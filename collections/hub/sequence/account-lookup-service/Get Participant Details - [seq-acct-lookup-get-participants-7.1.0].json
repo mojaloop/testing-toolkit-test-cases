@@ -1,0 +1,466 @@
+{
+  "name": "Get Participant Details - [seq-acct-lookup-get-participants-7.1.0]",
+  "test_cases": [
+    {
+      "id": 8,
+      "name": "Get participants details - Happy Path - [seq-acct-lookup-get-participants-7.1.0]",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Get Participant Information",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/MSISDN/{$inputs.toIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "HTTP status code 202 returned ",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "HTTP status should be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback content-length should not be zero",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback body should contain fspId",
+                "exec": [
+                  "expect(callback.body).to.have.property('fspId')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be participants",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback fspId should be toFspId",
+                "exec": [
+                  "expect(callback.body.fspId).to.equal('{$inputs.toFspId}')",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const curDate = (new Date()).toUTCString()\r",
+                "const alsAddParticipant = {\r",
+                "    url: pm.environment.get(\"HOST_ACCOUNT_LOOKUP_SERVICE\") + '/participants/' + pm.environment.get(\"toIdType\") + '/' + pm.environment.get(\"toIdValue\"),\r",
+                "    method: 'POST',\r",
+                "    header: {\r",
+                "        'FSPIOP-Source': 'payeefsp',\r",
+                "        'Accept': 'application/vnd.interoperability.participants+json;version=1.0',\r",
+                "        'Content-Type': 'application/vnd.interoperability.participants+json;version=1.0',\r",
+                "        'Date': curDate\r",
+                "    },\r",
+                "    body: {\r",
+                "      mode: 'raw',\r",
+                "      raw: JSON.stringify({\r",
+                "        \"fspId\": \"payeefsp\",\r",
+                "        \"currency\": \"USD\"\r",
+                "      })\r",
+                "    }\r",
+                "}\r",
+                "  \r",
+                "pm.sendRequest(alsAddParticipant, function (err, response) {\r",
+                "    console.log('asdf'+JSON.stringify(response.json()))\r",
+                "});\r",
+                "\r",
+                "const simulatorAddParty = {\r",
+                "    url: pm.environment.get(\"HOST_SIMULATOR\") + '/payeefsp/parties/' + pm.environment.get(\"toIdType\") + '/' + pm.environment.get(\"toIdValue\"),\r",
+                "    method: 'POST',\r",
+                "    header: {\r",
+                "        \"FSPIOP-Source\": \"payeefsp\",\r",
+                "        \"Content-Type\": \"application/json\"\r",
+                "    },\r",
+                "    body: {\r",
+                "      mode: 'raw',\r",
+                "      raw: JSON.stringify({\r",
+                "        \"party\": {\r",
+                "            \"partyIdInfo\": {\r",
+                "                \"partyIdType\": pm.environment.get(\"toIdType\"),\r",
+                "                \"partyIdentifier\": pm.environment.get(\"toIdValue\"),\r",
+                "                \"fspId\": \"payeefsp\"\r",
+                "            },\r",
+                "            \"name\": \"Test PayeeFSP\",\r",
+                "            \"personalInfo\": {\r",
+                "                \"complexName\": {\r",
+                "                    \"firstName\": \"Test\",\r",
+                "                    \"lastName\": \"Test\"\r",
+                "                },\r",
+                "                \"dateOfBirth\": \"1984-01-01\"\r",
+                "            }\r",
+                "        }\r",
+                "      })\r",
+                "    }\r",
+                "}\r",
+                "\r",
+                "  \r",
+                "pm.sendRequest(simulatorAddParty, function (err, response) {});\r",
+                "\r",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Get participants details - Error invalid Party ID - [seq-acct-lookup-get-participants-7.1.0]",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Get Participant Information",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/MSISDN/{$inputs.invalidToIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.invalidToIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "HTTP status code 202 returned ",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "HTTP status should be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback content-length should not be zero",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback body should contain errorInformation",
+                "exec": [
+                  "expect(callback.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be participants",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback errorCode and errorDescription validation",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3204')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('Party not found')",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const curDate = (new Date()).toUTCString()\r",
+                "const alsAddParticipant = {\r",
+                "    url: pm.environment.get(\"HOST_ACCOUNT_LOOKUP_SERVICE\") + '/participants/' + pm.environment.get(\"toIdType\") + '/' + pm.environment.get(\"toIdValue\"),\r",
+                "    method: 'POST',\r",
+                "    header: {\r",
+                "        'FSPIOP-Source': 'payeefsp',\r",
+                "        'Accept': 'application/vnd.interoperability.participants+json;version=1.0',\r",
+                "        'Content-Type': 'application/vnd.interoperability.participants+json;version=1.0',\r",
+                "        'Date': curDate\r",
+                "    },\r",
+                "    body: {\r",
+                "      mode: 'raw',\r",
+                "      raw: JSON.stringify({\r",
+                "        \"fspId\": \"payeefsp\",\r",
+                "        \"currency\": \"USD\"\r",
+                "      })\r",
+                "    }\r",
+                "}\r",
+                "  \r",
+                "pm.sendRequest(alsAddParticipant, function (err, response) {\r",
+                "    console.log('asdf'+JSON.stringify(response.json()))\r",
+                "});\r",
+                "\r",
+                "const simulatorAddParty = {\r",
+                "    url: pm.environment.get(\"HOST_SIMULATOR\") + '/payeefsp/parties/' + pm.environment.get(\"toIdType\") + '/' + pm.environment.get(\"toIdValue\"),\r",
+                "    method: 'POST',\r",
+                "    header: {\r",
+                "        \"FSPIOP-Source\": \"payeefsp\",\r",
+                "        \"Content-Type\": \"application/json\"\r",
+                "    },\r",
+                "    body: {\r",
+                "      mode: 'raw',\r",
+                "      raw: JSON.stringify({\r",
+                "        \"party\": {\r",
+                "            \"partyIdInfo\": {\r",
+                "                \"partyIdType\": pm.environment.get(\"toIdType\"),\r",
+                "                \"partyIdentifier\": pm.environment.get(\"toIdValue\"),\r",
+                "                \"fspId\": \"payeefsp\"\r",
+                "            },\r",
+                "            \"name\": \"Test PayeeFSP\",\r",
+                "            \"personalInfo\": {\r",
+                "                \"complexName\": {\r",
+                "                    \"firstName\": \"Test\",\r",
+                "                    \"lastName\": \"Test\"\r",
+                "                },\r",
+                "                \"dateOfBirth\": \"1984-01-01\"\r",
+                "            }\r",
+                "        }\r",
+                "      })\r",
+                "    }\r",
+                "}\r",
+                "\r",
+                "  \r",
+                "pm.sendRequest(simulatorAddParty, function (err, response) {});\r",
+                "\r",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Get participants details - Error ACCOUNT_ID type not setup - [seq-acct-lookup-get-participants-7.1.0]",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Get Participant Information",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/ACCOUNT_ID/{$inputs.toIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "ACCOUNT_ID",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "HTTP status code 202 returned ",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "HTTP status should be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback content-length should not be zero",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback body should contain errorInformation",
+                "exec": [
+                  "expect(callback.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be participants",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback errorCode and errorDescription validation",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3003')",
+                  "expect(callback.body.errorInformation.errorDescription).to.contain('Oracle type: ACCOUNT_ID not found')",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const curDate = (new Date()).toUTCString()\r",
+                "const alsAddParticipant = {\r",
+                "    url: pm.environment.get(\"HOST_ACCOUNT_LOOKUP_SERVICE\") + '/participants/' + pm.environment.get(\"toIdType\") + '/' + pm.environment.get(\"toIdValue\"),\r",
+                "    method: 'POST',\r",
+                "    header: {\r",
+                "        'FSPIOP-Source': 'payeefsp',\r",
+                "        'Accept': 'application/vnd.interoperability.participants+json;version=1.0',\r",
+                "        'Content-Type': 'application/vnd.interoperability.participants+json;version=1.0',\r",
+                "        'Date': curDate\r",
+                "    },\r",
+                "    body: {\r",
+                "      mode: 'raw',\r",
+                "      raw: JSON.stringify({\r",
+                "        \"fspId\": \"payeefsp\",\r",
+                "        \"currency\": \"USD\"\r",
+                "      })\r",
+                "    }\r",
+                "}\r",
+                "  \r",
+                "pm.sendRequest(alsAddParticipant, function (err, response) {\r",
+                "    console.log('asdf'+JSON.stringify(response.json()))\r",
+                "});\r",
+                "\r",
+                "const simulatorAddParty = {\r",
+                "    url: pm.environment.get(\"HOST_SIMULATOR\") + '/payeefsp/parties/' + pm.environment.get(\"toIdType\") + '/' + pm.environment.get(\"toIdValue\"),\r",
+                "    method: 'POST',\r",
+                "    header: {\r",
+                "        \"FSPIOP-Source\": \"payeefsp\",\r",
+                "        \"Content-Type\": \"application/json\"\r",
+                "    },\r",
+                "    body: {\r",
+                "      mode: 'raw',\r",
+                "      raw: JSON.stringify({\r",
+                "        \"party\": {\r",
+                "            \"partyIdInfo\": {\r",
+                "                \"partyIdType\": pm.environment.get(\"toIdType\"),\r",
+                "                \"partyIdentifier\": pm.environment.get(\"toIdValue\"),\r",
+                "                \"fspId\": \"payeefsp\"\r",
+                "            },\r",
+                "            \"name\": \"Test PayeeFSP\",\r",
+                "            \"personalInfo\": {\r",
+                "                \"complexName\": {\r",
+                "                    \"firstName\": \"Test\",\r",
+                "                    \"lastName\": \"Test\"\r",
+                "                },\r",
+                "                \"dateOfBirth\": \"1984-01-01\"\r",
+                "            }\r",
+                "        }\r",
+                "      })\r",
+                "    }\r",
+                "}\r",
+                "\r",
+                "  \r",
+                "pm.sendRequest(simulatorAddParty, function (err, response) {});\r",
+                "\r",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
