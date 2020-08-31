@@ -55,8 +55,8 @@
     "acceptParticipants": "application/vnd.interoperability.participants+json;version=1.0",
     "contentTypeParticipants": "application/vnd.interoperability.participants+json;version=1.0",
     "toIdValueDelete": "27713803913",
-    "batchToIdValue1": "27713803004",
-    "batchToIdValue2": "27713803005",
+    "batchToIdValue1": "27713803066",
+    "batchToIdValue2": "27713803067",
     "invalidToIdType": "ACCOUNT_ID"
   },
   "test_cases": [
@@ -329,7 +329,7 @@
     },
     {
       "id": 13,
-      "name": "Delete Added Participant Details",
+      "name": "Delete Added Participant Details - [seq-acct-lookup-del-participants-7.1.2]",
       "requests": [
         {
           "id": 1,
@@ -379,16 +379,9 @@
               },
               {
                 "id": 4,
-                "description": "Callback body should contain partyList",
+                "description": "Callback body should contain fspId",
                 "exec": [
-                  "expect(callback.body).to.have.property('partyList')"
-                ]
-              },
-              {
-                "id": 5,
-                "description": "Callback body should contain currency",
-                "exec": [
-                  "expect(callback.body).to.have.property('currency')"
+                  "expect(callback.body).to.have.property('fspId')"
                 ]
               },
               {
@@ -464,16 +457,9 @@
               },
               {
                 "id": 4,
-                "description": "Callback body should contain partyList",
+                "description": "Callback body should contain fspId",
                 "exec": [
-                  "expect(callback.body).to.have.property('partyList')"
-                ]
-              },
-              {
-                "id": 5,
-                "description": "Callback body should contain currency",
-                "exec": [
-                  "expect(callback.body).to.have.property('currency')"
+                  "expect(callback.body).to.have.property('fspId')"
                 ]
               },
               {
@@ -505,10 +491,10 @@
     },
     {
       "id": 14,
-      "name": "Get Participants Details - Error Party not Found - [seq-acct-lookup-get-participants-7.1.0]",
+      "name": "Create Participants Batch - Error Invalid IdType - [seq-acct-lookup-post-participants-batch-7.1.1]",
       "requests": [
         {
-          "id": 1,
+          "id": 2,
           "description": "Get Participants Details",
           "apiVersion": {
             "minorVersion": 0,
@@ -594,7 +580,7 @@
           }
         },
         {
-          "id": 2,
+          "id": 3,
           "description": "Get Participant Details second party",
           "apiVersion": {
             "minorVersion": 0,
