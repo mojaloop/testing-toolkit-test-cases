@@ -365,7 +365,7 @@
           },
           "params": {
             "Type": "{$inputs.toIdType}",
-            "ID": "{$inputs.unknownFspToIdValue}"
+            "ID": "{$inputs.invalidToIdValue}"
           },
           "tests": {
             "assertions": [
@@ -429,14 +429,14 @@
             ]
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "path": "/parties/{$inputs.toIdType}/{$inputs.unknownFspToIdValue}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.invalidToIdValue}",
           "scripts": {
             "preRequest": {
               "exec": [
                 "\r",
                 "const curDate = (new Date()).toUTCString()\r",
                 "const alsAddParticipant = {\r",
-                "    url: pm.environment.get(\"HOST_ACCOUNT_LOOKUP_SERVICE\") + '/participants/' + pm.environment.get(\"toIdType\") + '/' + pm.environment.get(\"unknownFspToIdValue\"),\r",
+                "    url: pm.environment.get(\"HOST_ACCOUNT_LOOKUP_SERVICE\") + '/participants/' + pm.environment.get(\"toIdType\") + '/' + pm.environment.get(\"invalidToIdValue\"),\r",
                 "    method: 'POST',\r",
                 "    header: {\r",
                 "        'FSPIOP-Source': 'unknownFsp',\r",
