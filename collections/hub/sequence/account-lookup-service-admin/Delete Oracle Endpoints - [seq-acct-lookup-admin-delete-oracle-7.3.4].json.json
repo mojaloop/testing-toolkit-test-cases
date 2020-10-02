@@ -1,0 +1,347 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Delete Oracle Endpoint - Happy Path [seq-acct-lookup-admin-delete-oracle-7.3.4].json",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Create Sample Oracle Endpoint",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json"
+          },
+          "body": {
+            "endpoint": {
+              "endpointType": "URL",
+              "value": "http://sample-oracle-endpoint"
+            },
+            "oracleIdType": "ALIAS",
+            "currency": "NZD",
+            "isDefault": false
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status should be 201",
+                "exec": [
+                  "if (response.status !== 500) {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response status could be 500 if duplicate request is sent",
+                "exec": [
+                  "if (response.status !== 201) {",
+                  "  expect(response.status).to.equal(500)",
+                  "  expect(response.body).to.have.property('errorInformation')",
+                  "  expect(response.body.errorInformation.errorCode).to.equal('2001')",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('Duplicate')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// Store the oracleId of the oracle create in env variable 'testOracleIdDelete' ",
+                "// for use in subsequent test cases",
+                "pm.sendRequest(",
+                "  {",
+                "   url: `${pm.environment.get('HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN')}/oracles?currency=NZD`,",
+                "   method: 'GET',",
+                "   header: {",
+                "     accept: 'application/json',",
+                "     'content-type': 'application/json',",
+                "     date: new Date().toISOString()",
+                "   }",
+                "  }, (err, response) => {",
+                "  console.log(err, response)",
+                "  const createdOracle = response.json()[0]",
+                "  pm.environment.set('testOracleIdDelete', createdOracle.oracleId)",
+                "})",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Delete Oracle Endpoint",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles/{ID}",
+          "path": "/oracles/{$environment.testOracleIdDelete}",
+          "method": "delete",
+          "params": {
+            "ID": "{$environment.testOracleIdDelete}"
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "delay": null,
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json"
+          },
+          "body": {
+            "endpoint": {
+              "endpointType": "URL",
+              "value": "https://sample-oracle-endpoint"
+            },
+            "oracleIdType": "BUSINESS",
+            "currency": "NZD",
+            "isDefault": true
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code should be 204",
+                "exec": [
+                  "expect(response.status).to.equal(204)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "description": "Verify Oracle is Disabled",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "get",
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "ignoreCallbacks": true,
+          "queryParams": {
+            "currency": "NZD"
+          },
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Oracle endpoint details should match",
+                "exec": [
+                  "const deletedOracle = response.body.find(o => o.oracleId = environment.testOracleIdDelete )",
+                  "console.log(deletedOracle)",
+                  "expect(deletedOracle).to.equal(undefined)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Delete Oracle Endpoint - Unhappy Path [seq-acct-lookup-admin-put-oracle-7.3.4].json",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Create Sample Oracle Endpoint",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json"
+          },
+          "body": {
+            "endpoint": {
+              "endpointType": "URL",
+              "value": "http://sample-oracle-endpoint"
+            },
+            "oracleIdType": "ALIAS",
+            "currency": "KES",
+            "isDefault": false
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status should be 201",
+                "exec": [
+                  "if (response.status !== 500) {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response status could be 500 if duplicate request is sent",
+                "exec": [
+                  "if (response.status !== 201) {",
+                  "  expect(response.status).to.equal(500)",
+                  "  expect(response.body).to.have.property('errorInformation')",
+                  "  expect(response.body.errorInformation.errorCode).to.equal('2001')",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('Duplicate')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// Store the oracleId of the oracle create in env variable 'testOracleIdDeleteUnhappy' ",
+                "// for use in subsequent test cases",
+                "pm.sendRequest(",
+                "  {",
+                "   url: `${pm.environment.get('HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN')}/oracles?currency=KES`,",
+                "   method: 'GET',",
+                "   header: {",
+                "     accept: 'application/json',",
+                "     'content-type': 'application/json',",
+                "     date: new Date().toISOString()",
+                "   }",
+                "  }, (err, response) => {",
+                "  console.log(err, response)",
+                "  const createdOracle = response.json()[0]",
+                "  pm.environment.set('testOracleIdDeleteUnhappy', createdOracle.oracleId)",
+                "})",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "ID not found",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles/{ID}",
+          "path": "/oracles/INVALID",
+          "method": "delete",
+          "params": {
+            "ID": "INVALID"
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "delay": null,
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json"
+          },
+          "body": {},
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code should be 204",
+                "exec": [
+                  "expect(response.status).to.equal(204)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response body should be empty",
+                "exec": [
+                  "expect(response.body).to.equal('')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 5,
+          "description": "Required Header Missing - Accept",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles/{ID}",
+          "path": "/oracles/{$environment.testOracleIdDeleteUnhappy}",
+          "method": "delete",
+          "params": {
+            "ID": "{$environment.testOracleIdDeleteUnhappy}"
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "delay": null,
+          "ignoreCallbacks": true,
+          "headers": {
+            "date": "{$function.generic.curDate}",
+            "content-type": "application/json"
+          },
+          "body": {},
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response should contain appropriate error information",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102')",
+                  "expect(response.body.errorInformation.errorDescription.includes('accept')).to.equal(true)",
+                  ""
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
