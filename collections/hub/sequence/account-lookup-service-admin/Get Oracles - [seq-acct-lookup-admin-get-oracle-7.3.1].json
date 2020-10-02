@@ -1,0 +1,436 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Get All Oracle Endpoints - Happy Path [seq-acct-lookup-admin-get-oracle-7.3.1]",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Get All Oracle Endpoints by Currency and Endpoint Type",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "get",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "{$environment.contentType}",
+            "date": "{$function.generic.curDate}",
+            "accept": "{$environment.accept}"
+          },
+          "queryParams": {
+            "currency": "{$environment.currency}",
+            "type": "MSISDN"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 2,
+                "description": "Response code should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response payload is an array",
+                "exec": [
+                  "expect(Array.isArray(response.body)).to.equal(true)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response payload array should contain an endpoint data",
+                "exec": [
+                  "",
+                  "expect(response.body[0]).to.have.property('oracleId')",
+                  "expect(response.body[0]).to.have.property('oracleIdType')",
+                  "expect(response.body[0].oracleIdType).to.equal('MSISDN')",
+                  "expect(response.body[0]).to.have.property('endpoint')",
+                  "expect(response.body[0].endpoint.value.length > 0).to.equal(true)",
+                  "expect(response.body[0].endpoint.endpointType).to.equal('URL')",
+                  "expect(response.body[0]).to.have.property('currency')",
+                  "expect(response.body[0].currency).to.equal(environment.currency)",
+                  "expect(response.body[0]).to.have.property('isDefault')",
+                  "expect(response.body[0].isDefault).to.equal(1)"
+                ]
+              }
+            ]
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "scripts": {
+            "postRequest": {
+              "exec": []
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Get All Oracle Endpoints by Currency",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "get",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "{$environment.contentType}",
+            "date": "{$function.generic.curDate}",
+            "accept": "{$environment.accept}"
+          },
+          "queryParams": {
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 2,
+                "description": "Response code should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response payload is an array",
+                "exec": [
+                  "expect(Array.isArray(response.body)).to.equal(true)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response payload array should contain an endpoint data",
+                "exec": [
+                  "",
+                  "expect(response.body[0]).to.have.property('oracleId')",
+                  "expect(response.body[0]).to.have.property('oracleIdType')",
+                  "expect(response.body[0].oracleIdType).to.equal('MSISDN')",
+                  "expect(response.body[0]).to.have.property('endpoint')",
+                  "expect(response.body[0].endpoint.value.length > 0).to.equal(true)",
+                  "expect(response.body[0].endpoint.endpointType).to.equal('URL')",
+                  "expect(response.body[0]).to.have.property('currency')",
+                  "expect(response.body[0].currency).to.equal(environment.currency)",
+                  "expect(response.body[0]).to.have.property('isDefault')",
+                  "expect(response.body[0].isDefault).to.equal(1)"
+                ]
+              }
+            ]
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// console.log(response)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Get All Oracle Endpoints by Type",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "get",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "{$environment.contentType}",
+            "date": "{$function.generic.curDate}",
+            "accept": "{$environment.accept}"
+          },
+          "queryParams": {
+            "type": "MSISDN"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 2,
+                "description": "Response code should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response payload is an array",
+                "exec": [
+                  "expect(Array.isArray(response.body)).to.equal(true)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response payload array should contain an endpoint data",
+                "exec": [
+                  "",
+                  "expect(response.body[0]).to.have.property('oracleId')",
+                  "expect(response.body[0]).to.have.property('oracleIdType')",
+                  "expect(response.body[0].oracleIdType).to.equal('MSISDN')",
+                  "expect(response.body[0]).to.have.property('endpoint')",
+                  "expect(response.body[0].endpoint.value.length > 0).to.equal(true)",
+                  "expect(response.body[0].endpoint.endpointType).to.equal('URL')",
+                  "expect(response.body[0]).to.have.property('currency')",
+                  "expect(response.body[0].currency).to.equal(environment.currency)",
+                  "expect(response.body[0]).to.have.property('isDefault')",
+                  "expect(response.body[0].isDefault).to.equal(1)"
+                ]
+              }
+            ]
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// console.log(response)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "description": "Get All Oracle Endpoints",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "get",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "{$environment.contentType}",
+            "date": "{$function.generic.curDate}",
+            "accept": "{$environment.accept}"
+          },
+          "queryParams": {},
+          "tests": {
+            "assertions": [
+              {
+                "id": 2,
+                "description": "Response code should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response payload is an array",
+                "exec": [
+                  "expect(Array.isArray(response.body)).to.equal(true)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response payload array should contain an endpoint data",
+                "exec": [
+                  "",
+                  "expect(response.body.length > 1).to.equal(true)",
+                  "expect(response.body[0]).to.have.property('oracleId')",
+                  "expect(response.body[0]).to.have.property('oracleIdType')",
+                  "expect(response.body[0].oracleIdType).to.equal('MSISDN')",
+                  "expect(response.body[0]).to.have.property('endpoint')",
+                  "expect(response.body[0].endpoint.value.length > 0).to.equal(true)",
+                  "expect(response.body[0].endpoint.endpointType).to.equal('URL')",
+                  "expect(response.body[0]).to.have.property('currency')",
+                  "expect(response.body[0].currency).to.equal(environment.currency)",
+                  "expect(response.body[0]).to.have.property('isDefault')",
+                  "expect(response.body[0].isDefault).to.equal(1)"
+                ]
+              }
+            ]
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// console.log(response)"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Get All Oracle Endpoints - Unhappy Path [seq-acct-lookup-admin-get-oracle-7.3.1]",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Invalid Currency",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "get",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json"
+          },
+          "queryParams": {
+            "currency": "INVALID",
+            "type": "MSISDN"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 2,
+                "description": "Response code should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response payload should be an array",
+                "exec": [
+                  "expect(Array.isArray(response.body)).to.equal(true)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response payload should contain no endpoint data",
+                "exec": [
+                  "expect(response.body.length).to.equal(0)"
+                ]
+              }
+            ]
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// console.log(response)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Invalid Endpoint Type",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "get",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json"
+          },
+          "queryParams": {
+            "currency": "{$environment.currency}",
+            "type": "INVALID"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 2,
+                "description": "Response code should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response payload should be an array",
+                "exec": [
+                  "expect(Array.isArray(response.body)).to.equal(true)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response payload should contain no endpoint data",
+                "exec": [
+                  "expect(response.body.length).to.equal(0)"
+                ]
+              }
+            ]
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// console.log(response)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Invalid Endpoint Type and Currency",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "get",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json"
+          },
+          "queryParams": {
+            "currency": "INVALID",
+            "type": "INVALID"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 2,
+                "description": "Response code should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response payload should be an array",
+                "exec": [
+                  "expect(Array.isArray(response.body)).to.equal(true)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response payload should contain no endpoint data",
+                "exec": [
+                  "expect(response.body.length).to.equal(0)"
+                ]
+              }
+            ]
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// console.log(response)"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

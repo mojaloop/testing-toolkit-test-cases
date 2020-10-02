@@ -1,0 +1,312 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Create Oracle Endpoints - Happy Path [seq-acct-lookup-admin-post-oracle-7.3.2].json",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Create Oracle Endpoint",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json"
+          },
+          "body": {
+            "endpoint": {
+              "endpointType": "URL",
+              "value": "http://sample-alias-oracle"
+            },
+            "oracleIdType": "ALIAS",
+            "currency": "AUD",
+            "isDefault": false
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status should be 201",
+                "exec": [
+                  "if (response.status !== 500) {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response status could be 500 if duplicate request is sent",
+                "exec": [
+                  "if (response.status !== 201) {",
+                  "  expect(response.status).to.equal(500)",
+                  "  expect(response.body).to.have.property('errorInformation')",
+                  "  expect(response.body.errorInformation.errorCode).to.equal('2001')",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('Duplicate')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// Store the oracleId of the oracle create in env variable 'testOracleIdCreate' ",
+                "// for use in subsequent test cases",
+                "pm.sendRequest(",
+                "  {",
+                "   url: `${pm.environment.get('HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN')}/oracles?currency=AUD&type=ALIAS`,",
+                "   method: 'GET',",
+                "   header: {",
+                "     accept: 'application/json',",
+                "     'content-type': 'application/json',",
+                "     date: new Date().toISOString()",
+                "   }",
+                "  }, (err, response) => {",
+                "  console.log(err, response)",
+                "  const createdOracle = response.json()[0]",
+                "  pm.environment.set('testOracleIdCreate', createdOracle.oracleId)",
+                "})",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Clean up",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles/{ID}",
+          "path": "/oracles/{$environment.testOracleIdCreate}",
+          "method": "delete",
+          "params": {
+            "ID": "{$environment.testOracleIdCreate}"
+          },
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status should be 204",
+                "exec": [
+                  "expect(response.status).to.equal(204)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Create Oracle Endpoint - Unhappy Paths [seq-acct-lookup-admin-post-oracle-7.3.2].json",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Invalid Request - Missing Accept Header",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "content-type": "application/json",
+            "date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "endpoint": {
+              "endpointType": "URL",
+              "value": "http://sample-oracle-endpoint-2"
+            },
+            "oracleIdType": "ALIAS",
+            "currency": "PLN",
+            "isDefault": false
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response payload should contain appropriate error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')",
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102')",
+                  "expect(response.body.errorInformation.errorDescription).to.include('accept')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "description": "Invalid Request - Missing 'endpoint' in payload",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json",
+            "content-type": "application/json"
+          },
+          "body": {
+            "oracleIdType": "ALIAS",
+            "currency": "PLN",
+            "isDefault": false
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response payload should contain appropriate error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')",
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102')",
+                  "expect(response.body.errorInformation.errorDescription).to.include('endpoint')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "description": "Invalid Request - Missing 'oracleIdType' in payload",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json",
+            "content-type": "application/json"
+          },
+          "body": {
+            "endpoint": {
+              "endpointType": "URL",
+              "value": "http://sample-oracle-endpoint-2"
+            },
+            "currency": "PLN",
+            "isDefault": false
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response payload should contain appropriate error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')",
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102')",
+                  "expect(response.body.errorInformation.errorDescription).to.include('oracleIdType')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "description": "Invalid Request - Non-existing Currency",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$environment.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "date": "{$function.generic.curDate}",
+            "accept": "application/json",
+            "content-type": "application/json"
+          },
+          "body": {
+            "endpoint": {
+              "endpointType": "URL",
+              "value": "http://sample-oracle-endpoint-2"
+            },
+            "oracleIdType": "ALIAS",
+            "currency": "ZZZ",
+            "isDefault": false
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response payload should contain appropriate error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')",
+                  "expect(response.body.errorInformation.errorCode).to.equal('3100')",
+                  "expect(response.body.errorInformation.errorDescription).to.include('currency')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
