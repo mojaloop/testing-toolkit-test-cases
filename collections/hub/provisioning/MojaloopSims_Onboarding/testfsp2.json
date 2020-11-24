@@ -59,7 +59,7 @@
             "currency": "{$inputs.currency}",
             "limit": {
               "type": "NET_DEBIT_CAP",
-              "value": 1000000
+              "value": 10000
             },
             "initialPosition": 0
           },
@@ -476,8 +476,8 @@
             "FSPIOP-Source": "{$inputs.hub_operator}"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/participants/{{requestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -490,7 +490,7 @@
               }
             ]
           }
-        }, 
+        },
         {
           "id": 8,
           "description": "Add testfsp2 callback - QUOTES",
@@ -867,10 +867,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "pm.environment.set('fullName', 'SimFirst SimLast');\r",
-                "pm.environment.set('firstName', 'SimFirst');\r",
-                "pm.environment.set('middleName', 'SimMiddle');\r",
-                "pm.environment.set('lastName', 'SimLast');\r",
+                "pm.environment.set('fullName', 'Testfsp2First Testfsp2Last');\r",
+                "pm.environment.set('firstName', 'Testfsp2First');\r",
+                "pm.environment.set('middleName', 'Testfsp2Middle');\r",
+                "pm.environment.set('lastName', 'Testfsp2Last');\r",
                 "pm.environment.set('dob', '2010-10-10');\r",
                 "const testApiAddParty = {\r",
                 "    url: pm.environment.get(\"TESTFSP2_BACKEND_TESTAPI_URL\") + '/repository/parties',\r",
@@ -881,11 +881,11 @@
                 "    body: {\r",
                 "      mode: 'raw',\r",
                 "      raw: JSON.stringify({\r",
-                "        \"displayName\": \"SimFirst SimLast\",\r",
-                "        \"firstName\": \"SimFirst\",\r",
-                "        \"middleName\": \"SimMiddle\",\r",
-                "        \"lastName\": \"SimLast\",\r",
-                "        \"dateOfBirth\": \"2000-10-10\",\r",
+                "        \"displayName\": \"Testfsp2First Testfsp2Last\",\r",
+                "        \"firstName\": \"Testfsp2First\",\r",
+                "        \"middleName\": \"Testfsp2Middle\",\r",
+                "        \"lastName\": \"Testfsp2Last\",\r",
+                "        \"dateOfBirth\": \"2010-10-10\",\r",
                 "        \"idType\": pm.environment.get(\"testfsp2IdType\"),\r",
                 "        \"idValue\": pm.environment.get(\"testfsp2Identifier\")\r",
                 "    })\r",
