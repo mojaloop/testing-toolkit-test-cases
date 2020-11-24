@@ -59,7 +59,7 @@
             "currency": "{$inputs.currency}",
             "limit": {
               "type": "NET_DEBIT_CAP",
-              "value": 1000000
+              "value": 10000
             },
             "initialPosition": 0
           },
@@ -406,8 +406,8 @@
             "FSPIOP-Source": "{$inputs.hub_operator}"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/participants/{{requestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -1004,10 +1004,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "pm.environment.set('fullName', 'SimFirst SimLast');\r",
-                "pm.environment.set('firstName', 'SimFirst');\r",
-                "pm.environment.set('middleName', 'SimMiddle');\r",
-                "pm.environment.set('lastName', 'SimLast');\r",
+                "pm.environment.set('fullName', 'PayeeFirst PayeeLast');\r",
+                "pm.environment.set('firstName', 'PayeeFirst');\r",
+                "pm.environment.set('middleName', 'PayeeMiddle');\r",
+                "pm.environment.set('lastName', 'PayeeLast');\r",
                 "pm.environment.set('dob', '2010-10-10');\r",
                 "const testApiAddParty = {\r",
                 "    url: pm.environment.get(\"PAYEEFSP_BACKEND_TESTAPI_URL\") + '/repository/parties',\r",
@@ -1018,11 +1018,11 @@
                 "    body: {\r",
                 "      mode: 'raw',\r",
                 "      raw: JSON.stringify({\r",
-                "        \"displayName\": \"SimFirst SimLast\",\r",
-                "        \"firstName\": \"SimFirst\",\r",
-                "        \"middleName\": \"SimMiddle\",\r",
-                "        \"lastName\": \"SimLast\",\r",
-                "        \"dateOfBirth\": \"2000-10-10\",\r",
+                "        \"displayName\": \"PayeeFirst PayeeLast\",\r",
+                "        \"firstName\": \"PayeeFirst\",\r",
+                "        \"middleName\": \"PayeeMiddle\",\r",
+                "        \"lastName\": \"PayeeLast\",\r",
+                "        \"dateOfBirth\": \"2010-10-10\",\r",
                 "        \"idType\": pm.environment.get(\"payeeIdType\"),\r",
                 "        \"idValue\": pm.environment.get(\"payeeIdentifier\")\r",
                 "    })\r",

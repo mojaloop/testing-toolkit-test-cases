@@ -59,7 +59,7 @@
             "currency": "{$inputs.currency}",
             "limit": {
               "type": "NET_DEBIT_CAP",
-              "value": 1000000
+              "value": 10000
             },
             "initialPosition": 0
           },
@@ -406,8 +406,8 @@
             "FSPIOP-Source": "{$inputs.hub_operator}"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-            "value": "{$inputs.PAYERFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+            "value": "{$inputs.PAYERFSP_CALLBACK_URL}/participants/{{requestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -1022,7 +1022,7 @@
                 "        \"firstName\": \"SimFirst\",\r",
                 "        \"middleName\": \"SimMiddle\",\r",
                 "        \"lastName\": \"SimLast\",\r",
-                "        \"dateOfBirth\": \"2000-10-10\",\r",
+                "        \"dateOfBirth\": \"2010-10-10\",\r",
                 "        \"idType\": pm.environment.get(\"payerIdType\"),\r",
                 "        \"idValue\": pm.environment.get(\"payerIdentifier\")\r",
                 "    })\r",
