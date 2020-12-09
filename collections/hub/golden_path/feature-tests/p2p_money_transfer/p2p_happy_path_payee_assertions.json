@@ -145,14 +145,18 @@
                 "id": 9,
                 "description": "Payee FSPIOP-Source",
                 "exec": [
-                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
                 ]
               },
               {
                 "id": 10,
                 "description": "Payee Content-Type",
                 "exec": [
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')",
+                  "}"
                 ]
               }
             ]
@@ -162,13 +166,16 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "const wsURL = environment.PAYEEFSP_SDK_TESTAPI_URL.replace('http://', 'ws://')",
-                "await websocket.connect(wsURL + '/requests/{$inputs.toIdValue}', 'payeeRequest')"
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
+                "}"
               ]
             },
             "postRequest": {
               "exec": [
-                "environment.payeeRequest = await websocket.getMessage('payeeRequest')"
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
               ]
             }
           },
@@ -232,13 +239,16 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "const wsURL = environment.PAYEEFSP_SDK_TESTAPI_URL.replace('http://', 'ws://')",
-                "await websocket.connect(wsURL + '/requests/{$request.body.quoteId}', 'payeeRequest')"
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
               ]
             },
             "postRequest": {
               "exec": [
-                "environment.payeeRequest = await websocket.getMessage('payeeRequest')"
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
               ]
             }
           },
@@ -326,28 +336,36 @@
                 "id": 12,
                 "description": "Payee FSPIOP-Source",
                 "exec": [
-                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
                 ]
               },
               {
                 "id": 13,
                 "description": "Payee Content-Type",
                 "exec": [
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')",
+                  "}"
                 ]
               },
               {
                 "id": 14,
                 "description": "Payee Body QuoteId",
                 "exec": [
-                  "expect(environment.payeeRequest.data['quoteId']).to.equal('{$request.body.quoteId}')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.data['quoteId']).to.equal('{$request.body.quoteId}')",
+                  "}"
                 ]
               },
               {
                 "id": 15,
                 "description": "Payee Body TransactionId",
                 "exec": [
-                  "expect(environment.payeeRequest.data['transactionId']).to.equal('{$request.body.transactionId}')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.data['transactionId']).to.equal('{$request.body.transactionId}')",
+                  "}"
                 ]
               }
             ]
@@ -392,13 +410,16 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "const wsURL = environment.PAYEEFSP_SDK_TESTAPI_URL.replace('http://', 'ws://')",
-                "await websocket.connect(wsURL + '/requests/{$request.body.transferId}', 'payeeRequest')"
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.transferId}', 'payeeRequest')",
+                "}"
               ]
             },
             "postRequest": {
               "exec": [
-                "environment.payeeRequest = await websocket.getMessage('payeeRequest')"
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
               ]
             }
           },
@@ -472,28 +493,36 @@
                 "id": 10,
                 "description": "Payee FSPIOP-Source",
                 "exec": [
-                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
                 ]
               },
               {
                 "id": 11,
                 "description": "Payee Content-Type",
                 "exec": [
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  "}"
                 ]
               },
               {
                 "id": 12,
                 "description": "Payee Body TransferId",
                 "exec": [
-                  "expect(environment.payeeRequest.data['transferId']).to.equal('{$request.body.transferId}')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.data['transferId']).to.equal('{$request.body.transferId}')",
+                  "}"
                 ]
               },
               {
                 "id": 13,
                 "description": "Payee Body Amount",
                 "exec": [
-                  "expect(environment.payeeRequest.data.amount.amount).to.equal('{$request.body.amount.amount}')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.data.amount.amount).to.equal('{$request.body.amount.amount}')",
+                  "}"
                 ]
               }
             ]
