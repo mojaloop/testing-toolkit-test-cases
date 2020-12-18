@@ -1,0 +1,939 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Positive Scenarios",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Add Participant to ALS",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "fspId": "{$inputs.toFspId}",
+            "currency": "USD"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true
+        },
+        {
+          "id": 2,
+          "description": "Add Party to Simulator",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "body": {
+            "displayName": "Test PayeeFSP",
+            "firstName": "Test",
+            "middleName": "Test",
+            "lastName": "Test",
+            "dateOfBirth": "1984-01-01",
+            "idType": "{$inputs.toIdType}",
+            "idValue": "{$inputs.toIdValue}"
+          }
+        },
+        {
+          "id": 3,
+          "description": "Get party information",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback body should contain party",
+                "exec": [
+                  "expect(callback.body).to.have.property('party')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be parties",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Payee Content-Type",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "description": "Post scenario",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/scenarios",
+          "path": "/scenarios",
+          "method": "post",
+          "url": "{$inputs.PAYERFSP_BACKEND_TESTAPI_URL}",
+          "body": [
+            {
+              "name": "scenario1",
+              "operation": "postTransfers",
+              "body": {
+                "from": {
+                  "displayName": "{$environment.payerName}",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.SIMPAYER_MSISDN}"
+                },
+                "to": {
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.SIMPAYEE_MSISDN}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.SIMPAYER_CURRENCY}",
+                "amount": "10",
+                "transactionType": "TRANSFER",
+                "initiatorType": "CONSUMER",
+                "note": "test payment",
+                "homeTransactionId": "123ABC"
+              }
+            },
+            {
+              "name": "scenario2",
+              "operation": "putTransfers",
+              "params": {
+                "transferId": "{{scenario1.result.transferId}}"
+              },
+              "body": {
+                "acceptQuote": true
+              }
+            }
+          ],
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payer name matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.from.displayName).to.equal(environment.payerName)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Payer IdType matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.from.idType).to.equal('MSISDN')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Payer IdValue matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.from.idValue).to.equal('{$inputs.SIMPAYER_MSISDN}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Payee IdType matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.to.idType).to.equal('MSISDN')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Payee IdValue matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.to.idValue).to.equal('{$inputs.SIMPAYEE_MSISDN}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Payee fspId matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.to.fspId).to.equal('{$inputs.SIMPAYEE_NAME}')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Payee First Name matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.to.firstName).to.equal(environment.expectedPayeeFirstName)"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Payee Last Name matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.to.lastName).to.equal(environment.expectedPayeeLastName)"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Payee DOB matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.to.dateOfBirth).to.equal(environment.expectedPayeeDOB)"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Amount Type is 'SEND'",
+                "exec": [
+                  "expect(response.body.scenario1.result.amountType).to.equal('SEND')"
+                ]
+              },
+              {
+                "id": 12,
+                "description": "Currency matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.currency).to.equal('{$inputs.SIMPAYER_CURRENCY}')"
+                ]
+              },
+              {
+                "id": 13,
+                "description": "Transfer Amount matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": 14,
+                "description": "Transaction Type is 'Transfer'",
+                "exec": [
+                  "expect(response.body.scenario1.result.transactionType).to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 15,
+                "description": "Initiator Type is 'CONSUMER'",
+                "exec": [
+                  "expect(response.body.scenario1.result.initiatorType).to.equal('CONSUMER')"
+                ]
+              },
+              {
+                "id": 16,
+                "description": "Note matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.note).to.equal('test payment')"
+                ]
+              },
+              {
+                "id": 17,
+                "description": "Transfer ID matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.transferId).to.equal(response.body.scenario2.result.transferId)"
+                ]
+              },
+              {
+                "id": 18,
+                "description": "Home transaction ID matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.homeTransactionId).to.equal('123ABC')"
+                ]
+              },
+              {
+                "id": 19,
+                "description": "Current state on quote is 'COMPLETED'",
+                "exec": [
+                  "expect(response.body.scenario1.result.currentState).to.equal('COMPLETED')"
+                ]
+              },
+              {
+                "id": 20,
+                "description": "Quote amount matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.transferAmount.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": 21,
+                "description": "Currency matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.transferAmount.currency).to.equal('{$inputs.SIMPAYER_CURRENCY}')"
+                ]
+              },
+              {
+                "id": 22,
+                "description": "Quote response expiration is not null",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.expiration).to.not.equal(undefined)"
+                ]
+              },
+              {
+                "id": 23,
+                "description": "Quote response ilp packet is not null",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.ilpPacket).to.not.equal(undefined)"
+                ]
+              },
+              {
+                "id": 24,
+                "description": "Quote response condition is not null",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.condition).to.not.equal(undefined)"
+                ]
+              },
+              {
+                "id": 25,
+                "description": "Payee fee amount is zero (0)",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.payeeFspFee.amount).to.equal('0')"
+                ]
+              },
+              {
+                "id": 26,
+                "description": "Payee fee currency matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.payeeFspFee.currency).to.equal('{$inputs.SIMPAYEE_CURRENCY}')"
+                ]
+              },
+              {
+                "id": 27,
+                "description": "Payee commission amount is zero (0)",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.payeeFspCommission.amount).to.equal('0')"
+                ]
+              },
+              {
+                "id": 28,
+                "description": "Payee FSP commission currency matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.payeeFspCommission.currency).to.equal('{$inputs.SIMPAYEE_CURRENCY}')"
+                ]
+              },
+              {
+                "id": 29,
+                "description": "Payer FSP name matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.from.displayName).to.equal(environment.payerName)"
+                ]
+              },
+              {
+                "id": 30,
+                "description": "Payer IdType matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.from.idType).to.equal('MSISDN')"
+                ]
+              },
+              {
+                "id": 31,
+                "description": "Payer IdValue matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.from.idValue).to.equal('{$inputs.SIMPAYER_MSISDN}')"
+                ]
+              },
+              {
+                "id": 32,
+                "description": "Payee IdType matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.to.idType).to.equal('MSISDN')"
+                ]
+              },
+              {
+                "id": 33,
+                "description": "Payee  ReceiverMSISDN IdValue matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.to.idValue).to.equal('{$inputs.SIMPAYEE_MSISDN}')"
+                ]
+              },
+              {
+                "id": 34,
+                "description": "Payee fspId matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.to.fspId).to.equal('{$inputs.SIMPAYEE_NAME}')"
+                ]
+              },
+              {
+                "id": 35,
+                "description": "Payee First Name matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.to.firstName).to.equal(environment.expectedPayeeFirstName)"
+                ]
+              },
+              {
+                "id": 36,
+                "description": "Payee Last Name matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.to.lastName).to.equal(environment.expectedPayeeLastName)"
+                ]
+              },
+              {
+                "id": 37,
+                "description": "Payee DOB matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.to.dateOfBirth).to.equal(environment.expectedPayeeDOB)"
+                ]
+              },
+              {
+                "id": 38,
+                "description": "Amount type in quote response is 'SEND'",
+                "exec": [
+                  "expect(response.body.scenario2.result.amountType).to.equal('SEND')"
+                ]
+              },
+              {
+                "id": 39,
+                "description": "Currency in quotes matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.currency).to.equal('{$inputs.SIMPAYER_CURRENCY}')"
+                ]
+              },
+              {
+                "id": 40,
+                "description": "Transfer amount matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": 41,
+                "description": "Transaction Type is TRANSFER",
+                "exec": [
+                  "expect(response.body.scenario2.result.transactionType).to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 42,
+                "description": "Initiator type is CONSUMER",
+                "exec": [
+                  "expect(response.body.scenario2.result.initiatorType).to.equal('CONSUMER')"
+                ]
+              },
+              {
+                "id": 43,
+                "description": "Note matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.note).to.equal('test payment')"
+                ]
+              },
+              {
+                "id": 44,
+                "description": "Home transaction ID is 123ABC",
+                "exec": [
+                  "expect(response.body.scenario2.result.homeTransactionId).to.equal('123ABC')"
+                ]
+              },
+              {
+                "id": 45,
+                "description": "Current state of the transfer is COMPLETED",
+                "exec": [
+                  "expect(response.body.scenario2.result.currentState).to.equal('COMPLETED')"
+                ]
+              },
+              {
+                "id": 46,
+                "description": "Transfer Amount matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.transferAmount.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": 47,
+                "description": "Currency matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.transferAmount.currency).to.equal('{$inputs.SIMPAYER_CURRENCY}')"
+                ]
+              },
+              {
+                "id": 48,
+                "description": "Quote expiration is not null",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.expiration).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": 49,
+                "description": "Response ilpPacket is not null",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.ilpPacket).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": 50,
+                "description": "Response condition is not null",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.condition).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": 51,
+                "description": "Payee FSP Fee is zero (0)",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.payeeFspFee.amount).to.equal('0')"
+                ]
+              },
+              {
+                "id": 52,
+                "description": "Payee FSP commission is zero (0)",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.payeeFspCommission.amount).to.equal('0')"
+                ]
+              },
+              {
+                "id": 53,
+                "description": "Transfer currency matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.payeeFspCommission.currency).to.equal('{$inputs.SIMPAYEE_CURRENCY}')"
+                ]
+              },
+              {
+                "id": 54,
+                "description": "CompletedTimestamp is not empty",
+                "exec": [
+                  "expect(response.body.scenario2.result.fulfil.completedTimestamp).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": 55,
+                "description": "Transfer state is 'COMMITTED'",
+                "exec": [
+                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                ]
+              },
+              {
+                "id": 56,
+                "description": "Fulfilment is not empty",
+                "exec": [
+                  "expect(response.body.scenario2.result.fulfil.fulfilment).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": 57,
+                "description": "Payee Request: fspiop-source header is 'payerfsp'",
+                "exec": [
+                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.SIMPAYER_NAME}')"
+                ]
+              },
+              {
+                "id": 58,
+                "description": "Payee Request: fspiop-destination header is 'payeefsp'",
+                "exec": [
+                  "expect(environment.payeeRequest.headers['fspiop-destination']).to.equal('payeefsp')"
+                ]
+              },
+              {
+                "id": 59,
+                "description": "Payee Request: Content-Type is 'application/vnd.interoperability.parties+json;version=1.0'",
+                "exec": [
+                  "expect(environment.payeeRequest.headers['content-type']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)"
+                ]
+              },
+              {
+                "id": 60,
+                "description": "Payee Request: Accept matches 'application/vnd.interoperability.parties+json;version=1' ",
+                "exec": [
+                  "expect(environment.payeeRequest.headers['accept']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)"
+                ]
+              },
+              {
+                "id": 61,
+                "description": "Payee Request: Date is not null",
+                "exec": [
+                  "expect(environment.payeeRequest.headers['date']).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": 62,
+                "description": "Payer Callback: 'fspiop-source' header is 'payeefsp'",
+                "exec": [
+                  "expect(environment.payerCallback.headers['fspiop-source']).to.equal('{$inputs.SIMPAYEE_NAME}')"
+                ]
+              },
+              {
+                "id": 63,
+                "description": "Payer Callback: 'fspiop-destination' header is 'payerfsp'",
+                "exec": [
+                  "expect(environment.payerCallback.headers['fspiop-destination']).to.equal('{$inputs.SIMPAYER_NAME}')"
+                ]
+              },
+              {
+                "id": 64,
+                "description": "Payer Callback: 'content-type' header matches",
+                "exec": [
+                  "expect(environment.payerCallback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 65,
+                "description": "Payer Callback: 'Accept' header is empty",
+                "exec": [
+                  "expect(environment.payerCallback.headers['accept']).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": 66,
+                "description": "Payer Callback: 'fspiop-uri' header matches",
+                "exec": [
+                  "expect(environment.payerCallback.headers['fspiop-uri']).to.equal('/parties/MSISDN/{$inputs.SIMPAYEE_MSISDN}')"
+                ]
+              },
+              {
+                "id": 67,
+                "description": "Payer Callback: 'fspiop-http-method' headers is 'PUT'",
+                "exec": [
+                  "expect(environment.payerCallback.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 68,
+                "description": "Payer Callback: Expected partyIdType is MSISDN",
+                "exec": [
+                  "expect(environment.payerCallback.data.party.partyIdInfo.partyIdType).to.equal('MSISDN')"
+                ]
+              },
+              {
+                "id": 69,
+                "description": "Payer Callback: Payee partyIdentifier matches",
+                "exec": [
+                  "expect(environment.payerCallback.data.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.SIMPAYEE_MSISDN}')"
+                ]
+              },
+              {
+                "id": 70,
+                "description": "Payer Callback: Payee fspId matches",
+                "exec": [
+                  "expect(environment.payerCallback.data.party.partyIdInfo.fspId).to.equal('{$inputs.SIMPAYEE_NAME}')"
+                ]
+              },
+              {
+                "id": 71,
+                "description": "Payer Callback: Payee first name matches",
+                "exec": [
+                  "expect(environment.payerCallback.data.party.personalInfo.complexName.firstName).to.equal(environment.expectedPayeeFirstName)"
+                ]
+              },
+              {
+                "id": 72,
+                "description": "Payer Callback: Payee last name matches",
+                "exec": [
+                  "expect(environment.payerCallback.data.party.personalInfo.complexName.lastName).to.equal(environment.expectedPayeeLastName)"
+                ]
+              },
+              {
+                "id": 73,
+                "description": "Payer Callback: Payee DOB matches",
+                "exec": [
+                  "expect(environment.payerCallback.data.party.personalInfo.dateOfBirth).to.equal(environment.expectedPayeeDOB)"
+                ]
+              },
+              {
+                "id": 74,
+                "description": "Payee Request: 'fspiop-source' header matches",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME)"
+                ]
+              },
+              {
+                "id": 75,
+                "description": "Payee Request: 'fspiop-destination' header matches",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)"
+                ]
+              },
+              {
+                "id": 76,
+                "description": "Payee Request: 'content-type' header is the same as sent in the request",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 77,
+                "description": "Payee Request: 'accept' header is the same as sent in the request",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.headers['content-type']).to.match(/application\\/vnd\\.interoperability\\.transfers\\+json;version=1(\\.\\d)?/)"
+                ]
+              },
+              {
+                "id": 78,
+                "description": "Payee Request: 'fspiop-http-method' i s POST",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.headers['fspiop-http-method']).to.equal('POST')"
+                ]
+              },
+              {
+                "id": 79,
+                "description": "Payee Request: 'fspiop-uri'  is /transfers",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.headers['fspiop-uri']).to.equal('/transfers')"
+                ]
+              },
+              {
+                "id": 80,
+                "description": "Payee Request: data should have the same \"transferId\" as request",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.data.transferId).to.equal(environment.scenario1TransferId)"
+                ]
+              },
+              {
+                "id": 81,
+                "description": "Payee Request: data should have the same Payer FSP as request",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.data.payerFsp).to.equal(environment.SIMPAYER_NAME)"
+                ]
+              },
+              {
+                "id": 82,
+                "description": "Payee Request: data should have the same Payee FSP as request",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.data.payeeFsp).to.equal(environment.SIMPAYEE_NAME)"
+                ]
+              },
+              {
+                "id": 83,
+                "description": "Payee Request: data should have the same amount as request",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.data.amount.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": 84,
+                "description": "Payee Request: data should have the same currency as request",
+                "exec": [
+                  "expect(environment.payeeSideTransferRequest.data.amount.currency).to.equal(environment.SIMPAYER_CURRENCY)"
+                ]
+              },
+              {
+                "id": 85,
+                "description": "Payer Callback: 'fspiop-source' header matches",
+                "exec": [
+                  "expect(environment.payerSideTransferCallback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)"
+                ]
+              },
+              {
+                "id": 86,
+                "description": "Payer Callback: 'fspiop-destination' header matches",
+                "exec": [
+                  "expect(environment.payerSideTransferCallback.headers['fspiop-destination']).to.equal(environment.SIMPAYER_NAME)"
+                ]
+              },
+              {
+                "id": 87,
+                "description": "Payer Callback: 'content-type' header is 'application/vnd.interoperability.transfers+json;version=1.0'",
+                "exec": [
+                  "expect(environment.payerSideTransferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 89,
+                "description": "Payer Callback: 'accept' header is empty",
+                "exec": [
+                  "expect(environment.payerSideTransferCallback.headers['accept']).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": 90,
+                "description": "Payer Callback: 'fspiop-uri' header includes /transfers",
+                "exec": [
+                  "expect(environment.payerSideTransferCallback.headers['fspiop-uri']).to.include('/transfers')"
+                ]
+              },
+              {
+                "id": 91,
+                "description": "Payer Callback: 'fspiop-http-method' header is 'PUT'",
+                "exec": [
+                  "expect(environment.payerSideTransferCallback.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 92,
+                "description": "Payer Callback: Response data does not have transferId",
+                "exec": [
+                  "expect(environment.payerSideTransferCallback.data.transferId).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": 93,
+                "description": "Payer Callback: Transfer state is 'COMMITTED'",
+                "exec": [
+                  "expect(environment.payerSideTransferCallback.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.SIMPAYEE_MSISDN}', 'payeeRequest')",
+                "  ",
+                "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.SIMPAYER_MSISDN}', 'payerCallback')",
+                "}",
+                "",
+                "environment.expectedPayeeFirstName = \"PayeeFirst\"",
+                "environment.expectedPayeeLastName = \"PayeeLast\"",
+                "environment.expectedPayeeDOB = \"2010-10-10\"",
+                "environment.payerName = \"PayerFirst PayerLast\""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
+                "  environment.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
+                "  environment.scenario1TransferId = response.body.scenario1.result.transferId",
+                "  ",
+                "  let url = `${environment.PAYEEFSP_SDK_TESTAPI_URL}/requests/${response.body.scenario1.result.transferId}`",
+                "  ",
+                "  try {",
+                "    const res = await axios.get(url)",
+                "    environment.payeeSideTransferRequest = res.data",
+                "  } catch (err) {",
+                "    console.log(err)",
+                "  }",
+                "  ",
+                "  url = `${environment.PAYERFSP_SDK_TESTAPI_URL}/callbacks/${response.body.scenario1.result.transferId}`",
+                "  ",
+                "  try {",
+                "    const res = await axios.get(url)",
+                "    environment.payerSideTransferCallback = res.data",
+                "  } catch (err) {",
+                "    console.log(err)",
+                "  }",
+                "  ",
+                "  ",
+                "  // await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + `/callbacks/${response.body.scenario1.result.transferId}`, 'payerSideTransferCallback')",
+                "  // environment.payerSideTransferCallback = await websocket.getMessage('payerSideTransferCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "  // console.log(environment.payerSideTransferCallback)",
+                "  // await websocket.disconnect()",
+                "}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
