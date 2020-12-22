@@ -1095,6 +1095,17 @@
                   "  expect(requestVariables.payerSideTransferCallback.data.transferState).to.equal('COMMITTED')",
                   "}"
                 ]
+              },
+              {
+                "id": 87,
+                "description": "Payer FSP FSPIOP-Signature Verification",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallbackJWSValid ).to.equal(true)",
+                  "}"
+                ]
               }
             ]
           },
@@ -1120,6 +1131,13 @@
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
                 "  requestVariables.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
+                "  //console.log(requestVariables.payerCallback)",
+                "  ",
+                "  if (environment.ENABLE_JWS_VALIDATION){",
+                "  requestVariables.payerCallbackJWSValid = custom.jws.validateCallback(requestVariables.payerCallback.headers, requestVariables.payerCallback.data, environment.TESTFSP2_JWS_PUB_KEY)",
+                "  console.log('Valid?: ', requestVariables.payerCallbackJWSValid)",
+                "  }",
                 "}",
                 "",
                 "requestVariables.scenario1TransferId = response.body.scenario1.result.transferId",
