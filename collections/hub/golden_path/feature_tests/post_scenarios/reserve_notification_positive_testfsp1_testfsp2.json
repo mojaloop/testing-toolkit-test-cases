@@ -167,7 +167,7 @@
         },
         {
           "id": 5,
-          "description": "Post scenarios - MSISDN - SIMPAYER to SIMPAYEE - PATCH notification",
+          "description": "Post scenarios - MSISDN - TESTFSP2 to TESTFSP1 - PATCH notification",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 0,
@@ -190,7 +190,7 @@
                 },
                 "to": {
                   "idType": "MSISDN",
-                  "idValue": "{$input.testfsp1MSISDN}"
+                  "idValue": "{$inputs.testfsp1MSISDN}"
                 },
                 "amountType": "SEND",
                 "currency": "{$inputs.SIMPAYER_CURRENCY}",
@@ -218,7 +218,7 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.status).to.equal(200)",
                   "}"
                 ]
@@ -227,8 +227,8 @@
                 "id": 2,
                 "description": "Payer name matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
-                  "  expect(response.body.scenario1.result.from.displayName).to.equal(environment.payerName)",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario1.result.from.displayName).to.equal(requestVariables.payerName)",
                   "}"
                 ]
               },
@@ -236,7 +236,7 @@
                 "id": 3,
                 "description": "Payer idType is 'MSISDN'",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.from.idType).to.equal('MSISDN')",
                   "}"
                 ]
@@ -245,7 +245,7 @@
                 "id": 4,
                 "description": "Payer idValue matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.from.idValue).to.equal(environment.testfsp2MSISDN)",
                   "}"
                 ]
@@ -254,7 +254,7 @@
                 "id": 5,
                 "description": "Payee idType is 'MSISDN'",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.to.idType).to.equal('MSISDN')",
                   "}"
                 ]
@@ -263,7 +263,7 @@
                 "id": 6,
                 "description": "Payee idValue matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.to.idType).to.equal('MSISDN')",
                   "}"
                 ]
@@ -272,7 +272,7 @@
                 "id": 7,
                 "description": "Payee fspId is \"testfsp1\"",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.to.fspId).to.equal('testfsp1')",
                   "}"
                 ]
@@ -281,16 +281,16 @@
                 "id": 8,
                 "description": "Payee First name \"Testfsp1First\"",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.to.firstName).to.equal('Testfsp1First')",
                   "}"
                 ]
               },
               {
                 "id": 9,
-                "description": "Payee First name \"Testfsp1Last\" ",
+                "description": "Payee Last name \"Testfsp1Last\"",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.to.lastName).to.equal('Testfsp1Last')",
                   "}"
                 ]
@@ -299,8 +299,17 @@
                 "id": 10,
                 "description": "Payee DOB matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.to.dateOfBirth).to.equal('2010-10-10')",
+                  "}"
+                ]
+              },
+              {
+                "id": 55,
+                "description": "Amount type is 'SEND'",
+                "exec": [
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario1.result.amountType).to.equal('SEND')",
                   "}"
                 ]
               },
@@ -308,7 +317,7 @@
                 "id": 11,
                 "description": "Currency matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.currency).to.equal('{$inputs.SIMPAYER_CURRENCY}')",
                   "}"
                 ]
@@ -317,7 +326,7 @@
                 "id": 12,
                 "description": "Transfer amount matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.amount).to.equal('10')",
                   "}"
                 ]
@@ -326,7 +335,7 @@
                 "id": 13,
                 "description": "Transaction type is 'TRANSFER'",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.transactionType).to.equal('TRANSFER')",
                   "}"
                 ]
@@ -335,7 +344,7 @@
                 "id": 14,
                 "description": "Initiator type is 'CONSUMER'",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.initiatorType).to.equal('CONSUMER')",
                   "}"
                 ]
@@ -344,7 +353,7 @@
                 "id": 15,
                 "description": "Note matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.note).to.equal('test payment')",
                   "}"
                 ]
@@ -353,8 +362,8 @@
                 "id": 16,
                 "description": "transferId matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
-                  "  expect(response.body.scenario1.result.transferId).to.equal('test payment')",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario1.result.transferId).to.equal(response.body.scenario2.result.transferId)",
                   "}"
                 ]
               },
@@ -362,7 +371,7 @@
                 "id": 17,
                 "description": "Home transaction ID matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.homeTransactionId).to.equal('123ABC')",
                   "}"
                 ]
@@ -371,7 +380,7 @@
                 "id": 18,
                 "description": "Current state on quote is 'COMPLETED'",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.currentState).to.equal('COMPLETED')",
                   "}"
                 ]
@@ -380,7 +389,7 @@
                 "id": 19,
                 "description": "Transfer amount matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.quoteResponse.transferAmount.amount).to.equal('10')",
                   "}"
                 ]
@@ -389,7 +398,7 @@
                 "id": 20,
                 "description": "Currency matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.quoteResponse.transferAmount.currency).to.equal(environment.SIMPAYER_CURRENCY)",
                   "}"
                 ]
@@ -398,7 +407,7 @@
                 "id": 21,
                 "description": "Quote response expiration is not null",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.quoteResponse.expiration).to.not.equal(undefined)",
                   "}"
                 ]
@@ -407,7 +416,7 @@
                 "id": 22,
                 "description": "Quote request ILP packet is not null",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.quoteResponse.ilpPacket).to.not.equal(undefined)",
                   "}"
                 ]
@@ -416,7 +425,7 @@
                 "id": 23,
                 "description": "Quote response condition is not null",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario1.result.quoteResponse.condition).to.not.equal(undefined)",
                   "}"
                 ]
@@ -425,8 +434,8 @@
                 "id": 24,
                 "description": "Payee Fee amount is 0",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
-                  "  expect(response.body.scenario1.result.payeeFspFee.amount).to.equal('0')",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario1.result.quoteResponse.payeeFspFee.amount).to.equal('0')",
                   "}"
                 ]
               },
@@ -434,8 +443,26 @@
                 "id": 25,
                 "description": "Payee fee currency matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
-                  "  expect(response.body.scenario1.result.payeeFspFee.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario1.result.quoteResponse.payeeFspFee.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
+                  "}"
+                ]
+              },
+              {
+                "id": 57,
+                "description": "Payee FSP commission amount is '0'",
+                "exec": [
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario1.result.quoteResponse.payeeFspCommission.amount).to.equal('0')",
+                  "}"
+                ]
+              },
+              {
+                "id": 56,
+                "description": "Payee FSP commission currency matches",
+                "exec": [
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario1.result.quoteResponse.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
                   "}"
                 ]
               },
@@ -443,16 +470,16 @@
                 "id": 26,
                 "description": "Payer FSP name matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
-                  "  expect(response.body.scenario2.result.from.displayName).to.equal(environment.payerName)",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario2.result.from.displayName).to.equal(requestVariables.payerName)",
                   "}"
                 ]
               },
               {
                 "id": 27,
-                "description": "IdType is 'MSISDN'",
+                "description": "Payer IdType is 'MSISDN'",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.from.idType).to.equal('MSISDN')",
                   "}"
                 ]
@@ -461,16 +488,16 @@
                 "id": 28,
                 "description": "Payer MSISDN matches",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.to.idValue).to.equal(environment.testfsp2MSISDN)",
                   "}"
                 ]
               },
               {
                 "id": 29,
-                "description": "IdType is 'MSISDN'",
+                "description": "Payee IdType is 'MSISDN'",
                 "exec": [
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.to.idType).to.equal('MSISDN')",
                   "}"
                 ]
@@ -481,7 +508,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.to.idValue).to.equal(environment.testfsp1MSISDN)",
                   "}"
                 ]
@@ -492,7 +519,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.to.fspId).to.equal('testfsp1')",
                   "}"
                 ]
@@ -503,7 +530,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.to.firstName).to.equal('Testfsp1First')",
                   "}"
                 ]
@@ -514,7 +541,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.to.firstName).to.equal('Testfsp1Last')",
                   "}"
                 ]
@@ -525,7 +552,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.to.dateOfBirth).to.equal('2010-10-10')",
                   "}"
                 ]
@@ -536,7 +563,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.amountType).to.equal('SEND')",
                   "}"
                 ]
@@ -547,7 +574,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.currency).to.equal(environment.SIMPAYER_CURRENCY)",
                   "}"
                 ]
@@ -558,7 +585,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.amount).to.equal('10')",
                   "}"
                 ]
@@ -569,7 +596,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.transactionType).to.equal('TRANSFER')",
                   "}"
                 ]
@@ -580,7 +607,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.initiatorType).to.equal('CONSUMER')",
                   "}"
                 ]
@@ -591,7 +618,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.note).to.equal('test payment')",
                   "}"
                 ]
@@ -602,18 +629,18 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
-                  "  expect(response.body.scenario2.result.homeTrasnactionId).to.equal('123ABC')",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario2.result.homeTransactionId).to.equal('123ABC')",
                   "}"
                 ]
               },
               {
                 "id": 42,
-                "description": "Current state of the transfer is COMPLETED",
+                "description": "Current state of the transfer is 'COMPLETED'",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.currentState).to.equal('COMPLETED')",
                   "}"
                 ]
@@ -624,7 +651,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.quoteResponse.transferAmount.amount).to.equal('10')",
                   "}"
                 ]
@@ -635,7 +662,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.quoteResponse.transferAmount.currency).to.equal(environment.SIMPAYER_CURRENCY)",
                   "}"
                 ]
@@ -646,7 +673,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.quoteResponse.expiration).to.not.equal(null)",
                   "}"
                 ]
@@ -657,7 +684,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.quoteResponse.ilpPacket).to.not.equal(null)",
                   "}"
                 ]
@@ -668,7 +695,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.quoteResponse.condition).to.not.equal(null)",
                   "}"
                 ]
@@ -679,29 +706,40 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.quoteResponse.payeeFspFee.amount).to.equal('0')",
                   "}"
                 ]
               },
               {
                 "id": 49,
-                "description": "PayeeFee commission is '0'",
+                "description": "Payee FSP fee currency matches",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
-                  "  expect(response.body.scenario2.result.quoteResponse.payeeFspCommission.amount).to.equal('0')",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario2.result.quoteResponse.payeeFspFee.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
                   "}"
                 ]
               },
               {
                 "id": 50,
-                "description": "PayeeFee commission currency matches",
+                "description": "Payee FSP commission is '0'",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(response.body.scenario2.result.quoteResponse.payeeFspCommission.amount).to.equal('0')",
+                  "}"
+                ]
+              },
+              {
+                "id": 54,
+                "description": "Payee FSP Transfer commission currency matches",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.quoteResponse.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
                   "}"
                 ]
@@ -712,7 +750,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.fulfil.completedTimestamp).to.not.equal(null)",
                   "}"
                 ]
@@ -723,7 +761,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')",
                   "}"
                 ]
@@ -734,33 +772,377 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS) {",
                   "  expect(response.body.scenario2.result.fulfil.fulfilment).to.not.equal(null)",
                   "}"
                 ]
               },
               {
-                "id": 54,
-                "description": "Fulfilment is not empty Copy",
+                "id": 58,
+                "description": "On testfsp2 fspiop-source is testfsp2",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TES_NOTIFICATIONS) {",
-                  "  expect(response.body.scenario2.result.fulfil.fulfilment).to.not.equal(null)",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal('testfsp2')",
+                  "}"
+                ]
+              },
+              {
+                "id": 59,
+                "description": "On testfsp2 content-type should be application/vnd.interoperability.parties+json;version=1.0",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')",
+                  "}"
+                ]
+              },
+              {
+                "id": 60,
+                "description": "On Payee FSP 'accept' header should be 'application/vnd.interoperability.parties+json;version=1.1'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payeeRequest.headers['accept']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)",
+                  "}"
+                ]
+              },
+              {
+                "id": 61,
+                "description": "On Payee FSP date cannot be undefined",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payeeRequest.headers['date']).to.not.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": 62,
+                "description": "On testfsp2 'fspiop-source' is 'testfsp1'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.headers['fspiop-source']).to.equal('testfsp1')",
+                  "}"
+                ]
+              },
+              {
+                "id": 63,
+                "description": "On testfsp2 'fspiop-destination' is 'testfsp2'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.headers['fspiop-destination']).to.equal('testfsp2')",
+                  "}"
+                ]
+              },
+              {
+                "id": 64,
+                "description": "On testfsp2 'content-type' header should be 'application/vnd.interoperability.parties+json;version=1.0'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')",
+                  "}"
+                ]
+              },
+              {
+                "id": 65,
+                "description": "Payer FSP 'accept' header is empty",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.headers['accept']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": 66,
+                "description": "Payer FSP 'fspiop-uri' should be /parties/MSISDN/17039811907",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.headers['fspiop-uri']).to.equal('/parties/MSISDN/{$inputs.testfsp1MSISDN}')",
+                  "}"
+                ]
+              },
+              {
+                "id": 67,
+                "description": "Payer FSP 'fspiop-http-method' is PUT",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
+                ]
+              },
+              {
+                "id": 68,
+                "description": "Expected partyIdType is 'MSISDN'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.data.party.partyIdInfo.partyIdType).to.equal('MSISDN')",
+                  "}"
+                ]
+              },
+              {
+                "id": 73,
+                "description": "Expected partyIdentifier matches",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.data.party.partyIdInfo.partyIdentifier).to.equal(environment.testfsp1MSISDN)",
+                  "}"
+                ]
+              },
+              {
+                "id": 69,
+                "description": "Expected fspId is 'testfsp1'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.data.party.partyIdInfo.fspId).to.equal('testfsp1')",
+                  "}"
+                ]
+              },
+              {
+                "id": 70,
+                "description": "Expected receiver first name is 'Testfsp1First'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.data.party.personalInfo.complexName.firstName).to.equal('Testfsp1First')",
+                  "}"
+                ]
+              },
+              {
+                "id": 71,
+                "description": "Expected receiver last name is 'Testfsp1Last'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.data.party.personalInfo.complexName.lastName).to.equal('Testfsp1Last')",
+                  "}"
+                ]
+              },
+              {
+                "id": 72,
+                "description": "Expected receiver DOB is '2010-10-10'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerCallback.data.party.personalInfo.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)",
+                  "}"
+                ]
+              },
+              {
+                "id": 74,
+                "description": "On testfsp1 'fspiop-source' is 'switch'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payeeSideTransferRequest.headers['fspiop-source']).to.equal('switch')",
+                  "}"
+                ]
+              },
+              {
+                "id": 75,
+                "description": "On testfsp1 'fspiop-destination' is 'testfsp1'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payeeSideTransferRequest.headers['fspiop-destination']).to.equal('testfsp1')",
+                  "}"
+                ]
+              },
+              {
+                "id": 76,
+                "description": "On testfsp1 'content-type' is the same as sent in the request",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  "}"
+                ]
+              },
+              {
+                "id": 77,
+                "description": "On testfsp1 'fspiop-http-method' is PATCH",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payeeSideTransferRequest.headers['fspiop-http-method']).to.equal('PATCH')",
+                  "}"
+                ]
+              },
+              {
+                "id": 78,
+                "description": "On testfsp1 'fspiop-uri' contains '/transfers'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payeeSideTransferRequest.headers['fspiop-uri']).to.equal(`/transfers/${requestVariables.scenario1TransferId}`)",
+                  "}"
+                ]
+              },
+              {
+                "id": 79,
+                "description": "On testfsp2 'fspiop-source' is 'testfsp1'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerSideTransferCallback.headers['fspiop-source']).to.equal('testfsp1')",
+                  "}"
+                ]
+              },
+              {
+                "id": 80,
+                "description": "On testfsp2 'fspiop-destination' is 'testfsp2'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerSideTransferCallback.headers['fspiop-destination']).to.equal('testfsp2')",
+                  "}"
+                ]
+              },
+              {
+                "id": 81,
+                "description": "On Payer FSP 'content-type' should be 'application/vnd.interoperability.transfers+json;version=1.1'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.1')",
+                  "}"
+                ]
+              },
+              {
+                "id": 82,
+                "description": "On Payer FSP 'accept' is empty",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerSideTransferCallback.headers['accept']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": 83,
+                "description": "On Payer FSP 'fspiop-uri' includes '/transfers'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerSideTransferCallback.headers['fspiop-uri']).to.include('/transfers')",
+                  "}"
+                ]
+              },
+              {
+                "id": 84,
+                "description": "On Payer FSP 'fspiop-http-method' is PUT",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerSideTransferCallback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
+                ]
+              },
+              {
+                "id": 85,
+                "description": "Response data does not have transferId",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerSideTransferCallback.data.transferId).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": 86,
+                "description": "Response 'transferState' is 'COMMITTED'",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  expect(requestVariables.payerSideTransferCallback.data.transferState).to.equal('COMMITTED')",
                   "}"
                 ]
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "environment.expectedPayeeFirstName = \"PayeeFirst\"",
-                "environment.expectedPayeeLastName = \"PayeeLast\"",
-                "environment.expectedPayeeDOB = \"2010-10-10\"",
-                "environment.payerName = \"PayerFirst PayerLast\"",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.TESTFSP1_SDK_TESTAPI_WS_URL + '/requests/{$inputs.testfsp1MSISDN}', 'payeeRequest')",
+                "  ",
+                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.testfsp1MSISDN}', 'payerCallback')",
+                "}",
                 "",
+                "requestVariables.expectedPayeeFirstName = \"PayeeFirst\"",
+                "requestVariables.expectedPayeeLastName = \"PayeeLast\"",
+                "requestVariables.expectedPayeeDOB = \"2010-10-10\"",
+                "requestVariables.payerName = \"PayerFirst PayerLast\"",
                 ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  requestVariables.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "",
+                "requestVariables.scenario1TransferId = response.body.scenario1.result.transferId",
+                "",
+                "console.log('requestVariable: ', requestVariables)",
+                "  ",
+                "let url, res",
+                "",
+                "try {",
+                "  url = `${environment.TESTFSP1_SDK_TESTAPI_URL}/requests/${response.body.scenario1.result.transferId}`",
+                "  res = await axios.get(url)",
+                "  requestVariables.payeeSideTransferRequest = res.data",
+                "} catch (err) {",
+                "  console.log(err)",
+                "}",
+                "",
+                "try {",
+                "  url = `${environment.TESTFSP2_SDK_TESTAPI_URL}/callbacks/${response.body.scenario1.result.transferId}`",
+                "  res = await axios.get(url)",
+                "  requestVariables.payerSideTransferCallback = res.data",
+                "} catch (err) {",
+                "  console.log(err)",
+                "}"
               ]
             }
           }
