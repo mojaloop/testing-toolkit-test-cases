@@ -866,6 +866,30 @@
                 ]
               },
               {
+                "id": 87,
+                "description": "Payer FSP JWS headers validation",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION)",
+                  "  expect(requestVariables.payerCallbackJWSHeadersValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": 88,
+                "description": "Payer FSP JWS validation",
+                "exec": [
+                  "",
+                  "",
+                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "  if (environment.ENABLE_JWS_VALIDATION)",
+                  "  expect(requestVariables.payerCallbackJWSValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
                 "id": 66,
                 "description": "Payer FSP 'fspiop-uri' should be /parties/MSISDN/17039811907",
                 "exec": [
@@ -1095,17 +1119,6 @@
                   "  expect(requestVariables.payerSideTransferCallback.data.transferState).to.equal('COMMITTED')",
                   "}"
                 ]
-              },
-              {
-                "id": 87,
-                "description": "Payer FSP FSPIOP-Signature Verification",
-                "exec": [
-                  "",
-                  "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
-                  "  expect(requestVariables.payerCallbackJWSValid ).to.equal(true)",
-                  "}"
-                ]
               }
             ]
           },
@@ -1113,6 +1126,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  await websocket.connect(environment.TESTFSP1_SDK_TESTAPI_WS_URL + '/requests/{$inputs.testfsp1MSISDN}', 'payeeRequest')",
                 "  ",
@@ -1132,11 +1149,14 @@
                 "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
                 "  requestVariables.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
                 "  ",
-                "  //console.log(requestVariables.payerCallback)",
+                "  if (environment.ENABLE_JWS_VALIDATION) {",
+                "    // TODO: Use TESTFSP1_JWS_PUB_KEY instead of SIMPAYEE_JWS_PUB_KEY after the MojaSim setup script bug with ",
+                "    // conflicting MSISDN for parties is fixed",
+                "    requestVariables.payerCallbackJWSValidationStatus = custom.jws.validateCallback(requestVariables.payerCallback.headers, requestVariables.payerCallback.data, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "  }",
                 "  ",
-                "  if (environment.ENABLE_JWS_VALIDATION){",
-                "  requestVariables.payerCallbackJWSValid = custom.jws.validateCallback(requestVariables.payerCallback.headers, requestVariables.payerCallback.data, environment.TESTFSP2_JWS_PUB_KEY)",
-                "  console.log('Valid?: ', requestVariables.payerCallbackJWSValid)",
+                "  if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "    requestVariables.payerCallbackJWSHeadersValidationStatus = custom.jws.validateCallbackProtectedHeaders(requestVariables.payerCallback.headers)",
                 "  }",
                 "}",
                 "",
