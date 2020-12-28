@@ -247,23 +247,140 @@
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
+              },
+              {
+                "id": 2,
+                "description": "Payee FSP 'fspiop-source' is 'payerfsp'",
+                "exec": [
+                  "expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Payee FSP 'fspiop-destination' is 'payeefsp'",
+                "exec": [
+                  "expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Payee FSP 'fspiop-signature' is same as sent in the request",
+                "exec": [
+                  "expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.body['FSPIOP-Signature'])"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Payee FSP 'accept' is same as sent in the request",
+                "exec": [
+                  "expect(requestVariables.payeeRequest.headers['accept']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Payee FSP 'content-type' is same as sent in the request",
+                "exec": [
+                  "expect(requestVariables.payeeRequest.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Payee FSP 'fspiop-uri' is /quotes",
+                "exec": [
+                  "expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(\"/quotes\")"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Payee FSP 'fspiop-http-method' is 'POST'",
+                "exec": [
+                  "expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(\"POST\")"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Payer FSP Callback: 'fspiop-source' is 'payeefsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Payer FSP Callback: 'fspiop-destination' is 'payerfsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.SIMPAYER_NAME)"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Payer FSP Callback: 'fspiop-signature' is same as sent in the request",
+                "exec": [
+                  "expect(callback.headers['fspiop-signature']).to.equal(request.body['FSPIOP-Signature'])"
+                ]
+              },
+              {
+                "id": 12,
+                "description": "Payer FSP Callback: 'accept' is same as sent in the request",
+                "exec": [
+                  "expect(rcallback.headers['accept']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")"
+                ]
+              },
+              {
+                "id": 13,
+                "description": "Payer FSP Callback: 'content-type' is same as sent in the request",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")"
+                ]
+              },
+              {
+                "id": 14,
+                "description": "Payer FSP Callback: 'fspiop-uri' is /quotes",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal(\"/quotes\")"
+                ]
+              },
+              {
+                "id": 15,
+                "description": "Payer FSP Callback: 'fspiop-http-method' is 'POST'",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal(\"POST\")"
+                ]
               }
             ]
           },
           "scripts": {
             "preRequest": {
               "exec": [
+                "requestVariables.quoteId = \"{$function.generic.generateUUID}\"",
+                "",
+                "requestVariables.transactionId = \"{$function.generic.generateUUID}\"",
+                "",
                 "if(environment.ENABLE_JWS_SIGNING) {",
                 "  custom.jws.signRequest(environment.SIMPAYEE_JWS_PRIVATE_KEY)",
                 "}",
                 "",
-                "requestVariables.quoteId = \"{$function.generic.generateUUID}\"",
-                "",
-                "requestVariables.transactionId = requestVariables.quoteId",
-                "",
-                "console.log(requestVariables.quoteId)",
-                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + `/requests/${requestVariables.quoteId}`, 'payeeRequest')",
+                "}",
                 ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
+                "  console.log(callback.data)",
+                "  ",
+                " /** if (environment.ENABLE_JWS_VALIDATION) {",
+                "    requestVariables.payerCallbackJWSValidationStatus = custom.jws.validateCallback(callback.headers, callback.data, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "  }",
+                "  ",
+                "  if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "    requestVariables.payerCallbackJWSHeadersValidationStatus = custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "  }",
+                "  **/",
+                "}"
               ]
             }
           }
