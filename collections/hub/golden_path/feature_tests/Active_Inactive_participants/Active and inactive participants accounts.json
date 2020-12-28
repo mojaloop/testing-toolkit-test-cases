@@ -1,25 +1,22 @@
 {
   "test_cases": [
     {
-      "id": 1,
-      "name": "Active and inactive participant",
+      "id": 2,
+      "name": "Active and inactive participant account",
       "requests": [
         {
           "id": 1,
-          "description": "Update participant (SIM2 to inactive)",
+          "description": "Get SIM2 Participant Account",
           "apiVersion": {
             "minorVersion": 3,
             "majorVersion": 9,
             "type": "central_admin"
           },
-          "operationPath": "/participants/{name}",
-          "path": "/participants/{$inputs.SIM2_NAME}",
-          "method": "put",
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
           "params": {
             "name": "{$inputs.SIM2_NAME}"
-          },
-          "body": {
-            "isActive": false
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -32,10 +29,45 @@
                 ]
               }
             ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "response.body",
+                "    .filter(account => account.currency === environment.currency)",
+                "    .forEach(curAccount => {",
+                "        if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "            environment['SIM2_PositionAccountId'] = curAccount.id",
+                "        }",
+                "    })"
+              ]
+            }
           }
         },
         {
           "id": 2,
+          "description": "Update SIM2 to inactive_XOF account",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts/{$environment.SIM2_PositionAccountId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}",
+            "id": "{$environment.SIM2_PositionAccountId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {},
+          "body": {
+            "isActive": false
+          }
+        },
+        {
+          "id": 3,
           "description": "Send Quote fail (SIM1 to SIM2)",
           "apiVersion": {
             "minorVersion": 0,
@@ -231,7 +263,7 @@
           }
         },
         {
-          "id": 3,
+          "id": 4,
           "description": "Send Transfer fail (SIM1 to SIM2)",
           "apiVersion": {
             "minorVersion": 0,
@@ -252,7 +284,7 @@
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.3.request.body.transactionId}",
             "payerFsp": "{$inputs.SIM1_NAME}",
             "payeeFsp": "{$inputs.SIM2_NAME}",
             "amount": {
@@ -405,23 +437,25 @@
           }
         },
         {
-          "id": 4,
-          "description": "Update participant (SIM2 to active)",
+          "id": 5,
+          "description": "Update participant (SIM2 to active) account",
           "apiVersion": {
             "minorVersion": 3,
             "majorVersion": 9,
             "type": "central_admin"
           },
-          "operationPath": "/participants/{name}",
-          "path": "/participants/{$inputs.SIM2_NAME}",
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts/{$environment.SIM2_PositionAccountId}",
           "method": "put",
           "params": {
-            "name": "{$inputs.SIM2_NAME}"
+            "name": "{$inputs.SIM2_NAME}",
+            "id": "{$environment.SIM2_PositionAccountId}"
           },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {},
           "body": {
             "isActive": true
           },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
             "assertions": [
               {
@@ -435,7 +469,7 @@
           }
         },
         {
-          "id": 5,
+          "id": 6,
           "description": "Send Quote (SIM1 to SIM2)",
           "apiVersion": {
             "minorVersion": 0,
@@ -697,7 +731,7 @@
           }
         },
         {
-          "id": 6,
+          "id": 7,
           "description": "Send Transfer (SIM1 to SIM2)",
           "apiVersion": {
             "minorVersion": 0,
@@ -718,7 +752,7 @@
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
-            "transferId": "{$prev.5.request.body.transactionId}",
+            "transferId": "{$prev.6.request.body.transactionId}",
             "payerFsp": "{$inputs.SIM1_NAME}",
             "payeeFsp": "{$inputs.SIM2_NAME}",
             "amount": {
