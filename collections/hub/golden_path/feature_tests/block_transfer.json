@@ -1,0 +1,274 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Block Transfer",
+      "requests": [
+        {
+          "id": 1,
+          "description": "GET limits - SIMPAYER",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/limits",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYER_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "id": 2,
+                "description": "NDC limit set correctly",
+                "exec": [
+                  "expect(requestVariables.payerNDC).to.not.equal(undefined)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "requestVariables.payerNDC = response.body[0].limit.value",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "GET limits - SIMPAYEE",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/limits",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "id": 2,
+                "description": "NDC limit set correctly",
+                "exec": [
+                  "expect(requestVariables.payeeNDC).to.not.equal(undefined)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "requestVariables.payeeNDC = response.body[0].limit.value"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "GET SIMPAYER position before the transfer",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYER_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payer FSP position correctly set",
+                "exec": [
+                  "expect(requestVariables.payerPositionBeforeTransfer).to.not.equal(undefined)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "requestVariables.payerPositionBeforeTransfer = response.body[0].value"
+              ]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "description": "GET SIMPAYEE position before the transfer",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payee FSP position correctly set",
+                "exec": [
+                  "expect(requestVariables.payeePositionBeforeTransfer).to.not.equal(undefined)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "requestVariables.payeePositionBeforeTransfer = response.body[0].value"
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "description": "Send Quote",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scriptingEngine": "javascript",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
+            "FSPIOP-HTTP-Method": "POST",
+            "FSPIOP-URI": "/quotes",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "quoteId": "{$requestVariables.quoteId}",
+            "transactionId": "{$requestVariables.transactionId}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYER_MSISDN}",
+                "fspId": "{$inputs.SIMPAYER_NAME}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Mats",
+                  "lastName": "Hagman"
+                },
+                "dateOfBirth": "1983-10-25"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.SIMPAYEE_NAME}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60",
+              "currency": "{$inputs.SIMPAYEE_CURRENCY}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "hej"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.SIMPAYEE_JWS_PRIVATE_KEY)",
+                "}",
+                "",
+                "requestVariables.quoteId = \"{$function.generic.generateUUID}\"",
+                "",
+                "requestVariables.transactionId = requestVariables.quoteId",
+                "",
+                "console.log(requestVariables.quoteId)",
+                "",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
