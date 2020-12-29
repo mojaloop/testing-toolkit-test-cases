@@ -14,10 +14,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/limits",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/limits",
+          "path": "/participants/{$inputs.fromFspId}/limits",
           "method": "get",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.fromFspId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
@@ -36,7 +36,7 @@
                 "id": 2,
                 "description": "NDC limit set correctly",
                 "exec": [
-                  "expect(requestVariables.payerNDC).to.not.equal(undefined)",
+                  "expect(environment.payerNDC).to.not.equal(undefined)",
                   ""
                 ]
               }
@@ -45,7 +45,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "requestVariables.payerNDC = response.body[0].limit.value",
+                "environment.payerNDC = response.body[0].limit.value",
                 ""
               ]
             }
@@ -82,7 +82,7 @@
                 "id": 2,
                 "description": "NDC limit set correctly",
                 "exec": [
-                  "expect(requestVariables.payeeNDC).to.not.equal(undefined)",
+                  "expect(environment.payeeNDC).to.not.equal(undefined)",
                   ""
                 ]
               }
@@ -91,7 +91,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "requestVariables.payeeNDC = response.body[0].limit.value"
+                "environment.payeeNDC = response.body[0].limit.value"
               ]
             }
           }
@@ -105,10 +105,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/positions",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
           "method": "get",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.fromFspId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -124,7 +124,7 @@
                 "id": 2,
                 "description": "Payer FSP position correctly set",
                 "exec": [
-                  "expect(requestVariables.payerPositionBeforeTransfer).to.not.equal(undefined)"
+                  "expect(environment.payerPositionBeforeTransfer).to.not.equal(undefined)"
                 ]
               }
             ]
@@ -133,7 +133,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "requestVariables.payerPositionBeforeTransfer = response.body[0].value"
+                "environment.payerPositionBeforeTransfer = response.body[0].value"
               ]
             }
           }
@@ -166,7 +166,7 @@
                 "id": 2,
                 "description": "Payee FSP position correctly set",
                 "exec": [
-                  "expect(requestVariables.payeePositionBeforeTransfer).to.not.equal(undefined)"
+                  "expect(environment.payeePositionBeforeTransfer).to.not.equal(undefined)"
                 ]
               }
             ]
@@ -175,7 +175,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "requestVariables.payeePositionBeforeTransfer = response.body[0].value"
+                "environment.payeePositionBeforeTransfer = response.body[0].value"
               ]
             }
           }
@@ -197,7 +197,7 @@
           "headers": {
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
-            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
             "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
             "FSPIOP-HTTP-Method": "POST",
             "FSPIOP-URI": "/quotes",
@@ -209,8 +209,8 @@
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
-                "partyIdentifier": "{$inputs.SIMPAYER_MSISDN}",
-                "fspId": "{$inputs.SIMPAYER_NAME}"
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "testingtoolkitdfsp"
               },
               "personalInfo": {
                 "complexName": {
@@ -250,9 +250,9 @@
               },
               {
                 "id": 2,
-                "description": "Payee FSP 'fspiop-source' is 'payerfsp'",
+                "description": "Payee FSP 'fspiop-source' is 'testingtoolkitdfsp'",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME)"
+                  "expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.fromFspId)"
                 ]
               },
               {
@@ -264,9 +264,12 @@
               },
               {
                 "id": 4,
-                "description": "Payee FSP 'fspiop-signature' is same as sent in the request",
+                "description": "Payee FSP: 'fspiop-signature' is same as sent in the request",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.body['FSPIOP-Signature'])"
+                  "if(environment.ENABLE_JWS_VALIDATION) {",
+                  "expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  "}",
+                  ""
                 ]
               },
               {
@@ -306,23 +309,35 @@
               },
               {
                 "id": 10,
-                "description": "Payer FSP Callback: 'fspiop-destination' is 'payerfsp'",
+                "description": "Payer FSP Callback: 'fspiop-destination' is 'testingtoolkitdfsp'",
                 "exec": [
-                  "expect(callback.headers['fspiop-destination']).to.equal(environment.SIMPAYER_NAME)"
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
                 ]
               },
               {
                 "id": 11,
-                "description": "Payer FSP Callback: 'fspiop-signature' is same as sent in the request",
+                "description": "Payer FSP Callback:  JWS signature valid",
                 "exec": [
-                  "expect(callback.headers['fspiop-signature']).to.equal(request.body['FSPIOP-Signature'])"
+                  "if(environment.ENABLE_JWS_VALIDATION) {",
+                  "expect(requestVariables.payerCallbackJWSValidationStatus).to.equal('VALID')",
+                  "}",
+                  ""
+                ]
+              },
+              {
+                "id": 17,
+                "description": "Payer Callback: JWS protected headers are valid",
+                "exec": [
+                  "if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                  "expect(requestVariables.payerCallbackJWSHeadersValidationStatus).to.equal('VALID')",
+                  "}"
                 ]
               },
               {
                 "id": 12,
-                "description": "Payer FSP Callback: 'accept' is same as sent in the request",
+                "description": "Payer FSP Callback: 'accept' is empty",
                 "exec": [
-                  "expect(rcallback.headers['accept']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")"
+                  "expect(callback.headers['accept']).to.equal(undefined)"
                 ]
               },
               {
@@ -336,14 +351,14 @@
                 "id": 14,
                 "description": "Payer FSP Callback: 'fspiop-uri' is /quotes",
                 "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal(\"/quotes\")"
+                  "expect(callback.headers['fspiop-uri']).to.equal(\"/quotes/{$request.body.quoteId}\")"
                 ]
               },
               {
                 "id": 15,
                 "description": "Payer FSP Callback: 'fspiop-http-method' is 'POST'",
                 "exec": [
-                  "expect(callback.headers['fspiop-http-method']).to.equal(\"POST\")"
+                  "expect(callback.headers['fspiop-http-method']).to.equal(\"PUT\")"
                 ]
               }
             ]
@@ -356,7 +371,7 @@
                 "requestVariables.transactionId = \"{$function.generic.generateUUID}\"",
                 "",
                 "if(environment.ENABLE_JWS_SIGNING) {",
-                "  custom.jws.signRequest(environment.SIMPAYEE_JWS_PRIVATE_KEY)",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
                 "}",
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -370,16 +385,231 @@
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
                 "  ",
-                "  console.log(callback.data)",
-                "  ",
-                " /** if (environment.ENABLE_JWS_VALIDATION) {",
-                "    requestVariables.payerCallbackJWSValidationStatus = custom.jws.validateCallback(callback.headers, callback.data, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "if (environment.ENABLE_JWS_VALIDATION) {  ",
+                "    requestVariables.payerCallbackJWSValidationStatus = custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
                 "  }",
                 "  ",
                 "  if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
                 "    requestVariables.payerCallbackJWSHeadersValidationStatus = custom.jws.validateCallbackProtectedHeaders(callback.headers)",
-                "  }",
-                "  **/",
+                "  }  ",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "description": "Send Block Transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "transferId": "{$requestVariables.transferId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
+            "amount": {
+              "amount": "{$requestVariables.amount}",
+              "currency": "{$inputs.SIMPAYEE_CURRENCY}"
+            },
+            "expiration": "{$requestVariables.transferExpiration}",
+            "ilpPacket": "{$inputs.ilpPacket}",
+            "condition": "{$inputs.condition}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
+            "FSPIOP-HTTP-Method": "POST",
+            "FSPIOP-URI": "/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Error code should be returned",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.eql('4001');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Error description should be returned",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('Payer FSP insufficient liquidity');"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "'fspiop-source' should be 'switch'",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('switch');"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "'fspiop-destination' should be 'testingtoolkitdfsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}');"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "'accept' should be empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined);"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "'content-type' should be 'application/vnd.interoperability.transfers+json;version=1.0'",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0');"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "'fspiop-signature' should be present",
+                "exec": [
+                  "expect(callback.headers['fspiop-signature']).to.not.equal(undefined);"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "'fspiop-uri' is /transfers/{transferId}/error",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/{$requestVariables.transferId}/error');"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "'fspiop-http-method' is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT');"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "requestVariables.transferId = '{$prev.5.request.body.transactionId}'",
+                "",
+                "requestVariables.amount = Number(environment.payerNDC) - Number(environment.payerPositionBeforeTransfer) + 100;",
+                "",
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 600000).toISOString()",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "GET SIMPAYER position after the transfer",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Position before and after transfer should be the same",
+                "exec": [
+                  "expect(environment.payerPositionBeforeTransfer).to.equal(requestVariables.payerPositionAfterTransfer)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "for (const i of response.body) {",
+                " if (i.currency == environment.currency) {",
+                "   requestVariables.payerPositionAfterTransfer = i.value",
+                " }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 8,
+          "description": "GET SIMPAYEE position after the transfer",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Position before and after transfer should be the same",
+                "exec": [
+                  "expect(environment.payeePositionBeforeTransfer).to.equal(requestVariables.payeePositionAfterTransfer)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "for (const i of response.body) {",
+                " if (i.currency == environment.SIMPAYEE_CURRENCY) {",
+                "   requestVariables.payeePositionAfterTransfer = i.value",
+                " }",
                 "}"
               ]
             }
