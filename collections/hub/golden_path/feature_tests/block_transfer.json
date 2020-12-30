@@ -41,14 +41,6 @@
                 ]
               }
             ]
-          },
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "environment.payerNDC = response.body[0].limit.value",
-                ""
-              ]
-            }
           }
         },
         {
@@ -87,13 +79,6 @@
                 ]
               }
             ]
-          },
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "environment.payeeNDC = response.body[0].limit.value"
-              ]
-            }
           }
         },
         {
@@ -129,14 +114,7 @@
               }
             ]
           },
-          "scriptingEngine": "javascript",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "environment.payerPositionBeforeTransfer = response.body[0].value"
-              ]
-            }
-          }
+          "scriptingEngine": "javascript"
         },
         {
           "id": 4,
@@ -171,14 +149,7 @@
               }
             ]
           },
-          "scriptingEngine": "javascript",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "environment.payeePositionBeforeTransfer = response.body[0].value"
-              ]
-            }
-          }
+          "scriptingEngine": "javascript"
         },
         {
           "id": 5,
@@ -210,7 +181,7 @@
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
                 "partyIdentifier": "{$inputs.fromIdValue}",
-                "fspId": "testingtoolkitdfsp"
+                "fspId": "{$inputs.fromFspId}"
               },
               "personalInfo": {
                 "complexName": {
@@ -266,9 +237,7 @@
                 "id": 4,
                 "description": "Payee FSP: 'fspiop-signature' is same as sent in the request",
                 "exec": [
-                  "if(environment.ENABLE_JWS_VALIDATION) {",
                   "expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
-                  "}",
                   ""
                 ]
               },
@@ -356,45 +325,12 @@
               },
               {
                 "id": 15,
-                "description": "Payer FSP Callback: 'fspiop-http-method' is 'POST'",
+                "description": "Payer FSP Callback: 'fspiop-http-method' is 'PUT'",
                 "exec": [
                   "expect(callback.headers['fspiop-http-method']).to.equal(\"PUT\")"
                 ]
               }
             ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "requestVariables.quoteId = \"{$function.generic.generateUUID}\"",
-                "",
-                "requestVariables.transactionId = \"{$function.generic.generateUUID}\"",
-                "",
-                "if(environment.ENABLE_JWS_SIGNING) {",
-                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + `/requests/${requestVariables.quoteId}`, 'payeeRequest')",
-                "}",
-                ""
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "  ",
-                "if (environment.ENABLE_JWS_VALIDATION) {  ",
-                "    requestVariables.payerCallbackJWSValidationStatus = custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
-                "  }",
-                "  ",
-                "  if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                "    requestVariables.payerCallbackJWSHeadersValidationStatus = custom.jws.validateCallbackProtectedHeaders(callback.headers)",
-                "  }  ",
-                "}"
-              ]
-            }
           }
         },
         {
@@ -505,22 +441,6 @@
                 ]
               }
             ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "if(environment.ENABLE_JWS_SIGNING) {",
-                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
-                "}",
-                "",
-                "requestVariables.transferId = '{$prev.5.request.body.transactionId}'",
-                "",
-                "requestVariables.amount = Number(environment.payerNDC) - Number(environment.payerPositionBeforeTransfer) + 100;",
-                "",
-                "requestVariables.transferExpiration = new Date(new Date().getTime() + 600000).toISOString()",
-                ""
-              ]
-            }
           }
         },
         {
@@ -556,18 +476,7 @@
               }
             ]
           },
-          "scriptingEngine": "javascript",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "for (const i of response.body) {",
-                " if (i.currency == environment.currency) {",
-                "   requestVariables.payerPositionAfterTransfer = i.value",
-                " }",
-                "}"
-              ]
-            }
-          }
+          "scriptingEngine": "javascript"
         },
         {
           "id": 8,
@@ -602,18 +511,7 @@
               }
             ]
           },
-          "scriptingEngine": "javascript",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "for (const i of response.body) {",
-                " if (i.currency == environment.SIMPAYEE_CURRENCY) {",
-                "   requestVariables.payeePositionAfterTransfer = i.value",
-                " }",
-                "}"
-              ]
-            }
-          }
+          "scriptingEngine": "javascript"
         }
       ]
     }
