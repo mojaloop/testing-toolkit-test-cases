@@ -41,6 +41,13 @@
                 ]
               }
             ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.payerNDC = response.body[0].limit.value"
+              ]
+            }
           }
         },
         {
@@ -79,6 +86,13 @@
                 ]
               }
             ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.payeeNDC = response.body[0].limit.value"
+              ]
+            }
           }
         },
         {
@@ -114,7 +128,14 @@
               }
             ]
           },
-          "scriptingEngine": "javascript"
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.payerPositionBeforeTransfer = response.body[0].value"
+              ]
+            }
+          }
         },
         {
           "id": 4,
@@ -149,7 +170,19 @@
               }
             ]
           },
-          "scriptingEngine": "javascript"
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.payeePositionBeforeTransfer = "
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.payeePositionBeforeTransfer = response.body[0].value"
+              ]
+            }
+          }
         },
         {
           "id": 5,
@@ -331,6 +364,41 @@
                 ]
               }
             ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.quoteId = '{$function.generic.generateUUID}'",
+                "requestVariables.transactionId = '{$function.generic.generateUUID}'",
+                "",
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(",
+                "    environment.PAYEEFSP_SDK_TESTAPI_WS_URL + `/requests/${requestVariables.quoteId}`, ",
+                "    'payeeRequest'",
+                "  )",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "",
+                "if (environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.payerCallbackJWSValidationStatus = custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.payerCallbackJWSHeadersValidationStatus = custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                ""
+              ]
+            }
           }
         },
         {
@@ -348,16 +416,16 @@
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "scriptingEngine": "javascript",
           "body": {
-            "transferId": "{$requestVariables.transferId}",
+            "transferId": "{$prev.5.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
             "amount": {
               "amount": "{$requestVariables.amount}",
               "currency": "{$inputs.SIMPAYEE_CURRENCY}"
             },
-            "expiration": "{$requestVariables.transferExpiration}",
-            "ilpPacket": "{$inputs.ilpPacket}",
-            "condition": "{$inputs.condition}"
+            "expiration": "{$prev.5.callback.body.expiration}",
+            "ilpPacket": "{$prev.5.callback.body.ilpPacket}",
+            "condition": "{$prev.5.callback.body.condition}"
           },
           "headers": {
             "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
@@ -430,7 +498,7 @@
                 "id": 9,
                 "description": "'fspiop-uri' is /transfers/{transferId}/error",
                 "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/{$requestVariables.transferId}/error');"
+                  "expect(callback.headers['fspiop-uri']).to.equal(`/transfers/{$request.body.transferId}/error`);"
                 ]
               },
               {
@@ -441,6 +509,19 @@
                 ]
               }
             ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 600000).toISOString();",
+                "",
+                "requestVariables.amount = Number(environment.payerNDC) - Number(environment.payerPositionBeforeTransfer) + 100;",
+                "",
+                "console.log(environment.payerNDC);",
+                "console.log(environment.payerPositionBeforeTransfer)",
+                "console.log(requestVariables.amount)"
+              ]
+            }
           }
         },
         {
@@ -471,7 +552,7 @@
                 "id": 2,
                 "description": "Position before and after transfer should be the same",
                 "exec": [
-                  "expect(environment.payerPositionBeforeTransfer).to.equal(requestVariables.payerPositionAfterTransfer)"
+                  "expect(environment.payerPositionBeforeTransfer).to.equal(response.body[0].value)"
                 ]
               }
             ]
@@ -506,7 +587,7 @@
                 "id": 2,
                 "description": "Position before and after transfer should be the same",
                 "exec": [
-                  "expect(environment.payeePositionBeforeTransfer).to.equal(requestVariables.payeePositionAfterTransfer)"
+                  "expect(environment.payeePositionBeforeTransfer).to.equal(response.body[0].value)"
                 ]
               }
             ]

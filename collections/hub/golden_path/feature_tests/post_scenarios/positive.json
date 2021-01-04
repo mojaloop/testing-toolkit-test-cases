@@ -146,7 +146,7 @@
                 "description": "Payee FSPIOP-Source",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
                   "}"
                 ]
               },
@@ -155,7 +155,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')",
+                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')",
                   "}"
                 ]
               }
@@ -175,7 +175,7 @@
             "postRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
                 "}"
               ]
             }

@@ -21,11 +21,11 @@
           "url": "{$inputs.TESTFSP1_BACKEND_TESTAPI_URL}",
           "headers": {},
           "body": {
-            "displayName": "{$inputs.fullName}",
-            "firstName": "{$inputs.firstName}",
-            "middleName": "{$inputs.middleName}",
-            "lastName": "{$inputs.lastName}",
-            "dateOfBirth": "{$inputs.dob}",
+            "displayName": "{$requestVariables.fullName}",
+            "firstName": "{$requestVariables.firstName}",
+            "middleName": "{$requestVariables.middleName}",
+            "lastName": "{$requestVariables.lastName}",
+            "dateOfBirth": "{$requestVariables.dob}",
             "idType": "MSISDN",
             "idValue": "{$inputs.testfsp1MSISDN}"
           },
@@ -40,21 +40,21 @@
                 "description": "Successfully POST request",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
-                  "  ",
                   "  expect(response.status).to.be.oneOf([204, 200, 500])",
                   "}"
                 ]
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "environment.fullName = 'Testfsp1First Testfsp1Last'",
-                "environment.firstName = 'Testfsp1First'",
-                "environment.middleName = 'Testfsp1Middle'",
-                "environment.lastName = 'Testfsp1Last'",
-                "environment.dob = '2010-10-10'",
+                "requestVariables.fullName = 'Testfsp1First Testfsp1Last'",
+                "requestVariables.firstName = 'Testfsp1First'",
+                "requestVariables.middleName = 'Testfsp1Middle'",
+                "requestVariables.lastName = 'Testfsp1Last'",
+                "requestVariables.dob = '2010-10-10'",
                 ""
               ]
             }
@@ -76,11 +76,11 @@
           "url": "{$inputs.TESTFSP2_BACKEND_TESTAPI_URL}",
           "headers": {},
           "body": {
-            "displayName": "{$inputs.fullName}",
-            "firstName": "{$inputs.firstName}",
-            "middleName": "{$inputs.middleName}",
-            "lastName": "{$inputs.lastName}",
-            "dateOfBirth": "{$inputs.dob}",
+            "displayName": "{$requestVariables.fullName}",
+            "firstName": "{$requestVariables.firstName}",
+            "middleName": "{$requestVariables.middleName}",
+            "lastName": "{$requestVariables.lastName}",
+            "dateOfBirth": "{$requestVariables.dob}",
             "idType": "MSISDN",
             "idValue": "{$inputs.testfsp2MSISDN}"
           },
@@ -95,21 +95,21 @@
                 "description": "Successfully POST request",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
-                  "  ",
                   "  expect(response.status).to.be.oneOf([204, 200, 500])",
                   "}"
                 ]
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "environment.fullName = 'Testfsp2First Testfsp2Last'",
-                "environment.firstName = 'Testfsp2First'",
-                "environment.middleName = 'Testfsp2Middle'",
-                "environment.lastName = 'Testfsp2Last'",
-                "environment.dob = '2010-10-10'",
+                "requestVariables.fullName = 'Testfsp2First Testfsp2Last'",
+                "requestVariables.firstName = 'Testfsp2First'",
+                "requestVariables.middleName = 'Testfsp2Middle'",
+                "requestVariables.lastName = 'Testfsp2Last'",
+                "requestVariables.dob = '2010-10-10'",
                 ""
               ]
             }
@@ -150,13 +150,13 @@
                 "description": "Successfully POST request",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
-                  "  ",
                   "  expect(response.status).to.be.oneOf([204, 200, 500])",
                   "}"
                 ]
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -1144,7 +1144,8 @@
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
                 "  requestVariables.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
-                "  ",
+                "}",
+                "",
                 "  if (environment.ENABLE_JWS_VALIDATION) {",
                 "    // TODO: Use TESTFSP1_JWS_PUB_KEY instead of SIMPAYEE_JWS_PUB_KEY after the MojaSim setup script bug with ",
                 "    // conflicting MSISDN for parties is fixed",
@@ -1154,7 +1155,6 @@
                 "  if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
                 "    requestVariables.payerCallbackJWSHeadersValidationStatus = custom.jws.validateCallbackProtectedHeaders(requestVariables.payerCallback.headers)",
                 "  }",
-                "}",
                 "",
                 "requestVariables.scenario1TransferId = response.body.scenario1.result.transferId",
                 "  ",
