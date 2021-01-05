@@ -629,252 +629,324 @@
                 "id": 57,
                 "description": "Payee Request: fspiop-source header is 'payerfsp'",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 58,
                 "description": "Payee Request: fspiop-destination header is 'payeefsp'",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal('payeefsp')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal('payeefsp')",
+                  "}"
                 ]
               },
               {
                 "id": 59,
                 "description": "Payee Request: Content-Type is 'application/vnd.interoperability.parties+json;version=1.0'",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['content-type']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['content-type']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)",
+                  "}"
                 ]
               },
               {
                 "id": 60,
                 "description": "Payee Request: Accept matches 'application/vnd.interoperability.parties+json;version=1(\\.\\d)?/' ",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['accept']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['accept']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)",
+                  "}"
                 ]
               },
               {
                 "id": 61,
                 "description": "Payee Request: Date is not null",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['date']).to.not.equal(null)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['date']).to.not.equal(null)",
+                  "}"
                 ]
               },
               {
                 "id": 62,
                 "description": "Payer Callback: 'fspiop-source' header is 'payeefsp'",
                 "exec": [
-                  "expect(requestVariables.payerCallback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 63,
                 "description": "Payer Callback: 'fspiop-destination' header is 'payerfsp'",
                 "exec": [
-                  "expect(requestVariables.payerCallback.headers['fspiop-destination']).to.equal(environment.SIMPAYER_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.headers['fspiop-destination']).to.equal(environment.SIMPAYER_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 64,
                 "description": "Payer Callback: 'content-type' header matches",
                 "exec": [
-                  "expect(requestVariables.payerCallback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')",
+                  "}"
                 ]
               },
               {
                 "id": 65,
                 "description": "Payer Callback: 'Accept' header is empty",
                 "exec": [
-                  "expect(requestVariables.payerCallback.headers['accept']).to.equal(undefined)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.headers['accept']).to.equal(undefined)",
+                  "}"
                 ]
               },
               {
                 "id": 66,
                 "description": "Payer Callback: 'fspiop-uri' header matches",
                 "exec": [
-                  "expect(requestVariables.payerCallback.headers['fspiop-uri']).to.equal('/parties/MSISDN/{$inputs.SIMPAYEE_MSISDN}')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(requestVariables.payerCallback.headers['fspiop-uri']).to.equal('/parties/MSISDN/{$inputs.SIMPAYEE_MSISDN}')",
+                  "}"
                 ]
               },
               {
                 "id": 67,
                 "description": "Payer Callback: 'fspiop-http-method' headers is 'PUT'",
                 "exec": [
-                  "expect(requestVariables.payerCallback.headers['fspiop-http-method']).to.equal('PUT')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
                 ]
               },
               {
                 "id": 68,
                 "description": "Payer Callback: Expected partyIdType is MSISDN",
                 "exec": [
-                  "expect(requestVariables.payerCallback.data.party.partyIdInfo.partyIdType).to.equal('MSISDN')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.data.party.partyIdInfo.partyIdType).to.equal('MSISDN')",
+                  "}"
                 ]
               },
               {
                 "id": 69,
                 "description": "Payer Callback: Payee partyIdentifier matches",
                 "exec": [
-                  "expect(requestVariables.payerCallback.data.party.partyIdInfo.partyIdentifier).to.equal(environment.SIMPAYEE_MSISDN)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.data.party.partyIdInfo.partyIdentifier).to.equal(environment.SIMPAYEE_MSISDN)",
+                  "}"
                 ]
               },
               {
                 "id": 70,
                 "description": "Payer Callback: Payee fspId matches",
                 "exec": [
-                  "expect(requestVariables.payerCallback.data.party.partyIdInfo.fspId).to.equal(environment.SIMPAYEE_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.data.party.partyIdInfo.fspId).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 71,
                 "description": "Payer Callback: Payee first name matches",
                 "exec": [
-                  "expect(requestVariables.payerCallback.data.party.personalInfo.complexName.firstName).to.equal(requestVariables.expectedPayeeFirstName)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.data.party.personalInfo.complexName.firstName).to.equal(requestVariables.expectedPayeeFirstName)",
+                  "}"
                 ]
               },
               {
                 "id": 72,
                 "description": "Payer Callback: Payee last name matches",
                 "exec": [
-                  "expect(requestVariables.payerCallback.data.party.personalInfo.complexName.lastName).to.equal(requestVariables.expectedPayeeLastName)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.data.party.personalInfo.complexName.lastName).to.equal(requestVariables.expectedPayeeLastName)",
+                  "}"
                 ]
               },
               {
                 "id": 73,
                 "description": "Payer Callback: Payee DOB matches",
                 "exec": [
-                  "expect(requestVariables.payerCallback.data.party.personalInfo.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.data.party.personalInfo.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)",
+                  "}"
                 ]
               },
               {
                 "id": 74,
                 "description": "Payee Request: 'fspiop-source' header matches",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 75,
                 "description": "Payee Request: 'fspiop-destination' header matches",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 76,
                 "description": "Payee Request: 'content-type' header is the same as sent in the request",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  "}"
                 ]
               },
               {
                 "id": 77,
                 "description": "Payee Request: 'accept' header is the same as sent in the request",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.match(/application\\/vnd\\.interoperability\\.transfers\\+json;version=1(\\.\\d)?/)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.match(/application\\/vnd\\.interoperability\\.transfers\\+json;version=1(\\.\\d)?/)",
+                  "}"
                 ]
               },
               {
                 "id": 78,
                 "description": "Payee Request: 'fspiop-http-method' i s POST",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.headers['fspiop-http-method']).to.equal('POST')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['fspiop-http-method']).to.equal('POST')",
+                  "}"
                 ]
               },
               {
                 "id": 79,
                 "description": "Payee Request: 'fspiop-uri'  is /transfers",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.headers['fspiop-uri']).to.equal('/transfers')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['fspiop-uri']).to.equal('/transfers')",
+                  "}"
                 ]
               },
               {
                 "id": 80,
                 "description": "Payee Request: data should have the same \"transferId\" as request",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.data.transferId).to.equal(requestVariables.scenario1TransferId)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.data.transferId).to.equal(requestVariables.scenario1TransferId)",
+                  "}"
                 ]
               },
               {
                 "id": 81,
                 "description": "Payee Request: data should have the same Payer FSP as request",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.data.payerFsp).to.equal(environment.SIMPAYER_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.data.payerFsp).to.equal(environment.SIMPAYER_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 82,
                 "description": "Payee Request: data should have the same Payee FSP as request",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.data.payeeFsp).to.equal(environment.SIMPAYEE_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.data.payeeFsp).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 83,
                 "description": "Payee Request: data should have the same amount as request",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.data.amount.amount).to.equal('10')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.data.amount.amount).to.equal('10')",
+                  "}"
                 ]
               },
               {
                 "id": 84,
                 "description": "Payee Request: data should have the same currency as request",
                 "exec": [
-                  "expect(requestVariables.payeeSideTransferRequest.data.amount.currency).to.equal(environment.SIMPAYER_CURRENCY)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.data.amount.currency).to.equal(environment.SIMPAYER_CURRENCY)",
+                  "}"
                 ]
               },
               {
                 "id": 85,
                 "description": "Payer Callback: 'fspiop-source' header matches",
                 "exec": [
-                  "expect(requestVariables.payerSideTransferCallback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 86,
                 "description": "Payer Callback: 'fspiop-destination' header matches",
                 "exec": [
-                  "expect(requestVariables.payerSideTransferCallback.headers['fspiop-destination']).to.equal(environment.SIMPAYER_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['fspiop-destination']).to.equal(environment.SIMPAYER_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 87,
                 "description": "Payer Callback: 'content-type' header is 'application/vnd.interoperability.transfers+json;version=1.0'",
                 "exec": [
-                  "expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  "}"
                 ]
               },
               {
                 "id": 89,
                 "description": "Payer Callback: 'accept' header is empty",
                 "exec": [
-                  "expect(requestVariables.payerSideTransferCallback.headers['accept']).to.equal(undefined)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['accept']).to.equal(undefined)",
+                  "}"
                 ]
               },
               {
                 "id": 90,
                 "description": "Payer Callback: 'fspiop-uri' header includes /transfers",
                 "exec": [
-                  "expect(requestVariables.payerSideTransferCallback.headers['fspiop-uri']).to.include('/transfers')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['fspiop-uri']).to.include('/transfers')",
+                  "}"
                 ]
               },
               {
                 "id": 91,
                 "description": "Payer Callback: 'fspiop-http-method' header is 'PUT'",
                 "exec": [
-                  "expect(requestVariables.payerSideTransferCallback.headers['fspiop-http-method']).to.equal('PUT')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
                 ]
               },
               {
                 "id": 92,
                 "description": "Payer Callback: Response data does not have transferId",
                 "exec": [
-                  "expect(requestVariables.payerSideTransferCallback.data.transferId).to.equal(undefined)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.data.transferId).to.equal(undefined)",
+                  "}"
                 ]
               },
               {
                 "id": 93,
                 "description": "Payer Callback: Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(requestVariables.payerSideTransferCallback.data.transferState).to.equal('COMMITTED')"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.data.transferState).to.equal('COMMITTED')",
+                  "}"
                 ]
               }
             ]

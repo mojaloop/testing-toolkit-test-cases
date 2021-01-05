@@ -174,7 +174,7 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "environment.payeePositionBeforeTransfer = "
+                ""
               ]
             },
             "postRequest": {
@@ -256,21 +256,27 @@
                 "id": 2,
                 "description": "Payee FSP 'fspiop-source' is 'testingtoolkitdfsp'",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.fromFspId)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.fromFspId)",
+                  "}"
                 ]
               },
               {
                 "id": 3,
                 "description": "Payee FSP 'fspiop-destination' is 'payeefsp'",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
                 ]
               },
               {
                 "id": 4,
                 "description": "Payee FSP: 'fspiop-signature' is same as sent in the request",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  "}",
                   ""
                 ]
               },
@@ -278,35 +284,44 @@
                 "id": 5,
                 "description": "Payee FSP 'accept' is same as sent in the request",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['accept']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")",
+                  "}"
                 ]
               },
               {
                 "id": 6,
                 "description": "Payee FSP 'content-type' is same as sent in the request",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")",
+                  "}"
                 ]
               },
               {
                 "id": 7,
                 "description": "Payee FSP 'fspiop-uri' is /quotes",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(\"/quotes\")"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(\"/quotes\")",
+                  "}"
                 ]
               },
               {
                 "id": 8,
                 "description": "Payee FSP 'fspiop-http-method' is 'POST'",
                 "exec": [
-                  "expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(\"POST\")"
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(\"POST\")",
+                  "}"
                 ]
               },
               {
                 "id": 9,
                 "description": "Payer FSP Callback: 'fspiop-source' is 'payeefsp'",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)"
+                  "expect(callback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)",
+                  ""
                 ]
               },
               {
@@ -515,11 +530,7 @@
               "exec": [
                 "requestVariables.transferExpiration = new Date(new Date().getTime() + 600000).toISOString();",
                 "",
-                "requestVariables.amount = Number(environment.payerNDC) - Number(environment.payerPositionBeforeTransfer) + 100;",
-                "",
-                "console.log(environment.payerNDC);",
-                "console.log(environment.payerPositionBeforeTransfer)",
-                "console.log(requestVariables.amount)"
+                "requestVariables.amount = Number(environment.payerNDC) - Number(environment.payerPositionBeforeTransfer) + 100;"
               ]
             }
           }
