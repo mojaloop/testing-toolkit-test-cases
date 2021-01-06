@@ -1,0 +1,795 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Reserve&Commit",
+      "requests": [
+        {
+          "id": 3,
+          "description": "Get payerfsp settlement account",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/payerfsp/accounts",
+          "method": "get",
+          "params": {
+            "name": "payerfsp"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'SETTLEMENT') && (environment.SIMPAYER_CURRENCY)) {\r",
+                "environment.payerfspSettlementAccountId=jsonData[i].id;\r",
+                "environment.SettlementAccountBalanceBeforeFundsOutPrepare=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "console.log(environment.payerfspSettlementAccountId);\r",
+                "console.log(environment.SettlementAccountBalanceBeforeFundsOutPrepare);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "Get Hub Reconcilliation account",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "get",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'HUB_RECONCILIATION') && (environment.SIMPAYER_CURRENCY)) {\r",
+                "\r",
+                "environment.hubReconAccountBalanceBeforeFundsOutPrepare=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "console.log(environment.hubReconAccountBalanceBeforeFundsOutPrepare);\r",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 9,
+          "description": "Record Funds Out Prepare&Reserve- SIMPAYER",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/payerfsp/accounts/{$environment.payerfspSettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "payerfsp",
+            "id": "{$environment.payerfspSettlementAccountId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/json"
+          },
+          "scriptingEngine": "javascript",
+          "body": {
+            "transferId": "{$function.generic.generateUUID}",
+            "externalReference": "string",
+            "action": "recordFundsOutPrepareReserve",
+            "reason": "string",
+            "amount": {
+              "amount": "{$requestVariables.fundsOutPrepareAmount}",
+              "currency": "{$inputs.SIMPAYER_CURRENCY}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "\r",
+                "requestVariables.fundsOutPrepareAmount= 10;\r",
+                "environment.fundsOutPrepareReserveAmount= requestVariables.fundsOutPrepareAmount;\r",
+                "requestVariables.payerid= environment.payerfspSettlementAccountId\r",
+                "\r",
+                "\r",
+                "console.log(requestVariables.payerid);\r",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "/*var url = environment.HOST_CENTRAL_LEDGER;\r",
+                "console.log(url);\r",
+                "\r",
+                "\r",
+                "const res = await axios.get(environment.HOST_CENTRAL_LEDGER+'/participants/payerfsp/accounts');\r",
+                "console.log(res.data);\r",
+                "*/\r",
+                "\r",
+                "environment.transferidfi = '{$request.body.transferId}'\r",
+                "console.log(environment.transferidfi);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 10,
+          "description": "Get payerfsp settlement account after funds out",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/payerfsp/accounts",
+          "method": "get",
+          "params": {
+            "name": "payerfsp"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payerfsp Settlement Account Balance should decrease by the transfer amount",
+                "exec": [
+                  "expect(environment.payerfspSettlementAccountBalanceAfterFundsOutPrepare).to.eql(environment.payerfspExpectedBalance);"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2000",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'SETTLEMENT') && (environment.SIMPAYER_CURRENCY)) {\r",
+                "\r",
+                "environment.payerfspSettlementAccountBalanceAfterFundsOutPrepare=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "\r",
+                "\r",
+                "console.log(environment.payerfspSettlementAccountBalanceAfterFundsOutPrepare)\r",
+                "\r",
+                "  environment.payerfspExpectedBalance = -(-Number(environment.SettlementAccountBalanceBeforeFundsOutPrepare) - Number(environment.fundsOutPrepareReserveAmount))\r",
+                "  \r",
+                "console.log(environment.payerfspExpectedBalance)"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 11,
+          "description": "Get Hub Reconcilliation account after funds out",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "get",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Final Hub Reconciliation Account Balance should stay the same in prepare phase",
+                "exec": [
+                  " expect(environment.hubReconAccountBalanceAfterFundsOutPrepare).to.eql(environment.hubExpectedBalance);"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'HUB_RECONCILIATION') && (environment.SIMPAYER_CURRENCY)) {\r",
+                "\r",
+                "environment.hubReconAccountBalanceAfterFundsOutPrepare=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "console.log(environment.hubReconAccountBalanceAfterFundsOutPrepare);\r",
+                "\r",
+                "  environment.hubExpectedBalance = Number(environment.hubReconAccountBalanceBeforeFundsOutPrepare)\r",
+                "console.log(environment.hubExpectedBalance);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 12,
+          "description": "Record Funds Out Prepare&Reserve - transferStatus",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$environment.transferidfi}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.transferidfi}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "payerfsp",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "fspiop-source is switch",
+                "exec": [
+                  "expect(environment.payercallback.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "fspiop-destination is payerfsp",
+                "exec": [
+                  "expect(environment.payercallback.headers['fspiop-destination']).to.equal('payerfsp')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "content-type should be application/vnd.interoperability.transfers+json;version=1.0",
+                "exec": [
+                  "expect(environment.payercallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "accept is empty",
+                "exec": [
+                  "expect(environment.payercallback.headers['accept']).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "fspiop-signature is not empty",
+                "exec": [
+                  "expect(environment.payercallback.headers['fspiop-signature']).not.equal(undefined)"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "fspiop-uri includes \"transfer/transferid\"",
+                "exec": [
+                  "expect(environment.payercallback.headers['fspiop-uri']).to.equal('/transfers/'+ environment.transferidfi)"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "fspiop-http-method is PUT",
+                "exec": [
+                  "expect(environment.payercallback.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Transfer State should be RESERVED",
+                "exec": [
+                  "expect(environment.payercallback.data.transferState).to.equal('RESERVED')"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "/*environment.transid= $prev.3.request.body.transferId",
+                "console.log(environment.transid);*/"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var callbackpayer = await axios.get(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.transferidfi);\r",
+                "//console.log(callbackpayer.data);\r",
+                "\r",
+                "environment.payercallback = callbackpayer.data;\r",
+                "console.log(environment.payercallback);\r",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 13,
+          "description": "Get payerfsp settlement account before commit",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/payerfsp/accounts",
+          "method": "get",
+          "params": {
+            "name": "payerfsp"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'SETTLEMENT') && (environment.SIMPAYER_CURRENCY)) {\r",
+                "environment.payerfspSettlementAccountId=jsonData[i].id;\r",
+                "environment.SettlementAccountBalanceBeforeFundsOutCommit=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "\r",
+                "console.log(environment.SettlementAccountBalanceBeforeFundsOutCommit);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 14,
+          "description": "Get Hub Reconcilliation account before commit",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "get",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'HUB_RECONCILIATION') && (environment.SIMPAYER_CURRENCY)) {\r",
+                "\r",
+                "environment.hubReconAccountBalanceBeforeFundsOutCommit=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "console.log(environment.hubReconAccountBalanceBeforeFundsOutCommit);\r",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 15,
+          "description": "Record Funds Out Commit - SIMPAYER",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}/transfers/{transferId}",
+          "path": "/participants/payerfsp/accounts/{$environment.payerfspSettlementAccountId}/transfers/{$environment.transferidfi}",
+          "method": "put",
+          "params": {
+            "name": "payerfsp",
+            "id": "{$environment.payerfspSettlementAccountId}",
+            "transferId": "{$environment.transferidfi}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "action": "recordFundsOutCommit",
+            "reason": "Reason for out flow of funds"
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2000",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.fundsOutCommitAmount = environment.fundsOutPrepareReserveAmount"
+              ]
+            }
+          }
+        },
+        {
+          "id": 16,
+          "description": "Get payerfsp settlement account after commit",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/payerfsp/accounts",
+          "method": "get",
+          "params": {
+            "name": "payerfsp"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payerfsp Settlement Account Balance should not change during commit phase",
+                "exec": [
+                  "expect(environment.payerfspSettlementAccountBalanceAfterFundsOutCommit).to.eql(environment.payerfspExpectedBalance);"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2000",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'SETTLEMENT') && (environment.SIMPAYER_CURRENCY)) {\r",
+                "\r",
+                "environment.payerfspSettlementAccountBalanceAfterFundsOutCommit=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "\r",
+                "\r",
+                "console.log(environment.payerfspSettlementAccountBalanceAfterFundsOutCommit)\r",
+                "\r",
+                "  environment.payerfspExpectedBalance = Number(environment.SettlementAccountBalanceBeforeFundsOutCommit)\r",
+                "  \r",
+                "console.log(environment.payerfspExpectedBalance)"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 17,
+          "description": "Get Hub Reconcilliation account after commit",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "get",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Final Hub Reconciliation Account Balance should decrease by the transfer amount",
+                "exec": [
+                  " expect(environment.hubReconAccountBalanceAfterFundsOutCommit).to.eql(environment.hubExpectedBalance);"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'HUB_RECONCILIATION') && (environment.SIMPAYER_CURRENCY)) {\r",
+                "\r",
+                "environment.hubReconAccountBalanceAfterFundsOutCommit=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "console.log(environment.hubReconAccountBalanceAfterFundsOutCommit);\r",
+                "\r",
+                "  environment.hubExpectedBalance = Number(environment.hubReconAccountBalanceBeforeFundsOutCommit) - Number(environment.fundsOutCommitAmount)\r",
+                "  \r",
+                "console.log(environment.hubExpectedBalance);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 18,
+          "description": "Record Funds Out Commit - transfer status",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$environment.transferidfi}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.transferidfi}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "payerfsp",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "fspiop-source is switch",
+                "exec": [
+                  "expect(environment.payercallback.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "fspiop-destination is payerfsp",
+                "exec": [
+                  "expect(environment.payercallback.headers['fspiop-destination']).to.equal('payerfsp')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "content-type should be application/vnd.interoperability.transfers+json;version=1.0",
+                "exec": [
+                  "expect(environment.payercallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "accept is empty",
+                "exec": [
+                  "expect(environment.payercallback.headers['accept']).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "fspiop-signature is not empty",
+                "exec": [
+                  "expect(environment.payercallback.headers['fspiop-signature']).not.equal(undefined)"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "fspiop-uri includes \"transfer/transferid\"",
+                "exec": [
+                  "expect(environment.payercallback.headers['fspiop-uri']).to.equal('/transfers/'+ environment.transferidfi)"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "fspiop-http-method is PUT",
+                "exec": [
+                  "expect(environment.payercallback.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Transfer State should be COMMITTED",
+                "exec": [
+                  "expect(environment.payercallback.data.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "/*environment.transid= $prev.3.request.body.transferId",
+                "console.log(environment.transid);*/"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var callbackpayer = await axios.get(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.transferidfi);\r",
+                "//console.log(callbackpayer.data);\r",
+                "\r",
+                "environment.payercallback = callbackpayer.data;\r",
+                "console.log(environment.payercallback);\r",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
