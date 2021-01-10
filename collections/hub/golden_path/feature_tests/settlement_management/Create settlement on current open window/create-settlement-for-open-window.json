@@ -1,6 +1,7 @@
 {
   "name": "multi",
   "test_cases": [
+    
     {
       "id": 1,
       "name": "Create Settlement on the current open window",
@@ -16,7 +17,7 @@
           "operationPath": "/settlementWindows",
           "path": "/settlementWindows",
           "method": "get",
-          "url": "{$inputs.HOST_xCENTRAL_SETTLEMENT}",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "queryParams": {
             "state": "OPEN"
           },
@@ -71,7 +72,7 @@
           "params": {
             "id": "{$environment.openWindowID}"
           },
-          "url": "{$inputs.HOST_xCENTRAL_SETTLEMENT}",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "body": {
             "state": "CLOSED",
             "reason": "string"
@@ -122,15 +123,16 @@
             "postRequest": {
               "exec": [
                 "var jsonData = response.body;",
-                "//console.log(jsonData.state);",
+                "var rcode = Number(response.status);",
+                "//console.log(rcode);",
                 "",
-                "if (response.status === 200){",
-                "environment.closedWindowID=environment.openWindowID;",
-                "environment.openWindowstate=jsonData[0].state;",
+                "//if (rcode == 200){",
+                "environment.closedWindowID= Number(environment.openWindowID);",
+                "environment.openWindowstate=jsonData.state;",
                 "",
                 "console.log(environment.openWindowstate);",
                 "console.log(environment.closedWindowID);",
-                "}"
+                "//}"
               ]
             }
           }
@@ -146,7 +148,7 @@
           "operationPath": "/settlements",
           "path": "/settlements",
           "method": "post",
-          "url": "{$inputs.HOST_xCENTRAL_SETTLEMENT}",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}"
@@ -212,7 +214,8 @@
             },
             "preRequest": {
               "exec": [
-                "requestVariables.closedWindowID = 1 //environment.closedWindowID;",
+                "//environment.closedWindowID = 6;",
+                "requestVariables.closedWindowID = Number(environment.closedWindowID);",
                 "",
                 "/*requestVariables.closedWindowID = Number(environment.closedWindowID);",
                 "*/"
@@ -229,12 +232,12 @@
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/1",
+          "path": "/settlements/{$environment.closedWindowID}",
           "method": "get",
           "params": {
-            "id": "1"
+            "id": "{$environment.closedWindowID}"
           },
-          "url": "{$inputs.HOSTx_CENTRAL_SETTLEMENT}",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
@@ -254,12 +257,13 @@
             "postRequest": {
               "exec": [
                 "var res = response.body;",
-                "environment.settlementId = 1;",
+                "//environment.settlementId = 6;",
                 "var i=0;",
                 "var dfspsacc = [];",
                 "var callbackpayer;",
                 "",
-                "",
+                "environment.winstate = res.state;",
+                "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
                 "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
@@ -294,11 +298,18 @@
                 "            },config)    ",
                 "console.log(callbackpayer.data);  ",
                 "}",
-                "",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
                 "/*res.participants.map(participant => {",
                 "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
                 "    .forEach(curAccount => {*/",
                 "  "
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
               ]
             }
           }
@@ -312,10 +323,10 @@
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/1",
+          "path": "/settlements/{$environment.closedWindowID}",
           "method": "get",
           "params": {
-            "id": "1"
+            "id": "{$environment.closedWindowID}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
@@ -337,11 +348,14 @@
             "postRequest": {
               "exec": [
                 "var res = response.body;",
-                "environment.settlementId = 1;",
+                "//environment.settlementId = 1;",
                 "var i=0;",
                 "var dfspsacc = [];",
                 "var callbackpayer;",
                 "",
+                "environment.winstate = res.state;",
+                "",
+                "if(environment.winstate===\"PS_TRANSFERS_RECORDED\"){",
                 "",
                 "",
                 "res.participants.map(function (participant) {",
@@ -377,7 +391,9 @@
                 "            },config)    ",
                 "console.log(callbackpayer.data);  ",
                 "}",
-                "",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
                 "/*res.participants.map(participant => {",
                 "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
                 "    .forEach(curAccount => {*/",
@@ -395,10 +411,10 @@
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/1",
+          "path": "/settlements/{$environment.closedWindowID}",
           "method": "get",
           "params": {
-            "id": "1"
+            "id": "{$environment.closedWindowID}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
@@ -420,11 +436,14 @@
             "postRequest": {
               "exec": [
                 "var res = response.body;",
-                "environment.settlementId = 1;",
+                "//environment.settlementId = 1;",
                 "var i=0;",
                 "var dfspsacc = [];",
                 "var callbackpayer;",
                 "",
+                "environment.winstate = res.state;",
+                "",
+                "if(environment.winstate===\"PS_TRANSFERS_RESERVED\"){",
                 "",
                 "",
                 "res.participants.map(function (participant) {",
@@ -460,7 +479,9 @@
                 "            },config)    ",
                 "console.log(callbackpayer.data);  ",
                 "}",
-                "",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
                 "/*res.participants.map(participant => {",
                 "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
                 "    .forEach(curAccount => {*/",
@@ -478,10 +499,10 @@
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/1",
+          "path": "/settlements/{$environment.closedWindowID}",
           "method": "get",
           "params": {
-            "id": "1"
+            "id": "{$environment.closedWindowID}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
@@ -503,11 +524,14 @@
             "postRequest": {
               "exec": [
                 "var res = response.body;",
-                "environment.settlementId = 1;",
+                "//environment.settlementId = 1;",
                 "var i=0;",
                 "var dfspsacc = [];",
                 "var callbackpayer;",
                 "",
+                "environment.winstate = res.state;",
+                "",
+                "if(environment.winstate===\"PS_TRANSFERS_COMMITTED\"){",
                 "",
                 "",
                 "res.participants.map(function (participant) {",
@@ -543,7 +567,9 @@
                 "            },config)    ",
                 "console.log(callbackpayer.data);  ",
                 "}",
-                "",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
                 "",
                 "  "
               ]
