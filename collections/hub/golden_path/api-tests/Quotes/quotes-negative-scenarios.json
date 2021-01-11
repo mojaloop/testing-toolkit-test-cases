@@ -70,15 +70,6 @@
                 ]
               },
               {
-                "id": 2,
-                "description": "Callback Validate Protected Headers",
-                "exec": [
-                  "if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
-                  "}"
-                ]
-              },
-              {
                 "id": 3,
                 "description": "Callback Validate JWS",
                 "exec": [
@@ -315,15 +306,6 @@
                 "description": "Response code 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Callback Validate Protected Headers",
-                "exec": [
-                  "if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
-                  "}"
                 ]
               },
               {
@@ -579,15 +561,6 @@
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include(\"lastName\")"
                 ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Validate JWS",
-                "exec": [
-                  "if (environment.ENABLE_JWS_VALIDATION) {",
-                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
-                  "}"
-                ]
               }
             ]
           },
@@ -676,15 +649,6 @@
                 "description": "Response code 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Callback Validate Protected Headers",
-                "exec": [
-                  "if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
-                  "}"
                 ]
               },
               {
@@ -853,6 +817,7 @@
                 "}",
                 "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
                 "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "  console.log(requestVariables.protectedHeadersValidationStatus)",
                 "}",
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -925,15 +890,6 @@
                 "description": "Response code 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Callback Validate Protected Headers",
-                "exec": [
-                  "if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
-                  "}"
                 ]
               },
               {
@@ -1138,15 +1094,6 @@
                 "description": "Response code 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Callback Validate Protected Headers",
-                "exec": [
-                  "if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
-                  "}"
                 ]
               },
               {
@@ -1445,15 +1392,6 @@
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
                 ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Validate JWS",
-                "exec": [
-                  "if (environment.ENABLE_JWS_VALIDATION) {",
-                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
-                  "}"
-                ]
               }
             ]
           },
@@ -1566,15 +1504,6 @@
                 "description": "Malformed DOB from payer",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
-                ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Validate JWS",
-                "exec": [
-                  "if (environment.ENABLE_JWS_VALIDATION) {",
-                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
-                  "}"
                 ]
               }
             ]
@@ -1689,15 +1618,6 @@
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
                 ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Validate JWS",
-                "exec": [
-                  "if (environment.ENABLE_JWS_VALIDATION) {",
-                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
-                  "}"
-                ]
               }
             ]
           },
@@ -1811,15 +1731,6 @@
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
                 ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Validate JWS",
-                "exec": [
-                  "if (environment.ENABLE_JWS_VALIDATION) {",
-                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
-                  "}"
-                ]
               }
             ]
           },
@@ -1930,15 +1841,6 @@
                 "description": "Malformed DOB from payer",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
-                ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Validate JWS",
-                "exec": [
-                  "if (environment.ENABLE_JWS_VALIDATION) {",
-                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
-                  "}"
                 ]
               }
             ]
@@ -2051,15 +1953,6 @@
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
                 ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Validate JWS",
-                "exec": [
-                  "if (environment.ENABLE_JWS_VALIDATION) {",
-                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
-                  "}"
-                ]
               }
             ]
           },
@@ -2171,15 +2064,6 @@
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
                 ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Validate JWS",
-                "exec": [
-                  "if (environment.ENABLE_JWS_VALIDATION) {",
-                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
-                  "}"
-                ]
               }
             ]
           },
@@ -2290,15 +2174,6 @@
                 "description": "Malformed DOB from payer",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
-                ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Validate JWS",
-                "exec": [
-                  "if (environment.ENABLE_JWS_VALIDATION) {",
-                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
-                  "}"
                 ]
               }
             ]

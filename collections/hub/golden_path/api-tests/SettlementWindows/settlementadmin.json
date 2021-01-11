@@ -1,41 +1,10 @@
 {
   "name": "multi",
   "test_cases": [
-   
     {
-      "id": 5,
+      "id": 1,
       "name": "api-tests/SettlementWindows",
       "requests": [
-        {
-          "id": 1,
-          "description": "ValidRequest - closedWindowById",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "settlements"
-          },
-          "operationPath": "/settlementWindows/{id}",
-          "path": "/settlementWindows/50",
-          "method": "get",
-          "params": {
-            "id": "50"
-          },
-          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
-          "headers": {
-            "FSPIOP-Source": "{$inputs.fromFspId}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response status to be 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              }
-            ]
-          }
-        },
         {
           "id": 2,
           "description": "Window- state (OPEN)",
@@ -68,6 +37,45 @@
                 "description": "Check state for window is OPEN",
                 "exec": [
                   "expect(response.body[0].state).to.equal(\"OPEN\")"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.setwinid= response.body[0].settlementWindowId;",
+                "console.log(environment.setwinid);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 1,
+          "description": "ValidRequest - closedWindowById",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows/{id}",
+          "path": "/settlementWindows/{$environment.setwinid}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.setwinid}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
                 ]
               }
             ]
@@ -138,10 +146,24 @@
                 "id": 2,
                 "description": "Check state for window is SETTLED",
                 "exec": [
-                  "expect(response.body[0].state).to.equal(\"SETTLED\")"
+                  "for (var i in environment.resx){",
+                  "   ",
+                  "        expect(environment.resx[i].state).to.equal('SETTLED');",
+                  "    ",
+                  "}"
                 ]
               }
             ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.resx = response.body;",
+                "",
+                ""
+              ]
+            }
           }
         }
       ]
