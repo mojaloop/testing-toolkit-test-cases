@@ -1,0 +1,73 @@
+{
+  "name": "Test1",
+  "inputValues": {
+    "payerIdType": "MSISDN",
+    "payerIdValue": "44123456789",
+    "payeeFirstName": "Vijay",
+    "payeeMiddleName": "Kumar",
+    "payeeLastName": "Guthi",
+    "payeeDOB": "1984-01-01",
+    "note": "Test Payment",
+    "currency": "USD",
+    "amount": "100",
+    "homeTransactionId": "123ABC",
+    "accept": "application/vnd.interoperability.parties+json;version=1.0",
+    "contentType": "application/vnd.interoperability.parties+json;version=1.0",
+    "payeeIdType": "MSISDN",
+    "payeeIdValue": "9876543210",
+    "payeeFspId": "userdfsp",
+    "scenario": "PAYMENT",
+    "initiator": "PAYEE",
+    "initiatorType": "BUSINESS",
+    "refundReason": "userdfsp"
+  },
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "P2P Transfer Happy Path",
+      "requests": [
+        {
+          "id": 2,
+          "description": "Delete Party",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties/{idType}/{idValue}",
+          "path": "/repository/parties/MSISDN/{$inputs.toIdValue}",
+          "method": "delete",
+          "params": {
+            "idType": "MSISDN",
+            "idValue": "{$inputs.toIdValue}",
+            "Type": "",
+            "ID": ""
+          },
+          "url": "http://sim:3003"
+        },
+        {
+          "id": 3,
+          "description": "Add Party",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "http://sim:3003",
+          "body": {
+            "displayName": "asdf",
+            "firstName": "asdf",
+            "middleName": "asdf",
+            "lastName": "asdf",
+            "dateOfBirth": "1970-01-01",
+            "idType": "{$inputs.toIdType}",
+            "idValue": "{$inputs.toIdValue}"
+          }
+        }
+      ]
+    }
+  ]
+}
