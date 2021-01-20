@@ -1,0 +1,35 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "transaction_request_service",
+      "requests": [
+        {
+          "id": 5,
+          "description": "transaction service health",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
