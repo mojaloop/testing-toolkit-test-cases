@@ -1,0 +1,243 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Tests for Bugfix #1009 - ML Adapter and ALS service health should include broker status",
+      "requests": [
+        {
+          "id": 5,
+          "description": "transaction service health",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "ML Adaptor - Expected Status is OK",
+                "exec": [
+                  "expect(response.body.status).to.eql(\"OK\");"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "ML Adaptor - Expected body to have services array",
+                "exec": [
+                  "expect(response.body.services).to.be.an('array');"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "ML Adaptor - Expected services to have broker and status is OK",
+                "exec": [
+                  "expect(environment.var1).to.be.an('object');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                " const brokerOk = response.body.services.find(item => {\r",
+                "               return item.name=='broker' && item.status=='OK'; \r",
+                "            });\r",
+                "            \r",
+                "environment.var1 = brokerOk;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "description": "Get health status of ALS",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Expected Status is OK",
+                "exec": [
+                  "expect(response.body.status).to.eql(\"OK\");"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Expected body to have services array",
+                "exec": [
+                  "expect(response.body.services).to.be.an('array');"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Expected services to have datastore and status is OK",
+                "exec": [
+                  "expect(environment.var1).to.be.an('object');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                " const brokerOk = response.body.services.find(item => {\r",
+                "               return item.name=='datastore' && item.status=='OK'; \r",
+                "            });\r",
+                "            \r",
+                "environment.var1 = brokerOk;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "Get health status of Central Ledger",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Expected Status is OK",
+                "exec": [
+                  "expect(response.body.status).to.eql(\"OK\");"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Expected body to have services array",
+                "exec": [
+                  "expect(response.body.services).to.be.an('array');"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Expected services to have broker and status is OK",
+                "exec": [
+                  "expect(environment.var1).to.be.an('object');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                " const brokerOk = response.body.services.find(item => {\r",
+                "               return item.name=='broker' && item.status=='OK'; \r",
+                "            });\r",
+                "            \r",
+                "environment.var1 = brokerOk;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 8,
+          "description": "Get health status of Central Settlement",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Expected Status is OK",
+                "exec": [
+                  "expect(response.body.status).to.eql(\"OK\");"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Expected body to have services array",
+                "exec": [
+                  "expect(response.body.services).to.be.an('array');"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Expected services to have datastore and status is OK",
+                "exec": [
+                  "expect(environment.var1).to.be.an('object');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                " const brokerOk = response.body.services.find(item => {\r",
+                "               return item.name=='datastore' && item.status=='OK'; \r",
+                "            });\r",
+                "            \r",
+                "environment.var1 = brokerOk;"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

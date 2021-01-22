@@ -42,6 +42,7 @@
             ]
           },
           "scriptingEngine": "javascript",
+          "ignoreCallbacks": true,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -63,76 +64,6 @@
                 "}",
                 "",
                 "console.log(environment.payeecallback);*/"
-              ]
-            }
-          }
-        },
-        {
-          "id": 5,
-          "description": "Payee initiate request - MIssing body",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "fspiop",
-            "asynchronous": true
-          },
-          "operationPath": "/transactionRequests",
-          "path": "/transactionRequests",
-          "method": "post",
-          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
-          "headers": {
-            "FSPIOP-Source": "{$inputs.payeefsp}",
-            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
-            "Date": "{$function.generic.curDate}",
-            "Content-Type": "application/vnd.interoperability.transactionRequests+json;version=1.0",
-            "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
-            "FSPIOP-HTTP-Method": "POST"
-          },
-          "body": {},
-          "scriptingEngine": "javascript",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response code status 400",
-                "exec": [
-                  "expect(response.status).to.equal(400)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Check Malformed syntax error",
-                "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax ');"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "Check Error code 3101",
-                "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3101');"
-                ]
-              }
-            ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "environment.tranid = '{$function.generic.generateUUID}'",
-                "console.log(environment.tranid)",
-                "",
-                "environment.transferExpirationx= new Date(new Date().getTime() + 600000);",
-                "",
-                "console.log(environment.transferExpirationx)",
-                "",
-                ""
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "",
-                "",
-                ""
               ]
             }
           }
@@ -232,6 +163,7 @@
               }
             ]
           },
+          "ignoreCallbacks": true,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -349,6 +281,7 @@
               }
             ]
           },
+          "ignoreCallbacks": true,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -467,6 +400,7 @@
               }
             ]
           },
+          "ignoreCallbacks": true,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -504,7 +438,7 @@
           "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
           "headers": {
             "FSPIOP-Destination": "{$inputs.payeefsp}",
-            "Content-Type": "application/vnd.interoperability.transactionRequests+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.transactionRequests+xml;version=1.0",
             "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
             "FSPIOP-HTTP-Method": "POST",
             "Date": "{$function.generic.curDate}",
@@ -597,6 +531,7 @@
               }
             ]
           },
+          "ignoreCallbacks": true,
           "scripts": {
             "preRequest": {
               "exec": [

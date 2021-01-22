@@ -1,0 +1,213 @@
+{
+  "name": "multi",
+  "test_cases": [
+   
+    {
+      "id": 1,
+      "name": "Check Settlements Error #956",
+      "requests": [
+        {
+          "id": 6,
+          "description": "Check Settlements Error #956",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows",
+          "path": "/settlementWindows",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "ignoreCallbacks": true,
+          "queryParams": {
+            "participantId": "0",
+            "state": "open"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Malformed syntax in settlements",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3101');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "description": "Check FSPIOP Headers from Switch #883",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/MSISDN/{$environment.msisdnid}",
+          "method": "get",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$environment.msisdnid}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Expected error code is 3204",
+                "exec": [
+                  "expect(environment.payercallbackx.data.errorInformation.errorCode).to.equal('3204');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Expected error description - party not Found",
+                "exec": [
+                  "expect(environment.payercallbackx.data.errorInformation.errorDescription).to.equal('Party not found');"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.msisdnid = 1999999;",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.msisdnid, 'payercallback')",
+                "}  ",
+                "  console.log(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.msisdnid);"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "",
+                "  ",
+                "  environment.payercallbackx = await websocket.getMessage('payercallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "console.log(environment.payercallbackx);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 8,
+          "description": "Check FSPIOP Headers from ML-API-Adapter #1032",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "payeefspNOTFOUND",
+            "FSPIOP-URI": "/transfers",
+            "FSPIOP-HTTP-Method": "POST"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateUUID}",
+            "payerFsp": "{$inputs.SIMPAYER_NAME}",
+            "payeeFsp": "payeefspNOTFOUND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "{$environment.transferExpirationx}",
+            "ilpPacket": "{$inputs.ilpPacket}",
+            "condition": "{$inputs.validCondition}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response data does not have transferId",
+                "exec": [
+                  "expect(environment.payercallbackx.data.transferId).to.equal(undefined);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Error code is 3100",
+                "exec": [
+                  "expect(environment.payercallbackx.data.errorInformation.errorCode).to.equal('3100');"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.transferExpirationx= new Date(new Date().getTime() + 600000).toISOString();",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'payercallback')",
+                "}  ",
+                "  console.log(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}');"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "",
+                "  ",
+                "  environment.payercallbackx = await websocket.getMessage('payercallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "console.log(environment.payercallbackx);"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
