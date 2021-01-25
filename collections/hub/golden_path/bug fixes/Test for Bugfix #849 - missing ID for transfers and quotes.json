@@ -1,0 +1,135 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Test for Bugfix #849 - missing ID for transfers and quotes",
+      "requests": [
+        {
+          "id": 6,
+          "description": "Check transfers/ Missing ID #849",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/ ",
+          "method": "put",
+          "params": {
+            "ID": " "
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}"
+          },
+          "body": {
+            "fulfilment": "{$inputs.validFulfillment}",
+            "completedTimestamp": "{$environment.completedTimestamp}",
+            "transferState": "COMMITTED"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 404",
+                "exec": [
+                  "expect(response.status).to.equal(404)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check ID missing",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Unknown URI');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3002",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3002');"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.completedTimestamp = new Date().toISOString();"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "Check quotes/ Missing ID #849",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/ ",
+          "method": "put",
+          "params": {
+            "ID": " "
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}"
+          },
+          "body": {
+            "fulfilment": "{$inputs.validFulfillment}",
+            "completedTimestamp": "{$environment.completedTimestamp}",
+            "transferState": "COMMITTED"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 405",
+                "exec": [
+                  "expect(response.status).to.equal(405)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check method not allowed",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Generic client error - Method Not Allowed');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3000",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3000');"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.completedTimestamp = new Date().toISOString();"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

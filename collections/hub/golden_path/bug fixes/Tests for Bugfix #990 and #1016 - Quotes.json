@@ -1,0 +1,1102 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Tests for Bugfix #990 and #1016 - Quotes",
+      "requests": [
+        {
+          "id": 3,
+          "description": "Send quote",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60.1234",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback body should contain transferAmount",
+                "exec": [
+                  "expect(callback.body).to.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback transferAmount (amount & currency)to match the request",
+                "exec": [
+                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be quotes",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Request amountType to be RECEIVE",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('RECEIVE')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scriptingEngine": "javascript",
+          "ignoreCallbacks": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.destinationheader = callback.headers['fspiop-destination']",
+                "console.log(environment.destinationheader);",
+                "",
+                "environment.quoteidx = '{$request.body.quoteId}'",
+                "console.log(environment.quoteidx);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "description": "Send Quote_SEND - 12 - Validate Within Expire Time w Duplicate Quote Id Copy",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "quoteId": "{$environment.quoteidx}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60.1234",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Modified request - Duplicate Quote before expire time",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.include('Modified request');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3106",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.include('3106');"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scriptingEngine": "javascript",
+          "ignoreCallbacks": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.destinationheader = callback.headers['fspiop-destination']",
+                "console.log(environment.destinationheader);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "description": "Send Quote_SEND - 12 - Validate After Expire Time w Duplicate Quote Id",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "quoteId": "{$environment.quoteidx}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60.1234",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Modified request - Duplicate Quote before expire time",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.include('Modified request');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3106",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.include('3106');"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scriptingEngine": "javascript",
+          "ignoreCallbacks": false,
+          "delay": "3500",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.destinationheader = callback.headers['fspiop-destination']",
+                "console.log(environment.destinationheader);"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "other",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send Quote_SEND - Missing content-type version",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60.1234",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Missing mandatory element",
+                "exec": [
+                  " expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3101');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "description": "Send Quote_SEND - 6a - Invalid Content Type - application/json",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/json",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60.1234",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Missing mandatory element",
+                "exec": [
+                  " expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3101');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "description": "Send Quote_SEND - 6b - Invalid Content Type - xml",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/xml",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60.1234",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Missing mandatory element",
+                "exec": [
+                  " expect(response.body.errorInformation.errorDescription).to.include('Unsupported Media Type');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3101');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "description": "Send Quote_SEND - 9- Destination FSP NOT FOUND",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "payeefspNOTFOUND"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60.1234",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Destination FSP Error - Unsupported participant",
+                "exec": [
+                  " expect(callback.body.errorInformation.errorDescription).to.include('Destination FSP Error - Unsupported participant');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3201",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.eql('3201');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 5,
+          "description": "Send Quote_SEND - 10 - PayeePartyIdentifier NOT FOUND",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60.1234",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Malformed sintax - Generic validation error",
+                "exec": [
+                  " expect(response.body.errorInformation.errorDescription).to.include('Generic validation error');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3100",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3100');"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check partyIdentifier is included in Error description",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('partyIdentifier');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "description": "Send Quote_SEND - 14 - Incorrect Switch Version Header",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=9.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60.1234",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 406",
+                "exec": [
+                  "expect(response.status).to.equal(406)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Unacceptable version requested error",
+                "exec": [
+                  " expect(response.body.errorInformation.errorDescription).to.include('Unacceptable version requested');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3001",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3001');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "description": "QuotesByID - 11 - Missing Condition Field",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/{$function.generic.generateUUID}",
+          "method": "put",
+          "params": {
+            "ID": "{$function.generic.generateUUID}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}"
+          },
+          "body": {
+            "transferAmount": {
+              "amount": "11",
+              "currency": "XOF"
+            },
+            "payeeReceiveAmount": {
+              "amount": "11",
+              "currency": "XOF"
+            },
+            "payeeFspCommission": {
+              "currency": "XOF",
+              "amount": "1"
+            },
+            "expiration": "2019-10-14T20:19:20.741Z",
+            "ilpPacket": "AQAAAAAAAADIEHByaXZhdGUucGF5ZWVmc3CCAiB7InRyYW5zYWN0aW9uSWQiOiIyZGY3NzRlMi1mMWRiLTRmZjctYTQ5NS0yZGRkMzdhZjdjMmMiLCJxdW90ZUlkIjoiMDNhNjA1NTAtNmYyZi00NTU2LThlMDQtMDcwM2UzOWI4N2ZmIiwicGF5ZWUiOnsicGFydHlJZEluZm8iOnsicGFydHlJZFR5cGUiOiJNU0lTRE4iLCJwYXJ0eUlkZW50aWZpZXIiOiIyNzcxMzgwMzkxMyIsImZzcElkIjoicGF5ZWVmc3AifSwicGVyc29uYWxJbmZvIjp7ImNvbXBsZXhOYW1lIjp7fX19LCJwYXllciI6eyJwYXJ0eUlkSW5mbyI6eyJwYXJ0eUlkVHlwZSI6Ik1TSVNETiIsInBhcnR5SWRlbnRpZmllciI6IjI3NzEzODAzOTExIiwiZnNwSWQiOiJwYXllcmZzcCJ9LCJwZXJzb25hbEluZm8iOnsiY29tcGxleE5hbWUiOnt9fX0sImFtb3VudCI6eyJjdXJyZW5jeSI6IlVTRCIsImFtb3VudCI6IjIwMCJ9LCJ0cmFuc2FjdGlvblR5cGUiOnsic2NlbmFyaW8iOiJERVBPU0lUIiwic3ViU2NlbmFyaW8iOiJERVBPU0lUIiwiaW5pdGlhdG9yIjoiUEFZRVIiLCJpbml0aWF0b3JUeXBlIjoiQ09OU1VNRVIiLCJyZWZ1bmRJbmZvIjp7fX19"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Missing mandatory element condition",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('condition');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 8,
+          "description": "QuotedById - 13a- 400- Missing Accept header",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/{$function.generic.generateUUID}",
+          "method": "get",
+          "params": {
+            "ID": "{$function.generic.generateUUID}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Accept": "*/*"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Malformed syntax - Invalid accept header",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax - Invalid accept header');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3101');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 9,
+          "description": "QuotesById - 13b - 400-Missing FSPIOP-Source header",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/{$function.generic.generateUUID}",
+          "method": "get",
+          "params": {
+            "ID": "{$function.generic.generateUUID}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Missing mandatory element",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102');"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Error message fspiop-source is required",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('fspiop-source');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 10,
+          "description": "QuotesById - 13c - 400-Missing Date header (BUG)",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/{$function.generic.generateUUID}",
+          "method": "get",
+          "params": {
+            "ID": "{$function.generic.generateUUID}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Missing mandatory element",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102');"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Error message date is required",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('date');"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

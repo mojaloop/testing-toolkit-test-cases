@@ -1,0 +1,1273 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Error-framework-authorizations",
+      "requests": [
+        {
+          "id": 6,
+          "description": "Check retriesLeft missing",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Missing mandatory element",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element'&&'retriesLeft');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "authenticationType": "OTP",
+            "amount": "102",
+            "currency": "USD"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 8,
+          "description": "Check authenticationType missing",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranidx}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranidx}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Missing mandatory element",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element'&&'authenticationType');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "amount": "102",
+            "currency": "USD",
+            "retriesLeft": "2"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 9,
+          "description": "Check currency missing",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranidx}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranidx}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Missing mandatory element",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element'&&'currency');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "amount": "102",
+            "retriesLeft": "2",
+            "authenticationType": "OTP"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 10,
+          "description": "Check retriesLeft with non-number ",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranidx}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranidx}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Malformed syntax",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax '&&'retriesLeft');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3101');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "amount": "102",
+            "retriesLeft": "g",
+            "authenticationType": "OTP",
+            "currency": "USD"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 11,
+          "description": "Check retriesLeft with floating number",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranidx}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranidx}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Malformed syntax with floating retriesLeft",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('retriesLeft');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3101');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "amount": "102",
+            "retriesLeft": "1.5",
+            "authenticationType": "OTP",
+            "currency": "USD"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 12,
+          "description": "Check wrong authentication type",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranidx}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranidx}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Generic validation error",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Generic validation error '&&'authenticationType');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3100",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3100');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "amount": "102",
+            "retriesLeft": "2",
+            "authenticationType": "XTP",
+            "currency": "USD"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 13,
+          "description": "Check accept header missing",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranidx}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranidx}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Missing mandatory element - Accept",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Accept is required');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "amount": "102",
+            "retriesLeft": "2",
+            "authenticationType": "OTP",
+            "currency": "USD"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 14,
+          "description": "Check date missing",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranidx}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranidx}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Missing mandatory element ",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Generic validation error '&&'date');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "amount": "102",
+            "retriesLeft": "2",
+            "authenticationType": "OTP",
+            "currency": "USD"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 15,
+          "description": "Check fspiop-source missing",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranidx}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranidx}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check Generic validation error",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element '&&'fspiop-source');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "amount": "102",
+            "retriesLeft": "2",
+            "authenticationType": "OTP",
+            "currency": "USD"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 17,
+          "description": "Check Content-type missing",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranidx}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranidx}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check missing mandatory element",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Content-type');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "amount": "102",
+            "retriesLeft": "2",
+            "authenticationType": "OTP",
+            "currency": "USD"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 18,
+          "description": "Check  Unacceptable Content-type ",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranidx}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranidx}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 406",
+                "exec": [
+                  "expect(response.status).to.equal(406)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check missing mandatory element",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Unacceptable version requested ');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Error code 3001",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3001');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=4.0"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "amount": "102",
+            "retriesLeft": "2",
+            "authenticationType": "OTP",
+            "currency": "USD"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "Check Authorizatons - wrong responseType",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "authenticationInfo": {
+              "authentication": "OTP",
+              "authenticationValue": "234567"
+            },
+            "responseType": "WHAT"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "PUT",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "queryParams": {},
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 19,
+          "description": "Check authentication missing - 400 - 3102 Error code",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "authenticationInfo": {
+              "authenticationValue": "234567"
+            },
+            "responseType": "REJECTED"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "PUT",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check mandatory element missing",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('authentication');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "queryParams": {},
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 20,
+          "description": "Check authenticationValue missing - 400 - 3102 Error code",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "authenticationInfo": {
+              "authentication": "OTP"
+            },
+            "responseType": "REJECTED"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "PUT",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check mandatory element missing",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('authenticationValue');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "queryParams": {},
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 21,
+          "description": "Check responseType missing - 400 - 3102 Error code",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "authenticationInfo": {
+              "authentication": "OTP",
+              "authenticationValue": "234567"
+            }
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "PUT",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check mandatory element missing",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('responseType');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "queryParams": {},
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 22,
+          "description": "Check authorization with content-type header missing",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "authenticationInfo": {
+              "authentication": "OTP",
+              "authenticationValue": "234567"
+            },
+            "responseType": "REJECTED"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Date": "{$function.generic.curDate}",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "PUT",
+            "FSPIOP-URI": "/authorizations"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check mandatory element missing",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Content-type');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "queryParams": {},
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 23,
+          "description": "Check authorization with date header missing",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "authenticationInfo": {
+              "authentication": "OTP",
+              "authenticationValue": "234567"
+            },
+            "responseType": "REJECTED"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "PUT",
+            "FSPIOP-URI": "/authorizations",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check mandatory element missing",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('date'&&'Missing mandatory element');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "queryParams": {},
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 24,
+          "description": "Check authorization with fspiop header missing ",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "authenticationInfo": {
+              "authentication": "OTP",
+              "authenticationValue": "234567"
+            },
+            "responseType": "REJECTED"
+          },
+          "headers": {
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Accept": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "FSPIOP-HTTP-Method": "PUT",
+            "FSPIOP-URI": "/authorizations",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Date": "{$function.generic.curDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check mandatory element missing",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('fspiop-source');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3102');"
+                ]
+              }
+            ]
+          },
+          "queryParams": {},
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 25,
+          "description": "Check authorization with accept header missing",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "authenticationInfo": {
+              "authentication": "OTP",
+              "authenticationValue": "234567"
+            },
+            "responseType": "REJECTED"
+          },
+          "headers": {
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-HTTP-Method": "PUT",
+            "FSPIOP-URI": "/authorizations",
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "Accept": "*/*"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check mandatory element missing",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('accept' && '');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql('3101');"
+                ]
+              }
+            ]
+          },
+          "queryParams": {},
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
