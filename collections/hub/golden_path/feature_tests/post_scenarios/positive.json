@@ -15,11 +15,11 @@
             "asynchronous": true
           },
           "operationPath": "/participants/{Type}/{ID}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "path": "/participants/MSISDN/{$inputs.SIMPAYEE_MSISDN}",
           "method": "post",
           "params": {
-            "Type": "{$inputs.toIdType}",
-            "ID": "{$inputs.toIdValue}"
+            "Type": "MSISDN",
+            "ID": "{$inputs.SIMPAYEE_MSISDN}"
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.toFspId}",
@@ -33,6 +33,23 @@
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "ignoreCallbacks": true
+        },
+        {
+          "id": 7,
+          "description": "Delete party from simulator",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties/{idType}/{idValue}",
+          "path": "/repository/parties/MSISDN/{$inputs.SIMPAYEE_MSISDN}",
+          "method": "delete",
+          "params": {
+            "idType": "MSISDN",
+            "idValue": "{$inputs.SIMPAYEE_MSISDN}"
+          },
+          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}"
         },
         {
           "id": 2,
@@ -53,12 +70,12 @@
           },
           "body": {
             "displayName": "Test PayeeFSP",
-            "firstName": "Test",
-            "middleName": "Test",
-            "lastName": "Test",
-            "dateOfBirth": "1984-01-01",
-            "idType": "{$inputs.toIdType}",
-            "idValue": "{$inputs.toIdValue}"
+            "firstName": "PayeeFirst",
+            "middleName": "PayeeMiddle",
+            "lastName": "PayeeLast",
+            "dateOfBirth": "2010-10-10",
+            "idType": "MSISDN",
+            "idValue": "{$inputs.SIMPAYEE_MSISDN}"
           }
         },
         {
@@ -79,8 +96,8 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "params": {
-            "Type": "{$inputs.toIdType}",
-            "ID": "{$inputs.toIdValue}"
+            "Type": "MSISDN",
+            "ID": "{$inputs.SIMPAYEE_MSISDN}"
           },
           "tests": {
             "assertions": [
@@ -137,8 +154,8 @@
                 "id": 8,
                 "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
                 "exec": [
-                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
-                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')"
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('MSISDN')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.SIMPAYEE_MSISDN}')"
                 ]
               },
               {
@@ -162,13 +179,13 @@
             ]
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "path": "/parties/MSISDN/{$inputs.SIMPAYEE_MSISDN}",
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.SIMPAYEE_MSISDN}', 'payeeRequest')",
                 "}"
               ]
             },
@@ -958,7 +975,7 @@
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.SIMPAYEE_MSISDN}', 'payeeRequest')",
                 "  ",
-                "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.SIMPAYER_MSISDN}', 'payerCallback')",
+                "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.SIMPAYEE_MSISDN}', 'payerCallback')",
                 "}",
                 "",
                 "requestVariables.expectedPayeeFirstName = \"PayeeFirst\"",
@@ -972,8 +989,9 @@
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "  ",
+                "  console.log(requestVariables.payeeRequest)",
                 "  requestVariables.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "  console.log(requestVariables.payerCallback)",
                 "  ",
                 "  requestVariables.scenario1TransferId = response.body.scenario1.result.transferId",
                 "  ",
