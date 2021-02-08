@@ -742,6 +742,52 @@
     },
     {
       "id": 4,
+      "name": "testfsp2 oracle_registration",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Add payeeIdentifier in payeeIdType Oracle",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.payeeIdType}/{$inputs.testfsp2Identifier}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.payeeIdType}",
+            "ID": "{$inputs.testfsp2Identifier}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "testfsp2"
+          },
+          "body": {
+            "fspId": "testfsp2",
+            "currency": "{$inputs.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true
+        }
+      ]
+    },
+    {
+      "id": 5,
       "name": "testfsp2 add_users",
       "requests": [
         {
