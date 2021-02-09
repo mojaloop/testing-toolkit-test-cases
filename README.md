@@ -10,6 +10,8 @@ This repository is a collection of tests for the Mojaloop testing toolkit
  - [For Mojaloop **FSP** Implementations](#for-mojaloop-fsp-implementations)
    - [Provisioning collection for Mojaloop Simulator](#provisioning-collection-for-mojaloop-simulator)
    - [DFSP Golden Path collection](#dfsp-golden-path-collection)
+ - [Scripts](#scripts)
+   - [Compare two TTK environment files](#compare-two-ttk-environment-files)
 
 ## For Mojaloop Switch Implementations
 
@@ -71,3 +73,19 @@ collections/golden_path
 ```
 
 This collection contains all positive and negative scenarios to test against your DFSP implementation.
+
+## Scripts
+
+### Compare two TTK environment files:
+
+Usage:
+```
+node scripts/env-compare.js <first-file> <second-file>
+```
+
+You can use the script `env-compare.js` to compare two TTK environment files by each key.
+
+The script can return the following
+- Items those exist only in first file
+- Items those exist only in second file
+- Items which are common but with different values
