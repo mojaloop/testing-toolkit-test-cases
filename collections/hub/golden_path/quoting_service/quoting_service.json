@@ -237,7 +237,9 @@
                 "id": 3,
                 "description": "Expected services to have data store and status is OK",
                 "exec": [
-                  "expect(environment.datastoreOKx).to.be.an('object')"
+                  "if(!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
+                  "  expect(environment.datastoreOKx).to.be.an('object')",
+                  "}"
                 ]
               }
             ]
