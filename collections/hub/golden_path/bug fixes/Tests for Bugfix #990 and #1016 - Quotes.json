@@ -233,14 +233,19 @@
                 "id": 2,
                 "description": "Check Modified request - Duplicate Quote before expire time",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorDescription).to.include('Modified request');"
+                  "if (!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
+                  "  expect(callback.body.errorInformation.errorDescription).to.include('Modified request');",
+                  "}",
+                  ""
                 ]
               },
               {
                 "id": 3,
                 "description": "Check Error code 3106",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorCode).to.include('3106');"
+                  "if (!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
+                  "  expect(callback.body.errorInformation.errorCode).to.include('3106');",
+                  "}"
                 ]
               }
             ]
@@ -334,14 +339,18 @@
                 "id": 2,
                 "description": "Check Modified request - Duplicate Quote before expire time",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorDescription).to.include('Modified request');"
+                  "if (!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
+                  "  expect(callback.body.errorInformation.errorDescription).to.include('Modified request');",
+                  "}"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check Error code 3106",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorCode).to.include('3106');"
+                  "if (!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
+                  "  expect(callback.body.errorInformation.errorCode).to.include('3106');",
+                  "}"
                 ]
               }
             ]
