@@ -147,7 +147,7 @@
                 "id": 7,
                 "description": "Callback content-type to be parties",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                 ]
               },
               {
@@ -172,7 +172,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')",
+                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
                   "}"
                 ]
               }
@@ -710,7 +710,7 @@
                 "description": "Payer Callback: 'content-type' header matches",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payerCallback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')",
+                  " expect(requestVariables.payerCallback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
                   "}"
                 ]
               },
@@ -818,7 +818,7 @@
                 "description": "Payee Request: 'content-type' header is the same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
                   "}"
                 ]
               },
@@ -917,7 +917,7 @@
                 "description": "Payer Callback: 'content-type' header is 'application/vnd.interoperability.transfers+json;version=1.0'",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  " expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
                   "}"
                 ]
               },
