@@ -346,7 +346,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
                   "}"
                 ]
               },
@@ -503,7 +503,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
                   "}"
                 ]
               },

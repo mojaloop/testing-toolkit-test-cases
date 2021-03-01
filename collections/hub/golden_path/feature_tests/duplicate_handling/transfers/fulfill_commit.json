@@ -494,7 +494,7 @@
                 "id": 14,
                 "description": "Callback Header - content-type is application/vnd.interoperability.transfers+json;version=1.0",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
                   ""
                 ]
               },
@@ -1027,7 +1027,7 @@
                 "description": "Payee Side Callback Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  "  expect(requestVariables.payeeCallback.headers['content-type']).to.equal(request.headers['Content-Type'])",
                   "}"
                 ]
               },
