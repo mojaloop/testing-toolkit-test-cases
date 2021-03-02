@@ -130,7 +130,7 @@
                 "id": 7,
                 "description": "Callback content-type to be parties",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                 ]
               },
               {
@@ -155,7 +155,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')",
+                  "  expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
                   "}"
                 ]
               }
@@ -301,7 +301,7 @@
                 "id": 7,
                 "description": "Callback content-type to be quotes",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')"
                 ]
               },
               {
@@ -346,7 +346,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
                   "}"
                 ]
               },
@@ -464,7 +464,7 @@
                 "id": 6,
                 "description": "Callback content-type to be transfers",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')"
                 ]
               },
               {
@@ -503,7 +503,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
                   "}"
                 ]
               },

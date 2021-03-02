@@ -359,9 +359,9 @@
               },
               {
                 "id": 13,
-                "description": "Payer FSP Callback: 'content-type' is same as sent in the request",
+                "description": "Payer FSP Callback: 'content-type' is as expected",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")"
+                  "expect(callback.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}\")"
                 ]
               },
               {
@@ -497,9 +497,9 @@
               },
               {
                 "id": 7,
-                "description": "'content-type' should be 'application/vnd.interoperability.transfers+json;version=1.0'",
+                "description": "'content-type' should be in proper format",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0');"
+                  "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=');"
                 ]
               },
               {

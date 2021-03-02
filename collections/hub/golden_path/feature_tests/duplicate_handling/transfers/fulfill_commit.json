@@ -207,7 +207,7 @@
                 "id": 14,
                 "description": "Callback Header - content-type is application/vnd.interoperability.quotes+json;version=1.0",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')",
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
                   ""
                 ]
               },
@@ -758,7 +758,7 @@
                 "id": 14,
                 "description": "Callback Header - content-type is application/vnd.interoperability.quotes+json;version=1.0",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')",
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
                   ""
                 ]
               },
@@ -1027,7 +1027,7 @@
                 "description": "Payee Side Callback Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  "  expect(requestVariables.payeeCallback.headers['content-type']).to.equal(request.headers['Content-Type'])",
                   "}"
                 ]
               },
