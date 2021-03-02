@@ -815,10 +815,10 @@
               },
               {
                 "id": 76,
-                "description": "Payee Request: 'content-type' header is the same as sent in the request",
+                "description": "Payee Request: 'content-type' header should be in proper format",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=')",
                   "}"
                 ]
               },

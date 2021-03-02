@@ -1001,12 +1001,12 @@
               },
               {
                 "id": 76,
-                "description": "On testfsp1 'content-type' is the same as sent in the request",
+                "description": "On testfsp1 'content-type' should be in the proper format",
                 "exec": [
                   "",
                   "",
                   "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  "  expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=')",
                   "}"
                 ]
               },
