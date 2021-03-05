@@ -15,12 +15,12 @@
             "asynchronous": true
           },
           "operationPath": "/participants/{Type}/{ID}/{SubId}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}/30",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
           "method": "post",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}",
-            "SubId": "30"
+            "SubId": "{$inputs.toSubIdValue}"
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.toFspId}",
@@ -60,7 +60,7 @@
             "dateOfBirth": "1984-01-01",
             "idType": "{$inputs.toIdType}",
             "idValue": "{$inputs.toIdValue}",
-            "subIdValue": 30
+            "subIdValue": "{$inputs.toSubIdValue}"
           }
         },
         {
@@ -83,7 +83,7 @@
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}",
-            "SubId": "30"
+            "SubId": "{$inputs.toSubIdValue}"
           },
           "tests": {
             "assertions": [
@@ -141,7 +141,8 @@
                 "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
                 "exec": [
                   "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
-                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')"
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')",
+                  "expect(callback.body.party.partyIdInfo.partySubIdOrType).to.equal('{$inputs.toSubIdValue}')"
                 ]
               },
               {
@@ -161,11 +162,18 @@
                   "  expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
                   "}"
                 ]
+              },
+              {
+                "id": 11,
+                "description": "Callback FSPIOP-URI should contain ID and SubID",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/parties/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}')"
+                ]
               }
             ]
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}/30",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -223,6 +231,7 @@
               "partyIdInfo": {
                 "partyIdType": "{$prev.3.callback.body.party.partyIdInfo.partyIdType}",
                 "partyIdentifier": "{$prev.3.callback.body.party.partyIdInfo.partyIdentifier}",
+                "partySubIdOrType": "{$prev.3.callback.body.party.partyIdInfo.partySubIdOrType}",
                 "fspId": "{$prev.3.callback.body.party.partyIdInfo.fspId}"
               }
             },
