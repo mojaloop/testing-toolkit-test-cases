@@ -1,0 +1,1147 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Store settlement and position balances before-transfers",
+      "requests": [
+        {
+          "id": 1,
+          "description": "get balances for testfsp1",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp1SettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp1PositionAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp1SettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.testfsp1PositionAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "get balances for testfsp2",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp2SettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp2PositionAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp2SettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.testfsp2PositionAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 8,
+          "description": "get balances for testfsp3",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM3_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp3SettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp3PositionAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp3SettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.testfsp3PositionAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "get balances for testfsp4",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM4_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM4_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp4SettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp4PositionAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp4SettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.testfsp4PositionAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "get balances for payerfsp",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYER_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.payerfspSettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.payerfspPositionAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.payerfspSettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.payerfspPositionAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "description": "get balances for payeefsp",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.payeefsp}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.payeefsp}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.payeefspSettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.payeefspPositionAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.payeefspSettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.payeefspPositionAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "description": "Get Hub balances",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "get",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;\r",
+                "jsonData\r",
+                "    .filter(account => account.currency === environment.SIMPAYER_CURRENCY)\r",
+                "    .forEach(curAccount => {\r",
+                "        if(curAccount.ledgerAccountType === \"HUB_RECONCILIATION\") {\r",
+                "            environment.hubReconciliationAccountBalanceBeforeTransfer=curAccount.value;\r",
+                "        }\r",
+                "        if(curAccount.ledgerAccountType === \"HUB_MULTILATERAL_SETTLEMENT\") {\r",
+                "            environment.hubMultilateralAccountBalanceBeforeTransfer=curAccount.value;\r",
+                "        }\r",
+                "    })\r",
+                "\r",
+                "\r",
+                "console.log(environment.hubReconciliationAccountBalanceBeforeTransfer);\r",
+                "console.log(environment.hubMultilateralAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "description": "Get Existing Open Window",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows",
+          "path": "/settlementWindows",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "queryParams": {
+            "state": "OPEN"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "State should be OPEN",
+                "exec": [
+                  "expect(environment.openWindowstate).to.equal(\"OPEN\")"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "//console.log(jsonData.state);",
+                "",
+                "environment.openWindowID=jsonData[0].settlementWindowId;",
+                "environment.openWindowstate=jsonData[0].state;",
+                "",
+                "console.log(environment.openWindowID);"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Close window before tranfers",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Get Existing Open Window",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows",
+          "path": "/settlementWindows",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "queryParams": {
+            "state": "OPEN"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "State should be OPEN",
+                "exec": [
+                  "expect(environment.openWindowstate).to.equal(\"OPEN\")"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "//console.log(jsonData.state);",
+                "",
+                "environment.openWindowID=jsonData[0].settlementWindowId;",
+                "environment.openWindowstate=jsonData[0].state;",
+                "",
+                "console.log(environment.openWindowID);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Close existent window",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows/{id}",
+          "path": "/settlementWindows/{$environment.openWindowID}",
+          "method": "post",
+          "params": {
+            "id": "{$environment.openWindowID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "body": {
+            "state": "CLOSED",
+            "reason": "string"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200 or 400",
+                "exec": [
+                  "if(response.status === 400){",
+                  "  expect(response.status).to.equal(400)",
+                  "}",
+                  "else{",
+                  "  expect(response.status).to.equal(200)",
+                  "}",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "id": 2,
+                "description": "New window State should be OPEN",
+                "exec": [
+                  "",
+                  " if (response.status === 400) {",
+                  "   ",
+                  "expect(response.body.errorInformation.errorCode).to.eql('3100');",
+                  "expect(response.body.errorInformation.errorDescription).to.eql('Generic validation error - Window ' + environment.openWindowID + ' is empty');",
+                  "}else{",
+                  "  ",
+                  "  ",
+                  "  expect(environment.openWindowstate).to.equal(\"OPEN\");",
+                  "}",
+                  "",
+                  "",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "var rcode = Number(response.status);",
+                "//console.log(rcode);",
+                "",
+                "//if (rcode == 200){",
+                "environment.closedWindowID= Number(environment.openWindowID);",
+                "environment.openWindowstate=jsonData.state;",
+                "",
+                "console.log(environment.openWindowstate);",
+                "console.log(environment.closedWindowID);",
+                "//}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "get initial position: testfsp1, testfsp2, testfsp3, testfsp4",
+      "requests": [
+        {
+          "id": 1,
+          "description": "get balances for testfsp1",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                " /* if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp1SettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }*/",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp1PositionBefore= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "//console.log(environment.testfsp1SettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.testfsp1PositionBefore);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "get balances for testfsp2",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                " /* if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp2SettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }*/",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp2PositionBefore= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "//console.log(environment.testfsp2SettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.testfsp2PositionBefore);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 8,
+          "description": "get balances for testfsp3",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM3_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                " /* if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp3SettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }*/",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp3PositionBefore= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "//console.log(environment.testfsp3SettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.testfsp3PositionBefore);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "get balances for testfsp4",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM4_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM4_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                " /* if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp4SettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }*/",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp4PositionBefore= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "//console.log(environment.testfsp4SettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.testfsp4PositionBefore);"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "[new sims]  transfers, positions CGS Window1 tests (OTC-649, OTC-645)",
+      "requests": [
+        {
+          "id": 1,
+          "description": "get balances for testfsp1",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp1SettlementBalanceBefore= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp1PositionBalanceBefore= curAccount.value",
+                "        }  ",
+                "        ",
+                "          if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "  environment.testfsp1InterchFeeBalanceBefore= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp1SettlementBalanceBefore);",
+                "console.log(environment.testfsp1PositionBalanceBefore);",
+                "console.log(environment.testfsp1InterchFeeBalanceBefore);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "get balances for testfsp2",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp2SettlementBalanceBefore= curAccount.value",
+                "        }",
+                "        ",
+                "if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp2PositionBalanceBefore= curAccount.value",
+                "        }    ",
+                "  if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "  environment.testfsp2InterchFeeBalanceBefore= curAccount.value",
+                "        }     ",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp2SettlementBalanceBefore);",
+                "console.log(environment.testfsp2PositionBalanceBefore);",
+                "console.log(environment.testfsp2InterchFeeBalanceBefore);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 8,
+          "description": "get balances for testfsp3",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM3_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp3SettlementBalanceBefore= curAccount.value",
+                "        }",
+                "        ",
+                "if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp3PositionBalanceBefore= curAccount.value",
+                "        }     ",
+                "",
+                "  if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "  environment.testfsp3InterchFeeBalanceBefore= curAccount.value",
+                "        }  ",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp3SettlementBalanceBefore);",
+                "console.log(environment.testfsp3PositionBalanceBefore);",
+                "console.log(environment.testfsp3InterchFeeBalanceBefore);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "get balances for testfsp4",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM4_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM4_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp4SettlementBalanceBefore= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp3PositionBalanceBefore= curAccount.value",
+                "        }     ",
+                " if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "  environment.testfsp4InterchFeeBalanceBefore= curAccount.value",
+                "        }  ",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp4SettlementBalanceBefore);",
+                "console.log(environment.testfsp4PositionBalanceBefore);",
+                "console.log(environment.testfsp4InterchFeeBalanceBefore);"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
