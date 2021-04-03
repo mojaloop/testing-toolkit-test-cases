@@ -1,0 +1,301 @@
+{
+  "name": "multi",
+  "test_cases": [
+   
+    {
+      "id": 9,
+      "name": "adjust ALL participants limits  NET DEBIT CAP (parametrized)",
+      "requests": [
+        {
+          "id": 1,
+          "description": "GET /participants/limits before updating NDC",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/limits",
+          "path": "/participants/limits",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "description": "PUT /participants/payerfsp/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/payerfsp/limits",
+          "method": "put",
+          "params": {
+            "name": "payerfsp"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.currency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "description": "PUT /participants/payeefsp/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/payeefsp/limits",
+          "method": "put",
+          "params": {
+            "name": "payeefsp"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.currency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "description": "PUT /participants/testfsp1/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/testfsp1/limits",
+          "method": "put",
+          "params": {
+            "name": "testfsp1"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.currency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 5,
+          "description": "PUT /participants/testfsp2/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/testfsp2/limits",
+          "method": "put",
+          "params": {
+            "name": "testfsp2"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.currency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "description": "PUT /participants/testfsp3/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/testfsp3/limits",
+          "method": "put",
+          "params": {
+            "name": "testfsp3"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.currency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "description": "PUT /participants/testfsp4/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/testfsp4/limits",
+          "method": "put",
+          "params": {
+            "name": "testfsp4"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.currency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 8,
+          "description": "GET /participants/limits after updating NDC",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/limits",
+          "path": "/participants/limits",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+    
+  ]
+}

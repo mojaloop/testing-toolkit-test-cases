@@ -1,0 +1,1061 @@
+{
+  "name": "multi",
+  "test_cases": [
+   
+    
+   
+    {
+      "id": 11,
+      "name": "Add Users to new Sims ; ALS registration",
+      "requests": [
+        {
+          "id": 2,
+          "description": "GET PAYEEFSP/repository/parties    parties",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "get",
+          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "description": "GET PAYERFSP/repository/parties    parties",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "get",
+          "url": "{$inputs.PAYERFSP_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "description": "GET TESTFSP1/repository/parties    parties",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "get",
+          "url": "{$inputs.TESTFSP1_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 5,
+          "description": "GET TESTFSP2/repository/parties    parties",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "get",
+          "url": "{$inputs.TESTFSP2_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "description": "GET TESTFSP3/repository/parties    parties",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "get",
+          "url": "{$inputs.TESTFSP3_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "description": "GET TESTFSP4/repository/parties    parties",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "get",
+          "url": "{$inputs.TESTFSP4_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 8,
+          "description": "[payee, Wallet] POST payeefsp/repository/parties  {{payeefspMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "payeefspFname payeefspLname",
+            "firstName": "payeefspFname",
+            "middleName": "",
+            "lastName": "payeefspLname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.payeefspMSISDN}",
+            "extensionList": [
+              {
+                "key": "accountType",
+                "value": "Wallet"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 9,
+          "description": "[payee, Wallet] POST /ALS_host/participants {{payeefspMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.payeefspMSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.payeefspMSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIMPAYEE_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 10,
+          "description": "[payer, Wallet] POST /parties  {{payerfspMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.PAYERFSP_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "payerfspFname payerfspLname",
+            "firstName": "payerfspFname",
+            "middleName": "",
+            "lastName": "payerfspLname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.payerfspMSISDN}",
+            "extensionList": [
+              {
+                "key": "accountType",
+                "value": "Wallet"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 11,
+          "description": "[payer, Wallet] POST /ALS_host/participants {{payerfspMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.payerfspMSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.payerfspMSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIMPAYER_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 12,
+          "description": "[testfsp1, Wallet] POST /parties  {{testfsp1MSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.TESTFSP1_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "testfsp1Fname testfsp1Lname",
+            "firstName": "testfsp1Fname",
+            "middleName": "",
+            "lastName": "testfsp1Lname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.testfsp1MSISDN}",
+            "extensionList": [
+              {
+                "key": "accountType",
+                "value": "Wallet"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 13,
+          "description": "[testfsp1, Wallet] POST /ALS_host/participants {{testfsp1MSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.testfsp1MSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.testfsp1MSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM1_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIM1_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 14,
+          "description": "[testfsp1, Bank] POST parties  {{settlementtestfsp1bankMSISDN}} BANK",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.TESTFSP1_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "testfsp1BankFname testfsp1BankLname",
+            "firstName": "testfsp1BankFname",
+            "middleName": "",
+            "lastName": "testfsp1BankLname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.settlementtestfsp1bankMSISDN}",
+            "extensionList": [
+              {
+                "key": "accountType",
+                "value": "Bank"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 15,
+          "description": "[testfsp1, Bank] POST /ALS_host/participants {{settlementtestfsp1bankMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.settlementtestfsp1bankMSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.settlementtestfsp1bankMSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM1_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIM1_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 16,
+          "description": "[testfsp2, Wallet] POST /parties  {{testfsp2MSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.TESTFSP2_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "testfsp2WalletFname testfsp2WalletLname",
+            "firstName": "testfsp2WalletFname",
+            "middleName": "",
+            "lastName": "testfsp2WalletLname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.testfsp2MSISDN}",
+            "extensionList": [
+              {
+                "key": "accountType",
+                "value": "Wallet"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 17,
+          "description": "[testfsp2, Wallet] POST /ALS_host/participants {{testfsp2MSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.testfsp2MSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.testfsp2MSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIM2_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 18,
+          "description": "[testfsp2, Bank] POST /parties  {{settlementtestfsp2bankMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.TESTFSP2_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "testfsp2BankFname testfsp2Bankname",
+            "firstName": "testfsp2BankFname",
+            "middleName": "",
+            "lastName": "testfsp2WalletLname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.settlementtestfsp2bankMSISDN}",
+            "extensionList": [
+              {
+                "key": "accountType",
+                "value": "Bank"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 19,
+          "description": "[testfsp2, Bank] POST /ALS_host/participants {{settlementtestfsp2bankMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.settlementtestfsp2bankMSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.settlementtestfsp2bankMSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIM2_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 20,
+          "description": "[testfsp3, Wallet] POST /parties  {{testfsp3MSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.TESTFSP3_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "testfsp3WalletFname testfsp3WalletLname",
+            "firstName": "testfsp3WalletFname",
+            "middleName": "",
+            "lastName": "testfsp3WalletLname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.testfsp3MSISDN}",
+            "extensionList": [
+              {
+                "key": "accountType",
+                "value": "Wallet"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 21,
+          "description": "[testfsp3, Wallet] POST /ALS_host/participants {{testfsp3MSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.testfsp3MSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.testfsp3MSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM3_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIM3_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 22,
+          "description": "[testfsp3, Bank] POST /parties  {{settlementtestfsp3bankMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.TESTFSP3_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "testfsp3BankFname testfsp3Bankname",
+            "firstName": "testfsp3BankFname",
+            "middleName": "",
+            "lastName": "testfsp3BankLname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.settlementtestfsp3bankMSISDN}",
+            "extensionList": [
+              {
+                "key": "accountType",
+                "value": "Bank"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 23,
+          "description": "[testfsp3, Bank] POST /ALS_host/participants {{settlementtestfsp3bankMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.settlementtestfsp3bankMSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.settlementtestfsp3bankMSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM3_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIM3_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 24,
+          "description": "[testfsp4, Wallet] POST /parties  {{testfsp4MSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.TESTFSP4_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "testfsp4WalletFname testfsp4WalletLname",
+            "firstName": "testfsp4WalletFname",
+            "middleName": "",
+            "lastName": "testfsp4WalletLname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.testfsp4MSISDN}",
+            "extensionList": [
+              {
+                "key": "accountType",
+                "value": "Wallet"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 25,
+          "description": "[testfsp4, Wallet] POST /ALS_host/participants {{testfsp4MSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.testfsp4MSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.testfsp4MSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM4_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIM4_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 26,
+          "description": "[testfsp4, Bank] POST /parties  {{settlementtestfsp4bankMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.TESTFSP4_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "testfsp4BankFname testfsp4Bankname",
+            "firstName": "testfsp4BankFname",
+            "middleName": "",
+            "lastName": "testfsp4BankLname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.settlementtestfsp4bankMSISDN}",
+            "extensionList": [
+              {
+                "key": "accountType",
+                "value": "Bank"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 27,
+          "description": "[testfsp4, Bank] POST /ALS_host/participants {{settlementtestfsp4bankMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.settlementtestfsp4bankMSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.settlementtestfsp4bankMSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM4_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIM4_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 28,
+          "description": "[payee, no ext] POST /parties  {{settlementpayeefspNoExtensionMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "payeefspNoextensionFname payeefspNoextensionLname",
+            "firstName": "payeefspNoextensionFname",
+            "middleName": "",
+            "lastName": "payeefspNoextensionLname",
+            "dateOfBirth": "1985-05-13",
+            "idType": "MSISDN",
+            "idValue": "{$environment.settlementpayeefspNoExtensionMSISDN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).that.is.oneOf([200,204,500])"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 29,
+          "description": "[payee, no ext] POST /ALS_host/participants {{settlementpayeefspNoExtensionMSISDN}}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.settlementpayeefspNoExtensionMSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.settlementpayeefspNoExtensionMSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "body": {
+            "fspId": "{$environment.SIMPAYEE_NAME}",
+            "currency": "{$environment.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
