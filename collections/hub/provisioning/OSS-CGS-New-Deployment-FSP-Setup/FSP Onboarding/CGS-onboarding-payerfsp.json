@@ -1,9 +1,8 @@
 {
   "name": "multi",
   "test_cases": [
-   
     {
-      "id": 3,
+      "id": 1,
       "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp",
       "requests": [
         {
@@ -193,7 +192,7 @@
       ]
     },
     {
-      "id": 4,
+      "id": 2,
       "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-callbacks",
       "requests": [
         {
@@ -641,7 +640,7 @@
       ]
     },
     {
-      "id": 5,
+      "id": 3,
       "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-notifications",
       "requests": [
         {
@@ -719,7 +718,7 @@
       ]
     },
     {
-      "id": 6,
+      "id": 4,
       "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-notifications-oracle_registration",
       "requests": [
         {
@@ -732,15 +731,15 @@
             "asynchronous": true
           },
           "operationPath": "/participants/{Type}/{ID}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.SIMPAYER_MSISDN}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.payerMSISDN}",
           "method": "post",
           "params": {
             "Type": "{$inputs.toIdType}",
-            "ID": "{$inputs.SIMPAYER_MSISDN}"
+            "ID": "{$inputs.payerMSISDN}"
           },
           "url": "{$inputs.MSISDN_ORACLE_ENDPOINT}",
           "body": {
-            "fspId": "payeefsp",
+            "fspId": "payerfsp",
             "currency": "{$environment.currency}"
           },
           "headers": {
@@ -752,7 +751,7 @@
       ]
     },
     {
-      "id": 7,
+      "id": 5,
       "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-SubID-user",
       "requests": [
         {
@@ -776,7 +775,8 @@
           "headers": {
             "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
             "Accept": "application/vnd.interoperability.participants+json;version=1",
-            "Date": "{$function.generic.curDate}"
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
             "fspId": "{$environment.SIMPAYER_NAME}",
@@ -797,10 +797,10 @@
       ]
     },
     {
-      "id": 8,
+      "id": 6,
       "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-register-msisdn-simulator",
       "requests": [
-         {
+        {
           "id": 1,
           "description": "Add Party to Simulator",
           "apiVersion": {
@@ -824,7 +824,7 @@
             "lastName": "SimLast",
             "dateOfBirth": "2010-10-10",
             "idType": "{$inputs.toIdType}",
-            "idValue": "{$inputs.SIMPAYER_MSISDN}"
+            "idValue": "{$inputs.payerMSISDN}"
           }
         }
       ]
