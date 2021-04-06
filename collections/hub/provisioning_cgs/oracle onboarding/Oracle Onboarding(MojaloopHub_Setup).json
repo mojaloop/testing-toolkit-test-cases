@@ -1,0 +1,95 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Oracle Onboarding(MojaloopHub_Setup)",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Register MSISDN Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "cache-control": "no-cache"
+          },
+          "body": {
+            "oracleIdType": "MSISDN",
+            "endpoint": {
+              "value": "{$environment.HOST_REGISTER_ORACLE}/oracle",
+              "endpointType": "URL"
+            },
+            "currency": "{$environment.currency}",
+            "isDefault": true
+          }
+        },
+        {
+          "id": 2,
+          "description": "Register BUSINESS Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "body": {
+            "oracleIdType": "BUSINESS",
+            "endpoint": {
+              "value": "{$environment.HOST_REGISTER_ORACLE}/oracle",
+              "endpointType": "URL"
+            },
+            "currency": "{$environment.currency}",
+            "isDefault": true
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "cache-control": "no-cache"
+          }
+        },
+        {
+          "id": 3,
+          "description": "Register ALIAS Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN}",
+          "body": {
+            "oracleIdType": "ALIAS",
+            "endpoint": {
+              "value": "{$environment.HOST_REGISTER_ORACLE}/oracle",
+              "endpointType": "URL"
+            },
+            "currency": "{$environment.currency}",
+            "isDefault": true
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "cache-control": "no-cache"
+          }
+        }
+      ]
+    }
+  ]
+}

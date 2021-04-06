@@ -1,0 +1,136 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "post",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "type": "HUB_MULTILATERAL_SETTLEMENT",
+            "currency": "{$environment.currency}"
+          }
+        },
+        {
+          "id": 2,
+          "description": "Add Hub Account-HUB_RECONCILIATION",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "post",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "type": "HUB_RECONCILIATION",
+            "currency": "{$environment.currency}"
+          }
+        },
+        {
+          "id": 3,
+          "description": "Hub Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/Hub/endpoints",
+          "method": "post",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+            "value": "{$environment.huboperatoremail}"
+          }
+        },
+        {
+          "id": 4,
+          "description": "Hub Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/Hub/endpoints",
+          "method": "post",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+            "value": "{$environment.huboperatoremail}"
+          }
+        },
+        {
+          "id": 5,
+          "description": "Hub Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/Hub/endpoints",
+          "method": "post",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+            "value": "{$environment.huboperatoremail}"
+          }
+        }
+      ]
+    }
+  ]
+}
