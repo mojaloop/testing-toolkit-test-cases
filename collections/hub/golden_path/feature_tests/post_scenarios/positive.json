@@ -25,7 +25,8 @@
             "FSPIOP-Source": "{$inputs.toFspId}",
             "Accept": "application/vnd.interoperability.participants+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-            "Date": "{$function.generic.curDate}"
+            "Date": "{$function.generic.curDate}",
+			 "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "fspId": "{$inputs.toFspId}",
@@ -49,7 +50,10 @@
             "idType": "MSISDN",
             "idValue": "{$inputs.SIMPAYEE_MSISDN}"
           },
-          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}"
+          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
+		   "headers": {
+            "Content-Type": "application/json"
+          }
         },
         {
           "id": 2,
@@ -66,7 +70,8 @@
           "method": "post",
           "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
           "headers": {
-            "FSPIOP-Source": "{$inputs.toFspId}"
+            "FSPIOP-Source": "{$inputs.toFspId}",
+			 "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "displayName": "Test PayeeFSP",
@@ -93,7 +98,8 @@
             "Accept": "{$inputs.accept}",
             "Content-Type": "{$inputs.contentType}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "params": {
             "Type": "MSISDN",

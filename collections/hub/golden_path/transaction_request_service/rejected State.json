@@ -24,7 +24,8 @@
             "Date": "{$function.generic.curDate}",
             "Content-Type": "application/vnd.interoperability.transactionRequests+json;version=1.0",
             "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
-            "FSPIOP-HTTP-Method": "POST"
+            "FSPIOP-HTTP-Method": "POST",
+			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "transactionRequestId": "{$function.generic.generateUUID}",
@@ -150,7 +151,8 @@
             "Content-Type": "application/vnd.interoperability.transactionRequests+json;version=1.0",
             "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
             "FSPIOP-HTTP-Method": "PUT",
-            "FSPIOP-URI": "/transactionRequests/{$prev.5.request.body.transactionRequestId}"
+            "FSPIOP-URI": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
+			"Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
             "transactionId": "{$prev.5.request.body.transactionRequestId}",
@@ -243,7 +245,8 @@
             "Content-Type": "application/vnd.interoperability.transactionRequests+json;version=1.0",
             "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
             "FSPIOP-HTTP-Method": "GET",
-            "FSPIOP-URI": "/transactionRequests"
+            "FSPIOP-URI": "/transactionRequests",
+			"Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [

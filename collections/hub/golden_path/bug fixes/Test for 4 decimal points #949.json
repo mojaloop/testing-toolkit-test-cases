@@ -21,7 +21,8 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "FSPIOP-Destination": "{$inputs.toFspId}"
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -177,7 +178,8 @@
             "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",

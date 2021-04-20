@@ -46,6 +46,10 @@
                 ]
               }
             ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           }
         },
         {
@@ -70,7 +74,8 @@
             "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
             "Accept": "application/vnd.interoperability.parties+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}"
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+			 "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -140,6 +145,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+			 "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
             "FSPIOP-Destination": "payeefspNOTFOUND",
             "FSPIOP-URI": "/transfers",
             "FSPIOP-HTTP-Method": "POST"
