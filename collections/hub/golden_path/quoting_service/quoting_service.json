@@ -21,7 +21,8 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
-            "FSPIOP-Destination": "{$inputs.toFspId}"
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+			"Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -244,7 +245,11 @@
               }
             ]
           },
-          "scriptingEngine": "javascript",
+         "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payerfsp}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
           "scripts": {
             "postRequest": {
               "exec": [
@@ -280,7 +285,8 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.payerfsp}",
-            "FSPIOP-Destination": "{$inputs.toFspId}"
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -309,7 +315,8 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "FSPIOP-Source": "{$inputs.toFspId}",
-            "FSPIOP-Destination": "{$inputs.toFspId}"
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -416,7 +423,8 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
-            "FSPIOP-Destination": "{$inputs.toFspId}"
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+			"Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -522,7 +530,8 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.payerfsp}",
-            "FSPIOP-Destination": "{$inputs.toFspId}"
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -572,7 +581,8 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.payerfsp}",
             "FSPIOP-Destination": "{$inputs.toFspId}",
-            "Content-Type": "application/vnd.interoperability.quotes+xml;version=1.0"
+            "Content-Type": "application/vnd.interoperability.quotes+xml;version=1.0",
+			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [

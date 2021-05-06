@@ -20,7 +20,8 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}",
+             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
@@ -181,7 +182,8 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}",
+             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
@@ -287,7 +289,8 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}",
+             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
@@ -400,7 +403,8 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}",
+             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
@@ -483,7 +487,8 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/json",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}",
+             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
@@ -567,6 +572,7 @@
             "Content-Type": "application/xml",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
@@ -649,7 +655,8 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}",
+             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "payeefspNOTFOUND"
           },
           "body": {
@@ -733,6 +740,7 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.payeefsp}"
           },
           "body": {
@@ -822,7 +830,8 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=9.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}",
+             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.payeefsp}"
           },
           "body": {
@@ -908,6 +917,7 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}"
           },
           "body": {
@@ -965,6 +975,7 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
             "Accept": "*/*"
           },
@@ -1014,36 +1025,53 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0"
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+			"Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
-          "tests": {
+          "tests":  {
             "assertions": [
               {
                 "id": 1,
                 "description": "Response code is 400",
                 "exec": [
-                  "expect(response.status).to.equal(400)"
+                  "if (environment.WS02_OAUTH_ENABLED===true) {",
+                  "",
+                  "expect(response.status).to.equal(403)",
+                  "  ",
+                  "}else{",
+                  "  ",
+                  "  expect(response.status).to.equal(400)",
+                  "}"
                 ]
               },
               {
                 "id": 2,
                 "description": "Check Missing mandatory element",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element');"
+                  "if (environment.WS02_OAUTH_ENABLED===true) {",
+                  "",
+                  "",
+                  "}else{expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element');}"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check error code 3102",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.equal('3102');"
+                  "if (environment.WS02_OAUTH_ENABLED===true) {",
+                  "",
+                  "",
+                  "}else {expect(response.body.errorInformation.errorCode).to.equal('3102');}"
                 ]
               },
               {
                 "id": 4,
                 "description": "Error message fspiop-source is required",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('fspiop-source');"
+                  "if (environment.WS02_OAUTH_ENABLED===true) {",
+                  "",
+                  "",
+                  "}else{expect(response.body.errorInformation.errorDescription).to.include('fspiop-source');}"
                 ]
               }
             ]
@@ -1069,7 +1097,8 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}"
+             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [

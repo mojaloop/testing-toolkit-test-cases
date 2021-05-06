@@ -31,6 +31,10 @@
             ]
           },
           "scriptingEngine": "javascript",
+		   "headers": {
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
           "scripts": {
             "postRequest": {
               "exec": [
@@ -61,7 +65,10 @@
             "id": "{$environment.SIM2_PositionAccountId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {},
+          "headers": {
+		   "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+		  },
           "body": {
             "isActive": false
           }
@@ -84,6 +91,7 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
+			 "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
@@ -281,6 +289,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
+			 "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
@@ -452,7 +461,10 @@
             "id": "{$environment.SIM2_PositionAccountId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {},
+          "headers": {
+		  "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+		  },
           "body": {
             "isActive": true
           },
@@ -486,6 +498,7 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
+			 "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
@@ -749,6 +762,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
+			 "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
