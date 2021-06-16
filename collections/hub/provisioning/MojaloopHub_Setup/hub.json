@@ -187,6 +187,84 @@
               }
             ]
           }
+        },
+        {
+          "id": 6,
+          "description": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT Second Currency",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "post",
+          "params": {
+            "name": "Hub"
+          },
+          "body": {
+            "type": "HUB_MULTILATERAL_SETTLEMENT",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "description": "Add Hub Account-HUB_RECONCILIATION Second Currency",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "post",
+          "params": {
+            "name": "Hub"
+          },
+          "body": {
+            "type": "HUB_RECONCILIATION",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
         }
       ]
     },
@@ -214,6 +292,48 @@
             "ledgerAccountType": "POSITION",
             "autoPositionReset": true,
             "currency": "{$inputs.currency}",
+            "settlementAccountType": "SETTLEMENT"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "description": "Create settlement model DEFAULT DEFERRED NET",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/settlementModels",
+          "path": "/settlementModels",
+          "method": "post",
+          "body": {
+            "name": "DEFAULTDEFERREDNET",
+            "settlementGranularity": "NET",
+            "settlementInterchange": "MULTILATERAL",
+            "settlementDelay": "DEFERRED",
+            "requireLiquidityCheck": true,
+            "ledgerAccountType": "POSITION",
+            "autoPositionReset": true,
             "settlementAccountType": "SETTLEMENT"
           },
           "headers": {
