@@ -21,7 +21,7 @@
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
-              "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
@@ -49,36 +49,46 @@
                 "\r",
                 "var jsonData = response.body;\r",
                 "console.log(jsonData);\r",
-                "    for(var i in jsonData) {\r",
-                "        if((jsonData[i].ledgerAccountType === 'POSITION') ) {\r",
-                "          \r",
-                "environment.participant1accountid=jsonData[i].id;\r",
+                "const {$inputs.SIMPAYER_NAME} = {}\r",
                 "\r",
-                "        }\r",
+                "for (const i in jsonData) {\r",
+                "  if (jsonData[i].ledgerAccountType === 'POSITION') {\r",
+                "    {$inputs.SIMPAYER_NAME}[jsonData[i].currency] = jsonData[i].id\r",
+                "    environment.accounts = {\r",
+                "      ...environment.accounts,\r",
+                "      {$inputs.SIMPAYER_NAME}\r",
                 "    }\r",
-                "console.log(environment.participant1accountid);"
+                "  };\r",
+                "}\r",
+                "\r",
+                "console.log(environment.accounts.{$inputs.SIMPAYER_NAME});"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
               ]
             }
           }
         },
         {
           "id": 4,
-          "description": "Active account for payerfsp",
+          "description": "Active account for currency for payerfsp",
           "apiVersion": {
             "minorVersion": 3,
             "majorVersion": 9,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/accounts/{$environment.participant1accountid}",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/accounts/{$requestVariables.currentId}",
           "method": "put",
           "params": {
             "name": "{$inputs.SIMPAYER_NAME}",
-            "id": "{$environment.participant1accountid}"
+            "id": "{$requestVariables.currentId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
-             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "application/json",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
@@ -95,10 +105,66 @@
           },
           "body": {
             "isActive": true
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.currentId = environment.accounts[environment.SIMPAYER_NAME][environment.currency]",
+                "",
+                "console.log(requestVariables.currentId)"
+              ]
+            }
           }
         },
         {
           "id": 5,
+          "description": "Active account for currency2 for payerfsp",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/accounts/{$requestVariables.currentId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIMPAYER_NAME}",
+            "id": "{$requestVariables.currentId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/json",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "isActive": true
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.currentId = environment.accounts[environment.SIMPAYER_NAME][environment.currency2]",
+                "",
+                "console.log(requestVariables.currentId)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
           "description": "Get payeefsp account id",
           "apiVersion": {
             "minorVersion": 3,
@@ -106,14 +172,14 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/payeefsp/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "payeefsp"
+            "name": "{$inputs.SIMPAYEE_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
-             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
@@ -129,7 +195,7 @@
                 "id": 2,
                 "description": "Account id not null",
                 "exec": [
-                  "expect(environment.participant2accountid).to.not.be.null;"
+                  "expect(environment.participant1accountid).to.not.be.null;"
                 ]
               }
             ]
@@ -141,38 +207,48 @@
                 "\r",
                 "var jsonData = response.body;\r",
                 "console.log(jsonData);\r",
-                "    for(var i in jsonData) {\r",
-                "        if((jsonData[i].ledgerAccountType === 'POSITION') ) {\r",
-                "          \r",
-                "environment.participant2accountid=jsonData[i].id;\r",
+                "const {$inputs.SIMPAYEE_NAME} = {}\r",
                 "\r",
-                "        }\r",
+                "for (const i in jsonData) {\r",
+                "  if (jsonData[i].ledgerAccountType === 'POSITION') {\r",
+                "    {$inputs.SIMPAYEE_NAME}[jsonData[i].currency] = jsonData[i].id\r",
+                "    environment.accounts = {\r",
+                "      ...environment.accounts,\r",
+                "      {$inputs.SIMPAYEE_NAME}\r",
                 "    }\r",
-                "console.log(environment.participant2accountid);"
+                "  };\r",
+                "}\r",
+                "\r",
+                "console.log(environment.accounts.{$inputs.SIMPAYEE_NAME});"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
               ]
             }
           }
         },
         {
-          "id": 6,
-          "description": "Active account for payeefsp",
+          "id": 7,
+          "description": "Active account for currency for payeefsp",
           "apiVersion": {
             "minorVersion": 3,
             "majorVersion": 9,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/payeefsp/accounts/{$environment.participant2accountid}",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/accounts/{$requestVariables.currentId}",
           "method": "put",
           "params": {
-            "name": "payeefsp",
-            "id": "{$environment.participant2accountid}"
+            "name": "{$inputs.SIMPAYEE_NAME}",
+            "id": "{$requestVariables.currentId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -187,84 +263,38 @@
           },
           "body": {
             "isActive": true
-          }
-        },
-        {
-          "id": 7,
-          "description": "Get testfsp1 account id ",
-          "apiVersion": {
-            "minorVersion": 3,
-            "majorVersion": 9,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/testfsp1/accounts",
-          "method": "get",
-          "params": {
-            "name": "testfsp1"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {
-            "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response code is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Account id not null",
-                "exec": [
-                  "expect(environment.participant3accountid).to.not.be.null;"
-                ]
-              }
-            ]
           },
           "scriptingEngine": "javascript",
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "\r",
-                "var jsonData = response.body;\r",
-                "console.log(jsonData);\r",
-                "    for(var i in jsonData) {\r",
-                "        if((jsonData[i].ledgerAccountType === 'POSITION') ) {\r",
-                "          \r",
-                "environment.participant3accountid=jsonData[i].id;\r",
-                "\r",
-                "        }\r",
-                "    }\r",
-                "console.log(environment.participant3accountid);"
+                "requestVariables.currentId = environment.accounts[environment.SIMPAYEE_NAME][environment.currency]",
+                "",
+                "console.log(requestVariables.currentId)"
               ]
             }
           }
         },
         {
           "id": 8,
-          "description": "Active account for testfsp1",
+          "description": "Active account for currency2 for payeefsp",
           "apiVersion": {
             "minorVersion": 3,
             "majorVersion": 9,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/testfsp1/accounts/{$environment.participant3accountid}",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts/{$requestVariables.currentId}",
           "method": "put",
           "params": {
-            "name": "testfsp1",
-            "id": "{$environment.participant3accountid}"
+            "name": "{$inputs.SIMPAYEE_NAME}",
+            "id": "{$requestVariables.currentId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "application/json",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -279,26 +309,36 @@
           },
           "body": {
             "isActive": true
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.currentId = environment.accounts[environment.SIMPAYEE_NAME][environment.currency2]",
+                "",
+                "console.log(requestVariables.currentId)"
+              ]
+            }
           }
         },
         {
           "id": 9,
-          "description": "Get testfsp2 account id ",
+          "description": "Get testfsp1 account id",
           "apiVersion": {
             "minorVersion": 3,
             "majorVersion": 9,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/testfsp2/accounts",
+          "path": "/participants/{$inputs.SIM1_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "testfsp2"
+            "name": "{$inputs.SIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -313,7 +353,7 @@
                 "id": 2,
                 "description": "Account id not null",
                 "exec": [
-                  "expect(environment.participant3accountid).to.not.be.null;"
+                  "expect(environment.participant1accountid).to.not.be.null;"
                 ]
               }
             ]
@@ -325,38 +365,48 @@
                 "\r",
                 "var jsonData = response.body;\r",
                 "console.log(jsonData);\r",
-                "    for(var i in jsonData) {\r",
-                "        if((jsonData[i].ledgerAccountType === 'POSITION') ) {\r",
-                "          \r",
-                "environment.participant4accountid=jsonData[i].id;\r",
+                "const {$inputs.SIM1_NAME} = {}\r",
                 "\r",
-                "        }\r",
+                "for (const i in jsonData) {\r",
+                "  if (jsonData[i].ledgerAccountType === 'POSITION') {\r",
+                "    {$inputs.SIM1_NAME}[jsonData[i].currency] = jsonData[i].id\r",
+                "    environment.accounts = {\r",
+                "      ...environment.accounts,\r",
+                "      {$inputs.SIM1_NAME}\r",
                 "    }\r",
-                "console.log(environment.participant4accountid);"
+                "  };\r",
+                "}\r",
+                "\r",
+                "console.log(environment.accounts.{$inputs.SIM1_NAME});"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
               ]
             }
           }
         },
         {
           "id": 10,
-          "description": "Active account for testfsp1 Copy",
+          "description": "Active account for currency for testfsp1",
           "apiVersion": {
             "minorVersion": 3,
             "majorVersion": 9,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/testfsp2/accounts/{$environment.participant4accountid}",
+          "path": "/participants/{$inputs.SIM1_NAME}/accounts/{$requestVariables.currentId}",
           "method": "put",
           "params": {
-            "name": "testfsp2",
-            "id": "{$environment.participant4accountid}"
+            "name": "{$inputs.SIM1_NAME}",
+            "id": "{$requestVariables.currentId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "application/json",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -371,6 +421,220 @@
           },
           "body": {
             "isActive": true
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.currentId = environment.accounts[environment.SIM1_NAME][environment.currency]",
+                "",
+                "console.log(requestVariables.currentId)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 11,
+          "description": "Active account for currency2 for testfsp1",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM1_NAME}/accounts/{$requestVariables.currentId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIM1_NAME}",
+            "id": "{$requestVariables.currentId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/json",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "isActive": true
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.currentId = environment.accounts[environment.SIM1_NAME][environment.currency2]",
+                "",
+                "console.log(requestVariables.currentId)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 12,
+          "description": "Get testfsp2 account id",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Account id not null",
+                "exec": [
+                  "expect(environment.participant1accountid).to.not.be.null;"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "\r",
+                "var jsonData = response.body;\r",
+                "console.log(jsonData);\r",
+                "const {$inputs.SIM2_NAME} = {}\r",
+                "\r",
+                "for (const i in jsonData) {\r",
+                "  if (jsonData[i].ledgerAccountType === 'POSITION') {\r",
+                "    {$inputs.SIM2_NAME}[jsonData[i].currency] = jsonData[i].id\r",
+                "    environment.accounts = {\r",
+                "      ...environment.accounts,\r",
+                "      {$inputs.SIM2_NAME}\r",
+                "    }\r",
+                "  };\r",
+                "}\r",
+                "\r",
+                "console.log(environment.accounts.{$inputs.SIM2_NAME});"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 13,
+          "description": "Active account for currency for testfsp2",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts/{$requestVariables.currentId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}",
+            "id": "{$requestVariables.currentId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/json",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "isActive": true
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.currentId = environment.accounts[environment.SIM2_NAME][environment.currency]",
+                "",
+                "console.log(requestVariables.currentId)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 14,
+          "description": "Active account for currency2 for testfsp2",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts/{$requestVariables.currentId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}",
+            "id": "{$requestVariables.currentId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/json",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "isActive": true
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.currentId = environment.accounts[environment.SIM2_NAME][environment.currency2]",
+                "",
+                "console.log(requestVariables.currentId)"
+              ]
+            }
           }
         }
       ]
@@ -397,7 +661,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -454,7 +718,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -514,7 +778,7 @@
         },
         {
           "id": 3,
-          "description": "Create Settlement for Closed Window",
+          "description": "Create Settlement for Closed Window in deferred settlement model for currency",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -527,7 +791,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -580,7 +844,7 @@
           },
           "scriptingEngine": "javascript",
           "body": {
-            "settlementModel": "DEFERREDNET",
+            "settlementModel": "{$requestVariables.settlementModel}",
             "reason": "TESTING",
             "settlementWindows": [
               {
@@ -612,7 +876,9 @@
                 "/*requestVariables.closedWindowID = Number(environment.closedWindowID);",
                 "*/",
                 "",
-                ""
+                "requestVariables.settlementModel = environment.settlementModels.deferred[environment.currency]",
+                "",
+                "console.log(requestVariables.settlementModel)"
               ]
             }
           }
@@ -634,7 +900,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -730,7 +996,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -821,7 +1087,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -912,7 +1178,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -983,6 +1249,514 @@
               ]
             }
           }
+        },
+        {
+          "id": 8,
+          "description": "Create Settlement for Closed Window in default deferred settlement model ",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements",
+          "path": "/settlements",
+          "method": "post",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Settlement State should be PENDING_SETTLEMENT",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(environment.winstate).to.equal(\"PENDING_SETTLEMENT\")",
+                  "}"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Number of associated windows should be 1",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.settlementWindows.length).to.equal(1)",
+                  "}"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Associated Settlement Window ID is the correct one",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.settlementWindows[0].id).to.equal(environment.closedWindowID)",
+                  "}"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Associated Settlement Window state should be PENDING_SETTLEMENT",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.settlementWindows[0].state).to.equal(\"PENDING_SETTLEMENT\")",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "body": {
+            "settlementModel": "{$environment.settlementModels.deferred.default}",
+            "reason": "TESTING",
+            "settlementWindows": [
+              {
+                "id": "{$requestVariables.closedWindowID}"
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "environment.settlementId = jsonData.id;",
+                "environment.winstate = jsonData.state;",
+                "",
+                "if (response.body.errorInformation.errorCode === \"3100\"){",
+                "  ",
+                "  environment.WINDOWISEMPTY = true;",
+                "  console.log(\"Window is empty\");",
+                "}else{",
+                "  environment.WINDOWISEMPTY = false;",
+                "}"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "//environment.closedWindowID = 6;",
+                "requestVariables.closedWindowID = Number(environment.closedWindowID);",
+                "",
+                "/*requestVariables.closedWindowID = Number(environment.closedWindowID);",
+                "*/",
+                "",
+                "requestVariables.settlementModel = environment.settlementModels.deferred[environment.currency]",
+                "",
+                "console.log(requestVariables.settlementModel)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 9,
+          "description": "Prepare Settlement Default Settlement Model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.settlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.settlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "console.log(environment.settlementId);",
+                "//environment.settlementId = 6;",
+                "var i=0;",
+                "var dfspsacc = [];",
+                "var callbackpayer;",
+                "",
+                "environment.winstate = res.state;",
+                "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
+                "",
+                "res.participants.map(function (participant) {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "//for(const curAccount of account) {     ",
+                "",
+                " dfspsacc[i] = {",
+                "        dfspid: participant.id,",
+                "        dfspaccid: curAccount.id ",
+                "    }",
+                "    i++;",
+                "//}",
+                "})",
+                " })",
+                "    ",
+                "",
+                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "for(let dfspsaccx of dfspsacc){",
+                "  console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
+                "              \"participants\": [",
+                "                {",
+                "                  \"id\": dfspsaccx.dfspid,",
+                "                  \"accounts\": [",
+                "                    {",
+                "                      \"id\": dfspsaccx.dfspaccid,",
+                "                      \"reason\": \"Transfers recorded for payer\",",
+                "                      \"state\": \"PS_TRANSFERS_RECORDED\"",
+                "                    }",
+                "                  ]",
+                "                }",
+                "              ]",
+                "            },config)    ",
+                "console.log(callbackpayer.data);  ",
+                "}",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
+                "/*res.participants.map(participant => {",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "    .forEach(curAccount => {*/",
+                "  "
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 10,
+          "description": "Reserve Settlement Default Settlement Model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.settlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.settlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "//environment.settlementId = 1;",
+                "var i=0;",
+                "var dfspsacc = [];",
+                "var callbackpayer;",
+                "",
+                "environment.winstate = res.state;",
+                "",
+                "if(environment.winstate===\"PS_TRANSFERS_RECORDED\"){",
+                "",
+                "",
+                "res.participants.map(function (participant) {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "//for(const curAccount of account) {     ",
+                "",
+                " dfspsacc[i] = {",
+                "        dfspid: participant.id,",
+                "        dfspaccid: curAccount.id ",
+                "    }",
+                "    i++;",
+                "//}",
+                "})",
+                " })",
+                "    ",
+                "",
+                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "for(let dfspsaccx of dfspsacc){",
+                "  //console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
+                "              \"participants\": [",
+                "                {",
+                "                  \"id\": dfspsaccx.dfspid,",
+                "                  \"accounts\": [",
+                "                    {",
+                "                      \"id\": dfspsaccx.dfspaccid,",
+                "                      \"reason\": \"Transfers reserved\",",
+                "                      \"state\": \"PS_TRANSFERS_RESERVED\"",
+                "                    }",
+                "                  ]",
+                "                }",
+                "              ]",
+                "            },config)    ",
+                "console.log(callbackpayer.data);  ",
+                "}",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
+                "/*res.participants.map(participant => {",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "    .forEach(curAccount => {*/",
+                "  "
+              ]
+            }
+          }
+        },
+        {
+          "id": 11,
+          "description": "Commit Settlement Default Settlement Model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.settlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.settlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "//environment.settlementId = 1;",
+                "var i=0;",
+                "var dfspsacc = [];",
+                "var callbackpayer;",
+                "",
+                "environment.winstate = res.state;",
+                "",
+                "if(environment.winstate===\"PS_TRANSFERS_RESERVED\"){",
+                "",
+                "",
+                "res.participants.map(function (participant) {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "//for(const curAccount of account) {     ",
+                "",
+                " dfspsacc[i] = {",
+                "        dfspid: participant.id,",
+                "        dfspaccid: curAccount.id ",
+                "    }",
+                "    i++;",
+                "//}",
+                "})",
+                " })",
+                "    ",
+                "",
+                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "for(let dfspsaccx of dfspsacc){",
+                "  //console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
+                "              \"participants\": [",
+                "                {",
+                "                  \"id\": dfspsaccx.dfspid,",
+                "                  \"accounts\": [",
+                "                    {",
+                "                      \"id\": dfspsaccx.dfspaccid,",
+                "                      \"reason\": \"Transfers committed\",",
+                "                      \"state\": \"PS_TRANSFERS_COMMITTED\"",
+                "                    }",
+                "                  ]",
+                "                }",
+                "              ]",
+                "            },config)    ",
+                "console.log(callbackpayer.data);  ",
+                "}",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
+                "/*res.participants.map(participant => {",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "    .forEach(curAccount => {*/",
+                "  "
+              ]
+            }
+          }
+        },
+        {
+          "id": 12,
+          "description": "Settle Settlement Default Settlement Model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.settlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.settlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "//environment.settlementId = 1;",
+                "var i=0;",
+                "var dfspsacc = [];",
+                "var callbackpayer;",
+                "",
+                "environment.winstate = res.state;",
+                "",
+                "if(environment.winstate===\"PS_TRANSFERS_COMMITTED\"){",
+                "",
+                "",
+                "res.participants.map(function (participant) {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "//for(const curAccount of account) {     ",
+                "",
+                " dfspsacc[i] = {",
+                "        dfspid: participant.id,",
+                "        dfspaccid: curAccount.id ",
+                "    }",
+                "    i++;",
+                "//}",
+                "})",
+                " })",
+                "    ",
+                "",
+                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "for(let dfspsaccx of dfspsacc){",
+                "  //console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
+                "              \"participants\": [",
+                "                {",
+                "                  \"id\": dfspsaccx.dfspid,",
+                "                  \"accounts\": [",
+                "                    {",
+                "                      \"id\": dfspsaccx.dfspaccid,",
+                "                      \"reason\": \"Transfers settled for payer\",",
+                "                      \"state\": \"SETTLED\"",
+                "                    }",
+                "                  ]",
+                "                }",
+                "              ]",
+                "            },config)    ",
+                "console.log(callbackpayer.data);  ",
+                "}",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
+                "",
+                "",
+                "  "
+              ]
+            }
+          }
+        },
+        {
+          "id": 13,
+          "description": "get settlements models",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/settlementModels",
+          "path": "/settlementModels",
+          "method": "get",
+          "scriptingEngine": "javascript",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "environment.settlementModels = { deferred: {}}",
+                "for (const sm of jsonData) {",
+                "  if (sm.settlementDelay === 'DEFERRED') {",
+                "    if (sm.currency === null) {",
+                "      environment.settlementModels.deferred.default = sm.name",
+                "    } else {",
+                "      environment.settlementModels.deferred[sm.currency] = sm.name",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "console.log(environment.settlementModels)"
+              ]
+            }
+          }
         }
       ]
     },
@@ -1018,37 +1792,35 @@
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
+                "environment.balances = {}",
                 ""
               ]
             },
             "postRequest": {
               "exec": [
-                "var res = response.body;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM1_NAME} = { beforeTransfer: {} }",
+                "",
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM1_NAME}.beforeTransfer).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM1_NAME}.beforeTransfer[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM1_NAME}.beforeTransfer[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM1_NAME}",
+                "  }",
+                "}",
                 "",
                 "",
-                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "    ",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "  environment.testfsp1SettleAccountBalanceBeforeTransfer= curAccount.value",
-                "        }",
-                "        ",
-                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "  environment.testfsp1PositionAccountBalanceBeforeTransfer= curAccount.value",
-                "        }     ",
-                "",
-                "",
-                "})",
-                "//})",
-                "",
-                "                      ",
-                "console.log(environment.testfsp1SettleAccountBalanceBeforeTransfer);",
-                "console.log(environment.testfsp1PositionAccountBalanceBeforeTransfer);"
+                "console.log(environment.balances);"
               ]
             }
           }
@@ -1081,7 +1853,7 @@
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
@@ -1092,26 +1864,23 @@
             },
             "postRequest": {
               "exec": [
-                "var res = response.body;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM2_NAME} = { beforeTransfer: {} }",
+                "",
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM2_NAME}.beforeTransfer).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM2_NAME}.beforeTransfer[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM2_NAME}.beforeTransfer[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM2_NAME}",
+                "  }",
+                "}",
                 "",
                 "",
-                "   res.filter(account => account.currency === environment.currency2).forEach(curAccount => {",
-                "    ",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "  environment.testfsp2SettleAccountBalanceBeforeTransfer= curAccount.value",
-                "        }",
-                "        ",
-                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "  environment.testfsp2PositionAccountBalanceBeforeTransfer= curAccount.value",
-                "        }     ",
-                "",
-                "",
-                "})",
-                "//})",
-                "",
-                "                      ",
-                "console.log(environment.testfsp2SettleAccountBalanceBeforeTransfer);",
-                "console.log(environment.testfsp2PositionAccountBalanceBeforeTransfer);"
+                "console.log(environment.balances);"
               ]
             }
           }
@@ -1144,7 +1913,7 @@
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
@@ -1155,26 +1924,23 @@
             },
             "postRequest": {
               "exec": [
-                "var res = response.body;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYER_NAME} = { beforeTransfer: {} }",
+                "",
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYER_NAME}.beforeTransfer).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYER_NAME}.beforeTransfer[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYER_NAME}.beforeTransfer[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYER_NAME}",
+                "  }",
+                "}",
                 "",
                 "",
-                "   res.filter(account => account.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
-                "    ",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "  environment.payerfspSettleAccountBalanceBeforeTransfer= curAccount.value",
-                "        }",
-                "        ",
-                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "  environment.payerfspPositionAccountBalanceBeforeTransfer= curAccount.value",
-                "        }     ",
-                "",
-                "",
-                "})",
-                "//})",
-                "",
-                "                      ",
-                "console.log(environment.payerfspSettleAccountBalanceBeforeTransfer);",
-                "console.log(environment.payerfspPositionAccountBalanceBeforeTransfer);"
+                "console.log(environment.balances);"
               ]
             }
           }
@@ -1188,10 +1954,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.payeefsp}/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.payeefsp}"
+            "name": "{$inputs.SIMPAYEE_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -1207,7 +1973,7 @@
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
@@ -1218,26 +1984,23 @@
             },
             "postRequest": {
               "exec": [
-                "var res = response.body;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYEE_NAME} = { beforeTransfer: {} }",
+                "",
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYEE_NAME}.beforeTransfer).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYEE_NAME}.beforeTransfer[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYEE_NAME}.beforeTransfer[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYEE_NAME}",
+                "  }",
+                "}",
                 "",
                 "",
-                "   res.filter(account => account.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
-                "    ",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "  environment.payeefspSettleAccountBalanceBeforeTransfer= curAccount.value",
-                "        }",
-                "        ",
-                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "  environment.payeefspPositionAccountBalanceBeforeTransfer= curAccount.value",
-                "        }     ",
-                "",
-                "",
-                "})",
-                "//})",
-                "",
-                "                      ",
-                "console.log(environment.payeefspSettleAccountBalanceBeforeTransfer);",
-                "console.log(environment.payeefspPositionAccountBalanceBeforeTransfer);"
+                "console.log(environment.balances);"
               ]
             }
           }
@@ -1259,7 +2022,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -1276,21 +2039,23 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var jsonData = response.body;\r",
-                "jsonData\r",
-                "    .filter(account => account.currency === environment.SIMPAYER_CURRENCY)\r",
-                "    .forEach(curAccount => {\r",
-                "        if(curAccount.ledgerAccountType === \"HUB_RECONCILIATION\") {\r",
-                "            environment.hubReconciliationAccountBalanceBeforeTransfer=curAccount.value;\r",
-                "        }\r",
-                "        if(curAccount.ledgerAccountType === \"HUB_MULTILATERAL_SETTLEMENT\") {\r",
-                "            environment.hubMultilateralAccountBalanceBeforeTransfer=curAccount.value;\r",
-                "        }\r",
-                "    })\r",
-                "\r",
-                "\r",
-                "console.log(environment.hubReconciliationAccountBalanceBeforeTransfer);\r",
-                "console.log(environment.hubMultilateralAccountBalanceBeforeTransfer);"
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const Hub = { beforeTransfer: {} }",
+                "",
+                "for (const i in jsonData) {",
+                "  if (!Object.keys(Hub.beforeTransfer).includes(jsonData[i].currency)) {",
+                "    Hub.beforeTransfer[jsonData[i].currency] = {}",
+                "  }",
+                "  Hub.beforeTransfer[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    Hub",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances);"
               ]
             }
           }
@@ -1317,7 +2082,7 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
-			"Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
@@ -1347,7 +2112,7 @@
             "amountType": "RECEIVE",
             "amount": {
               "amount": "60",
-              "currency": "{$inputs.currency2}"
+              "currency": "{$inputs.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -1484,7 +2249,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
-			"Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -1615,7 +2380,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
             "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
-			"Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -1781,7 +2546,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
-			"Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -1789,7 +2554,7 @@
             "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
             "amount": {
               "amount": "55",
-              "currency": "{$inputs.currency}"
+              "currency": "{$inputs.currency2}"
             },
             "expiration": "{$environment.testfsp1callbacks.data.expiration}",
             "ilpPacket": "{$environment.testfsp1callbacks.data.ilpPacket}",
@@ -1908,7 +2673,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
             "FSPIOP-Destination": "{$inputs.SIM1_NAME}",
-			"Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -1937,7 +2702,7 @@
             "amountType": "RECEIVE",
             "amount": {
               "amount": "35",
-              "currency": "{$inputs.currency2}"
+              "currency": "{$inputs.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -2074,7 +2839,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
-			"Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -2201,7 +2966,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM2_NAME}",
             "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
-			"Authorization": "{$inputs.TESTFSP2_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TESTFSP2_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -2368,7 +3133,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM2_NAME}",
-			"Authorization": "{$inputs.TESTFSP2_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TESTFSP2_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -2376,7 +3141,7 @@
             "payeeFsp": "{$inputs.SIMPAYER_NAME}",
             "amount": {
               "amount": "20",
-              "currency": "{$inputs.currency}"
+              "currency": "{$inputs.currency2}"
             },
             "expiration": "{$environment.testfsp2callbacks.data.expiration}",
             "ilpPacket": "{$environment.testfsp2callbacks.data.ilpPacket}",
@@ -2493,7 +3258,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}",
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}",
-			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -2522,7 +3287,7 @@
             "amountType": "RECEIVE",
             "amount": {
               "amount": "35",
-              "currency": "{$inputs.currency2}"
+              "currency": "{$inputs.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -2659,7 +3424,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}",
-			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -2786,7 +3551,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}",
             "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
-			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -2952,7 +3717,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}",
-			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -2960,7 +3725,7 @@
             "payeeFsp": "{$inputs.SIMPAYER_NAME}",
             "amount": {
               "amount": "25",
-              "currency": "{$inputs.currency}"
+              "currency": "{$inputs.currency2}"
             },
             "expiration": "{$environment.payeefspcallbacks.data.expiration}",
             "ilpPacket": "{$environment.payeefspcallbacks.data.ilpPacket}",
@@ -3080,7 +3845,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3137,7 +3902,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3197,7 +3962,7 @@
         },
         {
           "id": 3,
-          "description": "Create Settlement for Closed Window",
+          "description": "Create Settlement for Closed Window with Settlement Model for Currency",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -3210,7 +3975,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3253,7 +4018,7 @@
           },
           "scriptingEngine": "javascript",
           "body": {
-            "settlementModel": "DEFERREDNET",
+            "settlementModel": "{$requestVariables.settlementModel}",
             "reason": "TESTING",
             "settlementWindows": [
               {
@@ -3266,7 +4031,7 @@
             "postRequest": {
               "exec": [
                 "var jsonData = response.body;",
-                "environment.settlementId = jsonData.id;",
+                "environment.deferredSettlementId = jsonData.id;",
                 "environment.winstate = jsonData.state;",
                 "",
                 ""
@@ -3275,10 +4040,100 @@
             "preRequest": {
               "exec": [
                 "//environment.closedWindowID = 6;",
-                "environment.closedWindowID = Number(environment.closedWindowID);",
+                "requestVariables.closedWindowID = Number(environment.closedWindowID);",
                 "",
                 "/*requestVariables.closedWindowID = Number(environment.closedWindowID);",
-                "*/"
+                "*/",
+                "",
+                "requestVariables.settlementModel = environment.settlementModels.deferred[environment.currency]",
+                "",
+                "console.log(requestVariables.settlementModel)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "description": "Create Settlement for Closed Window for Default Settlement Model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements",
+          "path": "/settlements",
+          "method": "post",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Settlement State should be PENDING_SETTLEMENT",
+                "exec": [
+                  "expect(environment.winstate).to.equal(\"PENDING_SETTLEMENT\")"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Number of associated windows should be 1",
+                "exec": [
+                  "expect(response.body.settlementWindows.length).to.equal(1)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Associated Settlement Window ID is the correct one",
+                "exec": [
+                  "expect(response.body.settlementWindows[0].id).to.equal(environment.closedWindowID)"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Associated Settlement Window state should be PENDING_SETTLEMENT",
+                "exec": [
+                  "expect(response.body.settlementWindows[0].state).to.equal(\"PENDING_SETTLEMENT\")"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "body": {
+            "settlementModel": "{$requestVariables.settlementModel}",
+            "reason": "TESTING",
+            "settlementWindows": [
+              {
+                "id": "{$environment.closedWindowID}"
+              }
+            ]
+          },
+          "delay": "3000",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "environment.defaultSettlementId = jsonData.id;",
+                "environment.winstate = jsonData.state;",
+                "",
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "requestVariables.settlementModel = environment.settlementModels.deferred.default",
+                "",
+                "console.log(requestVariables.settlementModel)"
               ]
             }
           }
@@ -3306,7 +4161,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3323,19 +4178,31 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.testfsp1SettleAccountBalanceAfterTransfer= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.testfsp1PositionAccountBalanceAfterTransfer= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM1_NAME} = {",
+                "  ...environment.balances[environment.SIM1_NAME],",
+                "  ...{afterTransfer: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM1_NAME}.afterTransfer).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM1_NAME}.afterTransfer[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM1_NAME}.afterTransfer[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM1_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "environment.balances.afterTransfer = {}"
               ]
             }
           }
@@ -3357,7 +4224,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3374,19 +4241,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.testfsp2SettleAccountBalanceAfterTransfer= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.testfsp2PositionAccountBalanceAfterTransfer= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM2_NAME} = {",
+                "  ...environment.balances[environment.SIM2_NAME],",
+                "  ...{afterTransfer: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM2_NAME}.afterTransfer).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM2_NAME}.afterTransfer[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM2_NAME}.afterTransfer[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM2_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -3408,7 +4282,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3425,19 +4299,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.payerfspSettleAccountBalanceAfterTransfer= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.payerfspPositionAccountBalanceAfterTransfer= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYER_NAME} = {",
+                "  ...environment.balances[environment.SIMPAYER_NAME],",
+                "  ...{afterTransfer: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYER_NAME}.afterTransfer).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYER_NAME}.afterTransfer[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYER_NAME}.afterTransfer[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYER_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -3451,15 +4332,15 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.payeefsp}/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.payeefsp}"
+            "name": "{$inputs.SIMPAYEE_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3476,19 +4357,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.payeefspSettleAccountBalanceAfterTransfer= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.payeefspPositionAccountBalanceAfterTransfer= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYEE_NAME} = {",
+                "  ...environment.balances[environment.SIMPAYEE_NAME],",
+                "  ...{afterTransfer: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYEE_NAME}.afterTransfer).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYEE_NAME}.afterTransfer[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYEE_NAME}.afterTransfer[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYEE_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -3497,26 +4385,26 @@
     },
     {
       "id": 12,
-      "name": "Prepare-settlement",
+      "name": "Prepare-settlements",
       "requests": [
         {
           "id": 4,
-          "description": "Prepare Settlement",
+          "description": "Prepare Settlement with deferred settlement model for currency",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/{$environment.settlementId}",
+          "path": "/settlements/{$environment.deferredSettlementId}",
           "method": "get",
           "params": {
-            "id": "{$environment.settlementId}"
+            "id": "{$environment.deferredSettlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3537,7 +4425,7 @@
             "postRequest": {
               "exec": [
                 "var res = response.body;",
-                "console.log(environment.settlementId);",
+                "console.log(environment.deferredSettlementId);",
                 "//environment.settlementId = 6;",
                 "var i=0;",
                 "var dfspsacc = [];",
@@ -3549,7 +4437,7 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -3565,7 +4453,7 @@
                 "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
                 "for(let dfspsaccx of dfspsacc){",
                 "  console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
-                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.deferredSettlementId, {",
                 "              \"participants\": [",
                 "                {",
                 "                  \"id\": dfspsaccx.dfspid,",
@@ -3599,22 +4487,22 @@
         },
         {
           "id": 5,
-          "description": "check state for participants after prepare",
+          "description": "check state for participants after prepare deferred settlement model",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/{$environment.settlementId}",
+          "path": "/settlements/{$environment.deferredSettlementId}",
           "method": "get",
           "params": {
-            "id": "{$environment.settlementId}"
+            "id": "{$environment.deferredSettlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -3658,7 +4546,191 @@
                 "\r",
                 "try{\r",
                 "res.participants.map(function (participant) {\r",
-                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).every(curAccount => {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).every(curAccount => {\r",
+                "             if(isok === true){      \r",
+                "         if(curAccount.state === \"PS_TRANSFERS_RECORDED\"){\r",
+                "                          isok= true;\r",
+                "                        \r",
+                "                        \r",
+                "                           \r",
+                "                        }else{\r",
+                "                           isok= false;\r",
+                "                          // console.log(isok);\r",
+                "                         \r",
+                "                        }\r",
+                "             } \r",
+                "                    })\r",
+                "})\r",
+                "\r",
+                "}catch(exception){\r",
+                "  console.log(exception);\r",
+                "}\r",
+                "\r",
+                "environment.controlvar = isok;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "description": "Prepare Settlement with default settlement model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.defaultSettlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.defaultSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "//if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "//}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "console.log(environment.defaultSettlementId);",
+                "//environment.settlementId = 6;",
+                "var i=0;",
+                "var dfspsacc = [];",
+                "var callbackpayer;",
+                "",
+                "environment.winstate = res.settlementWindows[0].state;",
+                "",
+                "console.log(environment.winstate);",
+                "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
+                "",
+                "res.participants.map(function (participant) {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency2).forEach(curAccount => {",
+                "//for(const curAccount of account) {     ",
+                "",
+                " dfspsacc[i] = {",
+                "        dfspid: participant.id,",
+                "        dfspaccid: curAccount.id ",
+                "    }",
+                "    i++;",
+                "//}",
+                "})",
+                " })",
+                "    ",
+                "",
+                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "for(let dfspsaccx of dfspsacc){",
+                "  console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.defaultSettlementId, {",
+                "              \"participants\": [",
+                "                {",
+                "                  \"id\": dfspsaccx.dfspid,",
+                "                  \"accounts\": [",
+                "                    {",
+                "                      \"id\": dfspsaccx.dfspaccid,",
+                "                      \"reason\": \"Transfers recorded for payer\",",
+                "                      \"state\": \"PS_TRANSFERS_RECORDED\"",
+                "                    }",
+                "                  ]",
+                "                }",
+                "              ]",
+                "            },config)    ",
+                "console.log(callbackpayer.data);  ",
+                "}",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
+                "/*res.participants.map(participant => {",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "    .forEach(curAccount => {*/",
+                "  "
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "check state for participants after prepare default settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.deferredSettlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.deferredSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check status PS_TRANSFERS_RECORDED",
+                "exec": [
+                  "expect(response.body.state).to.eql(\"PS_TRANSFERS_RECORDED\");"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check status for window is PENDING SETTLEMENT",
+                "exec": [
+                  " expect(response.body.settlementWindows[0].state).to.eql(\"PENDING_SETTLEMENT\");"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Account state is PS_TRANSFERS_RECORDED for all accounts",
+                "exec": [
+                  "expect(environment.controlvar).to.equal(true)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "//Boolean isok = false;\r",
+                "var res = response.body;\r",
+                "var isok = true;\r",
+                "\r",
+                "try{\r",
+                "res.participants.map(function (participant) {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency2).every(curAccount => {\r",
                 "             if(isok === true){      \r",
                 "         if(curAccount.state === \"PS_TRANSFERS_RECORDED\"){\r",
                 "                          isok= true;\r",
@@ -3706,7 +4778,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3719,16 +4791,9 @@
               },
               {
                 "id": 2,
-                "description": "testfsp1 settlement account balance before and  after prepare should be the same",
+                "description": "testfsp1 account balance before and  after prepare should be the same",
                 "exec": [
-                  "expect(environment.testfsp1SettleAccountBalanceAfterPrepare).to.equal(environment.testfsp1SettleAccountBalanceAfterTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "testfsp1 position account balance before and  after prepare should be the same.",
-                "exec": [
-                  "expect(environment.testfsp1PositionAccountBalanceAfterPrepare).to.equal(environment.testfsp1PositionAccountBalanceAfterTransfer);"
+                  "expect(environment.balances[environment.SIM1_NAME].afterPrepare).to.deep.equal(environment.balances[environment.SIM1_NAME].afterTransfer)"
                 ]
               }
             ]
@@ -3737,19 +4802,33 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.testfsp1SettleAccountBalanceAfterPrepare= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.testfsp1PositionAccountBalanceAfterPrepare= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM1_NAME} = {",
+                "  ...environment.balances[environment.SIM1_NAME],",
+                "  ...{afterPrepare: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM1_NAME}.afterPrepare).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM1_NAME}.afterPrepare[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM1_NAME}.afterPrepare[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM1_NAME}",
+                "  }",
+                "}",
+                "",
+                "console.log(environment.balances)",
+                "console.log('afterPreapre: ',JSON.stringify(environment.balances[environment.SIM1_NAME].afterPrepare, null, 2)) ",
+                "console.log('afterTransfer: ',JSON.stringify(environment.balances[environment.SIM1_NAME].afterTransfer, null, 2))",
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "environment.balances.afterPrepare = {}"
               ]
             }
           }
@@ -3771,7 +4850,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3784,16 +4863,10 @@
               },
               {
                 "id": 2,
-                "description": "testfsp2 settlement account balance before and after prepare should be the same",
+                "description": "testfsp2 account balance before and after prepare should be the same",
                 "exec": [
-                  "expect(environment.testfsp2SettleAccountBalanceAfterPrepare).to.equal(environment.testfsp2SettleAccountBalanceAfterTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "testfsp2 position account balance before and after prepare should be the same.",
-                "exec": [
-                  "expect(environment.testfsp2PositionAccountBalanceAfterPrepare).to.equal(environment.testfsp2PositionAccountBalanceAfterTransfer);"
+                  "expect(environment.balances[environment.SIM2_NAME].afterPrepare).to.deep.equal(environment.balances[environment.SIM2_NAME].afterTransfer)",
+                  ""
                 ]
               }
             ]
@@ -3802,19 +4875,28 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.testfsp2SettleAccountBalanceAfterPrepare= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.testfsp2PositionAccountBalanceAfterPrepare= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM2_NAME} = {",
+                "  ...environment.balances[environment.SIM2_NAME],",
+                "  ...{afterPrepare: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM2_NAME}.afterPrepare).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM2_NAME}.afterPrepare[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM2_NAME}.afterPrepare[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM2_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)",
+                "console.log('afterPreapre: ',JSON.stringify(environment.balances[environment.SIM2_NAME].afterPrepare, null, 2)) ",
+                "console.log('afterTransfer: ',JSON.stringify(environment.balances[environment.SIM2_NAME].afterTransfer, null, 2))"
               ]
             }
           }
@@ -3836,7 +4918,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3849,16 +4931,9 @@
               },
               {
                 "id": 2,
-                "description": "payerfsp settlement account balance before and after prepare should be the same",
+                "description": "payerfsp account balance before and after prepare should be the same",
                 "exec": [
-                  "expect(environment.payerfspSettleAccountBalanceAfterPrepare).to.equal(environment.payerfspSettleAccountBalanceAfterTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "payerfsp position account balance before and after prepare should be the same.",
-                "exec": [
-                  "expect(environment.payerfspPositionAccountBalanceAfterPrepare).to.equal(environment.payerfspPositionAccountBalanceAfterTransfer);"
+                  "expect(environment.balances[environment.SIMPAYER_NAME].afterPrepare).to.deep.equal(environment.balances[environment.SIMPAYER_NAME].afterTransfer)"
                 ]
               }
             ]
@@ -3867,19 +4942,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.payerfspSettleAccountBalanceAfterPrepare= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.payerfspPositionAccountBalanceAfterPrepare= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYER_NAME} = {",
+                "  ...environment.balances[environment.SIMPAYER_NAME],",
+                "  ...{afterPrepare: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYER_NAME}.afterPrepare).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYER_NAME}.afterPrepare[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYER_NAME}.afterPrepare[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYER_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -3893,15 +4975,15 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.payeefsp}/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.payeefsp}"
+            "name": "{$inputs.SIMPAYEE_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3914,16 +4996,9 @@
               },
               {
                 "id": 2,
-                "description": "payeefsp settlement account balance before and after prepare should be the same",
+                "description": "payeefsp account balance before and after prepare should be the same",
                 "exec": [
-                  "expect(environment.payeefspSettleAccountBalanceAfterPrepare).to.equal(environment.payeefspSettleAccountBalanceAfterTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "payeefsp position account balance before and after prepare should be the same.",
-                "exec": [
-                  "expect(environment.payeefspPositionAccountBalanceAfterPrepare).to.equal(environment.payeefspPositionAccountBalanceAfterTransfer);"
+                  "expect(environment.balances[environment.SIMPAYEE_NAME].afterPrepare).to.deep.equal(environment.balances[environment.SIMPAYEE_NAME].afterTransfer)"
                 ]
               }
             ]
@@ -3932,19 +5007,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.payeefspSettleAccountBalanceAfterPrepare= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.payeefspPositionAccountBalanceAfterPrepare= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYEE_NAME} = {",
+                "  ...environment.balances[environment.SIMPAYEE_NAME],",
+                "  ...{afterPrepare: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYEE_NAME}.afterPrepare).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYEE_NAME}.afterPrepare[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYEE_NAME}.afterPrepare[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYEE_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -3957,22 +5039,22 @@
       "requests": [
         {
           "id": 4,
-          "description": "reserve Settlement",
+          "description": "reserve Settlement with Currency Deferred Settlement Model",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/{$environment.settlementId}",
+          "path": "/settlements/{$environment.deferredSettlementId}",
           "method": "get",
           "params": {
-            "id": "{$environment.settlementId}"
+            "id": "{$environment.deferredSettlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3993,7 +5075,7 @@
             "postRequest": {
               "exec": [
                 "var res = response.body;",
-                "console.log(environment.settlementId);",
+                "console.log(environment.deferredSettlementId);",
                 "//environment.settlementId = 6;",
                 "var i=0;",
                 "var dfspsacc = [];",
@@ -4005,7 +5087,7 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -4021,7 +5103,7 @@
                 "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
                 "for(let dfspsaccx of dfspsacc){",
                 "  console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
-                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.deferredSettlementId, {",
                 "              \"participants\": [",
                 "                {",
                 "                  \"id\": dfspsaccx.dfspid,",
@@ -4055,22 +5137,22 @@
         },
         {
           "id": 5,
-          "description": "check state for participants after prepare",
+          "description": "check state for participants after reserve with deferred settlement model",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/{$environment.settlementId}",
+          "path": "/settlements/{$environment.deferredSettlementId}",
           "method": "get",
           "params": {
-            "id": "{$environment.settlementId}"
+            "id": "{$environment.deferredSettlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -4114,7 +5196,191 @@
                 "\r",
                 "try{\r",
                 "res.participants.map(function (participant) {\r",
-                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).every(curAccount => {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).every(curAccount => {\r",
+                "             if(isok === true){      \r",
+                "         if(curAccount.state === \"PS_TRANSFERS_RESERVED\"){\r",
+                "                          isok= true;\r",
+                "                        \r",
+                "                        \r",
+                "                           \r",
+                "                        }else{\r",
+                "                           isok= false;\r",
+                "                          // console.log(isok);\r",
+                "                         \r",
+                "                        }\r",
+                "             } \r",
+                "                    })\r",
+                "})\r",
+                "\r",
+                "}catch(exception){\r",
+                "  console.log(exception);\r",
+                "}\r",
+                "\r",
+                "environment.controlvar = isok;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "description": "reserve Settlement with default settlement model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.defaultSettlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.defaultSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "//if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "//}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "console.log(environment.defaultSettlementId);",
+                "//environment.settlementId = 6;",
+                "var i=0;",
+                "var dfspsacc = [];",
+                "var callbackpayer;",
+                "",
+                "environment.winstate = res.settlementWindows[0].state;",
+                "",
+                "console.log(environment.winstate);",
+                "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
+                "",
+                "res.participants.map(function (participant) {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency2).forEach(curAccount => {",
+                "//for(const curAccount of account) {     ",
+                "",
+                " dfspsacc[i] = {",
+                "        dfspid: participant.id,",
+                "        dfspaccid: curAccount.id ",
+                "    }",
+                "    i++;",
+                "//}",
+                "})",
+                " })",
+                "    ",
+                "",
+                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "for(let dfspsaccx of dfspsacc){",
+                "  console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.defaultSettlementId, {",
+                "              \"participants\": [",
+                "                {",
+                "                  \"id\": dfspsaccx.dfspid,",
+                "                  \"accounts\": [",
+                "                    {",
+                "                      \"id\": dfspsaccx.dfspaccid,",
+                "                      \"reason\": \"Transfers reserved\",",
+                "                      \"state\": \"PS_TRANSFERS_RESERVED\"",
+                "                    }",
+                "                  ]",
+                "                }",
+                "              ]",
+                "            },config)    ",
+                "console.log(callbackpayer.data);  ",
+                "}",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
+                "/*res.participants.map(participant => {",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "    .forEach(curAccount => {*/",
+                "  "
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "check state for participants after reserve with default settlement model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.defaultSettlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.defaultSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check status PS_TRANSFERS_RESERVED",
+                "exec": [
+                  "expect(response.body.state).to.eql(\"PS_TRANSFERS_RESERVED\");"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check status for window is PENDING SETTLEMENT",
+                "exec": [
+                  " expect(response.body.settlementWindows[0].state).to.eql(\"PENDING_SETTLEMENT\");"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Account state is PS_TRANSFERS_RESERVEDfor all accounts",
+                "exec": [
+                  "expect(environment.controlvar).to.equal(true)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "//Boolean isok = false;\r",
+                "var res = response.body;\r",
+                "var isok = true;\r",
+                "\r",
+                "try{\r",
+                "res.participants.map(function (participant) {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency2).every(curAccount => {\r",
                 "             if(isok === true){      \r",
                 "         if(curAccount.state === \"PS_TRANSFERS_RESERVED\"){\r",
                 "                          isok= true;\r",
@@ -4162,7 +5428,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4175,16 +5441,9 @@
               },
               {
                 "id": 2,
-                "description": "testfsp1 settlement account balance before and  after reserve should be the same",
+                "description": "testfsp1 account balance before and  after reserve should be the same",
                 "exec": [
-                  "expect(environment.testfsp1SettleAccountBalanceAfterReserve).to.equal(environment.testfsp1SettleAccountBalanceAfterTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "testfsp1 position account balance before and  after reserve  should be the same.",
-                "exec": [
-                  "expect(environment.testfsp1PositionAccountBalanceAfterReserve).to.equal(environment.testfsp1PositionAccountBalanceAfterTransfer);"
+                  "expect(environment.balances[environment.SIM1_NAME].afterReserve).to.deep.equal(environment.balances[environment.SIM1_NAME].afterTransfer)"
                 ]
               }
             ]
@@ -4193,19 +5452,31 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.testfsp1SettleAccountBalanceAfterReserve= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.testfsp1PositionAccountBalanceAfterReserve= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM1_NAME} = {",
+                "  ...environment.balances[environment.SIM1_NAME],",
+                "  ...{afterReserve: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM1_NAME}.afterReserve).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM1_NAME}.afterReserve[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM1_NAME}.afterReserve[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM1_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "environment.balances.afterReserve = {}"
               ]
             }
           }
@@ -4227,7 +5498,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4240,16 +5511,17 @@
               },
               {
                 "id": 2,
-                "description": "testfsp2 settlement account balance before and after reserve should be the same",
+                "description": "testfsp2 account for currency balance before and after reserve should be the same",
                 "exec": [
-                  "expect(environment.testfsp2SettleAccountBalanceAfterReserve).to.equal(environment.testfsp2SettleAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIM2_NAME].afterReserve[environment.currency]).to.deep.equal(environment.balances[environment.SIM2_NAME].beforeTransfer[environment.currency])",
+                  ""
                 ]
               },
               {
                 "id": 3,
-                "description": "testfsp2 position account balance before and after reserve should be the same.",
+                "description": "testfsp2 account for currency2 balance before and after reserve should be the same",
                 "exec": [
-                  "expect(environment.testfsp2PositionAccountBalanceAfterReserve).to.equal(environment.testfsp2PositionAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIM2_NAME].afterReserve[environment.currency2]).to.deep.equal(environment.balances[environment.SIM2_NAME].afterTransfer[environment.currency2])"
                 ]
               }
             ]
@@ -4258,19 +5530,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.testfsp2SettleAccountBalanceAfterReserve= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.testfsp2PositionAccountBalanceAfterReserve= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM2_NAME} = {",
+                "  ...environment.balances[environment.SIM2_NAME],",
+                "  ...{afterReserve: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM2_NAME}.afterReserve).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM2_NAME}.afterReserve[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM2_NAME}.afterReserve[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM2_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -4292,7 +5571,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4305,16 +5584,17 @@
               },
               {
                 "id": 2,
-                "description": "payerfsp settlement account balance before and after reserve should be the same",
+                "description": "payerfsp account for currency balance before and after reserve should be the same",
                 "exec": [
-                  "expect(environment.payerfspSettleAccountBalanceAfterReserve).to.equal(environment.payerfspSettleAccountBalanceAfterTransfer);"
+                  "expect(environment.balances[environment.SIMPAYER_NAME].afterReserve[environment.currency]).to.deep.equal(environment.balances[environment.SIMPAYER_NAME].afterTransfer[environment.currency])",
+                  ""
                 ]
               },
               {
                 "id": 3,
-                "description": "payerfsp position account balance before and after reserve should be the same.",
+                "description": "payerfsp account for currency2 balance before and after reserve should be the same",
                 "exec": [
-                  "expect(environment.payerfspPositionAccountBalanceAfterReserve).to.equal(environment.payerfspPositionAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIMPAYER_NAME].afterReserve[environment.currency2]).to.deep.equal(environment.balances[environment.SIMPAYER_NAME].beforeTransfer[environment.currency2])"
                 ]
               }
             ]
@@ -4323,19 +5603,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.payerfspSettleAccountBalanceAfterReserve= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.payerfspPositionAccountBalanceAfterReserve= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYER_NAME} = {",
+                "  ...environment.balances[environment.SIMPAYER_NAME],",
+                "  ...{afterReserve: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYER_NAME}.afterReserve).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYER_NAME}.afterReserve[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYER_NAME}.afterReserve[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYER_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -4349,15 +5636,15 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.payeefsp}/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.payeefsp}"
+            "name": "{$inputs.SIMPAYEE_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4370,16 +5657,17 @@
               },
               {
                 "id": 2,
-                "description": "payeefsp settlement account balance before and after Reserve should be the same",
+                "description": "payeefsp account for currency balance before and after Reserve should be the same",
                 "exec": [
-                  "expect(environment.payeefspSettleAccountBalanceAfterReserve).to.equal(environment.payeefspSettleAccountBalanceAfterTransfer);"
+                  "expect(environment.balances[environment.SIMPAYEE_NAME].afterReserve[environment.currency]).to.deep.equal(environment.balances[environment.SIMPAYEE_NAME].afterTransfer[environment.currency])",
+                  ""
                 ]
               },
               {
                 "id": 3,
-                "description": "payeefsp position account balance before and after Reserve should be the same.",
+                "description": "payeefsp account for currency 2 balance before and after Reserve should be the same",
                 "exec": [
-                  "expect(environment.payeefspPositionAccountBalanceAfterReserve).to.equal(environment.payeefspPositionAccountBalanceAfterTransfer);"
+                  "expect(environment.balances[environment.SIMPAYEE_NAME].afterReserve[environment.currency2]).to.deep.equal(environment.balances[environment.SIMPAYEE_NAME].beforeTransfer[environment.currency2])"
                 ]
               }
             ]
@@ -4388,19 +5676,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.payeefspSettleAccountBalanceAfterReserve= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.payeefspPositionAccountBalanceAfterReserve= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYEE_NAME} = {",
+                "  ...environment.balances[environment.SIMPAYEE_NAME],",
+                "  ...{afterReserve: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYEE_NAME}.afterReserve).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYEE_NAME}.afterReserve[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYEE_NAME}.afterReserve[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYEE_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -4413,22 +5708,22 @@
       "requests": [
         {
           "id": 4,
-          "description": "commit Settlement",
+          "description": "commit Settlement with deferred settlement model",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/{$environment.settlementId}",
+          "path": "/settlements/{$environment.deferredSettlementId}",
           "method": "get",
           "params": {
-            "id": "{$environment.settlementId}"
+            "id": "{$environment.deferredSettlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4449,7 +5744,7 @@
             "postRequest": {
               "exec": [
                 "var res = response.body;",
-                "console.log(environment.settlementId);",
+                "console.log(environment.deferredSettlementId);",
                 "//environment.settlementId = 6;",
                 "var i=0;",
                 "var dfspsacc = [];",
@@ -4461,7 +5756,7 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -4477,7 +5772,7 @@
                 "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
                 "for(let dfspsaccx of dfspsacc){",
                 "  console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
-                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.deferredSettlementId, {",
                 "              \"participants\": [",
                 "                {",
                 "                  \"id\": dfspsaccx.dfspid,",
@@ -4511,22 +5806,22 @@
         },
         {
           "id": 5,
-          "description": "check state for participants after commit",
+          "description": "check state for participants after commit deferred settlement model",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/{$environment.settlementId}",
+          "path": "/settlements/{$environment.deferredSettlementId}",
           "method": "get",
           "params": {
-            "id": "{$environment.settlementId}"
+            "id": "{$environment.deferredSettlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -4570,7 +5865,191 @@
                 "\r",
                 "try{\r",
                 "res.participants.map(function (participant) {\r",
-                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).every(curAccount => {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).every(curAccount => {\r",
+                "             if(isok === true){      \r",
+                "         if(curAccount.state === \"PS_TRANSFERS_COMMITTED\"){\r",
+                "                          isok= true;\r",
+                "                        \r",
+                "                        \r",
+                "                           \r",
+                "                        }else{\r",
+                "                           isok= false;\r",
+                "                          // console.log(isok);\r",
+                "                         \r",
+                "                        }\r",
+                "             } \r",
+                "                    })\r",
+                "})\r",
+                "\r",
+                "}catch(exception){\r",
+                "  console.log(exception);\r",
+                "}\r",
+                "\r",
+                "environment.controlvar = isok;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "description": "commit Settlement default settlement model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.defaultSettlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.defaultSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "//if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "//}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "console.log(environment.defaultSettlementId);",
+                "//environment.settlementId = 6;",
+                "var i=0;",
+                "var dfspsacc = [];",
+                "var callbackpayer;",
+                "",
+                "environment.winstate = res.settlementWindows[0].state;",
+                "",
+                "console.log(environment.winstate);",
+                "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
+                "",
+                "res.participants.map(function (participant) {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency2).forEach(curAccount => {",
+                "//for(const curAccount of account) {     ",
+                "",
+                " dfspsacc[i] = {",
+                "        dfspid: participant.id,",
+                "        dfspaccid: curAccount.id ",
+                "    }",
+                "    i++;",
+                "//}",
+                "})",
+                " })",
+                "    ",
+                "",
+                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "for(let dfspsaccx of dfspsacc){",
+                "  console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.defaultSettlementId, {",
+                "              \"participants\": [",
+                "                {",
+                "                  \"id\": dfspsaccx.dfspid,",
+                "                  \"accounts\": [",
+                "                    {",
+                "                      \"id\": dfspsaccx.dfspaccid,",
+                "                      \"reason\": \"Transfers committed\",",
+                "                      \"state\": \"PS_TRANSFERS_COMMITTED\"",
+                "                    }",
+                "                  ]",
+                "                }",
+                "              ]",
+                "            },config)    ",
+                "console.log(callbackpayer.data);  ",
+                "}",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
+                "/*res.participants.map(participant => {",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "    .forEach(curAccount => {*/",
+                "  "
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "check state for participants after commit default settlement model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.defaultSettlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.defaultSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check status PS_TRANSFERS_COMMITTED",
+                "exec": [
+                  "expect(response.body.state).to.eql(\"PS_TRANSFERS_COMMITTED\");"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check status for window is PENDING SETTLEMENT",
+                "exec": [
+                  " expect(response.body.settlementWindows[0].state).to.eql(\"PENDING_SETTLEMENT\");"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Account state is PS_TRANSFERS_COMMITTED for all accounts",
+                "exec": [
+                  "expect(environment.controlvar).to.equal(true)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "//Boolean isok = false;\r",
+                "var res = response.body;\r",
+                "var isok = true;\r",
+                "\r",
+                "try{\r",
+                "res.participants.map(function (participant) {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency2).every(curAccount => {\r",
                 "             if(isok === true){      \r",
                 "         if(curAccount.state === \"PS_TRANSFERS_COMMITTED\"){\r",
                 "                          isok= true;\r",
@@ -4618,7 +6097,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4631,16 +6110,9 @@
               },
               {
                 "id": 2,
-                "description": "testfsp1 settlement account balance before and  after Commit should be the same",
+                "description": "testfsp1 account balance before and  after Commit should be the same",
                 "exec": [
-                  "expect(environment.testfsp1SettleAccountBalanceAfterCommit).to.equal(environment.testfsp1SettleAccountBalanceAfterTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "testfsp1 position account balance before and  after Commit should be the same.",
-                "exec": [
-                  "expect(environment.testfsp1PositionAccountBalanceAfterCommit).to.equal(environment.testfsp1PositionAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIM1_NAME].afterCommit).to.deep.equal(environment.balances[environment.SIM1_NAME].beforeTransfer)"
                 ]
               }
             ]
@@ -4649,19 +6121,31 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.testfsp1SettleAccountBalanceAfterCommit= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.testfsp1PositionAccountBalanceAfterCommit= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM1_NAME} = {",
+                "  ...environment.balances[environment.SIM1_NAME],",
+                "  ...{afterCommit: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM1_NAME}.afterCommit).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM1_NAME}.afterCommit[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM1_NAME}.afterCommit[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM1_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "environment.balances.afterCommit = {}"
               ]
             }
           }
@@ -4683,7 +6167,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4696,16 +6180,9 @@
               },
               {
                 "id": 2,
-                "description": "testfsp2 settlement account balance before and after Commit should be the same",
+                "description": "testfsp2 account balance before and after Commit should be the same",
                 "exec": [
-                  "expect(environment.testfsp2SettleAccountBalanceAfterCommit).to.equal(environment.testfsp2SettleAccountBalanceBeforeTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "testfsp2 position account balance before and after Commit should be the same.",
-                "exec": [
-                  "expect(environment.testfsp2PositionAccountBalanceAfterCommit).to.equal(environment.testfsp2PositionAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIM2_NAME].afterCommit).to.deep.equal(environment.balances[environment.SIM2_NAME].beforeTransfer)"
                 ]
               }
             ]
@@ -4714,19 +6191,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.testfsp2SettleAccountBalanceAfterCommit= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.testfsp2PositionAccountBalanceAfterCommit= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM2_NAME} = {",
+                "  ...environment.balances[environment.SIM2_NAME],",
+                "  ...{afterCommit: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM2_NAME}.afterCommit).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM2_NAME}.afterCommit[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM2_NAME}.afterCommit[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM2_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -4748,7 +6232,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4761,16 +6245,9 @@
               },
               {
                 "id": 2,
-                "description": "payerfsp settlement account balance before and after Commit should be the same",
+                "description": "payerfsp account balance before and after Commit should be the same",
                 "exec": [
-                  "expect(environment.payerfspSettleAccountBalanceAfterCommit).to.equal(environment.payerfspSettleAccountBalanceAfterTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "payerfsp position account balance before and after Commit should be the same.",
-                "exec": [
-                  "expect(environment.payerfspPositionAccountBalanceAfterCommit).to.equal(environment.payerfspPositionAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIMPAYER_NAME].afterCommit).to.deep.equal(environment.balances[environment.SIMPAYER_NAME].beforeTransfer)"
                 ]
               }
             ]
@@ -4779,19 +6256,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.payerfspSettleAccountBalanceAfterCommit= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.payerfspPositionAccountBalanceAfterCommit= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYER_NAME} = {",
+                "  ...environment.balances[environment.SIMPAYER_NAME],",
+                "  ...{afterCommit: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYER_NAME}.afterCommit).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYER_NAME}.afterCommit[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYER_NAME}.afterCommit[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYER_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -4805,15 +6289,15 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.payeefsp}/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.payeefsp}"
+            "name": "{$inputs.SIMPAYEE_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4826,16 +6310,9 @@
               },
               {
                 "id": 2,
-                "description": "payeefsp settlement account balance before and after Commit should be the same",
+                "description": "payeefsp account balance before and after Commit should be the same",
                 "exec": [
-                  "expect(environment.payeefspSettleAccountBalanceAfterCommit).to.equal(environment.payeefspSettleAccountBalanceAfterTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "payeefsp position account balance before and after Commit should be the same.",
-                "exec": [
-                  "expect(environment.payeefspPositionAccountBalanceAfterCommit).to.equal(environment.payeefspPositionAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIMPAYEE_NAME].afterCommit).to.deep.equal(environment.balances[environment.SIMPAYEE_NAME].beforeTransfer)"
                 ]
               }
             ]
@@ -4844,19 +6321,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.payeefspSettleAccountBalanceAfterCommit= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.payeefspPositionAccountBalanceAfterCommit= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYEE_NAME} = {",
+                "  ...environment.balances[environment.SIMPAYEE_NAME],",
+                "  ...{afterCommit: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYEE_NAME}.afterCommit).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYEE_NAME}.afterCommit[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYEE_NAME}.afterCommit[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYEE_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -4878,7 +6362,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4893,14 +6377,7 @@
                 "id": 2,
                 "description": "hub reconciliation account balance before transfer and  after commit should be the same.",
                 "exec": [
-                  "expect(environment.hubReconciliationAccountBalanceAfterCommit).to.equal(environment.hubReconciliationAccountBalanceBeforeTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "hub multilateral account balance before transfer and  after commit should be the same.",
-                "exec": [
-                  "expect(environment.hubMultilateralAccountBalanceAfterCommit).to.equal(environment.hubMultilateralAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances.Hub.afterCommit).to.deep.equal(environment.balances.Hub.beforeTransfer)"
                 ]
               }
             ]
@@ -4909,23 +6386,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var jsonData = response.body;\r",
-                "var hubReconciliationAccountBalanceAfterCommit;\r",
-                "var hubMultilateralAccountBalanceAfterCommit;\r",
-                "jsonData\r",
-                "    .filter(account => account.currency === environment.SIMPAYER_CURRENCY)\r",
-                "    .forEach(curAccount => {\r",
-                "        if(curAccount.ledgerAccountType === \"HUB_RECONCILIATION\") {\r",
-                "            hubReconciliationAccountBalanceAfterCommit = curAccount.value;\r",
-                "        }\r",
-                "        if(curAccount.ledgerAccountType === \"HUB_MULTILATERAL_SETTLEMENT\") {\r",
-                "            hubMultilateralAccountBalanceAfterCommit = curAccount.value;\r",
-                "        }\r",
-                "    })\r",
-                "    \r",
-                "environment.hubReconciliationAccountBalanceAfterCommit = hubReconciliationAccountBalanceAfterCommit;\r",
-                "\r",
-                "environment.hubMultilateralAccountBalanceAfterCommit = hubMultilateralAccountBalanceAfterCommit;"
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const Hub = {",
+                "  ...environment.balances.Hub,",
+                "  ...{afterCommit: {}}",
+                "}",
+                "",
+                "for (const i in jsonData) {",
+                "  if (!Object.keys(Hub.afterCommit).includes(jsonData[i].currency)) {",
+                "    Hub.afterCommit[jsonData[i].currency] = {}",
+                "  }",
+                "  Hub.afterCommit[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    Hub",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -4938,22 +6418,22 @@
       "requests": [
         {
           "id": 4,
-          "description": "settle Settlement",
+          "description": "settle Settlement with deferred settlement model",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/{$environment.settlementId}",
+          "path": "/settlements/{$environment.deferredSettlementId}",
           "method": "get",
           "params": {
-            "id": "{$environment.settlementId}"
+            "id": "{$environment.deferredSettlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4974,7 +6454,7 @@
             "postRequest": {
               "exec": [
                 "var res = response.body;",
-                "console.log(environment.settlementId);",
+                "console.log(environment.deferredSettlementId);",
                 "//environment.settlementId = 6;",
                 "var i=0;",
                 "var dfspsacc = [];",
@@ -4986,7 +6466,7 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -5002,7 +6482,7 @@
                 "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
                 "for(let dfspsaccx of dfspsacc){",
                 "  console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
-                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.deferredSettlementId, {",
                 "              \"participants\": [",
                 "                {",
                 "                  \"id\": dfspsaccx.dfspid,",
@@ -5036,22 +6516,206 @@
         },
         {
           "id": 5,
-          "description": "check state for participants after commit",
+          "description": "check state for participants after settle with deferred settlement model",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "settlements"
           },
           "operationPath": "/settlements/{id}",
-          "path": "/settlements/{$environment.settlementId}",
+          "path": "/settlements/{$environment.deferredSettlementId}",
           "method": "get",
           "params": {
-            "id": "{$environment.settlementId}"
+            "id": "{$environment.deferredSettlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check status SETTLED",
+                "exec": [
+                  "expect(response.body.state).to.eql(\"SETTLED\");"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check status for window is PENDING SETTLEMENT",
+                "exec": [
+                  " expect(response.body.settlementWindows[0].state).to.eql(\"PENDING_SETTLEMENT\");"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Account state is SETTLED for all accounts",
+                "exec": [
+                  "expect(environment.controlvar).to.equal(true)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "//Boolean isok = false;\r",
+                "var res = response.body;\r",
+                "var isok = true;\r",
+                "\r",
+                "try{\r",
+                "res.participants.map(function (participant) {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).every(curAccount => {\r",
+                "             if(isok === true){      \r",
+                "         if(curAccount.state === \"SETTLED\"){\r",
+                "                          isok= true;\r",
+                "                        \r",
+                "                        \r",
+                "                           \r",
+                "                        }else{\r",
+                "                           isok= false;\r",
+                "                          // console.log(isok);\r",
+                "                         \r",
+                "                        }\r",
+                "             } \r",
+                "                    })\r",
+                "})\r",
+                "\r",
+                "}catch(exception){\r",
+                "  console.log(exception);\r",
+                "}\r",
+                "\r",
+                "environment.controlvar = isok;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "description": "settle Settlement default settlement model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.defaultSettlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.defaultSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "//if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "//}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "console.log(environment.defaultSettlementId);",
+                "//environment.settlementId = 6;",
+                "var i=0;",
+                "var dfspsacc = [];",
+                "var callbackpayer;",
+                "",
+                "environment.winstate = res.settlementWindows[0].state;",
+                "",
+                "console.log(environment.winstate);",
+                "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
+                "",
+                "res.participants.map(function (participant) {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency2).forEach(curAccount => {",
+                "//for(const curAccount of account) {     ",
+                "",
+                " dfspsacc[i] = {",
+                "        dfspid: participant.id,",
+                "        dfspaccid: curAccount.id ",
+                "    }",
+                "    i++;",
+                "//}",
+                "})",
+                " })",
+                "    ",
+                "",
+                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "for(let dfspsaccx of dfspsacc){",
+                "  console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
+                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.defaultSettlementId, {",
+                "              \"participants\": [",
+                "                {",
+                "                  \"id\": dfspsaccx.dfspid,",
+                "                  \"accounts\": [",
+                "                    {",
+                "                      \"id\": dfspsaccx.dfspaccid,",
+                "                      \"reason\": \"Transfers settled for payer\",",
+                "                      \"state\": \"SETTLED\"",
+                "                    }",
+                "                  ]",
+                "                }",
+                "              ]",
+                "            },config)    ",
+                "console.log(callbackpayer.data);  ",
+                "}",
+                "}else{",
+                "  console.log(\"Window is empty\")",
+                "}",
+                "/*res.participants.map(participant => {",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "    .forEach(curAccount => {*/",
+                "  "
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "check state for participants after settle default settlement model",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.defaultSettlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.defaultSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -5095,7 +6759,7 @@
                 "\r",
                 "try{\r",
                 "res.participants.map(function (participant) {\r",
-                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).every(curAccount => {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency2).every(curAccount => {\r",
                 "             if(isok === true){      \r",
                 "         if(curAccount.state === \"SETTLED\"){\r",
                 "                          isok= true;\r",
@@ -5143,7 +6807,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -5156,16 +6820,9 @@
               },
               {
                 "id": 2,
-                "description": "testfsp1 settlement account balance before and  after Settle should be the same",
+                "description": "testfsp1 account balance before and  after Settle should be the same",
                 "exec": [
-                  "expect(environment.testfsp1SettleAccountBalanceAfterSettle).to.equal(environment.testfsp1SettleAccountBalanceBeforeTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "testfsp1 position account balance before and  after Settle should be the same.",
-                "exec": [
-                  "expect(environment.testfsp1PositionAccountBalanceAfterSettle).to.equal(environment.testfsp1PositionAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIM1_NAME].afterSettle).to.deep.equal(environment.balances[environment.SIM1_NAME].beforeTransfer)"
                 ]
               }
             ]
@@ -5174,19 +6831,31 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.testfsp1SettleAccountBalanceAfterSettle= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.testfsp1PositionAccountBalanceAfterSettle= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM1_NAME} = {",
+                "  ...environment.balances[environment.SIM1_NAME],",
+                "  ...{afterSettle: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM1_NAME}.afterSettle).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM1_NAME}.afterSettle[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM1_NAME}.afterSettle[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM1_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "environment.balances.afterSettle = {}"
               ]
             }
           }
@@ -5208,7 +6877,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -5221,16 +6890,9 @@
               },
               {
                 "id": 2,
-                "description": "testfsp2 settlement account balance before and after Settle should be the same",
+                "description": "testfsp2 account balance before and after Settle should be the same",
                 "exec": [
-                  "expect(environment.testfsp2SettleAccountBalanceAfterSettle).to.equal(environment.testfsp2SettleAccountBalanceBeforeTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "testfsp2 position account balance before and after Settle should be the same.",
-                "exec": [
-                  "expect(environment.testfsp2PositionAccountBalanceAfterSettle).to.equal(environment.testfsp2PositionAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIM2_NAME].afterSettle).to.deep.equal(environment.balances[environment.SIM2_NAME].beforeTransfer)"
                 ]
               }
             ]
@@ -5239,19 +6901,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.testfsp2SettleAccountBalanceAfterSettle= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.testfsp2PositionAccountBalanceAfterSettle= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIM2_NAME} = {",
+                "  ...environment.balances[environment.SIM2_NAME],",
+                "  ...{afterSettle: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIM2_NAME}.afterSettle).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIM2_NAME}.afterSettle[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIM2_NAME}.afterSettle[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIM2_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -5273,7 +6942,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -5286,16 +6955,9 @@
               },
               {
                 "id": 2,
-                "description": "payerfsp settlement account balance before and after Settle should be the same",
+                "description": "payerfsp account balance before and after Settle should be the same",
                 "exec": [
-                  "expect(environment.payerfspSettleAccountBalanceAfterSettle).to.equal(environment.payerfspSettleAccountBalanceAfterTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "payerfsp position account balance before and after Settle should be the same.",
-                "exec": [
-                  "expect(environment.payerfspPositionAccountBalanceAfterSettle).to.equal(environment.payerfspPositionAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIMPAYER_NAME].afterSettle).to.deep.equal(environment.balances[environment.SIMPAYER_NAME].beforeTransfer)"
                 ]
               }
             ]
@@ -5304,19 +6966,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.payerfspSettleAccountBalanceAfterSettle= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.payerfspPositionAccountBalanceAfterSettle= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYER_NAME} = {",
+                "  ...environment.balances[environment.SIMPAYER_NAME],",
+                "  ...{afterSettle: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYER_NAME}.afterSettle).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYER_NAME}.afterSettle[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYER_NAME}.afterSettle[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYER_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
@@ -5330,15 +6999,15 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.payeefsp}/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.payeefsp}"
+            "name": "{$inputs.SIMPAYEE_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -5351,16 +7020,9 @@
               },
               {
                 "id": 2,
-                "description": "payeefsp settlement account balance before and after Settle should be the same",
+                "description": "payeefsp settlement balance before and after Settle should be the same",
                 "exec": [
-                  "expect(environment.payeefspSettleAccountBalanceAfterSettle).to.equal(environment.payeefspSettleAccountBalanceAfterTransfer);"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "payeefsp position account balance before and after Settle should be the same.",
-                "exec": [
-                  "expect(environment.payeefspPositionAccountBalanceAfterSettle).to.equal(environment.payeefspPositionAccountBalanceBeforeTransfer);"
+                  "expect(environment.balances[environment.SIMPAYEE_NAME].afterSettle).to.deep.equal(environment.balances[environment.SIMPAYEE_NAME].beforeTransfer)"
                 ]
               }
             ]
@@ -5369,19 +7031,26 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\")",
-                "  {",
-                "environment.payeefspSettleAccountBalanceAfterSettle= curAccount.value  ",
-                "}",
-                " if(curAccount.ledgerAccountType === \"POSITION\") ",
-                " {",
-                "environment.payeefspPositionAccountBalanceAfterSettle= curAccount.value;",
+                "var jsonData = response.body;",
+                "console.log(jsonData);",
+                "const {$inputs.SIMPAYEE_NAME} = {",
+                "  ...environment.balances[environment.SIMPAYEE_NAME],",
+                "  ...{afterSettle: {}}",
                 "}",
                 "",
-                "})"
+                "for (const i in jsonData) {",
+                "  if (!Object.keys({$inputs.SIMPAYEE_NAME}.afterSettle).includes(jsonData[i].currency)) {",
+                "    {$inputs.SIMPAYEE_NAME}.afterSettle[jsonData[i].currency] = {}",
+                "  }",
+                "  {$inputs.SIMPAYEE_NAME}.afterSettle[jsonData[i].currency][jsonData[i].ledgerAccountType] = jsonData[i].value",
+                "  environment.balances = {",
+                "    ...environment.balances,",
+                "    {$inputs.SIMPAYEE_NAME}",
+                "  }",
+                "}",
+                "",
+                "",
+                "console.log(environment.balances)"
               ]
             }
           }
