@@ -3,7 +3,7 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "Settlement_management",
+      "name": "Pre-settlement account activation per participant for $currency",
       "requests": [
         {
           "id": 3,
@@ -21,7 +21,7 @@
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
-              "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
@@ -50,7 +50,7 @@
                 "var jsonData = response.body;\r",
                 "console.log(jsonData);\r",
                 "    for(var i in jsonData) {\r",
-                "        if((jsonData[i].ledgerAccountType === 'POSITION') ) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'POSITION') && (jsonData[i].currency === environment.currency) ) {\r",
                 "          \r",
                 "environment.participant1accountid=jsonData[i].id;\r",
                 "\r",
@@ -78,7 +78,7 @@
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
-             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "application/json",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
@@ -113,7 +113,7 @@
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
-             "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
@@ -142,7 +142,7 @@
                 "var jsonData = response.body;\r",
                 "console.log(jsonData);\r",
                 "    for(var i in jsonData) {\r",
-                "        if((jsonData[i].ledgerAccountType === 'POSITION') ) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'POSITION')  && (jsonData[i].currency === environment.currency) ) {\r",
                 "          \r",
                 "environment.participant2accountid=jsonData[i].id;\r",
                 "\r",
@@ -171,7 +171,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "Content-Type": "application/json"
           },
           "tests": {
@@ -206,7 +206,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -234,7 +234,7 @@
                 "var jsonData = response.body;\r",
                 "console.log(jsonData);\r",
                 "    for(var i in jsonData) {\r",
-                "        if((jsonData[i].ledgerAccountType === 'POSITION') ) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'POSITION')  && (jsonData[i].currency === environment.currency) ) {\r",
                 "          \r",
                 "environment.participant3accountid=jsonData[i].id;\r",
                 "\r",
@@ -264,7 +264,7 @@
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "application/json",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -298,7 +298,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -326,7 +326,7 @@
                 "var jsonData = response.body;\r",
                 "console.log(jsonData);\r",
                 "    for(var i in jsonData) {\r",
-                "        if((jsonData[i].ledgerAccountType === 'POSITION') ) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'POSITION')  && (jsonData[i].currency === environment.currency)) {\r",
                 "          \r",
                 "environment.participant4accountid=jsonData[i].id;\r",
                 "\r",
@@ -339,7 +339,7 @@
         },
         {
           "id": 10,
-          "description": "Active account for testfsp1 Copy",
+          "description": "Active account for testfsp2",
           "apiVersion": {
             "minorVersion": 3,
             "majorVersion": 9,
@@ -356,7 +356,7 @@
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "application/json",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -397,7 +397,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -454,7 +454,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -527,7 +527,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -580,7 +580,7 @@
           },
           "scriptingEngine": "javascript",
           "body": {
-            "settlementModel": "DEFERREDNET",
+            "settlementModel": "DEFERREDNET{$inpust.currency}",
             "reason": "TESTING",
             "settlementWindows": [
               {
@@ -634,7 +634,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -665,7 +665,7 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -701,7 +701,7 @@
                 "  console.log(\"Window is empty\")",
                 "}",
                 "/*res.participants.map(participant => {",
-                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('currency'))",
                 "    .forEach(curAccount => {*/",
                 "  "
               ]
@@ -730,7 +730,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -761,7 +761,7 @@
                 "",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -797,7 +797,7 @@
                 "  console.log(\"Window is empty\")",
                 "}",
                 "/*res.participants.map(participant => {",
-                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('currency'))",
                 "    .forEach(curAccount => {*/",
                 "  "
               ]
@@ -821,7 +821,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -852,7 +852,7 @@
                 "",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -888,7 +888,7 @@
                 "  console.log(\"Window is empty\")",
                 "}",
                 "/*res.participants.map(participant => {",
-                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('currency'))",
                 "    .forEach(curAccount => {*/",
                 "  "
               ]
@@ -912,7 +912,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -943,7 +943,7 @@
                 "",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -1018,7 +1018,7 @@
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
@@ -1081,7 +1081,7 @@
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
@@ -1095,7 +1095,7 @@
                 "var res = response.body;",
                 "",
                 "",
-                "   res.filter(account => account.currency === environment.currency2).forEach(curAccount => {",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
                 "    ",
                 "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
                 "  environment.testfsp2SettleAccountBalanceBeforeTransfer= curAccount.value",
@@ -1144,7 +1144,7 @@
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
@@ -1158,7 +1158,7 @@
                 "var res = response.body;",
                 "",
                 "",
-                "   res.filter(account => account.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
                 "    ",
                 "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
                 "  environment.payerfspSettleAccountBalanceBeforeTransfer= curAccount.value",
@@ -1207,7 +1207,7 @@
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
@@ -1221,7 +1221,7 @@
                 "var res = response.body;",
                 "",
                 "",
-                "   res.filter(account => account.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
                 "    ",
                 "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
                 "  environment.payeefspSettleAccountBalanceBeforeTransfer= curAccount.value",
@@ -1259,7 +1259,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -1278,7 +1278,7 @@
               "exec": [
                 "var jsonData = response.body;\r",
                 "jsonData\r",
-                "    .filter(account => account.currency === environment.SIMPAYER_CURRENCY)\r",
+                "    .filter(account => account.currency === environment.currency)\r",
                 "    .forEach(curAccount => {\r",
                 "        if(curAccount.ledgerAccountType === \"HUB_RECONCILIATION\") {\r",
                 "            environment.hubReconciliationAccountBalanceBeforeTransfer=curAccount.value;\r",
@@ -1299,7 +1299,7 @@
     },
     {
       "id": 4,
-      "name": "SIM1 to SIM2",
+      "name": "Send transfer in $currency from SIM1 to SIM2",
       "requests": [
         {
           "id": 3,
@@ -1317,7 +1317,7 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
-			"Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
@@ -1347,7 +1347,7 @@
             "amountType": "RECEIVE",
             "amount": {
               "amount": "60",
-              "currency": "{$inputs.currency2}"
+              "currency": "{$inputs.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -1484,7 +1484,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
-			"Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -1596,7 +1596,7 @@
     },
     {
       "id": 5,
-      "name": "SIM1 to PAYEEFSP",
+      "name": "Send transfer in $currency from SIM1 to PAYEEFSP",
       "requests": [
         {
           "id": 3,
@@ -1615,7 +1615,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
             "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
-			"Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -1644,7 +1644,7 @@
             "amountType": "RECEIVE",
             "amount": {
               "amount": "55",
-              "currency": "{$inputs.currency2}"
+              "currency": "{$inputs.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -1781,7 +1781,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM1_NAME}",
-			"Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -1889,7 +1889,7 @@
     },
     {
       "id": 6,
-      "name": "PAYERFSP to SIM1",
+      "name": "Send transfer in $currency from PAYERFSP to SIM1",
       "requests": [
         {
           "id": 3,
@@ -1908,7 +1908,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
             "FSPIOP-Destination": "{$inputs.SIM1_NAME}",
-			"Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -1937,7 +1937,7 @@
             "amountType": "RECEIVE",
             "amount": {
               "amount": "35",
-              "currency": "{$inputs.currency2}"
+              "currency": "{$inputs.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -2074,7 +2074,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
-			"Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -2182,7 +2182,7 @@
     },
     {
       "id": 7,
-      "name": "SIM2 to PAYERFSP",
+      "name": "Send transfer in $currency from SIM2 to PAYERFSP",
       "requests": [
         {
           "id": 3,
@@ -2201,7 +2201,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM2_NAME}",
             "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
-			"Authorization": "{$inputs.TESTFSP2_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TESTFSP2_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -2230,7 +2230,7 @@
             "amountType": "RECEIVE",
             "amount": {
               "amount": "20",
-              "currency": "{$inputs.currency2}"
+              "currency": "{$inputs.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -2368,7 +2368,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIM2_NAME}",
-			"Authorization": "{$inputs.TESTFSP2_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TESTFSP2_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -2474,7 +2474,7 @@
     },
     {
       "id": 8,
-      "name": "PAYEEFSP to SIM2",
+      "name": "Send transfer in $currency from PAYEEFSP to SIM2",
       "requests": [
         {
           "id": 3,
@@ -2493,7 +2493,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}",
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}",
-			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -2522,7 +2522,7 @@
             "amountType": "RECEIVE",
             "amount": {
               "amount": "35",
-              "currency": "{$inputs.currency2}"
+              "currency": "{$inputs.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -2659,7 +2659,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}",
-			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -2767,7 +2767,7 @@
     },
     {
       "id": 9,
-      "name": "PAYEEFSP to PAYERFSP",
+      "name": "Send transfer in $currency from PAYEEFSP to PAYERFSP",
       "requests": [
         {
           "id": 3,
@@ -2786,7 +2786,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}",
             "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
-			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -2815,7 +2815,7 @@
             "amountType": "RECEIVE",
             "amount": {
               "amount": "25",
-              "currency": "{$inputs.currency2}"
+              "currency": "{$inputs.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -2952,7 +2952,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}",
-			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "transferId": "{$prev.3.request.body.transactionId}",
@@ -3080,7 +3080,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3137,7 +3137,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3210,7 +3210,7 @@
           "headers": {
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3253,7 +3253,7 @@
           },
           "scriptingEngine": "javascript",
           "body": {
-            "settlementModel": "DEFERREDNET",
+            "settlementModel": "DEFERREDNET{$inpust.currency}",
             "reason": "TESTING",
             "settlementWindows": [
               {
@@ -3306,7 +3306,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3357,7 +3357,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3408,7 +3408,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3459,7 +3459,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3516,7 +3516,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3549,7 +3549,7 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -3585,7 +3585,7 @@
                 "  console.log(\"Window is empty\")",
                 "}",
                 "/*res.participants.map(participant => {",
-                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('currency'))",
                 "    .forEach(curAccount => {*/",
                 "  "
               ]
@@ -3614,7 +3614,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -3658,7 +3658,7 @@
                 "\r",
                 "try{\r",
                 "res.participants.map(function (participant) {\r",
-                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).every(curAccount => {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).every(curAccount => {\r",
                 "             if(isok === true){      \r",
                 "         if(curAccount.state === \"PS_TRANSFERS_RECORDED\"){\r",
                 "                          isok= true;\r",
@@ -3706,7 +3706,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3771,7 +3771,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3836,7 +3836,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3901,7 +3901,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -3972,7 +3972,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4005,7 +4005,7 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -4041,7 +4041,7 @@
                 "  console.log(\"Window is empty\")",
                 "}",
                 "/*res.participants.map(participant => {",
-                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('currency'))",
                 "    .forEach(curAccount => {*/",
                 "  "
               ]
@@ -4070,7 +4070,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -4114,7 +4114,7 @@
                 "\r",
                 "try{\r",
                 "res.participants.map(function (participant) {\r",
-                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).every(curAccount => {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).every(curAccount => {\r",
                 "             if(isok === true){      \r",
                 "         if(curAccount.state === \"PS_TRANSFERS_RESERVED\"){\r",
                 "                          isok= true;\r",
@@ -4162,7 +4162,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4227,7 +4227,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4292,7 +4292,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4357,7 +4357,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4428,7 +4428,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4461,7 +4461,7 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -4497,7 +4497,7 @@
                 "  console.log(\"Window is empty\")",
                 "}",
                 "/*res.participants.map(participant => {",
-                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('currency'))",
                 "    .forEach(curAccount => {*/",
                 "  "
               ]
@@ -4526,7 +4526,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -4570,7 +4570,7 @@
                 "\r",
                 "try{\r",
                 "res.participants.map(function (participant) {\r",
-                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).every(curAccount => {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).every(curAccount => {\r",
                 "             if(isok === true){      \r",
                 "         if(curAccount.state === \"PS_TRANSFERS_COMMITTED\"){\r",
                 "                          isok= true;\r",
@@ -4618,7 +4618,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4683,7 +4683,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4748,7 +4748,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4813,7 +4813,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4878,7 +4878,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4913,7 +4913,7 @@
                 "var hubReconciliationAccountBalanceAfterCommit;\r",
                 "var hubMultilateralAccountBalanceAfterCommit;\r",
                 "jsonData\r",
-                "    .filter(account => account.currency === environment.SIMPAYER_CURRENCY)\r",
+                "    .filter(account => account.currency === environment.currency)\r",
                 "    .forEach(curAccount => {\r",
                 "        if(curAccount.ledgerAccountType === \"HUB_RECONCILIATION\") {\r",
                 "            hubReconciliationAccountBalanceAfterCommit = curAccount.value;\r",
@@ -4953,7 +4953,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -4986,7 +4986,7 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).forEach(curAccount => {",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
                 "//for(const curAccount of account) {     ",
                 "",
                 " dfspsacc[i] = {",
@@ -5022,7 +5022,7 @@
                 "  console.log(\"Window is empty\")",
                 "}",
                 "/*res.participants.map(participant => {",
-                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('SIMPAYER_CURRENCY'))",
+                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('currency'))",
                 "    .forEach(curAccount => {*/",
                 "  "
               ]
@@ -5051,7 +5051,7 @@
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -5095,7 +5095,7 @@
                 "\r",
                 "try{\r",
                 "res.participants.map(function (participant) {\r",
-                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.SIMPAYER_CURRENCY).every(curAccount => {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).every(curAccount => {\r",
                 "             if(isok === true){      \r",
                 "         if(curAccount.state === \"SETTLED\"){\r",
                 "                          isok= true;\r",
@@ -5143,7 +5143,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -5208,7 +5208,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -5273,7 +5273,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
@@ -5338,7 +5338,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [
