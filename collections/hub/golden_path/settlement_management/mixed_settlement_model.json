@@ -777,6 +777,50 @@
           }
         },
         {
+          "id": 13,
+          "description": "get settlements models",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/settlementModels",
+          "path": "/settlementModels",
+          "method": "get",
+          "scriptingEngine": "javascript",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "environment.settlementModels = { deferred: {}}",
+                "for (const sm of jsonData) {",
+                "  if (sm.settlementDelay === 'DEFERRED') {",
+                "    if (sm.currency === null) {",
+                "      environment.settlementModels.deferred.default = sm.name",
+                "    } else {",
+                "      environment.settlementModels.deferred[sm.currency] = sm.name",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "console.log(environment.settlementModels)"
+              ]
+            }
+          }
+        },
+        {
           "id": 3,
           "description": "Create Settlement for Closed Window in deferred settlement model for currency",
           "apiVersion": {
@@ -878,7 +922,9 @@
                 "",
                 "requestVariables.settlementModel = environment.settlementModels.deferred[environment.currency]",
                 "",
-                "console.log(requestVariables.settlementModel)"
+                "// console.log(requestVariables.settlementModel)",
+                "",
+                "console.log(environment.settlementModels.deferred[environment.currency])"
               ]
             }
           }
@@ -1721,39 +1767,6 @@
                 "",
                 "",
                 "  "
-              ]
-            }
-          }
-        },
-        {
-          "id": 13,
-          "description": "get settlements models",
-          "apiVersion": {
-            "minorVersion": 3,
-            "majorVersion": 9,
-            "type": "central_admin"
-          },
-          "operationPath": "/settlementModels",
-          "path": "/settlementModels",
-          "method": "get",
-          "scriptingEngine": "javascript",
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "var jsonData = response.body;",
-                "environment.settlementModels = { deferred: {}}",
-                "for (const sm of jsonData) {",
-                "  if (sm.settlementDelay === 'DEFERRED') {",
-                "    if (sm.currency === null) {",
-                "      environment.settlementModels.deferred.default = sm.name",
-                "    } else {",
-                "      environment.settlementModels.deferred[sm.currency] = sm.name",
-                "    }",
-                "  }",
-                "}",
-                "",
-                "console.log(environment.settlementModels)"
               ]
             }
           }
