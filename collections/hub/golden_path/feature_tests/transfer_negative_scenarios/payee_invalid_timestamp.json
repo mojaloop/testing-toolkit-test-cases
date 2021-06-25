@@ -1,4 +1,5 @@
 {
+  "name": "multi",
   "test_cases": [
     {
       "id": 1,
@@ -30,7 +31,7 @@
               }
             ]
           },
-		   "scriptingEngine": "javascript",
+          "scriptingEngine": "javascript",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
@@ -41,8 +42,7 @@
                 "environment[environment.SIMPAYER_NAME + 'PositionBeforeTransfer'] = response.body[0].value"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 2,
@@ -70,7 +70,7 @@
               }
             ]
           },
-		   "scriptingEngine": "javascript",
+          "scriptingEngine": "javascript",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
@@ -81,8 +81,7 @@
                 "environment[environment.SIMPAYEE_NAME + 'PositionBeforeTransfer'] = response.body[0].value"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 3,
@@ -100,7 +99,7 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			 "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}"
           },
           "body": {
@@ -316,6 +315,7 @@
           },
           "path": "/quotes",
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scriptingEngine": "javascript",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -343,8 +343,7 @@
                 "}"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 4,
@@ -362,7 +361,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			 "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "body": {
@@ -392,19 +391,40 @@
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
+              },
+              {
+                "id": 3,
+                "description": "Callback Body - errorCode is 3303",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3303')",
+                  ""
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback Body - errorDescription is Transfer expired",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('Transfer expired')",
+                  ""
+                ]
               }
             ]
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
-          "ignoreCallbacks": true,
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
                 "requestVariables.transferExpiration = new Date(new Date().getTime() + 2000).toISOString()"
               ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 5,
@@ -427,7 +447,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
-			 "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
+            "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.fromFspId}"
           },
           "body": {
@@ -478,7 +498,7 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			 "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "tests": {
@@ -570,8 +590,7 @@
                 ]
               }
             ]
-          },
-          "delay": "16000"
+          }
         },
         {
           "id": 7,
@@ -606,7 +625,7 @@
               }
             ]
           },
-		   "scriptingEngine": "javascript",
+          "scriptingEngine": "javascript",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
@@ -623,8 +642,7 @@
                 ""
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 9,
@@ -659,7 +677,7 @@
               }
             ]
           },
-		   "scriptingEngine": "javascript",
+          "scriptingEngine": "javascript",
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
@@ -676,8 +694,7 @@
                 ""
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         }
       ]
     }
