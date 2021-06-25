@@ -3,7 +3,7 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "Settlement_management",
+      "name": "Pre-settlement account activation per participant and currency",
       "requests": [
         {
           "id": 3,
@@ -772,50 +772,6 @@
                 "console.log(environment.openWindowstate);",
                 "console.log(environment.closedWindowID);",
                 "//}"
-              ]
-            }
-          }
-        },
-        {
-          "id": 13,
-          "description": "get settlements models",
-          "apiVersion": {
-            "minorVersion": 3,
-            "majorVersion": 9,
-            "type": "central_admin"
-          },
-          "operationPath": "/settlementModels",
-          "path": "/settlementModels",
-          "method": "get",
-          "scriptingEngine": "javascript",
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "status code is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              }
-            ]
-          },
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "var jsonData = response.body;",
-                "environment.settlementModels = { deferred: {}}",
-                "for (const sm of jsonData) {",
-                "  if (sm.settlementDelay === 'DEFERRED') {",
-                "    if (sm.currency === null) {",
-                "      environment.settlementModels.deferred.default = sm.name",
-                "    } else {",
-                "      environment.settlementModels.deferred[sm.currency] = sm.name",
-                "    }",
-                "  }",
-                "}",
-                "",
-                "console.log(environment.settlementModels)"
               ]
             }
           }
@@ -1770,6 +1726,50 @@
               ]
             }
           }
+        },
+        {
+          "id": 13,
+          "description": "get settlements models",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/settlementModels",
+          "path": "/settlementModels",
+          "method": "get",
+          "scriptingEngine": "javascript",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "environment.settlementModels = { deferred: {}}",
+                "for (const sm of jsonData) {",
+                "  if (sm.settlementDelay === 'DEFERRED') {",
+                "    if (sm.currency === null) {",
+                "      environment.settlementModels.deferred.default = sm.name",
+                "    } else {",
+                "      environment.settlementModels.deferred[sm.currency] = sm.name",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "console.log(environment.settlementModels)"
+              ]
+            }
+          }
         }
       ]
     },
@@ -2077,7 +2077,7 @@
     },
     {
       "id": 4,
-      "name": "SIM1 to SIM2",
+      "name": "Send transfer $currency from SIM1 to SIM2",
       "requests": [
         {
           "id": 3,
@@ -2374,7 +2374,7 @@
     },
     {
       "id": 5,
-      "name": "SIM1 to PAYEEFSP",
+      "name": "Send transfer $currency2 from SIM1 to PAYEEFSP",
       "requests": [
         {
           "id": 3,
@@ -2667,7 +2667,7 @@
     },
     {
       "id": 6,
-      "name": "PAYERFSP to SIM1",
+      "name": "Send transfer $currency from PAYERFSP to SIM1",
       "requests": [
         {
           "id": 3,
@@ -2960,7 +2960,7 @@
     },
     {
       "id": 7,
-      "name": "SIM2 to PAYERFSP",
+      "name": "Send transfer $currency2 from SIM2 to PAYERFSP",
       "requests": [
         {
           "id": 3,
@@ -3252,7 +3252,7 @@
     },
     {
       "id": 8,
-      "name": "PAYEEFSP to SIM2",
+      "name": "Send transfer $currency from PAYEEFSP to SIM2",
       "requests": [
         {
           "id": 3,
@@ -3545,7 +3545,7 @@
     },
     {
       "id": 9,
-      "name": "PAYEEFSP to PAYERFSP",
+      "name": "Send transfer $currency2 from PAYEEFSP to PAYERFSP",
       "requests": [
         {
           "id": 3,
