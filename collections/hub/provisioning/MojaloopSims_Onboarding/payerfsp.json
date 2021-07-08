@@ -239,6 +239,85 @@
             }
           },
           "delay": "500"
+        },
+        {
+          "id": 6,
+          "description": "Add payeefsp with different currency for default settlement case",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "payerfsp",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "description": "Add initial position and limits with different currency - payerfsp",
+          "apiVersion": {
+            "minorVersion": 3,
+            "majorVersion": 9,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/payerfsp/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "payerfsp"
+          },
+          "body": {
+            "currency": "{$inputs.currency2}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 10000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
         }
       ]
     },
