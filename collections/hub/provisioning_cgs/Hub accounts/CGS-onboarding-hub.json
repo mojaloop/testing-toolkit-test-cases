@@ -67,6 +67,62 @@
         {
           "id": 3,
           "meta": {
+            "info": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT second currency"
+          },
+          "description": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "post",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "type": "HUB_MULTILATERAL_SETTLEMENT",
+            "currency": "{$environment.currency2}"
+          }
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Add Hub Account-HUB_RECONCILIATION second currency"
+          },
+          "description": "Add Hub Account-HUB_RECONCILIATION",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "post",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "type": "HUB_RECONCILIATION",
+            "currency": "{$environment.currency2}"
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
             "info": "Hub Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL"
           },
           "description": "Hub Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
@@ -93,7 +149,7 @@
           }
         },
         {
-          "id": 4,
+          "id": 6,
           "meta": {
             "info": "Hub Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL"
           },
@@ -121,7 +177,7 @@
           }
         },
         {
-          "id": 5,
+          "id": 7,
           "meta": {
             "info": "Hub Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL"
           },
