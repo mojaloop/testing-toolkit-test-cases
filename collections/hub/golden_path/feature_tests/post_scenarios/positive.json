@@ -32,7 +32,7 @@
             "Accept": "application/vnd.interoperability.participants+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-			 "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "fspId": "{$inputs.toFspId}",
@@ -60,7 +60,7 @@
             "idValue": "{$inputs.SIMPAYEE_MSISDN}"
           },
           "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
-		   "headers": {
+          "headers": {
             "Content-Type": "application/json"
           }
         },
@@ -83,7 +83,7 @@
           "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
           "headers": {
             "FSPIOP-Source": "{$inputs.toFspId}",
-			 "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "displayName": "Test PayeeFSP",
@@ -114,7 +114,7 @@
             "Content-Type": "{$inputs.contentType}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-			"Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "params": {
             "Type": "MSISDN",
@@ -680,7 +680,7 @@
                 "description": "Payee Request: fspiop-destination header is 'payeefsp'",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal('payeefsp')",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)",
                   "}"
                 ]
               },

@@ -31,7 +31,7 @@
             "Content-Type": "application/vnd.interoperability.transactionRequests+json;version=1.0",
             "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
             "FSPIOP-HTTP-Method": "POST",
-			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
             "transactionRequestId": "{$function.generic.generateUUID}",
@@ -162,7 +162,7 @@
             "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
             "FSPIOP-HTTP-Method": "PUT",
             "FSPIOP-URI": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
-			"Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
             "transactionId": "{$prev.5.request.body.transactionRequestId}",
@@ -182,14 +182,14 @@
                 "id": 2,
                 "description": "check fsp source",
                 "exec": [
-                  "expect(environment.payeecallback.headers['fspiop-source']).to.equal('payerfsp');"
+                  "expect(environment.payeecallback.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME);"
                 ]
               },
               {
                 "id": 3,
                 "description": "check fsp destination",
                 "exec": [
-                  "expect(environment.payeecallback.headers['fspiop-destination']).to.equal('payeefsp');"
+                  "expect(environment.payeecallback.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME);"
                 ]
               },
               {
@@ -260,7 +260,7 @@
             "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
             "FSPIOP-HTTP-Method": "GET",
             "FSPIOP-URI": "/transactionRequests",
-			"Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "tests": {
             "assertions": [

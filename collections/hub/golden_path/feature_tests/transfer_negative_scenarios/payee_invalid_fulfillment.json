@@ -45,7 +45,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "environment[environment.SIMPAYER_NAME + 'PositionBeforeTransfer'] = response.body[0].value"
+                "environment['payerfspPositionBeforeTransfer'] = response.body[0].value"
               ]
             }
           }
@@ -87,7 +87,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "environment[environment.SIMPAYEE_NAME + 'PositionBeforeTransfer'] = response.body[0].value"
+                "environment['payeefspPositionBeforeTransfer'] = response.body[0].value"
               ]
             }
           }
@@ -622,10 +622,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/positions",
-          "path": "/participants/payeefsp/positions",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/positions",
           "method": "get",
           "params": {
-            "name": "payeefsp"
+            "name": "{$inputs.SIMPAYEE_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -677,10 +677,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/positions",
-          "path": "/participants/payerfsp/positions",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/positions",
           "method": "get",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIMPAYER_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
