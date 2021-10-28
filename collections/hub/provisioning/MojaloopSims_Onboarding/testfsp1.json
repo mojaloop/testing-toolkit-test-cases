@@ -1,5 +1,5 @@
 {
-  "name": "testfsp1-provisioning",
+  "name": "multi",
   "test_cases": [
     {
       "id": 1,
@@ -243,6 +243,7 @@
               }
             ]
           },
+          "delay": "500",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -255,8 +256,7 @@
                 "}"
               ]
             }
-          },
-          "delay": "500"
+          }
         },
         {
           "id": 6,
@@ -314,8 +314,120 @@
           "params": {
             "name": "{$inputs.SIM1_NAME}"
           },
+<<<<<<< Updated upstream
+          "delay": "500"
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Add testfsp1 with second currency"
+          },
+          "description": "Add testfsp1 with second currency",
+=======
           "body": {
             "currency": "{$inputs.currency2}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 10000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 8,
+          "description": "Add testfsp1 with second currency CGS",
+          "meta": {
+            "info": "Add testfsp1 with second currency"
+          },
+>>>>>>> Stashed changes
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.SIM1_NAME}",
+<<<<<<< Updated upstream
+            "currency": "{$inputs.currency2}"
+=======
+            "currency": "{$inputs.cgscurrency}"
+>>>>>>> Stashed changes
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+<<<<<<< Updated upstream
+          "id": 7,
+          "meta": {
+            "info": "Add initial position and limits - testfsp1 with second currency"
+          },
+          "description": "Add initial position and limits - testfsp1 with second currency",
+=======
+          "id": 9,
+          "description": "Add initial position and limits - testfsp1 with second currency CGS",
+          "meta": {
+            "info": "Add initial position and limits - testfsp1 with second currency"
+          },
+>>>>>>> Stashed changes
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.SIM1_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM1_NAME}"
+          },
+          "body": {
+<<<<<<< Updated upstream
+            "currency": "{$inputs.currency2}",
+=======
+            "currency": "{$inputs.cgscurrency}",
+>>>>>>> Stashed changes
             "limit": {
               "type": "NET_DEBIT_CAP",
               "value": 10000
