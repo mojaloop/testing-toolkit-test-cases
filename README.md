@@ -18,7 +18,9 @@ This repository is a collection of tests for the Mojaloop testing toolkit
 
 ### Provisioning Collection:
 
->**Test Path**: `collections/hub/provisioning`
+```
+collections/hub/provisioning
+```
 
 This collection can be used for setting up the switch after a fresh deployment. And also onboard the required FSPs (payerfsp, payeefsp, testfsp1, testfsp2, testingtoolkitdfsp ..etc) for running golden path tests.
 
@@ -56,11 +58,34 @@ Please follow the below standards for naming conventions and structure:
 * If the sequence diagram has alt's in it then the description of the sequence diagram should contain the title of the alt eg. *Create quote - quote invalid - Missing Date Header - [seq-quote-1.0.0]*
 
 
+### Third Party Provisioning Collectioin
+
+```
+collections/hub/provisioning_thirdparty
+```
+
+This collection adds the necessary participants and parties to
+make the Third Party Tests run.
+
+See [collections/hub/provisioning_thirdparty](./collections/hub/provisioning_thirdparty)
+for more information.
+
 ### Third Party Test Collection
 
 ```
-
+collections/hub/thirdparty
 ```
+
+This collection tests the optional Third Party features that 
+enable 3rd Party Payment Initiation (3PPI).
+
+The tests are executed from the perspective of a PISP with a 
+participantId of `pisp`
+
+The following scenarios are currently included:
+- Account Linking (WEB)
+- Account Linking (OTP)
+- 3rd Party Transaction Request
 
 ## For Mojaloop FSP Implementations
 
