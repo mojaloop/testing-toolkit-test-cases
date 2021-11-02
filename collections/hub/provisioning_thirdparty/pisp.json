@@ -1,0 +1,1184 @@
+{
+  "name": "pisp-provisioning",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "pisp account",
+      "meta": {
+        "info": "pisp account"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Add pisp"
+          },
+          "description": "Add pisp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.pisp_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Add pisp with different currency for default settlement case"
+          },
+          "description": "Add pisp with different currency for default settlement case",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.pisp_NAME}",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "pisp callbacks",
+      "meta": {
+        "info": "pisp callbacks"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_PATCH"
+          },
+          "description": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_PATCH",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_PATCH",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_POST"
+          },
+          "description": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_POST",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST"
+          },
+          "description": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Add pisp callback - FSPIOP_CALLBACK_URL_AUTHORIZATIONS"
+          },
+          "description": "Add pisp callback - FSPIOP_CALLBACK_URL_AUTHORIZATIONS",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_AUTHORIZATIONS",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_ACCOUNTS_PUT"
+          },
+          "description": "Add pisp callback - TP_CB_URL_ACCOUNTS_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_ACCOUNTS_PUT",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_ACCOUNTS_PUT_ERROR"
+          },
+          "description": "Add pisp callback - TP_CB_URL_ACCOUNTS_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_ACCOUNTS_PUT_ERROR",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_CONSENT_REQUEST_PUT"
+          },
+          "description": "Add pisp callback - TP_CB_URL_CONSENT_REQUEST_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_REQUEST_PUT",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 8,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_CONSENT_REQUEST_PUT_ERROR"
+          },
+          "description": "Add pisp callback - TP_CB_URL_CONSENT_REQUEST_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_REQUEST_PUT_ERROR",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 9,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_CREATE_CREDENTIAL_POST"
+          },
+          "description": "Add pisp callback - TP_CB_URL_CREATE_CREDENTIAL_POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CREATE_CREDENTIAL_POST",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 10,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_CONSENT_POST"
+          },
+          "description": "Add pisp callback - TP_CB_URL_CONSENT_POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_POST",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 11,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_CONSENT_GET"
+          },
+          "description": "Add pisp callback - TP_CB_URL_CONSENT_GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_GET",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 12,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_CONSENT_PUT"
+          },
+          "description": "Add pisp callback - TP_CB_URL_CONSENT_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_PUT",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 13,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_CONSENT_PUT_ERROR"
+          },
+          "description": "Add pisp callback - TP_CB_URL_CONSENT_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_PUT_ERROR",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 14,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_SERVICES_PUT"
+          },
+          "description": "Add pisp callback - TP_CB_URL_SERVICES_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_SERVICES_PUT",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 15,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_SERVICES_PUT_ERROR"
+          },
+          "description": "Add pisp callback - TP_CB_URL_SERVICES_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_SERVICES_PUT_ERROR",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 16,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_CONSENT_PUT"
+          },
+          "description": "Add pisp callback - TP_CB_URL_CONSENT_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_PUT",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 17,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_CONSENT_PATCH"
+          },
+          "description": "Add pisp callback - TP_CB_URL_CONSENT_PATCH",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_PATCH",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 18,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_ACCOUNTS_PUT_ERROR"
+          },
+          "description": "Add pisp callback - TP_CB_URL_ACCOUNTS_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_ACCOUNTS_PUT_ERROR",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 19,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_POST"
+          },
+          "description": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_POST",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 20,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_PUT"
+          },
+          "description": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_PUT",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 21,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_PUT_ERROR"
+          },
+          "description": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_PUT_ERROR",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 22,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT"
+          },
+          "description": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 23,
+          "meta": {
+            "info": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR"
+          },
+          "description": "Add pisp callback - TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR",
+            "value": "{$inputs.pisp_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "pisp notification_emails",
+      "meta": {
+        "info": "pisp notification_emails"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.pisp_NAME}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+            "value": "{$inputs.pispEmail}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+            "value": "{$inputs.pispEmail}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL"
+          },
+          "description": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.pisp_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.pisp_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.pisp_NAME}"
+          },
+          "body": {
+            "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+            "value": "{$inputs.pispEmail}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "pisp oracle_registration",
+      "meta": {
+        "info": "pisp oracle_registration"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Add 589408120 in payeeIdType Oracle"
+          },
+          "description": "Add 589408120 in payeeIdType Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.payeeIdType}/589408120",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.payeeIdType}",
+            "ID": "589408120"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.pisp_NAME}"
+          },
+          "body": {
+            "fspId": "{$inputs.pisp_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "pm.environment.set('fullName', 'Paolo Fernandez');\r",
+                "pm.environment.set('firstName', 'Paolo');\r",
+                "pm.environment.set('middleName', 'F');\r",
+                "pm.environment.set('lastName', 'Fernandez');\r",
+                "pm.environment.set('dob', '2000-10-10');\r",
+                "const testApiAddParty = {\r",
+                "    url: pm.environment.get(\"pisp_BACKEND_TESTAPI_URL\") + '/repository/parties',\r",
+                "    method: 'POST',\r",
+                "    header: {\r",
+                "        'Content-Type': 'application/json'\r",
+                "    },\r",
+                "    body: {\r",
+                "      mode: 'raw',\r",
+                "      raw: JSON.stringify({\r",
+                "        \"displayName\": \"Paolo Fernandez\",\r",
+                "        \"firstName\": \"Paolo\",\r",
+                "        \"middleName\": \"F\",\r",
+                "        \"lastName\": \"Fernandez\",\r",
+                "        \"dateOfBirth\": \"2000-10-10\",\r",
+                "        \"idType\": pm.environment.get(\"payeeIdType\"),\r",
+                "        \"idValue\": pm.environment.get(\"589408120\")\r",
+                "    })\r",
+                "    }\r",
+                "}\r",
+                "  \r",
+                "pm.sendRequest(testApiAddParty, function (err, response) {\r",
+                "    console.log('testApiAddParty: ', JSON.stringify(response.json()))\r",
+                "});"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
