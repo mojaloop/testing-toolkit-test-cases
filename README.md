@@ -7,6 +7,7 @@ This repository is a collection of tests for the Mojaloop testing toolkit
    - [Provisioning collection](#provisioning-collection)
    - [Golden Path collection](#golden-path-collection)
    - [Sequence Diagram test collection](#sequence-diagram-test-collection)
+   - [Third Party Provisioning collectionn](#third-party-provisioning-collection)
    - [Third Party test collection](#third-party-test-collection)
  - [For Mojaloop **FSP** Implementations](#for-mojaloop-fsp-implementations)
    - [Provisioning collection for Mojaloop Simulator](#provisioning-collection-for-mojaloop-simulator)
@@ -58,7 +59,7 @@ Please follow the below standards for naming conventions and structure:
 * If the sequence diagram has alt's in it then the description of the sequence diagram should contain the title of the alt eg. *Create quote - quote invalid - Missing Date Header - [seq-quote-1.0.0]*
 
 
-### Third Party Provisioning Collectioin
+### Third Party Provisioning Collection
 
 ```
 collections/hub/provisioning_thirdparty
@@ -80,7 +81,8 @@ This collection tests the optional Third Party features that
 enable 3rd Party Payment Initiation (3PPI).
 
 The tests are executed from the perspective of a PISP with a 
-participantId of `pisp`
+participantId of `pisp`, and use the [outbound thirdparty sdk](https://github.com/mojaloop/thirdparty-sdk)
+API.
 
 The following scenarios are currently included:
 - Account Linking (WEB)

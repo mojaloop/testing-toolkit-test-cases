@@ -8,9 +8,6 @@ This collection configures the following participants:
 
 And the following parties:
 
-<!-- TODO! -->
-
-
-## How to use this collection:
-
-<!-- TODO! -->
+- dfpspa: `MSISDN/589408120` - Paolo Fernandez
+- dfpspb: `MSISDN/329294234` - Daniel Rizal
+- dfpspb: `MSISDN/32929124` - Alejandro Leon
