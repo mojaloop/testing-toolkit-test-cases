@@ -7,6 +7,7 @@ This repository is a collection of tests for the Mojaloop testing toolkit
    - [Provisioning collection](#provisioning-collection)
    - [Golden Path collection](#golden-path-collection)
    - [Sequence Diagram test collection](#sequence-diagram-test-collection)
+   - [Third Party test collection](#third-party-test-collection)
  - [For Mojaloop **FSP** Implementations](#for-mojaloop-fsp-implementations)
    - [Provisioning collection for Mojaloop Simulator](#provisioning-collection-for-mojaloop-simulator)
    - [DFSP Golden Path collection](#dfsp-golden-path-collection)
@@ -17,9 +18,7 @@ This repository is a collection of tests for the Mojaloop testing toolkit
 
 ### Provisioning Collection:
 
-```
-collections/hub/provisioning
-```
+**Test Path**: `collections/hub/provisioning`
 
 This collection can be used for setting up the switch after a fresh deployment. And also onboard the required FSPs (payerfsp, payeefsp, testfsp1, testfsp2, testingtoolkitdfsp ..etc) for running golden path tests.
 
@@ -55,6 +54,13 @@ Please follow the below standards for naming conventions and structure:
 * Test collections for a specific service eg. Account-Lookup-Service should be under its own folder example [collections/hub/sequence/quoting-service](collections/hub/sequence/quoting-service) in the sequence folder [collections/hub/sequence](collections/hub/sequence)
 * The name of the collection should be a description of the sequence diagram as well as the file name such as [Create Quote [seq-quote-1.0.0]](collections/hub/sequence/quoting-service/Create%20Quote%20%5Bseq-quote-1.0.0%5D.json)   
 * If the sequence diagram has alt's in it then the description of the sequence diagram should contain the title of the alt eg. *Create quote - quote invalid - Missing Date Header - [seq-quote-1.0.0]*
+
+
+### Third Party Test Collection
+
+```
+
+```
 
 ## For Mojaloop FSP Implementations
 
