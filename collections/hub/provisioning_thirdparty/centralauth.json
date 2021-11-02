@@ -119,7 +119,7 @@
           },
           "body": {
             "type": "TP_CB_URL_TRANSACTION_REQUEST_VERIFY_POST",
-            "value": "{$inputs.CENTRALAUTH_CALLBACK_URL}"
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
           },
           "tests": {
             "assertions": [
@@ -157,7 +157,7 @@
           },
           "body": {
             "type": "TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT",
-            "value": "{$inputs.CENTRALAUTH_CALLBACK_URL}"
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
           },
           "tests": {
             "assertions": [
@@ -195,7 +195,7 @@
           },
           "body": {
             "type": "TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR",
-            "value": "{$inputs.CENTRALAUTH_CALLBACK_URL}"
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
           },
           "tests": {
             "assertions": [
@@ -233,7 +233,7 @@
           },
           "body": {
             "type": "TP_CB_URL_CONSENT_POST",
-            "value": "{$inputs.CENTRALAUTH_CALLBACK_URL}"
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
           },
           "tests": {
             "assertions": [
@@ -271,7 +271,7 @@
           },
           "body": {
             "type": "TP_CB_URL_CONSENT_GET",
-            "value": "{$inputs.CENTRALAUTH_CALLBACK_URL}"
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
           },
           "tests": {
             "assertions": [
@@ -309,7 +309,7 @@
           },
           "body": {
             "type": "TP_CB_URL_CONSENT_PUT",
-            "value": "{$inputs.CENTRALAUTH_CALLBACK_URL}"
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
           },
           "tests": {
             "assertions": [
@@ -347,7 +347,7 @@
           },
           "body": {
             "type": "TP_CB_URL_CONSENT_PUT_ERROR",
-            "value": "{$inputs.CENTRALAUTH_CALLBACK_URL}"
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
           },
           "tests": {
             "assertions": [
@@ -385,7 +385,83 @@
           },
           "body": {
             "type": "TP_CB_URL_CONSENT_PATCH",
-            "value": "{$inputs.CENTRALAUTH_CALLBACK_URL}"
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 18,
+          "meta": {
+            "info": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_PUT"
+          },
+          "description": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}/participants/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 19,
+          "meta": {
+            "info": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR"
+          },
+          "description": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
