@@ -18,7 +18,7 @@ This repository is a collection of tests for the Mojaloop testing toolkit
 
 ### Provisioning Collection:
 
->*Test Path*: `collections/hub/provisioning`
+>**Test Path**: `collections/hub/provisioning`
 
 This collection can be used for setting up the switch after a fresh deployment. And also onboard the required FSPs (payerfsp, payeefsp, testfsp1, testfsp2, testingtoolkitdfsp ..etc) for running golden path tests.
 
