@@ -7,6 +7,8 @@ This repository is a collection of tests for the Mojaloop testing toolkit
    - [Provisioning collection](#provisioning-collection)
    - [Golden Path collection](#golden-path-collection)
    - [Sequence Diagram test collection](#sequence-diagram-test-collection)
+   - [Third Party Provisioning collectionn](#third-party-provisioning-collection)
+   - [Third Party test collection](#third-party-test-collection)
  - [For Mojaloop **FSP** Implementations](#for-mojaloop-fsp-implementations)
    - [Provisioning collection for Mojaloop Simulator](#provisioning-collection-for-mojaloop-simulator)
    - [DFSP Golden Path collection](#dfsp-golden-path-collection)
@@ -55,6 +57,37 @@ Please follow the below standards for naming conventions and structure:
 * Test collections for a specific service eg. Account-Lookup-Service should be under its own folder example [collections/hub/sequence/quoting-service](collections/hub/sequence/quoting-service) in the sequence folder [collections/hub/sequence](collections/hub/sequence)
 * The name of the collection should be a description of the sequence diagram as well as the file name such as [Create Quote [seq-quote-1.0.0]](collections/hub/sequence/quoting-service/Create%20Quote%20%5Bseq-quote-1.0.0%5D.json)   
 * If the sequence diagram has alt's in it then the description of the sequence diagram should contain the title of the alt eg. *Create quote - quote invalid - Missing Date Header - [seq-quote-1.0.0]*
+
+
+### Third Party Provisioning Collection
+
+```
+collections/hub/provisioning_thirdparty
+```
+
+This collection adds the necessary participants and parties to
+make the Third Party Tests run.
+
+See [collections/hub/provisioning_thirdparty](./collections/hub/provisioning_thirdparty)
+for more information.
+
+### Third Party Test Collection
+
+```
+collections/hub/thirdparty
+```
+
+This collection tests the optional Third Party features that 
+enable 3rd Party Payment Initiation (3PPI).
+
+The tests are executed from the perspective of a PISP with a 
+participantId of `pisp`, and use the [outbound thirdparty sdk](https://github.com/mojaloop/thirdparty-sdk)
+API.
+
+The following scenarios are currently included:
+- Account Linking (WEB)
+- Account Linking (OTP)
+- 3rd Party Transaction Request
 
 ## For Mojaloop FSP Implementations
 
