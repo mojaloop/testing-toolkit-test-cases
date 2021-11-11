@@ -481,7 +481,9 @@
                 "id": 1,
                 "description": "settlement model created code 201",
                 "exec": [
-                  "expect(response.status).to.equal(201)"
+                  "if (response.status !=201) {",
+                  "  expect(response.body.errorInformation.errorDescription).to.contain('Settlement Model already exists')",
+                  "}"
                 ]
               }
             ]
@@ -520,7 +522,9 @@
                 "id": 1,
                 "description": "settlement model created code 201",
                 "exec": [
-                  "expect(response.status).to.equal(201)"
+                  "if (response.status !=201) {",
+                  "  expect(response.body.errorInformation.errorDescription).to.contain('Settlement Model already exists')",
+                  "}"
                 ]
               }
             ]
