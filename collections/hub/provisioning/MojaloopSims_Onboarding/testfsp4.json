@@ -3,17 +3,17 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp",
+      "name": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp4",
       "meta": {
-        "info": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp"
+        "info": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp4"
       },
       "requests": [
         {
           "id": 1,
           "meta": {
-            "info": "Add payerfsp"
+            "info": "Add testfsp4"
           },
-          "description": "Add payerfsp",
+          "description": "Add testfsp4",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -29,8 +29,8 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
-            "name": "payerfsp",
-            "currency": "{$environment.currency}"
+            "name": "{$inputs.SIM4_NAME}",
+            "currency": "{$environment.cgscurrency}"
           },
           "tests": {
             "assertions": [
@@ -38,7 +38,9 @@
                 "id": 1,
                 "description": "response code 201",
                 "exec": [
-                  "expect(response.status).to.equal(201)"
+                  "if (response.status !=201) {",
+                  "  expect(response.body.errorInformation.errorDescription).to.contain('already been registered')",
+                  "}"
                 ]
               }
             ]
@@ -47,29 +49,29 @@
         {
           "id": 2,
           "meta": {
-            "info": "[NBC=0]Add initial position and limits - payerfsp"
+            "info": "[NBC=0]Add initial position and limits - testfsp4"
           },
-          "description": "[NBC=0]Add initial position and limits - payerfsp",
+          "description": "[NBC=0]Add initial position and limits - testfsp4",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.SIM4_NAME}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "ignoreCallbacks": true,
           "body": {
-            "currency": "{$environment.currency}",
+            "currency": "{$environment.cgscurrency}",
             "limit": {
               "type": "NET_DEBIT_CAP",
               "value": 1000000
             },
-            "initialPosition": 1000
+            "initialPosition": 0
           },
           "tests": {
             "assertions": [
@@ -77,7 +79,9 @@
                 "id": 1,
                 "description": "response code is 201",
                 "exec": [
-                  "expect(response.status).to.equal(201)"
+                  "if (response.status !=201) {",
+                  "  expect(response.body.errorInformation.errorDescription).to.contain('already set')",
+                  "}"
                 ]
               }
             ]
@@ -86,19 +90,19 @@
         {
           "id": 3,
           "meta": {
-            "info": "GET /participants payerfsp"
+            "info": "GET /participants testfsp4"
           },
-          "description": "GET /participants payerfsp",
+          "description": "GET /participants testfsp4",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/accounts",
+          "path": "/participants/{$inputs.SIM4_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -123,13 +127,13 @@
                 "var jsonData = response.body;\r",
                 "console.log(jsonData);\r",
                 "    for(var i in jsonData) {\r",
-                "        if((jsonData[i].ledgerAccountType === 'SETTLEMENT') && (jsonData[i].currency === environment.currency) ) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'SETTLEMENT') && (jsonData[i].currency === environment.cgscurrency) ) {\r",
                 "          \r",
-                "environment.participantsettlementaccountid=jsonData[i].id;\r",
+                "environment.cgsparticipantsettlementaccountid=jsonData[i].id;\r",
                 "\r",
                 "        }\r",
                 "    }\r",
-                "console.log(environment.participantsettlementaccountid);"
+                "console.log(environment.cgsparticipantsettlementaccountid);"
               ]
             }
           }
@@ -137,20 +141,20 @@
         {
           "id": 4,
           "meta": {
-            "info": "Deposit Funds in Settlement Account - Payerfsp"
+            "info": "Deposit Funds in Settlement Account - testfsp4"
           },
-          "description": "Deposit Funds in Settlement Account - Payerfsp",
+          "description": "Deposit Funds in Settlement Account - testfsp4",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/accounts/{$environment.participantsettlementaccountid}",
+          "path": "/participants/{$inputs.SIM4_NAME}/accounts/{$environment.cgsparticipantsettlementaccountid}",
           "method": "post",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}",
-            "id": "{$environment.participantsettlementaccountid}"
+            "name": "{$inputs.SIM4_NAME}",
+            "id": "{$environment.cgsparticipantsettlementaccountid}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -163,7 +167,7 @@
             "reason": "string",
             "amount": {
               "amount": "{$environment.fundsInPrepareAmount}",
-              "currency": "{$environment.currency}"
+              "currency": "{$environment.cgscurrency}"
             },
             "extensionList": {
               "extension": [
@@ -208,32 +212,32 @@
     },
     {
       "id": 2,
-      "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-callbacks",
+      "name": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp4-callbacks",
       "meta": {
-        "info": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-callbacks"
+        "info": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp4-callbacks"
       },
       "requests": [
         {
           "id": 1,
           "meta": {
-            "info": "Add payerfsp callback - AUTHORIZATIONS"
+            "info": "Add testfsp4 callback - AUTHORIZATIONS"
           },
-          "description": "Add payerfsp callback - AUTHORIZATIONS",
+          "description": "Add testfsp4 callback - AUTHORIZATIONS",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_AUTHORIZATIONS",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -253,24 +257,24 @@
         {
           "id": 2,
           "meta": {
-            "info": "Add payerfsp callback - PARTICIPANT PUT"
+            "info": "Add testfsp4 callback - PARTICIPANT PUT"
           },
-          "description": "Add payerfsp callback - PARTICIPANT PUT",
+          "description": "Add testfsp4 callback - PARTICIPANT PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -290,24 +294,24 @@
         {
           "id": 3,
           "meta": {
-            "info": "Add payerfsp callback - PARTICIPANT PUT Error"
+            "info": "Add testfsp4 callback - PARTICIPANT PUT Error"
           },
-          "description": "Add payerfsp callback - PARTICIPANT PUT Error",
+          "description": "Add testfsp4 callback - PARTICIPANT PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -327,24 +331,24 @@
         {
           "id": 4,
           "meta": {
-            "info": "Add payerfsp callback - PARTICIPANT PUT Batch"
+            "info": "Add testfsp4 callback - PARTICIPANT PUT Batch"
           },
-          "description": "Add payerfsp callback - PARTICIPANT PUT Batch",
+          "description": "Add testfsp4 callback - PARTICIPANT PUT Batch",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}/participants/{{requestId}}"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}/participants/{{requestId}}"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -364,24 +368,24 @@
         {
           "id": 5,
           "meta": {
-            "info": "Add payerfsp callback - PARTICIPANT PUT Batch Error"
+            "info": "Add testfsp4 callback - PARTICIPANT PUT Batch Error"
           },
-          "description": "Add payerfsp callback - PARTICIPANT PUT Batch Error",
+          "description": "Add testfsp4 callback - PARTICIPANT PUT Batch Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}/participants/{{requestId}}/error"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}/participants/{{requestId}}/error"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -401,24 +405,24 @@
         {
           "id": 6,
           "meta": {
-            "info": "Add payerfsp callback - PARTIES GET"
+            "info": "Add testfsp4 callback - PARTIES GET"
           },
-          "description": "Add payerfsp callback - PARTIES GET",
+          "description": "Add testfsp4 callback - PARTIES GET",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -438,24 +442,24 @@
         {
           "id": 7,
           "meta": {
-            "info": "Add payerfsp callback - PARTIES PUT"
+            "info": "Add testfsp4 callback - PARTIES PUT"
           },
-          "description": "Add payerfsp callback - PARTIES PUT",
+          "description": "Add testfsp4 callback - PARTIES PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -475,24 +479,24 @@
         {
           "id": 8,
           "meta": {
-            "info": "Add payerfsp callback - PARTIES PUT Error"
+            "info": "Add testfsp4 callback - PARTIES PUT Error"
           },
-          "description": "Add payerfsp callback - PARTIES PUT Error",
+          "description": "Add testfsp4 callback - PARTIES PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -512,24 +516,24 @@
         {
           "id": 9,
           "meta": {
-            "info": "Add payerfsp callback - QUOTES"
+            "info": "Add testfsp4 callback - QUOTES"
           },
-          "description": "Add payerfsp callback - QUOTES",
+          "description": "Add testfsp4 callback - QUOTES",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_QUOTES",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -549,24 +553,24 @@
         {
           "id": 10,
           "meta": {
-            "info": "Add payerfsp callback - TXN REQUEST"
+            "info": "Add testfsp4 callback - TXN REQUEST"
           },
-          "description": "Add payerfsp callback - TXN REQUEST",
+          "description": "Add testfsp4 callback - TXN REQUEST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -586,24 +590,24 @@
         {
           "id": 11,
           "meta": {
-            "info": "Add payerfsp callback - TRANSFER POST"
+            "info": "Add testfsp4 callback - TRANSFER POST"
           },
-          "description": "Add payerfsp callback - TRANSFER POST",
+          "description": "Add testfsp4 callback - TRANSFER POST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}/transfers"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}/transfers"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -623,24 +627,24 @@
         {
           "id": 12,
           "meta": {
-            "info": "Add payerfsp callback - TRANSFER PUT"
+            "info": "Add testfsp4 callback - TRANSFER PUT"
           },
-          "description": "Add payerfsp callback - TRANSFER PUT",
+          "description": "Add testfsp4 callback - TRANSFER PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}/transfers/{{transferId}}"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}/transfers/{{transferId}}"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -660,24 +664,24 @@
         {
           "id": 13,
           "meta": {
-            "info": "Add payerfsp callback - TRANSFER ERROR"
+            "info": "Add testfsp4 callback - TRANSFER ERROR"
           },
-          "description": "Add payerfsp callback - TRANSFER ERROR",
+          "description": "Add testfsp4 callback - TRANSFER ERROR",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/payerfsp/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "payerfsp"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
-            "value": "{$environment.PAYERFSP_CALLBACK_URL}/transfers/{{transferId}}/error"
+            "value": "{$environment.TESTFSP4_CALLBACK_URL}/transfers/{{transferId}}/error"
           },
           "headers": {
             "Content-Type": "application/json"
@@ -698,9 +702,9 @@
     },
     {
       "id": 3,
-      "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-notifications",
+      "name": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp4-notifications",
       "meta": {
-        "info": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-notifications"
+        "info": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp4-notifications"
       },
       "requests": [
         {
@@ -715,10 +719,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -727,7 +731,7 @@
           },
           "body": {
             "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
-            "value": "{$environment.PAYERFSP_EMAIL}"
+            "value": "{$environment.MASTER_EMAIL}"
           }
         },
         {
@@ -742,10 +746,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -754,7 +758,7 @@
           },
           "body": {
             "type": "NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
-            "value": "{$environment.PAYERFSP_EMAIL}"
+            "value": "{$environment.MASTER_EMAIL}"
           }
         },
         {
@@ -769,10 +773,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/endpoints",
+          "path": "/participants/{$inputs.SIM4_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.SIM4_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -781,137 +785,7 @@
           },
           "body": {
             "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
-            "value": "{$environment.PAYERFSP_EMAIL}"
-          }
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-notifications-oracle_registration",
-      "meta": {
-        "info": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-notifications-oracle_registration"
-      },
-      "requests": [
-        {
-          "id": 3,
-          "meta": {
-            "info": "Register {{payerfspMSISDN}} in MSISDN Oracle"
-          },
-          "description": "Register {{payerfspMSISDN}} in MSISDN Oracle",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "fspiop",
-            "asynchronous": true
-          },
-          "operationPath": "/participants/{Type}/{ID}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.payerMSISDN}",
-          "method": "post",
-          "params": {
-            "Type": "{$inputs.toIdType}",
-            "ID": "{$inputs.payerMSISDN}"
-          },
-          "url": "{$inputs.MSISDN_ORACLE_ENDPOINT}",
-          "body": {
-            "fspId": "payerfsp",
-            "currency": "{$environment.currency}"
-          },
-          "headers": {
-            "Accept": "application/vnd.interoperability.participants+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-            "Date": "{$function.generic.curDate}"
-          }
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-SubID-user",
-      "meta": {
-        "info": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-SubID-user"
-      },
-      "requests": [
-        {
-          "id": 1,
-          "meta": {
-            "info": "Add SubId User - 27713803920 - 100"
-          },
-          "description": "Add SubId User - 27713803920 - 100",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "fspiop",
-            "asynchronous": true
-          },
-          "operationPath": "/participants/{Type}/{ID}/{SubId}",
-          "path": "/participants/{$inputs.toIdType}/27713803920/100",
-          "method": "post",
-          "params": {
-            "Type": "{$inputs.toIdType}",
-            "ID": "27713803920",
-            "SubId": "100"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "headers": {
-            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-            "Accept": "application/vnd.interoperability.participants+json;version=1",
-            "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
-          },
-          "body": {
-            "fspId": "{$environment.SIMPAYER_NAME}",
-            "currency": "TZS"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response code is 202",
-                "exec": [
-                  "expect(response.status).to.equal(202)"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "name": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-register-msisdn-simulator",
-      "meta": {
-        "info": "FSP Onboarding(MojaloopSims_Onboarding)-payerfsp-register-msisdn-simulator"
-      },
-      "requests": [
-        {
-          "id": 1,
-          "meta": {
-            "info": "Add Party to Simulator"
-          },
-          "description": "Add Party to Simulator",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 0,
-            "type": "mojaloop_simulator",
-            "asynchronous": false,
-            "additionalApi": true
-          },
-          "operationPath": "/repository/parties",
-          "path": "/repository/parties",
-          "method": "post",
-          "url": "{$inputs.PAYERFSP_BACKEND_TESTAPI_URL}",
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          "body": {
-            "displayName": "SimFirst SimLast",
-            "firstName": "SimFirst",
-            "middleName": "SimMiddle",
-            "lastName": "SimLast",
-            "dateOfBirth": "2010-10-10",
-            "idType": "{$inputs.toIdType}",
-            "idValue": "{$inputs.payerMSISDN}"
+            "value": "{$environment.MASTER_EMAIL}"
           }
         }
       ]
