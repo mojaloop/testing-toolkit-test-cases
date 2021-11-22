@@ -320,7 +320,7 @@
                 "description": "Payee FSP 'accept' is same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")",
+                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
                   "}"
                 ]
               },
@@ -329,7 +329,7 @@
                 "description": "Payee FSP 'content-type' is same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")",
+                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
                   "}"
                 ]
               },
