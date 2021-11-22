@@ -702,8 +702,7 @@
             "FSPIOP-HTTP-Method": "GET",
             "FSPIOP-URI": "/authorizations",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
-            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
-            "Content-Type": "{$inputs.contentTypeAuthorizations}"
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "scriptingEngine": "javascript",
           "queryParams": {
@@ -774,7 +773,7 @@
             "FSPIOP-URI": "/authorizations",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
             "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
-            "Content-Type": "{$inputs.contentTypeAuthorizations}"
+            "Content-Type": "application/vnd.interoperability.authorizations+json;version=9.9"
           },
           "scriptingEngine": "javascript",
           "queryParams": {
@@ -1322,7 +1321,8 @@
             "Content-Type": "{$inputs.contentTypeAuthorizations}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.payeefsp}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Accept": "*/*"
           },
           "tests": {
             "assertions": [
