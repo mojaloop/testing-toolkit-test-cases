@@ -419,7 +419,6 @@
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
             "Accept": "{$inputs.acceptQuotes}",
-            "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -506,7 +505,7 @@
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
             "Accept": "{$inputs.acceptQuotes}",
-            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Content-Type": "application/json",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -593,7 +592,7 @@
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
             "Accept": "{$inputs.acceptQuotes}",
-            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Content-Type": "application/xml",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -861,7 +860,7 @@
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
             "Accept": "{$inputs.acceptQuotes}",
-            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=9.9",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -1015,7 +1014,6 @@
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
             "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
-            "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "{$inputs.contentTypeQuotes}"
           },
           "tests": {
@@ -1031,14 +1029,14 @@
                 "id": 2,
                 "description": "Check Malformed syntax - Invalid accept header",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax - Invalid accept header');"
+                  "expect(response.body.errorInformation.errorDescription).to.include('Accept is required');"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check error code 3101",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.equal('3101');"
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102');"
                 ]
               }
             ]
