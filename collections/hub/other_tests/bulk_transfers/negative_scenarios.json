@@ -1,11 +1,14 @@
 {
-  "name": "hub-bulk-transfers-tests",
+  "name": "multi",
   "test_cases": [
     {
-      "id": 2,
+      "id": 1,
       "name": "negative scenario - payee_abort",
       "meta": {
         "info": "negative scenario - payee_abort"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/negative_scenarios.json"
       },
       "requests": [
         {
@@ -37,14 +40,14 @@
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "postRequest": {
               "exec": [
                 "environment[\"payerfspPositionBeforePrepare\"] = response.body[0].value"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 2,
@@ -75,14 +78,14 @@
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "postRequest": {
               "exec": [
                 "environment[\"payeefspPositionBeforePrepare\"] = response.body[0].value"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 3,
@@ -100,8 +103,8 @@
           "method": "post",
           "url": "{$inputs.HOST_BULK_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.bulkTransfers+json;version=1",
-            "Content-Type": "application/vnd.interoperability.bulkTransfers+json;version=1.0",
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$environment.headerDate}",
             "FSPIOP-Source": "testingtoolkitdfsp",
             "FSPIOP-Destination": "noresponsepayeefsp"
@@ -285,8 +288,8 @@
           },
           "url": "{$inputs.HOST_BULK_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.bulkTransfers+json;version=1",
-            "Content-Type": "application/vnd.interoperability.bulkTransfers+json;version=1.0",
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$environment.headerDate}",
             "FSPIOP-Source": "testingtoolkitdfsp",
             "FSPIOP-Destination": "switch"
@@ -349,6 +352,8 @@
             ]
           },
           "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "delay": "1000",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -360,9 +365,7 @@
                 ""
               ]
             }
-          },
-          "scriptingEngine": "javascript",
-          "delay": "1000"
+          }
         },
         {
           "id": 7,
@@ -442,10 +445,13 @@
       ]
     },
     {
-      "id": 3,
+      "id": 2,
       "name": "negative scenario - partial fulfil",
       "meta": {
         "info": "negative scenario - partial fulfil"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/negative_scenarios.json"
       },
       "requests": [
         {
@@ -464,8 +470,8 @@
           "method": "post",
           "url": "{$inputs.HOST_BULK_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.bulkTransfers+json;version=1",
-            "Content-Type": "application/vnd.interoperability.bulkTransfers+json;version=1.0",
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "testingtoolkitdfsp",
             "FSPIOP-Destination": "payeefsp"
@@ -767,6 +773,7 @@
             "name": "testingtoolkitdfsp"
           },
           "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -799,8 +806,7 @@
                 "}"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 5,
@@ -823,8 +829,8 @@
           },
           "url": "{$inputs.HOST_BULK_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.bulkTransfers+json;version=1",
-            "Content-Type": "application/vnd.interoperability.bulkTransfers+json;version=1.0",
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "payeefsp",
             "FSPIOP-Destination": "switch"
@@ -911,6 +917,7 @@
             ]
           },
           "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -926,8 +933,7 @@
                 "}"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 6,
@@ -950,8 +956,8 @@
           },
           "url": "{$inputs.HOST_BULK_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.bulkTransfers+json;version=1",
-            "Content-Type": "application/vnd.interoperability.bulkTransfers+json;version=1.0",
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "testingtoolkitdfsp",
             "FSPIOP-Destination": "switch"

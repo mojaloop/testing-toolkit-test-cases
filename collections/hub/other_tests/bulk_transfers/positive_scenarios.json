@@ -1,11 +1,14 @@
 {
-  "name": "hub-bulk-transfers-tests",
+  "name": "multi",
   "test_cases": [
     {
       "id": 1,
       "name": "positive scenario - fulfil",
       "meta": {
         "info": "positive scenario - fulfil"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/positive_scenarios.json"
       },
       "requests": [
         {
@@ -24,8 +27,8 @@
           "method": "post",
           "url": "{$inputs.HOST_BULK_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.bulkTransfers+json;version=1",
-            "Content-Type": "application/vnd.interoperability.bulkTransfers+json;version=1.0",
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "testingtoolkitdfsp",
             "FSPIOP-Destination": "payeefsp"
@@ -362,6 +365,7 @@
             "name": "testingtoolkitdfsp"
           },
           "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -394,8 +398,7 @@
                 "}"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 5,
@@ -418,8 +421,8 @@
           },
           "url": "{$inputs.HOST_BULK_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.bulkTransfers+json;version=1",
-            "Content-Type": "application/vnd.interoperability.bulkTransfers+json;version=1.0",
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "payeefsp",
             "FSPIOP-Destination": "switch"
@@ -508,6 +511,7 @@
             ]
           },
           "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -523,8 +527,7 @@
                 "}"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 6,
@@ -547,8 +550,8 @@
           },
           "url": "{$inputs.HOST_BULK_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.bulkTransfers+json;version=1",
-            "Content-Type": "application/vnd.interoperability.bulkTransfers+json;version=1.0",
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "testingtoolkitdfsp",
             "FSPIOP-Destination": "switch"
