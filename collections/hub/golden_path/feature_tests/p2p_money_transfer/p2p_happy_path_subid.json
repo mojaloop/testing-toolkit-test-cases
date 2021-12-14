@@ -30,8 +30,8 @@
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.toFspId}",
-            "Accept": "application/vnd.interoperability.participants+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
             "Date": "{$function.generic.curDate}",
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
@@ -71,7 +71,7 @@
             "dateOfBirth": "1984-01-01",
             "idType": "{$inputs.toIdType}",
             "idValue": "{$inputs.toIdValue}",
-            "subIdValue": "{$inputs.toSubIdValue}"
+            "idSubValue": "{$inputs.toSubIdValue}"
           }
         },
         {
@@ -89,11 +89,11 @@
           "operationPath": "/parties/{Type}/{ID}/{SubId}",
           "method": "get",
           "headers": {
-            "Accept": "{$inputs.accept}",
-            "Content-Type": "{$inputs.contentType}",
+            "Accept": "{$inputs.acceptParties}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeParties}"
           },
           "params": {
             "Type": "{$inputs.toIdType}",
@@ -189,6 +189,7 @@
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -204,8 +205,7 @@
                 "}"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 4,
@@ -222,8 +222,8 @@
           "operationPath": "/quotes",
           "method": "post",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "FSPIOP-Destination": "{$inputs.toFspId}",
@@ -267,22 +267,6 @@
             "note": "{$inputs.note}"
           },
           "scriptingEngine": "javascript",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                "}"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -406,7 +390,23 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}"
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
         },
         {
           "id": 5,
@@ -423,8 +423,8 @@
           "operationPath": "/transfers",
           "method": "post",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
@@ -442,22 +442,6 @@
             "condition": "{$prev.4.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.transferId}', 'payeeRequest')",
-                "}"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -562,7 +546,23 @@
               }
             ]
           },
-          "url": "{$inputs.HOST_ML_API_ADAPTER}"
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.transferId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
         }
       ]
     }

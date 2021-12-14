@@ -24,8 +24,8 @@
           "path": "/quotes",
           "method": "post",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -287,8 +287,8 @@
           "method": "post",
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -348,8 +348,7 @@
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
@@ -416,8 +415,7 @@
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
@@ -484,11 +482,11 @@
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Accept": "{$inputs.acceptTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeTransfers}"
           },
           "scripts": {
             "preRequest": {
@@ -532,9 +530,9 @@
               },
               {
                 "id": 14,
-                "description": "Callback Header - content-type is application/vnd.interoperability.transfers+json;version=1.0",
+                "description": "Callback Header - content-type",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
                   ""
                 ]
               },
@@ -607,8 +605,8 @@
           "path": "/quotes",
           "method": "post",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -870,8 +868,8 @@
           "method": "post",
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -931,8 +929,7 @@
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
@@ -999,8 +996,7 @@
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
@@ -1074,11 +1070,11 @@
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Accept": "{$inputs.acceptTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeTransfers}"
           },
           "scripts": {
             "preRequest": {
@@ -1122,9 +1118,9 @@
               },
               {
                 "id": 14,
-                "description": "Callback Header - content-type is application/vnd.interoperability.transfers+json;version=1.0",
+                "description": "Callback Header - content-type",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
                   ""
                 ]
               },
