@@ -23,8 +23,8 @@
           "operationPath": "/quotes",
           "method": "post",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -188,8 +188,8 @@
           "operationPath": "/quotes",
           "method": "post",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -298,8 +298,8 @@
           "operationPath": "/quotes",
           "method": "post",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -418,8 +418,7 @@
           "method": "post",
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;",
+            "Accept": "{$inputs.acceptQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -505,7 +504,7 @@
           "method": "post",
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "application/json",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
@@ -592,7 +591,7 @@
           "method": "post",
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "application/xml",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
@@ -679,8 +678,8 @@
           "method": "post",
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -766,8 +765,8 @@
           "method": "post",
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -860,8 +859,8 @@
           "method": "post",
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=9.0",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=9.9",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -950,7 +949,7 @@
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
@@ -1011,12 +1010,11 @@
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
             "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
-            "Accept": "*/*"
+            "Content-Type": "{$inputs.contentTypeQuotes}"
           },
           "tests": {
             "assertions": [
@@ -1031,14 +1029,14 @@
                 "id": 2,
                 "description": "Check Malformed syntax - Invalid accept header",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax - Invalid accept header');"
+                  "expect(response.body.errorInformation.errorDescription).to.include('Accept is required');"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check error code 3101",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.equal('3101');"
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102');"
                 ]
               }
             ]
@@ -1064,11 +1062,11 @@
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+            "Accept": "{$inputs.acceptQuotes}",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeQuotes}"
           },
           "tests": {
             "assertions": [
@@ -1139,11 +1137,11 @@
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
-            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeQuotes}"
           },
           "tests": {
             "assertions": [

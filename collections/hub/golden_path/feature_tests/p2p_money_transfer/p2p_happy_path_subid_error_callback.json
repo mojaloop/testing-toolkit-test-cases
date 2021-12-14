@@ -30,8 +30,8 @@
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.toFspId}",
-            "Accept": "application/vnd.interoperability.participants+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
             "Date": "{$function.generic.curDate}",
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
@@ -57,11 +57,11 @@
           "operationPath": "/parties/{Type}/{ID}/{SubId}",
           "method": "get",
           "headers": {
-            "Accept": "{$inputs.accept}",
-            "Content-Type": "{$inputs.contentType}",
+            "Accept": "{$inputs.acceptParties}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeParties}"
           },
           "params": {
             "SubId": "31",

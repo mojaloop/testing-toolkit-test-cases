@@ -112,8 +112,8 @@
           "operationPath": "/transfers",
           "method": "post",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.1",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.1",
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
@@ -135,17 +135,9 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Response status to be 406",
+                "description": "Response status to be 202",
                 "exec": [
-                  "expect(response.status).to.equal(406)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Response errorInformation to be 3001 with Unacceptable version request",
-                "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.equal(\"3001\")",
-                  "expect(response.body.errorInformation.errorDescription).to.equal(\"Unacceptable version requested - Client supplied a protocol version which is not supported by the server\")"
+                  "expect(response.status).to.equal(202)"
                 ]
               }
             ]
@@ -230,8 +222,7 @@
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.1",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.1",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
@@ -247,17 +238,9 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Response status to be 406",
+                "description": "Response status to be 200",
                 "exec": [
-                  "expect(response.status).to.equal(406)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Response errorInformation to be 3001 with Unacceptable version request",
-                "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.equal(\"3001\")",
-                  "expect(response.body.errorInformation.errorDescription).to.equal(\"Unacceptable version requested - Client supplied a protocol version which is not supported by the server\")"
+                  "expect(response.status).to.equal(200)"
                 ]
               }
             ]
@@ -346,8 +329,7 @@
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.1",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.1",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
@@ -371,17 +353,9 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Status code is 406",
+                "description": "Status code is 200",
                 "exec": [
-                  "expect(response.status).to.equal(406)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Response errorInformation to be 3001 with Unacceptable version request",
-                "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.equal(\"3001\")",
-                  "expect(response.body.errorInformation.errorDescription).to.equal(\"Unacceptable version requested - Client supplied a protocol version which is not supported by the server\")"
+                  "expect(response.status).to.equal(200)"
                 ]
               }
             ]
@@ -426,12 +400,12 @@
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Accept": "{$inputs.acceptTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
-            "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
+            "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "Content-Type": "{$inputs.contentTypeTransfers}"
           },
           "tests": {
             "assertions": [
@@ -469,7 +443,7 @@
                 "id": 14,
                 "description": "Callback Header - content-type is application/vnd.interoperability.transfers+json;version=1.0",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')",
+                  "expect(callback.headers['content-type']).to.equal('{$inputs.contentTypeTransfers}')",
                   ""
                 ]
               },
@@ -490,13 +464,6 @@
                 ]
               },
               {
-                "id": 17,
-                "description": "Callback Header - fspiop-uri is /transfers/transferId",
-                "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/' + request.params.ID + '/error')"
-                ]
-              },
-              {
                 "id": 18,
                 "description": "Callback Header - fspiop-http-method is PUT",
                 "exec": [
@@ -506,10 +473,10 @@
               },
               {
                 "id": 19,
-                "description": "Response errorInformation to be 3208 with Transfer ID not found",
+                "description": "Callback transferState is ABORTED",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorCode).to.equal(\"3208\")",
-                  "expect(callback.body.errorInformation.errorDescription).to.equal(\"Transfer ID not found - Provided Transfer ID was not found on the server.\")"
+                  "expect(callback.body.transferState).to.equal('ABORTED')",
+                  ""
                 ]
               }
             ]

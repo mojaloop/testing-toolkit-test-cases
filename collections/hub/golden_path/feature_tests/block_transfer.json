@@ -233,8 +233,8 @@
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "scriptingEngine": "javascript",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
@@ -320,7 +320,7 @@
                 "description": "Payee FSP 'accept' is same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")",
+                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
                   "}"
                 ]
               },
@@ -329,7 +329,7 @@
                 "description": "Payee FSP 'content-type' is same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version=1.0\")",
+                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
                   "}"
                 ]
               },
@@ -481,8 +481,8 @@
             "condition": "{$prev.5.callback.body.condition}"
           },
           "headers": {
-            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",

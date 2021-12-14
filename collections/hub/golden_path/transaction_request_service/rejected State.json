@@ -28,8 +28,8 @@
             "FSPIOP-Source": "{$inputs.payeefsp}",
             "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
             "Date": "{$function.generic.curDate}",
-            "Content-Type": "application/vnd.interoperability.transactionRequests+json;version=1.0",
-            "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}",
+            "Accept": "{$inputs.acceptTransactionRequests}",
             "FSPIOP-HTTP-Method": "POST",
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
@@ -157,8 +157,7 @@
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
             "Date": "{$function.generic.curDate}",
-            "Content-Type": "application/vnd.interoperability.transactionRequests+json;version=1.0",
-            "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}",
             "FSPIOP-HTTP-Method": "PUT",
             "FSPIOP-URI": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
             "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
@@ -254,11 +253,11 @@
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
             "Date": "{$environment.transactionRequestDatex}",
-            "Content-Type": "application/vnd.interoperability.transactionRequests+json;version=1.0",
-            "Accept": "application/vnd.interoperability.transactionRequests+json;version=1.0",
+            "Accept": "{$inputs.acceptTransactionRequests}",
             "FSPIOP-HTTP-Method": "GET",
             "FSPIOP-URI": "/transactionRequests",
-            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}"
           },
           "tests": {
             "assertions": [
