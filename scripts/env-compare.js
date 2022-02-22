@@ -35,8 +35,10 @@ const commonKeysWithDifferentValues = Object.entries(env1Json.inputValues).filte
   return env2Json.inputValues[item1[0]] !== undefined && env2Json.inputValues[item1[0]] !== item1[1]
 })
 
-console.log('Items those exist only in first file', JSON.stringify(onlyInEnv1.map(item => item[0]), null, 2))
-console.log('Items those exist only in second file', JSON.stringify(onlyInEnv2.map(item => item[0]), null ,2))
+// console.log('Items those exist only in first file', JSON.stringify(onlyInEnv1.map(item => item[0]), null, 2))
+// console.log('Items those exist only in second file', JSON.stringify(onlyInEnv2.map(item => item[0]), null ,2))
+console.log('Items those exist only in first file', JSON.stringify(onlyInEnv1.reduce((a, v) => ({ ...a, [v[0]]: v[1]}), {}) , null ,2))
+console.log('Items those exist only in second file', JSON.stringify(onlyInEnv2.reduce((a, v) => ({ ...a, [v[0]]: v[1]}), {}) , null ,2))
 // console.log('Items those exist in both files', JSON.stringify(commonKeys.map(item => item[0]), null, 2))
 
 const commonKeysWithDifferentValuesComparison = commonKeysWithDifferentValues.map(item => {
