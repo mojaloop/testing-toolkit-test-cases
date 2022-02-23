@@ -30,14 +30,14 @@
             "Accept": "{$inputs.acceptBulkTransfers}",
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "testingtoolkitdfsp",
-            "FSPIOP-Destination": "payeefsp"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
             "bulkTransferId": "{$function.generic.generateUUID}",
             "bulkQuoteId": "{$function.generic.generateUUID}",
-            "payeeFsp": "payeefsp",
-            "payerFsp": "testingtoolkitdfsp",
+            "payeeFsp": "{$inputs.toFspId}",
+            "payerFsp": "{$inputs.fromFspId}",
             "individualTransfers": [
               {
                 "transferId": "{$function.generic.generateUUID}",
@@ -92,14 +92,14 @@
                 "id": 3,
                 "description": "payerfsp callback - fspiop-source should be payeefsp",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal('payeefsp')"
+                  "expect(callback.headers['fspiop-source']).to.equal(environment.toFspId)"
                 ]
               },
               {
                 "id": 4,
                 "description": "payerfsp callback - fspiop-destination should be testingtoolkitdfsp",
                 "exec": [
-                  "expect(callback.headers['fspiop-destination']).to.equal('testingtoolkitdfsp')"
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
                 ]
               },
               {
@@ -113,7 +113,7 @@
                 "id": 6,
                 "description": "payerfsp callback - fspiop-uri should be /payerfsp/bulkTransfers/",
                 "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
+                  "expect(callback.headers['fspiop-uri']).to.equal(`/${environment.fromFspId}/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
@@ -171,7 +171,7 @@
                 "id": 14,
                 "description": "payeefsp callback - fspiop-destination should be payeefsp",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-destination']).to.equal('payeefsp')"
+                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-destination']).to.equal(environment.toFspId)"
                 ]
               },
               {
@@ -185,7 +185,7 @@
                 "id": 16,
                 "description": "payeefsp callback - fspiop-uri should be as expected",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-uri']).to.equal(`/payeefsp/bulkTransfers/${environment.bulkTransferId}`)"
+                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-uri']).to.equal(`/${environment.toFspId}/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
@@ -236,14 +236,14 @@
                 "id": 23,
                 "description": "payeefsp request - fspiop-source should be testingtoolkitdfsp",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeRequest.headers['fspiop-source']).to.equal('testingtoolkitdfsp')"
+                  "expect(environment.bulkTransfersNegativeRequest.headers['fspiop-source']).to.equal(environment.fromFspId)"
                 ]
               },
               {
                 "id": 24,
                 "description": "payeefsp request - fspiop-destination should be payeefsp",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeRequest.headers['fspiop-destination']).to.equal('payeefsp')"
+                  "expect(environment.bulkTransfersNegativeRequest.headers['fspiop-destination']).to.equal(environment.toFspId)"
                 ]
               },
               {
@@ -278,14 +278,14 @@
                 "id": 29,
                 "description": "payeefsp request - PayerFsp should be testingtoolkitdfsp",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeRequest.data.payerFsp).to.equal('testingtoolkitdfsp')"
+                  "expect(environment.bulkTransfersNegativeRequest.data.payerFsp).to.equal(environment.fromFspId)"
                 ]
               },
               {
                 "id": 30,
                 "description": "payeefsp request - PayeeFsp should be payeefsp",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeRequest.data.payeeFsp).to.equal('payeefsp')"
+                  "expect(environment.bulkTransfersNegativeRequest.data.payeeFsp).to.equal(environment.toFspId)"
                 ]
               },
               {
@@ -424,7 +424,7 @@
             "Accept": "{$inputs.acceptBulkTransfers}",
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "payeefsp",
+            "FSPIOP-Source": "{$inputs.toFspId}",
             "FSPIOP-Destination": "switch"
           },
           "tests": {
@@ -454,14 +454,14 @@
                 "id": 4,
                 "description": "Callback fspiop-destination should be payeefsp",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-destination']).to.equal('payeefsp')"
+                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-destination']).to.equal(environment.toFspId)"
                 ]
               },
               {
                 "id": 5,
                 "description": "Callback fspiop-uri should be as expected",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-uri']).to.equal(`/payeefsp/bulkTransfers/${environment.bulkTransferId}`)"
+                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-uri']).to.equal(`/${environment.toFspId}/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
@@ -583,14 +583,14 @@
                 "id": 4,
                 "description": "Callback fspiop-destination should be payerfsp",
                 "exec": [
-                  "expect(callback.headers['fspiop-destination']).to.equal('testingtoolkitdfsp')"
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
                 ]
               },
               {
                 "id": 5,
                 "description": "Callback fspiop-uri should be as expected",
                 "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
+                  "expect(callback.headers['fspiop-uri']).to.equal(`/${environment.fromFspId}/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
