@@ -323,7 +323,8 @@
                 "description": "payeefsp request - 1st individual transfer should have valid transferAmount",
                 "exec": [
                   "const transfer1 = environment.bulkTransfersNegativeRequest.data.individualTransfers.find(t => t.transferId === environment.transferId);",
-                  "expect(JSON.stringify(transfer1.transferAmount)).to.equal(JSON.stringify({ amount: \"1\", currency: \"USD\" }))"
+                  "",
+                  "expect(transfer1.transferAmount.amount).to.equal(\"1\") && expect(transfer1.transferAmount.currency).to.equal(\"USD\")"
                 ]
               },
               {
@@ -355,7 +356,8 @@
                 "description": "payeefsp request - 2nd individual transfer should have valid transferAmount",
                 "exec": [
                   "const transfer2 = environment.bulkTransfersNegativeRequest.data.individualTransfers.find(t => t.transferId === environment.transferId2)",
-                  "expect(JSON.stringify(transfer2.transferAmount)).to.equal(JSON.stringify({ amount: \"1\", currency: \"USD\" }))"
+                  "",
+                  "expect(transfer2.transferAmount.amount).to.equal(\"1\") && expect(transfer2.transferAmount.currency).to.equal(\"USD\")"
                 ]
               }
             ]
@@ -395,7 +397,8 @@
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  environment.bulkTransfersNegativeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
                 "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
+                "}",
+                ""
               ]
             }
           }
