@@ -3,7 +3,7 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "fspiop_protocol_validation - Account-lookup-Service",
+      "name": "fspiop_protocol_validation - Quoting-Service Copy",
       "meta": {
         "info": "This is a test to validate that ACCEPT and CONTENT-TYPE headers are correctly validated for both legacy (Old) and not\n-supported (NotSupported)"
       },
@@ -12,37 +12,30 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": 3,
           "meta": {
-            "info": "This request allows us to add a new participant to Account Lookup Service."
+            "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
           },
-          "description": "Add Participant to ALS",
+          "description": "Get party information",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
             "type": "fspiop",
             "asynchronous": true
           },
-          "operationPath": "/participants/{Type}/{ID}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}",
-          "method": "post",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.acceptPartiesOld}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypePartiesOld}"
+          },
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
           },
-          "headers": {
-            "FSPIOP-Source": "{$inputs.toFspId}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
-            "Accept": "{$inputs.acceptParticipantsOld}",
-            "Content-Type": "{$inputs.contentTypeParticipantsOld}",
-            "Date": "{$function.generic.curDate}"
-          },
-          "body": {
-            "fspId": "{$inputs.toFspId}",
-            "currency": "{$inputs.currency}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "ignoreCallbacks": true,
           "tests": {
             "assertions": [
               {
@@ -54,19 +47,100 @@
               },
               {
                 "id": 2,
-                "description": "Response statusText to be Accepted",
+                "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback body should contain party",
+                "exec": [
+                  "expect(callback.body).to.have.property('party')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be parties",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Payee Content-Type",
+                "exec": [
+                  "// TODO investigate how to properly test this as it requires SIMs to be configured for 1.0",
+                  "// if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "//   expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
+                  "// }"
+                ]
               }
             ]
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
           }
         },
         {
-          "id": 2,
-          "description": "Add Participant to ALS",
+          "id": 4,
+          "description": "Get party information",
           "meta": {
-            "info": "This request allows us to add a new participant to Account Lookup Service.\n\nValidate Not Support Accept header."
+            "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
           },
           "apiVersion": {
             "minorVersion": 1,
@@ -74,26 +148,19 @@
             "type": "fspiop",
             "asynchronous": true
           },
-          "operationPath": "/participants/{Type}/{ID}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}",
-          "method": "post",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.acceptPartiesNotSupported}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeParties}"
+          },
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
           },
-          "headers": {
-            "FSPIOP-Source": "{$inputs.toFspId}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
-            "Accept": "{$inputs.acceptParticipantsNotSupported}",
-            "Content-Type": "{$inputs.contentTypeParticipants}",
-            "Date": "{$function.generic.curDate}"
-          },
-          "body": {
-            "fspId": "{$inputs.toFspId}",
-            "currency": "{$inputs.currency}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "ignoreCallbacks": true,
           "tests": {
             "assertions": [
               {
@@ -137,21 +204,32 @@
               }
             ]
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "scriptingEngine": "javascript",
+          "ignoreCallbacks": true,
           "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
+                "}"
+              ]
+            },
             "postRequest": {
               "exec": [
-                "console.log('test')",
-                "var res = pm.response.body;",
-                "console.log(JSON.stringify(res))"
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
               ]
             }
           }
         },
         {
-          "id": 3,
-          "description": "Add Participant to ALS",
+          "id": 5,
+          "description": "Get party information",
           "meta": {
-            "info": "This request allows us to add a new participant to Account Lookup Service. Validate Not Support Content-Type header."
+            "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
           },
           "apiVersion": {
             "minorVersion": 1,
@@ -159,26 +237,19 @@
             "type": "fspiop",
             "asynchronous": true
           },
-          "operationPath": "/participants/{Type}/{ID}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}",
-          "method": "post",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.acceptPartiesNotSupported}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeParties}"
+          },
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
           },
-          "headers": {
-            "FSPIOP-Source": "{$inputs.toFspId}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
-            "Accept": "{$inputs.acceptParticipants}",
-            "Content-Type": "{$inputs.contentTypeParticipantsNotSupported}",
-            "Date": "{$function.generic.curDate}"
-          },
-          "body": {
-            "fspId": "{$inputs.toFspId}",
-            "currency": "{$inputs.currency}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "ignoreCallbacks": true,
           "tests": {
             "assertions": [
               {
@@ -222,11 +293,23 @@
               }
             ]
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
           "scriptingEngine": "javascript",
+          "ignoreCallbacks": true,
           "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
+                "}"
+              ]
+            },
             "postRequest": {
               "exec": [
-                ""
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
               ]
             }
           }
