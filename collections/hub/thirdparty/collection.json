@@ -4,6 +4,9 @@
     {
       "id": 1,
       "name": "Account Linking: Prelinking",
+      "fileInfo": {
+        "path": "hub/thirdparty/collection.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -38,6 +41,9 @@
     {
       "id": 2,
       "name": "Account Linking: Discovery",
+      "fileInfo": {
+        "path": "hub/thirdparty/collection.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -88,6 +94,9 @@
     {
       "id": 3,
       "name": "Account Linking - Happy Path WEB",
+      "fileInfo": {
+        "path": "hub/thirdparty/collection.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -242,6 +251,9 @@
     {
       "id": 4,
       "name": "Account Linking - Happy Path OTP",
+      "fileInfo": {
+        "path": "hub/thirdparty/collection.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -395,6 +407,9 @@
     {
       "id": 5,
       "name": "Account Linking - Error @ consent request stage",
+      "fileInfo": {
+        "path": "hub/thirdparty/collection.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -453,6 +468,9 @@
     {
       "id": 6,
       "name": "Account Linking - Error @ consent request authenticate stage",
+      "fileInfo": {
+        "path": "hub/thirdparty/collection.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -560,6 +578,9 @@
     {
       "id": 7,
       "name": "Account Linking - Error @ consent request register credential stage",
+      "fileInfo": {
+        "path": "hub/thirdparty/collection.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -715,6 +736,9 @@
     {
       "id": 8,
       "name": "Third Party Transaction Request - Happy Path",
+      "fileInfo": {
+        "path": "hub/thirdparty/collection.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -814,21 +838,33 @@
                   "    consentId: \"2acf1dfa-ce45-486e-b19e-ae4ad9804a63\",",
                   "  consentRequestId: 'b5d6206c-4f06-497d-af15-ed866ea6958f',",
                   "    scopes: [",
-                  "      { actions: ['accounts.getBalance', 'accounts.transfer'], accountId: '244431e2-7a56-40c6-814c-932631760fa9' },",
-                  "      { actions: ['accounts.getBalance', 'accounts.transfer'], accountId: '6b6e6d77-dbf4-423f-abd5-bc5854e4ab1c' }",
+                  "      { accountId: '244431e2-7a56-40c6-814c-932631760fa9', actions: ['accounts.getBalance', 'accounts.transfer'] },",
+                  "      { accountId: '6b6e6d77-dbf4-423f-abd5-bc5854e4ab1c', actions: ['accounts.getBalance', 'accounts.transfer'] }",
                   "    ]",
                   "",
                   "  },",
                   "  challenge: \"fc315dc625bb0bb00029e706de7f38eed98dc370cd386281de46a438b8080e57\",",
                   "  currentState: 'consentReceivedAwaitingCredential'",
                   "}",
+                  "expect(response.body).to.deep.equal(expected)",
+                  "// expect(response.body.consent.scopes).to.deep.equal(expected.consent.scopes) && ",
+                  "// expect(response.body.consent.currentState).to.equal(expected.consent.currentState) && ",
+                  "// expect(response.body.consent.consentRequestId).to.equal(expected.consent.consentRequestId)",
                   "",
-                  "expect(response.body).to.deep.equal(expected)"
+                  ""
                 ]
               }
             ]
           },
-          "url": "{$inputs.PISP_THIRDPARTY_SDK_OUTBOUND_URL}"
+          "url": "{$inputs.PISP_THIRDPARTY_SDK_OUTBOUND_URL}",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
         },
         {
           "id": 3,
