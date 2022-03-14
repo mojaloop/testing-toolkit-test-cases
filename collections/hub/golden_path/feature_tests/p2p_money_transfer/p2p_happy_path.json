@@ -7,6 +7,12 @@
       "meta": {
         "info": "This is a happy path to test an end to end transfers. It includes party lookup, quote and transfer phases."
       },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path.json",
+        "labels": [
+          "p2p"
+        ]
+      },
       "requests": [
         {
           "id": 1,
@@ -178,6 +184,7 @@
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -193,8 +200,7 @@
                 "}"
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 4,
@@ -221,6 +227,7 @@
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
             "transactionId": "{$function.generic.generateUUID}",
+            "transactionRequestId": "{$function.generic.generateUUID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -255,22 +262,6 @@
             "note": "{$inputs.note}"
           },
           "scriptingEngine": "javascript",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                "}"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -394,7 +385,23 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}"
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
         },
         {
           "id": 5,
@@ -430,22 +437,6 @@
             "condition": "{$prev.4.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.transferId}', 'payeeRequest')",
-                "}"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -550,7 +541,23 @@
               }
             ]
           },
-          "url": "{$inputs.HOST_ML_API_ADAPTER}"
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.transferId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
         }
       ]
     }
