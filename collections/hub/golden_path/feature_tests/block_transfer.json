@@ -55,7 +55,8 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "environment.payerNDC = response.body[0].limit.value"
+                "const limitItem = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY))",
+                "environment.payerNDC = limitItem.limit.value"
               ]
             }
           }
@@ -107,7 +108,8 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "environment.payeeNDC = response.body[0].limit.value"
+                "const limitItem = response.body.find(item => (item.currency === environment.SIMPAYEE_CURRENCY))",
+                "environment.payeeNDC = limitItem.limit.value"
               ]
             }
           }
@@ -156,7 +158,8 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "environment.payerPositionBeforeTransfer = response.body[0].value"
+                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY))",
+                "environment.payerPositionBeforeTransfer = positionItem.value"
               ]
             }
           }
@@ -210,7 +213,8 @@
             },
             "postRequest": {
               "exec": [
-                "environment.payeePositionBeforeTransfer = response.body[0].value"
+                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYEE_CURRENCY))",
+                "environment.payeePositionBeforeTransfer = positionItem.value"
               ]
             }
           }
@@ -268,7 +272,7 @@
             },
             "amountType": "RECEIVE",
             "amount": {
-              "amount": "60",
+              "amount": "{$requestVariables.amount}",
               "currency": "{$inputs.SIMPAYEE_CURRENCY}"
             },
             "transactionType": {
@@ -421,6 +425,8 @@
                 "requestVariables.quoteId = '{$function.generic.generateUUID}'",
                 "requestVariables.transactionId = '{$function.generic.generateUUID}'",
                 "",
+                "requestVariables.amount = Number(environment.payerNDC) - Number(environment.payerPositionBeforeTransfer) + 100;",
+                "",
                 "if(environment.ENABLE_JWS_SIGNING) {",
                 "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
                 "}",
@@ -473,7 +479,7 @@
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
             "amount": {
-              "amount": "{$requestVariables.amount}",
+              "amount": "{$prev.5.request.body.amount.amount}",
               "currency": "{$inputs.SIMPAYEE_CURRENCY}"
             },
             "expiration": "{$prev.5.callback.body.expiration}",
@@ -569,7 +575,7 @@
               "exec": [
                 "requestVariables.transferExpiration = new Date(new Date().getTime() + 600000).toISOString();",
                 "",
-                "requestVariables.amount = Number(environment.payerNDC) - Number(environment.payerPositionBeforeTransfer) + 100;"
+                ""
               ]
             }
           }
@@ -605,7 +611,7 @@
                 "id": 2,
                 "description": "Position before and after transfer should be the same",
                 "exec": [
-                  "expect(environment.payerPositionBeforeTransfer).to.equal(response.body[0].value)"
+                  "expect(environment.payerPositionBeforeTransfer).to.equal(environment.payerPositionAfterTransfer)"
                 ]
               }
             ]
@@ -614,6 +620,14 @@
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY))",
+                "environment.payerPositionAfterTransfer = positionItem.value"
+              ]
+            }
           }
         },
         {
@@ -647,7 +661,7 @@
                 "id": 2,
                 "description": "Position before and after transfer should be the same",
                 "exec": [
-                  "expect(environment.payeePositionBeforeTransfer).to.equal(response.body[0].value)"
+                  "expect(environment.payeePositionBeforeTransfer).to.equal(environment.payeePositionAfterTransfer)"
                 ]
               }
             ]
@@ -656,9 +670,20 @@
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYEE_CURRENCY))",
+                "environment.payeePositionAfterTransfer = positionItem.value"
+              ]
+            }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/block_transfer.json"
+      }
     }
   ]
 }
