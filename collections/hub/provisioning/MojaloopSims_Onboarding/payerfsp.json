@@ -132,7 +132,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT') {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
                 "    pm.environment.set(\"payerfspSettlementAccountId\", jsonData[i].id)",
                 "    pm.environment.set(\"payerfspSettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
@@ -250,7 +250,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT') {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
                 "    pm.environment.set(\"payerfspSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
@@ -426,6 +426,171 @@
                 ]
               }
             ]
+          }
+        },
+        {
+          "id": 10,
+          "description": "Get Status Request before deposit for currency2",
+          "meta": {
+            "info": "Get Status Request before deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYER_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "    pm.environment.set(\"payerfspCurrency2SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"payerfspCurrency2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 11,
+          "description": "Deposit Funds in Settlement Account currency2",
+          "meta": {
+            "info": "Deposit Funds in Settlement Account"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/accounts/{$environment.payerfspCurrency2SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYER_NAME}",
+            "id": "{$environment.payerfspCurrency2SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.payerfspfundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.payerfspfundsInPrepareAmountCurrency2}",
+              "currency": "{$inputs.currency2}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('payerfspfundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('payerfspfundsInPrepareAmountCurrency2', 5000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 12,
+          "description": "Get Status Request after deposit for currency2",
+          "meta": {
+            "info": "Get Status Request after deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYER_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.payerfspCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.payerfspCurrency2SettlementAccountBalanceBeforeFundsIn - +environment.payerfspfundsInPrepareAmountCurrency2)"
+                ]
+              }
+            ]
+          },
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "    pm.environment.set(\"payerfspCurrency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
           }
         }
       ]
