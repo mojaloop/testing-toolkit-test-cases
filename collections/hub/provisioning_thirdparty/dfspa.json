@@ -132,7 +132,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT') {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
                 "    pm.environment.set(\"dfspaSettlementAccountId\", jsonData[i].id)",
                 "    pm.environment.set(\"dfspaSettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
@@ -249,7 +249,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT') {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
                 "    pm.environment.set(\"dfspaSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"

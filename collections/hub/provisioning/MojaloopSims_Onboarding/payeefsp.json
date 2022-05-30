@@ -132,7 +132,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT') {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
                 "    pm.environment.set(\"payeefspSettlementAccountId\", jsonData[i].id)",
                 "    pm.environment.set(\"payeefspSettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
@@ -250,7 +250,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT') {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
                 "    pm.environment.set(\"payeefspSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
