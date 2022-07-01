@@ -118,8 +118,8 @@
               {
                 "transferId": "{$environment.transferId}",
                 "transferAmount": {
-                  "currency": "{$environment.currency}",
-                  "amount": "{$environment.amount}"
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
                 },
                 "ilpPacket": "{$environment.validIlpPacket2}",
                 "condition": "{$environment.validCondition2}",
@@ -139,8 +139,8 @@
               {
                 "transferId": "{$environment.transferId2}",
                 "transferAmount": {
-                  "currency": "{$environment.currency2}",
-                  "amount": "{$environment.amount2}"
+                  "currency": "{$inputs.currency2}",
+                  "amount": "2"
                 },
                 "ilpPacket": "{$environment.validIlpPacket2}",
                 "condition": "{$environment.validCondition2}"
@@ -174,8 +174,6 @@
                 "const headerDate = now.toUTCString();",
                 "const expirationDate = new Date(now.getTime() + delay).toISOString();",
                 "const completedTimestamp = now.toISOString();",
-                "const amount = 1;",
-                "const amount2 = 2;",
                 "pm.environment.set('bulkTransferId', bulkTransferId);",
                 "pm.environment.set('bulkQuoteId', bulkQuoteId);",
                 "pm.environment.set('transferId', transferId);",
@@ -183,9 +181,7 @@
                 "pm.environment.set('headerDate', headerDate);",
                 "pm.environment.set('expirationDate', expirationDate);",
                 "pm.environment.set('completedTimestamp', completedTimestamp);",
-                "pm.environment.set('amount', amount);",
-                "pm.environment.set('amount2', amount2);",
-                "pm.environment.set('currency2', 'USD');"
+                ""
               ]
             }
           }
@@ -353,7 +349,6 @@
           },
           "ignoreCallbacks": false,
           "scriptingEngine": "javascript",
-          "delay": "1000",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -365,7 +360,8 @@
                 ""
               ]
             }
-          }
+          },
+          "delay": "1000"
         },
         {
           "id": 7,
@@ -485,8 +481,8 @@
               {
                 "transferId": "{$function.generic.generateUUID}",
                 "transferAmount": {
-                  "currency": "{$environment.currency}",
-                  "amount": "{$environment.amount}"
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
                 },
                 "ilpPacket": "{$environment.validIlpPacket2}",
                 "condition": "{$environment.validCondition2}",
@@ -507,7 +503,7 @@
                 "transferId": "{$function.generic.generateUUID}",
                 "transferAmount": {
                   "currency": "AED",
-                  "amount": "{$environment.amount2}"
+                  "amount": "2"
                 },
                 "ilpPacket": "{$environment.validIlpPacket2}",
                 "condition": "{$environment.validCondition2}"
@@ -788,9 +784,7 @@
                 "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
                 "environment[\"expirationDate\"] = expirationDate",
                 "environment[\"completedTimestamp\"] = completedTimestamp",
-                "environment[\"amount\"] = 1",
-                "environment[\"amount2\"] = 2",
-                "environment[\"currency2\"] = \"USD\"",
+                "",
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
