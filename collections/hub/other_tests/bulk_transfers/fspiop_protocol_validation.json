@@ -42,8 +42,8 @@
               {
                 "transferId": "{$function.generic.generateUUID}",
                 "transferAmount": {
-                  "currency": "{$environment.currency}",
-                  "amount": "{$environment.amount}"
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
                 },
                 "ilpPacket": "{$environment.validIlpPacket2}",
                 "condition": "{$environment.validCondition2}",
@@ -63,8 +63,8 @@
               {
                 "transferId": "{$function.generic.generateUUID}",
                 "transferAmount": {
-                  "currency": "{$environment.currency2}",
-                  "amount": "{$environment.amount2}"
+                  "currency": "{$inputs.currency2}",
+                  "amount": "1"
                 },
                 "ilpPacket": "{$environment.validIlpPacket2}",
                 "condition": "{$environment.validCondition2}"
@@ -324,7 +324,7 @@
                 "exec": [
                   "const transfer1 = environment.bulkTransfersNegativeRequest.data.individualTransfers.find(t => t.transferId === environment.transferId);",
                   "",
-                  "expect(transfer1.transferAmount.amount).to.equal(\"1\") && expect(transfer1.transferAmount.currency).to.equal(\"USD\")"
+                  "expect(transfer1.transferAmount.amount).to.equal(\"1\") && expect(transfer1.transferAmount.currency).to.equal(\"{$inputs.currency}\")"
                 ]
               },
               {
@@ -357,7 +357,7 @@
                 "exec": [
                   "const transfer2 = environment.bulkTransfersNegativeRequest.data.individualTransfers.find(t => t.transferId === environment.transferId2)",
                   "",
-                  "expect(transfer2.transferAmount.amount).to.equal(\"1\") && expect(transfer2.transferAmount.currency).to.equal(\"USD\")"
+                  "expect(transfer2.transferAmount.amount).to.equal(\"1\") && expect(transfer2.transferAmount.currency).to.equal(\"{$inputs.currency2}\")"
                 ]
               }
             ]
@@ -382,9 +382,6 @@
                 "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
                 "environment[\"expirationDate\"] = expirationDate",
                 "environment[\"completedTimestamp\"] = completedTimestamp",
-                "environment[\"amount\"] = 1",
-                "environment[\"amount2\"] = 1",
-                "environment[\"currency2\"] = \"USD\"",
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
@@ -434,8 +431,8 @@
               {
                 "transferId": "{$function.generic.generateUUID}",
                 "transferAmount": {
-                  "currency": "{$environment.currency}",
-                  "amount": "{$environment.amount}"
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
                 },
                 "ilpPacket": "{$environment.validIlpPacket2}",
                 "condition": "{$environment.validCondition2}",
@@ -455,8 +452,8 @@
               {
                 "transferId": "{$function.generic.generateUUID}",
                 "transferAmount": {
-                  "currency": "{$environment.currency2}",
-                  "amount": "{$environment.amount2}"
+                  "currency": "{$inputs.currency2}",
+                  "amount": "1"
                 },
                 "ilpPacket": "{$environment.validIlpPacket2}",
                 "condition": "{$environment.validCondition2}"
@@ -527,9 +524,6 @@
                 "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
                 "environment[\"expirationDate\"] = expirationDate",
                 "environment[\"completedTimestamp\"] = completedTimestamp",
-                "environment[\"amount\"] = 1",
-                "environment[\"amount2\"] = 1",
-                "environment[\"currency2\"] = \"USD\"",
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
@@ -579,8 +573,8 @@
               {
                 "transferId": "{$function.generic.generateUUID}",
                 "transferAmount": {
-                  "currency": "{$environment.currency}",
-                  "amount": "{$environment.amount}"
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
                 },
                 "ilpPacket": "{$environment.validIlpPacket2}",
                 "condition": "{$environment.validCondition2}",
@@ -600,8 +594,8 @@
               {
                 "transferId": "{$function.generic.generateUUID}",
                 "transferAmount": {
-                  "currency": "{$environment.currency2}",
-                  "amount": "{$environment.amount2}"
+                  "currency": "{$inputs.currency2}",
+                  "amount": "1"
                 },
                 "ilpPacket": "{$environment.validIlpPacket2}",
                 "condition": "{$environment.validCondition2}"
@@ -672,9 +666,6 @@
                 "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
                 "environment[\"expirationDate\"] = expirationDate",
                 "environment[\"completedTimestamp\"] = completedTimestamp",
-                "environment[\"amount\"] = 1",
-                "environment[\"amount2\"] = 1",
-                "environment[\"currency2\"] = \"USD\"",
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
