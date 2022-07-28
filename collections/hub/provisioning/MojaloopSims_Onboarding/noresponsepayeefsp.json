@@ -7,6 +7,9 @@
       "meta": {
         "info": "noresponsepayeefsp account"
       },
+      "fileInfo": {
+        "path": "hub/provisioning/MojaloopSims_Onboarding/noresponsepayeefsp.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -341,6 +344,91 @@
               }
             ]
           }
+        },
+        {
+          "id": 8,
+          "description": "Add noresponsepayeefsp Currency2",
+          "meta": {
+            "info": "Add noresponsepayeefsp"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 9,
+          "description": "Add initial position and limits - noresponsepayeefsp Currency2",
+          "meta": {
+            "info": "Add initial position and limits - noresponsepayeefsp"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.NORESPONSE_SIMPAYEE_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.currency2}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 1000000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
         }
       ]
     },
@@ -349,6 +437,9 @@
       "name": "noresponsepayeefsp callbacks",
       "meta": {
         "info": "noresponsepayeefsp callbacks"
+      },
+      "fileInfo": {
+        "path": "hub/provisioning/MojaloopSims_Onboarding/noresponsepayeefsp.json"
       },
       "requests": [
         {
@@ -580,6 +671,9 @@
       "name": "noresponsepayeefsp notification_emails",
       "meta": {
         "info": "noresponsepayeefsp notification_emails"
+      },
+      "fileInfo": {
+        "path": "hub/provisioning/MojaloopSims_Onboarding/noresponsepayeefsp.json"
       },
       "requests": [
         {
