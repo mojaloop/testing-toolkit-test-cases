@@ -310,7 +310,9 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.transferExpiration = new Date(new Date().getTime() + 1000).toISOString()",
+                "const additionalTimeoutExpiration = Number.parseFloat(environment.ADDITIONAL_TIMEOUT_EXPIRATION_MS) || 2000;",
+                "",
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + additionalTimeoutExpiration).toISOString()",
                 ""
               ]
             }
@@ -533,7 +535,7 @@
             }
           },
           "scriptingEngine": "javascript",
-          "delay": "15000",
+          "delay": "16000",
           "tests": {
             "assertions": [
               {

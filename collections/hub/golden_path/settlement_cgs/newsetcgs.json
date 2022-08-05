@@ -8,7 +8,7 @@
         "info": "Store settlement and position balances before-transfers"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -523,7 +523,7 @@
         "info": "Close window before tranfers"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -675,7 +675,7 @@
         "info": "get initial position: testfsp1, testfsp2, testfsp3, testfsp4"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -950,7 +950,7 @@
         "info": "[new sims]  transfers, positions CGS Window1 tests (OTC-649, OTC-645)"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -1309,7 +1309,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -1581,16 +1581,16 @@
                 "  console.log(environment.testfsp3InterchFeeBalanceAfterTransfer1Transfer1);*/",
                 "",
                 "  var transferAmount = 15;",
-                "  environment.testfsp3SettlementBalanceAfterExpected = (Number.parseFloat(environment.testfsp3SettlementBalanceBefore) - Number.parseFloat(transferAmount)).toFixed(2);",
+                "  environment.testfsp3SettlementBalanceAfterExpected = Number((Number.parseFloat(environment.testfsp3SettlementBalanceBefore) - Number.parseFloat(transferAmount)).toFixed(2));",
                 "",
                 "  console.log(\"testfsp3SettlementBalanceAfterExpected  before fixed\"+environment.testfsp3SettlementBalanceAfterExpected)",
                 "",
-                "  // environment.testfsp3SettlementBalanceAfterExpected = environment.testfsp3SettlementBalanceAfterExpected.toFixed(2);",
+                "  // environment.testfsp3SettlementBalanceAfterExpected = Number(environment.testfsp3SettlementBalanceAfterExpected.toFixed(2));",
                 "",
                 "  console.log(\"testfsp3SettlementBalanceAfterExpected  after fixed\"+environment.testfsp3SettlementBalanceAfterExpected)",
                 "",
                 "",
-                "  environment.testfsp3SettlementBalanceAfterActual = Number.parseFloat(environment.testfsp3SettlementBalanceAfterTransfer1).toFixed(2);",
+                "  environment.testfsp3SettlementBalanceAfterActual = Number(Number.parseFloat(environment.testfsp3SettlementBalanceAfterTransfer1).toFixed(2));",
                 "",
                 "  console.log(\"testfsp3SettlementBalanceAfterActual  after fixed\"+environment.testfsp3SettlementBalanceAfterActual)",
                 "",
@@ -1604,7 +1604,7 @@
                 "  console.log('test fsp3 positions account after',environment.testfsp3PositionBalanceAfterTransfer1);",
                 "",
                 "  // console.log(`environment.testfsp3_actual_interchange_transfer1 =  ${environment.testfsp3InterchFeeBalanceAfterTransfer1Transfer1} - ${environment.testfsp3InterchFeeBalanceBefore}`);",
-                "  environment.testfsp3_actual_interchange_transfer1 =  (Number.parseFloat(environment.testfsp3InterchFeeBalanceAfterTransfer1Transfer1) - Number.parseFloat(environment.testfsp3InterchFeeBalanceBefore)).toFixed(2);",
+                "  environment.testfsp3_actual_interchange_transfer1 =  Number((Number.parseFloat(environment.testfsp3InterchFeeBalanceAfterTransfer1Transfer1) - Number.parseFloat(environment.testfsp3InterchFeeBalanceBefore)).toFixed(2));",
                 "  // console.log(`environment.testfsp3_actual_interchange_transfer1=${environment.testfsp3_actual_interchange_transfer1}`);",
                 "",
                 "  console.log(\"interchange fee actual \"+environment.testfsp3_actual_interchange_transfer1);",
@@ -1731,10 +1731,10 @@
                 "",
                 "  console.log(\"testfsp1SettlementBalanceAfterExpected before fixed\" +environment.testfsp1SettlementBalanceAfterExpected)",
                 "",
-                "  environment.testfsp1SettlementBalanceAfterExpected = environment.testfsp1SettlementBalanceAfterExpected.toFixed(2);",
+                "  environment.testfsp1SettlementBalanceAfterExpected = Number(environment.testfsp1SettlementBalanceAfterExpected.toFixed(2));",
                 "  console.log(\"testfsp1SettlementBalanceAfterExpected after fixed\"+environment.testfsp1SettlementBalanceAfterExpected)",
                 "",
-                "  environment.testfsp1SettlementBalanceAfterActual = Number.parseFloat(environment.testfsp1SettlementBalanceAfter).toFixed(2);",
+                "  environment.testfsp1SettlementBalanceAfterActual = Number(Number.parseFloat(environment.testfsp1SettlementBalanceAfter).toFixed(2));",
                 "",
                 "  console.log(\"testfsp1SettlementBalanceAfterActual after fixed\"+environment.testfsp1SettlementBalanceAfterActual)",
                 "",
@@ -1752,7 +1752,7 @@
                 "  console.log('test fsp1 positions account after',environment.testfsp1PositionBalanceAfter);",
                 "",
                 "  environment.testfsp1_actual_interchange_transfer1 =  Number.parseFloat(environment.testfsp1InterchFeeBalanceAfterTransfer1) - Number.parseFloat(environment.testfsp1InterchFeeBalanceBefore)",
-                "  environment.testfsp1_actual_interchange_transfer1 = environment.testfsp1_actual_interchange_transfer1.toFixed(2);",
+                "  environment.testfsp1_actual_interchange_transfer1 = Number(environment.testfsp1_actual_interchange_transfer1.toFixed(2));",
                 "  environment.testfsp1_expected_interchange_transfer1 = -0.09;",
                 "",
                 "",
@@ -1844,7 +1844,7 @@
                 "id": 1,
                 "description": "Transfer is COMMITED",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
@@ -1927,7 +1927,7 @@
                 "  })",
                 "",
                 "  environment.testfsp2_actual_interchange_B2B =  Number.parseFloat(environment.testfsp2InterchFeeBalanceAfterB2B) - Number.parseFloat(environment.testfsp2InterchFeeBalanceBefore)",
-                "  environment.testfsp2_actual_interchange_B2B = environment.testfsp2_actual_interchange_B2B.toFixed(2);",
+                "  environment.testfsp2_actual_interchange_B2B = Number(environment.testfsp2_actual_interchange_B2B.toFixed(2));",
                 "",
                 "  console.log(\"actual value \"+environment.testfsp2_actual_interchange_B2B);",
                 "",
@@ -2018,7 +2018,7 @@
                 "",
                 "  environment.testfsp1_actual_interchange_b2b_transfer =  Number.parseFloat(environment.testfsp1InterchFeeBalanceAfterB2B) - Number.parseFloat(environment.testfsp1InterchFeeBalanceAfterTransfer1)",
                 "",
-                "  environment.testfsp1_actual_interchange_b2b_transfer = environment.testfsp1_actual_interchange_b2b_transfer.toFixed(2);",
+                "  environment.testfsp1_actual_interchange_b2b_transfer = Number(environment.testfsp1_actual_interchange_b2b_transfer.toFixed(2));",
                 "  console.log(\"actual value \" +environment.testfsp1_actual_interchange_b2b_transfer);",
                 "",
                 "  environment.testfsp1_expected_interchange_b2b = 0.00;",
@@ -2117,7 +2117,7 @@
                 "id": 2,
                 "description": "Transfer is COMMITTED",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -2211,13 +2211,13 @@
                 "  var transferAmount = 158.36;",
                 "  environment.testfsp1SettlementBalanceAfterExpected = Number.parseFloat(environment.testfsp1SettlementBalanceAfterB2B) - Number.parseFloat(transferAmount);",
                 "",
-                "  environment.testfsp1SettlementBalanceAfterExpected = environment.testfsp1SettlementBalanceAfterExpected.toFixed(2);",
+                "  environment.testfsp1SettlementBalanceAfterExpected = Number(environment.testfsp1SettlementBalanceAfterExpected.toFixed(2));",
                 "",
-                "  environment.testfsp1SettlementBalanceAfterActual = Number.parseFloat(environment.testfsp1SettlementBalanceAfterTransfer2).toFixed(2);",
+                "  environment.testfsp1SettlementBalanceAfterActual = Number(Number.parseFloat(environment.testfsp1SettlementBalanceAfterTransfer2).toFixed(2));",
                 "",
                 "  environment.testfsp1_actual_interchange_transfer2 =  Number.parseFloat(environment.testfsp1InterchFeeBalanceAfterTransfer2) - Number.parseFloat(environment.testfsp1InterchFeeBalanceAfterTransfer1)",
                 "  ",
-                "  environment.testfsp1_actual_interchange_transfer2 = environment.testfsp1_actual_interchange_transfer2.toFixed(2);",
+                "  environment.testfsp1_actual_interchange_transfer2 = Number(environment.testfsp1_actual_interchange_transfer2.toFixed(2));",
                 "",
                 "  environment.testfsp1_expected_interchange_transfer2 = 0.95; ",
                 "",
@@ -2312,7 +2312,7 @@
                 "id": 1,
                 "description": "Transfer is COMMITTED",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
@@ -2396,7 +2396,7 @@
                 "id": 1,
                 "description": "Transfer is COMMITTED",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
@@ -2480,7 +2480,7 @@
                 "id": 1,
                 "description": "Transfer is COMMITTED",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
@@ -2985,14 +2985,14 @@
                 "  environment.testfsp1SettlementBalanceAfterExpected = environment.testfsp1SettlementBalanceAfterExpected.toFixed(2);",
                 "",
                 "  //@TODO adjust rounding balance (2 decimals || 3 decimals after the point).",
-                "  environment.testfsp1SettlementBalanceAfterActual = Number.parseFloat(environment.testfsp1SettlementBalanceAfter).toFixed(2);",
+                "  environment.testfsp1SettlementBalanceAfterActual = Number(Number.parseFloat(environment.testfsp1SettlementBalanceAfter).toFixed(2));",
                 "",
                 "  environment.aggregates_fee = Number.parseFloat(environment.testfsp1InterchFeeBalanceAfter) - Number.parseFloat(environment.testfsp1InterchFeeBalanceBefore);",
-                "  environment.aggregates_fee = environment.aggregates_fee.toFixed(2);",
+                "  environment.aggregates_fee = Number(environment.aggregates_fee.toFixed(2));",
                 "",
                 "  environment.testfsp1_aggregate_interchange_fee_expected = -1.40;",
                 "",
-                "  environment.testfsp1_aggregate_interchange_fee_expected = Number.parseFloat(environment.testfsp1_aggregate_interchange_fee_expected).toFixed(2);",
+                "  environment.testfsp1_aggregate_interchange_fee_expected = Number(Number.parseFloat(environment.testfsp1_aggregate_interchange_fee_expected).toFixed(2));",
                 "",
                 "  if ((environment.testfsp1SettlementBalanceAfterExpected == environment.testfsp1SettlementBalanceAfterActual) && ",
                 "  (environment.aggregates_fee == environment.testfsp1_aggregate_interchange_fee_expected)) {",
@@ -3044,7 +3044,7 @@
                 "id": 3,
                 "description": "check agregates for interchange fees calculated correctly",
                 "exec": [
-                  "expect(environment.aggregates_fee).to.eql(Number.parseFloat(1.36).toFixed(2));"
+                  "expect(environment.aggregates_fee).to.eql(Number(Number.parseFloat(1.36).toFixed(2)));"
                 ]
               }
             ]
@@ -3078,12 +3078,12 @@
                 "  })",
                 "",
                 "  environment.testfsp2SettlementBalanceAfterExpected = Number.parseFloat(environment.testfsp2SettlementBalanceBefore) + Number.parseFloat(87.88) + Number.parseFloat(211.15) + Number.parseFloat(14.21);",
-                "  // testfsp2SettlementBalanceAfterExpected = testfsp2SettlementBalanceAfterExpected.toFixed(2);",
+                "  // testfsp2SettlementBalanceAfterExpected = Number(testfsp2SettlementBalanceAfterExpected.toFixed(2));",
                 "",
                 "  environment.testfsp2SettlementBalanceAfterActual = Number.parseFloat(environment.testfsp2SettlementBalanceAfter);",
                 "",
                 "  environment.aggregates_fee = Number.parseFloat(environment.testfsp2InterchFeeBalanceAfter)-Number.parseFloat(environment.testfsp2InterchFeeBalanceBefore);",
-                "  environment.aggregates_fee = environment.aggregates_fee.toFixed(2);",
+                "  environment.aggregates_fee = Number(environment.aggregates_fee.toFixed(2));",
                 "",
                 "  console.log(\"environment.aggregates_fee \"+environment.aggregates_fee);",
                 "",
@@ -3250,7 +3250,7 @@
         "info": "Close any window before transfers"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -3351,7 +3351,7 @@
         "info": "[new sims] new transfers window1"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -3435,7 +3435,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -3535,7 +3535,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -3635,7 +3635,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -3735,7 +3735,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -3835,7 +3835,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -3935,7 +3935,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -3966,7 +3966,7 @@
         "info": "Close any window1"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -4075,7 +4075,7 @@
         "info": "[new sims] new transfers window2"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -4159,7 +4159,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -4259,7 +4259,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -4359,7 +4359,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -4459,7 +4459,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -4559,7 +4559,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -4659,7 +4659,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -4690,7 +4690,7 @@
         "info": "Close any window2"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -4799,7 +4799,7 @@
         "info": "[new sims] new transfers window3"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -4883,7 +4883,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -4983,7 +4983,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -5083,7 +5083,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -5183,7 +5183,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -5283,7 +5283,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -5383,7 +5383,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -5414,7 +5414,7 @@
         "info": "Close any window3"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -5523,7 +5523,7 @@
         "info": "[new sims] new transfers window4"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -5607,7 +5607,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -5707,7 +5707,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -5807,7 +5807,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -5907,7 +5907,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -6007,7 +6007,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -6107,7 +6107,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -6138,7 +6138,7 @@
         "info": "Close any window4"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -6247,7 +6247,7 @@
         "info": "[new sims] new transfers window5"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -6331,7 +6331,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -6431,7 +6431,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -6531,7 +6531,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -6631,7 +6631,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -6731,7 +6731,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -6831,7 +6831,7 @@
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.transferState).to.equal('COMMITTED')"
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -6862,7 +6862,7 @@
         "info": "Close any window5"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -6971,7 +6971,7 @@
         "info": "Create Settlement for previously  closed 5 windows"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -7137,7 +7137,7 @@
         "info": "negative requests"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
@@ -7293,7 +7293,7 @@
         "info": "Add Users to new Sims ; ALS registration (random MSISDN)"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "golden_path/settlement_cgs/newsetcgs.json",
         "labels": [
           "settlements"
         ]
