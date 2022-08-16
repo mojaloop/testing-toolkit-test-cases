@@ -1,0 +1,483 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "negative scenario - invalid timestamp",
+      "meta": {
+        "info": "negative scenario - invalid timestamp"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/bulk-invalid-timestamp.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Store Payerfsp position before prepare"
+          },
+          "description": "Store Payerfsp position before prepare",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/testingtoolkitdfsp/positions",
+          "method": "get",
+          "params": {
+            "name": "testingtoolkitdfsp"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment[\"payerfspPositionBeforePrepare\"] = response.body[0].value"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Store Payeefsp position before prepare"
+          },
+          "description": "Store Payeefsp position before prepare",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.NORESPONSE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.NORESPONSE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment[\"payeefspPositionBeforePrepare\"] = response.body[0].value"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Send Prepare"
+          },
+          "description": "Send Prepare",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$environment.headerDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.NORESPONSE_NAME}"
+          },
+          "body": {
+            "bulkTransferId": "{$environment.bulkTransferId}",
+            "bulkQuoteId": "{$environment.bulkQuoteId}",
+            "payeeFsp": "{$environment.NORESPONSE_NAME}",
+            "payerFsp": "{$environment.fromFspId}",
+            "individualTransfers": [
+              {
+                "transferId": "{$environment.transferId}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "extKey1",
+                      "value": "extValue1"
+                    },
+                    {
+                      "key": "extKey2",
+                      "value": "extValue2"
+                    }
+                  ]
+                }
+              },
+              {
+                "transferId": "{$environment.transferId2}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency2}",
+                  "amount": "2"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}"
+              }
+            ],
+            "expiration": "{$environment.expirationDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "",
+                "const delay = environment.EXPIRATION_DELAY_MS || 1000 * 3600 * 24",
+                "const bulkTransferId = uuid.v4();",
+                "const bulkQuoteId = uuid.v4();",
+                "const transferId = uuid.v4();",
+                "const transferId2 = uuid.v4();",
+                "const now = new Date();",
+                "const headerDate = now.toUTCString();",
+                "const expirationDate = new Date(now.getTime() + delay).toISOString();",
+                "const completedTimestamp = now.toISOString();",
+                "pm.environment.set('bulkTransferId', bulkTransferId);",
+                "pm.environment.set('bulkQuoteId', bulkQuoteId);",
+                "pm.environment.set('transferId', transferId);",
+                "pm.environment.set('transferId2', transferId2);",
+                "pm.environment.set('headerDate', headerDate);",
+                "pm.environment.set('expirationDate', expirationDate);",
+                "pm.environment.set('completedTimestamp', completedTimestamp);",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Store Payerfsp position after Prepare"
+          },
+          "description": "Store Payerfsp position after Prepare",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = pm.response.body;",
+                "pm.environment.set(\"payerfspPositionAfterPrepare\", jsonData[0].value)"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 9,
+          "description": "Bulk transfer invalid timestamp",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers/{ID}",
+          "path": "/bulkTransfers/{$environment.bulkTransferId}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.bulkTransferId}"
+          },
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.bulkTransfers+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.NORESPONSE_NAME}",
+            "FSPIOP-Destination": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "body": {
+            "bulkTransferState": "COMPLETED",
+            "completedTimestamp": "{$requestVariables.completedTimestamp}",
+            "individualTransferResults": [
+              {
+                "transferId": "{$environment.transferId}",
+                "fulfilment": "{$environment.validFulfillment}"
+              },
+              {
+                "transferId": "{$environment.transferId2}",
+                "fulfilment": "{$environment.validFulfillment}"
+              }
+            ]
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "payerfsp callback - payer should be informed of payee invalid fulfilment",
+                "exec": [
+                  "expect(environment.payerCallbackNotification.body).to.have.property(\"errorInformation\")",
+                  "expect(environment.payerCallbackNotification.body.errorInformation.errorCode).to.equal(\"3100\")"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.completedTimestamp = new Date(new Date().getTime() + 10000).toISOString()",
+                "// Retrieve the payer fsp callback that is expected to be recieved after the payee fsp ",
+                "// sends a fulfil request",
+                "await inboundEvent.addListener('payer-callback', 'put', '/bulkTransfers/{$environment.bulkTransferId}/error')"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.payerCallbackNotification = await inboundEvent.getMessage('payer-callback')",
+                "console.log(environment.payerCallbackNotification)",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "GET Bulk Transfer - PayerFSP"
+          },
+          "description": "GET Bulk Transfer - PayerFSP",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers/{ID}",
+          "path": "/bulkTransfers/{$environment.bulkTransferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.bulkTransferId}",
+            "name": ""
+          },
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$environment.headerDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "switch"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "payerfsp callback - date header should be set",
+                "exec": [
+                  "expect(callback.headers).to.have.property('date')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "payerfsp callback - fspiop-source should be switch",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('switch')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "payerfsp callback - fspiop-destination should be testingtoolkitdfsp",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "payerfsp callback - fspiop-uri should be as expected",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "payerfsp callback - fspiop-http-method should be PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "payerfsp callback - errorInformation should be set correctly",
+                "exec": [
+                  "expect(callback.body).to.have.property(\"bulkTransferState\")",
+                  "expect(callback.body.bulkTransferState).to.equal(\"REJECTED\")"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "delay": "1000",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "Check Payerfsp position after Abort"
+          },
+          "description": "Check Payerfsp position after Abort",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}",
+            "ID": ""
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payerfsp position after Payer ABORT should be same as position before prepare.",
+                "exec": [
+                  "expect(response.body[0].value).to.equal(+environment.payerfspPositionBeforePrepare)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 8,
+          "meta": {
+            "info": "Check Payeefsp position after Abort"
+          },
+          "description": "Check Payeefsp position after Abort",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.NORESPONSE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.NORESPONSE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payeefsp position after Payee ABORT should be same as position before prepare.",
+                "exec": [
+                  "expect(response.body[0].value).to.equal(+environment.payeefspPositionBeforePrepare)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
