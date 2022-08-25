@@ -1498,7 +1498,7 @@
                 },
                 "amountType": "SEND",
                 "currency": "{$inputs.cgscurrency}",
-                "amount": "10",
+                "amount": "{$environment.SETTLEMENT_CGS_TX_AMOUNT_1}",
                 "transactionType": "TRANSFER",
                 "initiatorType": "CONSUMER",
                 "note": "test payment 2020-06-26 11:52AM",
@@ -1551,7 +1551,10 @@
                 "requestVariables.expectedPayeeFirstName = \"PayeeFirst\"",
                 "requestVariables.expectedPayeeLastName = \"PayeeLast\"",
                 "requestVariables.expectedPayeeDOB = \"2010-10-10\"",
-                "requestVariables.payerName = \"PayerFirst PayerLast\""
+                "requestVariables.payerName = \"PayerFirst PayerLast\"",
+                "",
+                "environment.SETTLEMENT_CGS_TX_AMOUNT_1 = environment.SETTLEMENT_CGS_TX_AMOUNT_1 || 15",
+                ""
               ]
             },
             "postRequest": {
@@ -1663,7 +1666,7 @@
             ]
           },
           "ignoreCallbacks": true,
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -1750,7 +1753,7 @@
                 "id": 3,
                 "description": "Check that position account value remains unchanged",
                 "exec": [
-                  "expect(environment.testfsp3PositionBalanceBefore).to.eql(environment.testfsp3PositionBalanceAfterTransfer1);"
+                  "expect(requestVariables.testfsp3PositionBalanceBefore).to.eql(environment.testfsp3PositionBalanceAfterTransfer1);"
                 ]
               },
               {
@@ -1784,6 +1787,8 @@
                 "",
                 "const envSettlementRuleInterchangeFee = Number.parseFloat(environment.SETTLEMENT_RULE_INTERCHANGE_FEE) || 0.006;",
                 "",
+                "const envSettlementCgsTxAmount1 = Number.parseFloat(environment.SETTLEMENT_CGS_TX_AMOUNT_1) || 15.00",
+                "",
                 "// var maxRetryWait = 1;",
                 "",
                 "var res = response.body;",
@@ -1812,7 +1817,7 @@
                 "  console.log(environment.testfsp3InterchFeeBalanceAfterTransfer1Transfer1);*/",
                 "",
                 "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
-                "  const transferAmount = 10;",
+                "  const transferAmount = envSettlementCgsTxAmount1;",
                 "",
                 "  console.log(`transferAmount=${transferAmount}`)",
                 "  ",
@@ -1860,6 +1865,18 @@
                 "    res = axioResponse.data;",
                 "  }",
                 "}",
+                "",
+                "// Store *BalanceBefore in a local variable for assertion test",
+                "requestVariables.testfsp3PositionBalanceBefore = environment.testfsp3PositionBalanceBefore",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.testfsp3PositionBalanceBefore = environment.testfsp3PositionBalanceAfterTransfer1",
+                "environment.testfsp3SettlementBalanceBefore = environment.testfsp3SettlementBalanceAfterTransfer1",
+                "environment.testfsp3InterchFeeBalanceBefore = environment.testfsp3InterchFeeBalanceAfterTransfer1Transfer1",
+                "",
+                "console.log(`RESET - environment.testfsp3PositionBalanceBefore=${environment.testfsp3PositionBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp3SettlementBalanceBefore=${environment.testfsp3SettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp3InterchFeeBalanceBefore=${environment.testfsp3InterchFeeBalanceBefore}`)",
                 ""
               ]
             }
@@ -1903,7 +1920,7 @@
                 "id": 3,
                 "description": "Check that position account value remains unchanged",
                 "exec": [
-                  "expect(environment.testfsp1PositionBalanceBefore).to.eql(environment.testfsp1PositionBalanceAfter);"
+                  "expect(requestVariables.testfsp1PositionBalanceBefore).to.eql(environment.testfsp1PositionBalanceAfter);"
                 ]
               },
               {
@@ -1935,6 +1952,8 @@
                 "",
                 "const envSettlementRuleInterchangeFee = Number.parseFloat(environment.SETTLEMENT_RULE_INTERCHANGE_FEE) || 0.006;",
                 "",
+                "const envSettlementCgsTxAmount1 = Number.parseFloat(environment.SETTLEMENT_CGS_TX_AMOUNT_1) || 15.00",
+                "",
                 "var res = response.body;",
                 "",
                 "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
@@ -1961,7 +1980,9 @@
                 "  console.log(environment.testfsp1InterchFeeBalanceAfterTransfer1);*/",
                 "",
                 "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
-                "  const transferAmount = 10;",
+                "  const transferAmount = envSettlementCgsTxAmount1;",
+                "  ",
+                "  console.log(`transferAmount=${transferAmount}`)",
                 "",
                 "  environment.testfsp1SettlementBalanceAfterExpected = (Number.parseFloat(environment.testfsp1SettlementBalanceBefore) - Number.parseFloat(transferAmount)).toFixed(2);",
                 "",
@@ -2007,7 +2028,20 @@
                 "    const axioResponse = await axios.get(`${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIM1_NAME}/accounts`)",
                 "    res = axioResponse.data;",
                 "  }",
-                "}"
+                "}",
+                "",
+                "// Store *BalanceBefore in a local variable for assertion test",
+                "requestVariables.testfsp1PositionBalanceBefore = environment.testfsp1PositionBalanceBefore",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.testfsp1PositionBalanceBefore = environment.testfsp1PositionBalanceAfter",
+                "environment.testfsp1SettlementBalanceBefore = environment.testfsp1SettlementBalanceAfter",
+                "environment.testfsp1InterchFeeBalanceBefore = environment.testfsp1InterchFeeBalanceAfterTransfer1",
+                "",
+                "console.log(`RESET - environment.testfsp1PositionBalanceBefore=${environment.testfsp1PositionBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp1SettlementBalanceBefore=${environment.testfsp1SettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp1InterchFeeBalanceBefore=${environment.testfsp1InterchFeeBalanceBefore}`)",
+                ""
               ]
             }
           }
@@ -2059,7 +2093,7 @@
                 },
                 "amountType": "SEND",
                 "currency": "{$inputs.cgscurrency}",
-                "amount": "87.88",
+                "amount": "{$environment.SETTLEMENT_CGS_TX_AMOUNT_2}",
                 "transactionType": "TRANSFER",
                 "initiatorType": "CONSUMER",
                 "note": "test payment 2020-06-26 11:52AM",
@@ -2096,7 +2130,15 @@
               }
             ]
           },
-          "disabled": true
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.SETTLEMENT_CGS_TX_AMOUNT_2 = environment.SETTLEMENT_CGS_TX_AMOUNT_2 || 87.88",
+                ""
+              ]
+            }
+          }
         },
         {
           "id": 10,
@@ -2140,7 +2182,7 @@
               }
             ]
           },
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -2185,6 +2227,15 @@
                 "    res = axioResponse.data;",
                 "  }",
                 "}",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.testfsp2PositionBalanceBefore = environment.testfsp2PositionBalanceAfterB2B",
+                "environment.testfsp2SettlementBalanceBefore = environment.testfsp2SettlementBalanceAfterB2B",
+                "environment.testfsp2InterchFeeBalanceBefore = environment.testfsp2InterchFeeBalanceAfterB2B",
+                "",
+                "console.log(`RESET - environment.testfsp2PositionBalanceBefore=${environment.testfsp2PositionBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp2SettlementBalanceBefore=${environment.testfsp2SettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp2InterchFeeBalanceBefore=${environment.testfsp2InterchFeeBalanceBefore}`)",
                 ""
               ]
             }
@@ -2231,7 +2282,7 @@
               }
             ]
           },
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -2276,6 +2327,15 @@
                 "    res = axioResponse.data;",
                 "  }",
                 "}",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.testfsp1PositionBalanceBefore = environment.testfsp1PositionBalanceAfterB2B",
+                "environment.testfsp1SettlementBalanceBefore = environment.testfsp1SettlementBalanceAfterB2B",
+                "environment.testfsp1InterchFeeBalanceBefore = environment.testfsp1InterchFeeBalanceAfterB2B",
+                "",
+                "console.log(`RESET - environment.testfsp1PositionBalanceBefore=${environment.testfsp1PositionBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp1SettlementBalanceBefore=${environment.testfsp1SettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp1InterchFeeBalanceBefore=${environment.testfsp1InterchFeeBalanceBefore}`)",
                 ""
               ]
             }
@@ -2328,7 +2388,7 @@
                 },
                 "amountType": "SEND",
                 "currency": "{$inputs.cgscurrency}",
-                "amount": "158.36",
+                "amount": "{$environment.SETTLEMENT_CGS_TX_AMOUNT_3}",
                 "transactionType": "TRANSFER",
                 "initiatorType": "CONSUMER",
                 "note": "test payment 2020-06-26 11:52AM",
@@ -2365,7 +2425,15 @@
               }
             ]
           },
-          "disabled": true
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.SETTLEMENT_CGS_TX_AMOUNT_3 = environment.SETTLEMENT_CGS_TX_AMOUNT_3 || 158.36",
+                ""
+              ]
+            }
+          }
         },
         {
           "id": 13,
@@ -2422,13 +2490,16 @@
               }
             ]
           },
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
                 "// lets get retry configs",
                 "var maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 10;",
                 "var maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 200;",
+                "",
+                "const envSettlementRuleInterchangeFee = Number.parseFloat(environment.SETTLEMENT_RULE_INTERCHANGE_FEE) || 0.006;",
+                "const envSettlementCgsTxAmount3 = Number.parseFloat(environment.SETTLEMENT_CGS_TX_AMOUNT_3) || 158.36",
                 "",
                 "var res = response.body;",
                 "",
@@ -2452,9 +2523,12 @@
                 "    }",
                 "  })",
                 "  ",
-                "  ",
-                "  var transferAmount = 158.36;",
-                "  environment.testfsp1SettlementBalanceAfterExpected = Number.parseFloat(environment.testfsp1SettlementBalanceAfterB2B) - Number.parseFloat(transferAmount);",
+                "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
+                "  var transferAmount = envSettlementCgsTxAmount3;",
+                "",
+                "  console.log(`transferAmount=${transferAmount}`)",
+                "",
+                "  environment.testfsp1SettlementBalanceAfterExpected = Number.parseFloat(environment.testfsp1SettlementBalanceAfterB2B) + Number.parseFloat(transferAmount);",
                 "",
                 "  environment.testfsp1SettlementBalanceAfterExpected = Number(environment.testfsp1SettlementBalanceAfterExpected.toFixed(2));",
                 "",
@@ -2464,8 +2538,14 @@
                 "  ",
                 "  environment.testfsp1_actual_interchange_transfer2 = Number(environment.testfsp1_actual_interchange_transfer2.toFixed(2));",
                 "",
-                "  environment.testfsp1_expected_interchange_transfer2 = 0.95; ",
+                "  environment.testfsp1_expected_interchange_transfer2 = (transferAmount * envSettlementRuleInterchangeFee).toFixed(2)",
+                "  console.log(`interchange fee percentage @ ${envSettlementRuleInterchangeFee}`)",
+                "  console.log(`interchange fee expected ${environment.testfsp1_expected_interchange_transfer2}`);",
                 "",
+                "  console.log(`environment.testfsp1PositionBalanceAfter (${environment.testfsp1PositionBalanceAfter}) == environment.testfsp1PositionBalanceAfterTransfer2 (${environment.testfsp1PositionBalanceAfterTransfer2})`)",
+                "  console.log(`environment.testfsp1SettlementBalanceAfterExpected (${environment.testfsp1SettlementBalanceAfterExpected}) == environment.testfsp1SettlementBalanceAfterActual (${environment.testfsp1SettlementBalanceAfterActual})`)",
+                "  console.log(`environment.testfsp1_actual_interchange_transfer2 (${environment.testfsp1_actual_interchange_transfer2}) == environment.testfsp1_expected_interchange_transfer2 (${environment.testfsp1_expected_interchange_transfer2})`)",
+                "  ",
                 "  // console.log(`environment.testfsp1_actual_interchange_transfer2[${environment.testfsp1_actual_interchange_transfer2}] === environment.testfsp1_expected_interchange_transfer2[${environment.testfsp1_expected_interchange_transfer2}]`)",
                 "  if ((environment.testfsp1SettlementBalanceAfterExpected == environment.testfsp1SettlementBalanceAfterActual) && ",
                 "  (environment.testfsp1PositionBalanceAfter == environment.testfsp1PositionBalanceAfterTransfer2) && ",
@@ -2479,6 +2559,16 @@
                 "    res = axioResponse.data;",
                 "  }",
                 "}",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.testfsp1PositionBalanceBefore = environment.testfsp1PositionBalanceAfterTransfer2",
+                "environment.testfsp1SettlementBalanceBefore = environment.testfsp1SettlementBalanceAfterTransfer2",
+                "environment.testfsp1InterchFeeBalanceBefore = environment.testfsp1InterchFeeBalanceAfterTransfer2",
+                "",
+                "console.log(`RESET - environment.testfsp1PositionBalanceBefore=${environment.testfsp1PositionBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp1SettlementBalanceBefore=${environment.testfsp1SettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp1InterchFeeBalanceAfterTransfer2=${environment.testfsp1InterchFeeBalanceAfterTransfer2}`)",
+                "",
                 ""
               ]
             },
@@ -2533,7 +2623,7 @@
                 },
                 "amountType": "SEND",
                 "currency": "{$inputs.cgscurrency}",
-                "amount": "211.15",
+                "amount": "{$environment.SETTLEMENT_CGS_TX_AMOUNT_4}",
                 "transactionType": "TRANSFER",
                 "initiatorType": "CONSUMER",
                 "note": "from testfsp2 to testfsp1, wallet-to-wallet 2020-06-26 11:52AM",
@@ -2572,7 +2662,15 @@
           "headers": {
             "Content-Type": "application/json"
           },
-          "disabled": true
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.SETTLEMENT_CGS_TX_AMOUNT_4 = environment.SETTLEMENT_CGS_TX_AMOUNT_4 || 211.15",
+                ""
+              ]
+            }
+          }
         },
         {
           "id": 15,
@@ -2618,7 +2716,7 @@
                 },
                 "amountType": "RECEIVE",
                 "currency": "{$inputs.cgscurrency}",
-                "amount": "14.21",
+                "amount": "{$environment.SETTLEMENT_CGS_TX_AMOUNT_5}",
                 "transactionType": "TRANSFER",
                 "initiatorType": "CONSUMER",
                 "note": "from testfsp2 to testfsp1, wallet-to-wallet RECEIVE",
@@ -2657,7 +2755,15 @@
           "headers": {
             "Content-Type": "application/json"
           },
-          "disabled": true
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.SETTLEMENT_CGS_TX_AMOUNT_5 = environment.SETTLEMENT_CGS_TX_AMOUNT_5 || 14.21",
+                ""
+              ]
+            }
+          }
         },
         {
           "id": 16,
@@ -2703,7 +2809,7 @@
                 },
                 "amountType": "RECEIVE",
                 "currency": "{$inputs.cgscurrency}",
-                "amount": "150",
+                "amount": "{$environment.SETTLEMENT_CGS_TX_AMOUNT_6}",
                 "transactionType": "TRANSFER",
                 "initiatorType": "CONSUMER",
                 "note": "from testfsp2 to testfsp1, wallet-to-wallet RECEIVE",
@@ -2742,7 +2848,15 @@
           "headers": {
             "Content-Type": "application/json"
           },
-          "disabled": true
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.SETTLEMENT_CGS_TX_AMOUNT_6 = environment.SETTLEMENT_CGS_TX_AMOUNT_6 || 150",
+                ""
+              ]
+            }
+          }
         },
         {
           "id": 18,
@@ -2788,7 +2902,7 @@
             ]
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -2841,7 +2955,7 @@
               }
             ]
           },
-          "disabled": true
+          "disabled": false
         },
         {
           "id": 20,
@@ -2878,13 +2992,13 @@
                 "id": 2,
                 "description": "Position value should be the same after transfer",
                 "exec": [
-                  "expect(environment.currentvaluetestfsp1).to.eql(      environment.testfsp1PositionBefore);"
+                  "expect(environment.currentvaluetestfsp1).to.eql(environment.testfsp1PositionBalanceBefore);"
                 ]
               }
             ]
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -2898,17 +3012,19 @@
                 "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
                 "  console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`);",
                 "",
-                "  for (var i in res) {",
-                "    if (res[i].currency === environment.cgscurrency && res[i].ledgerAccountType === \"POSITION\") {",
-                "      environment.currentvaluetestfsp1 =Number(res[i].value)",
+                "  res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "      environment.currentvaluetestfsp1 = Number(curAccount.value)",
                 "    }",
-                "  }",
+                "",
+                "  })",
                 "",
                 "  console.log(\"current value testfsp1: \"+environment.currentvaluetestfsp1)",
                 "",
-                "  console.log(\"before transfers value testfsp1: \"+environment.testfsp1PositionBefore)",
+                "  console.log(\"before transfers value testfsp1: \"+environment.testfsp1PositionBalanceBefore)",
                 "",
-                "  if (environment.currentvaluetestfsp1 == environment.testfsp1PositionBefore) {",
+                "  if (environment.currentvaluetestfsp1 == environment.testfsp1PositionBalanceBefore) {",
                 "    console.log('Everything is ok, lets continue')",
                 "    break; // lets break out of while loop",
                 "  } else {",
@@ -2917,7 +3033,8 @@
                 "    const axioResponse = await axios.get(`${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIM1_NAME}/accounts`)",
                 "    res = axioResponse.data;",
                 "  }",
-                "}"
+                "}",
+                ""
               ]
             }
           }
@@ -2957,13 +3074,13 @@
                 "id": 2,
                 "description": "Position value should be the same after transfer",
                 "exec": [
-                  "expect(environment.currentvaluetestfsp2).to.eql(      environment.testfsp2PositionBefore);"
+                  "expect(environment.currentvaluetestfsp2).to.eql(environment.testfsp2PositionBalanceBefore);"
                 ]
               }
             ]
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -2977,17 +3094,17 @@
                 "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
                 "  console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`);",
                 "",
-                "  for (var i in res) {",
-                "      if (res[i].currency === environment.cgscurrency && res[i].ledgerAccountType === \"POSITION\") {",
-                "        environment.currentvaluetestfsp2 =Number(res[i].value)",
-                "      }",
-                "  }",
+                "  res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "      environment.currentvaluetestfsp2 = Number(curAccount.value)",
+                "    }",
+                "  })",
                 "  ",
                 "  console.log(\"current value testfsp2: \"+environment.currentvaluetestfsp2)",
                 "  ",
-                "  console.log(\"before transfers value testfsp2: \"+environment.testfsp2PositionBefore)",
+                "  console.log(\"before transfers value testfsp2: \"+environment.testfsp2PositionBalanceBefore)",
                 "",
-                "  if (environment.currentvaluetestfsp1 == environment.testfsp1PositionBefore) {",
+                "  if (environment.currentvaluetestfsp2 == environment.testfsp2PositionBalanceBefore) {",
                 "    console.log('Everything is ok, lets continue')",
                 "    break; // lets break out of while loop",
                 "  } else {",
@@ -3036,13 +3153,14 @@
                 "id": 2,
                 "description": "Position value should be the same after transfer",
                 "exec": [
-                  "expect(environment.currentvaluetestfsp3).to.eql(      environment.testfsp3PositionBefore);"
+                  "expect(environment.currentvaluetestfsp3).to.eql(      environment.testfsp3PositionBalanceBefore);",
+                  ""
                 ]
               }
             ]
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -3056,17 +3174,17 @@
                 "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
                 "  console.log(`retry-count=${retryCount}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`);",
                 "",
-                "  for (var i in res) {",
-                "      if (res[i].currency === environment.cgscurrency && res[i].ledgerAccountType === \"POSITION\") {",
-                "        environment.currentvaluetestfsp3 =Number(res[i].value)",
-                "      }",
-                "  }",
+                "  res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "      environment.currentvaluetestfsp3 = Number(curAccount.value)",
+                "    }",
+                "  })",
                 "",
                 "  console.log(\"current value testfsp3: \"+environment.currentvaluetestfsp3)",
                 "",
-                "  console.log(\"before transfers value testfsp3: \"+environment.testfsp3PositionBefore)",
+                "  console.log(\"before transfers value testfsp3: \"+environment.testfsp3PositionBalanceBefore)",
                 "",
-                "  if (environment.currentvaluetestfsp1 == environment.testfsp1PositionBefore) {",
+                "  if (environment.currentvaluetestfsp3 == environment.testfsp3PositionBalanceBefore) {",
                 "    console.log('Everything is ok, lets continue')",
                 "    break; // lets break out of while loop",
                 "  } else {",
@@ -3115,13 +3233,13 @@
                 "id": 2,
                 "description": "Position value should be the same after transfer",
                 "exec": [
-                  "expect(environment.currentvaluetestfsp4).to.eql(      environment.testfsp4PositionBefore);"
+                  "expect(environment.currentvaluetestfsp4).to.eql(      environment.testfsp4PositionBalanceBefore);"
                 ]
               }
             ]
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -3135,17 +3253,17 @@
                 "for (let retryCount = 0 ; retryCount <= maxRetryCount; retryCount++) {",
                 "  console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`);",
                 "",
-                "  for (var i in res) {",
-                "      if (res[i].currency === environment.cgscurrency && res[i].ledgerAccountType === \"POSITION\") {",
-                "        environment.currentvaluetestfsp4 =Number(res[i].value)",
-                "      }",
-                "  }",
+                "  res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "      environment.currentvaluetestfsp4 = Number(curAccount.value)",
+                "    }",
+                "  })",
                 "",
                 "  console.log(\"current value testfsp4: \"+environment.currentvaluetestfsp4)",
                 "",
-                "  console.log(\"before transfers value testfsp4: \"+environment.testfsp4PositionBefore)",
+                "  console.log(\"before transfers value testfsp4: \"+environment.testfsp3PositionBalanceBefore)",
                 "",
-                "  if (environment.currentvaluetestfsp4 == environment.testfsp4PositionBefore) {",
+                "  if (environment.currentvaluetestfsp4 == environment.testfsp3PositionBalanceBefore) {",
                 "    console.log('Everything is ok, lets continue')",
                 "    break; // lets break out of while loop",
                 "  } else {",
@@ -3207,7 +3325,7 @@
             ]
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -3305,7 +3423,7 @@
             ]
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -3392,7 +3510,7 @@
             ]
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -3434,7 +3552,7 @@
             ]
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -3489,7 +3607,7 @@
             ]
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
