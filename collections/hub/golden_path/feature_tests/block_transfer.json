@@ -7,12 +7,15 @@
       "meta": {
         "info": "Block Transfer"
       },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/block_transfer.json"
+      },
       "requests": [
         {
           "id": 1,
-          "description": "Get Settlement account balance",
+          "description": "Get PAYER Settlement account balances for Liquidity and Position",
           "meta": {
-            "info": "Get Settlement account balance"
+            "info": "Get PAYER Settlement account balances for Liquidity and Position"
           },
           "apiVersion": {
             "minorVersion": 0,
@@ -42,66 +45,27 @@
             ]
           },
           "delay": "500",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "const jsonData = pm.response.body",
-                "console.log(jsonData)",
-                "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"payerSettlementAccountBalance\", jsonData[i].value)",
-                "  }",
-                "}"
-              ]
-            }
-          }
-        },
-        {
-          "id": 2,
-          "meta": {
-            "info": "GET SIMPAYER position before the transfer"
-          },
-          "description": "GET SIMPAYER position before the transfer",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/positions",
-          "path": "/participants/{$inputs.fromFspId}/positions",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.fromFspId}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Payer FSP position is not null",
-                "exec": [
-                  "expect(environment.payerPositionBeforeTransfer).to.not.equal(undefined)"
-                ]
-              }
-            ]
-          },
           "scriptingEngine": "javascript",
-          "headers": {
-            "FSPIOP-Source": "{$inputs.fromFspId}",
-            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
-          },
           "scripts": {
             "postRequest": {
               "exec": [
-                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY))",
-                "environment.payerPositionBeforeTransfer = positionItem.value"
+                "// Find the Settlement account for the set currency to determine the liquidity of the payer",
+                "const settlementAccount = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY && item.ledgerAccountType === 'SETTLEMENT'))",
+                "environment.payerSettlementAccountBalance = settlementAccount?.value",
+                "",
+                "console.log(`environment.payerSettlementAccountBalance=${environment.payerSettlementAccountBalance}`)",
+                "",
+                "// Find the Position account for the set currency to determine the position of the payer",
+                "const positionAccount = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY && item.ledgerAccountType === 'POSITION'))",
+                "environment.payerPositionBeforeTransfer = positionAccount?.value",
+                "",
+                "console.log(`environment.payerPositionBeforeTransfer=${environment.payerPositionBeforeTransfer}`)",
+                "",
+                "",
+                "environment.payerReservedPositionBeforeTransfer = positionAccount?.reservedValue",
+                "",
+                "console.log(`environment.payerReservedPositionBeforeTransfer=${environment.payerReservedPositionBeforeTransfer}`)",
+                ""
               ]
             }
           }
@@ -367,7 +331,37 @@
                 "requestVariables.quoteId = '{$function.generic.generateUUID}'",
                 "requestVariables.transactionId = '{$function.generic.generateUUID}'",
                 "",
-                "requestVariables.amount = Number((-Number(environment.payerSettlementAccountBalance).toFixed(2) - Number(environment.payerPositionBeforeTransfer).toFixed(2) + 1000).toFixed(2));",
+                "console.log(`environment.payerNetDebitCapLimit=${environment.payerNetDebitCapLimit}`)",
+                "",
+                "console.log(`environment.payerSettlementAccountBalance=${environment.payerSettlementAccountBalance}`)",
+                "",
+                "console.log(`environment.payerPositionBeforeTransfer=${environment.payerPositionBeforeTransfer}`)",
+                "",
+                "console.log(`environment.payerReservedPositionBeforeTransfer=${environment.payerReservedPositionBeforeTransfer}`)",
+                "",
+                "const payerLiquidityCover = -Number(environment.payerSettlementAccountBalance);",
+                "",
+                "console.log(`payerLiquidityCover=${payerLiquidityCover}`)",
+                "",
+                "const payerPositionBeforeTransfer = Number(environment.payerPositionBeforeTransfer);",
+                "",
+                "console.log(`payerPositionBeforeTransfer=${payerPositionBeforeTransfer}`)",
+                "",
+                "const payerReservedPositionBeforeTransfer = Number(environment.payerReservedPositionBeforeTransfer);",
+                "",
+                "console.log(`payerReservedPositionBeforeTransfer=${payerReservedPositionBeforeTransfer}`)",
+                "",
+                "const effectivePosition = payerPositionBeforeTransfer + payerReservedPositionBeforeTransfer;",
+                "",
+                "console.log(`effectivePosition=${effectivePosition}`)",
+                "",
+                " const liquidityAndPositionDifference = (payerLiquidityCover - effectivePosition);",
+                " ",
+                " console.log(`liquidityAndPositionDifference=${liquidityAndPositionDifference}`);",
+                "",
+                "requestVariables.amount = (liquidityAndPositionDifference + 1000).toFixed(2);",
+                "",
+                "console.log(`requestVariables.amount=${requestVariables.amount}`)",
                 "",
                 "if(environment.ENABLE_JWS_SIGNING) {",
                 "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
@@ -512,6 +506,7 @@
               }
             ]
           },
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -630,6 +625,9 @@
       "meta": {
         "info": "Block Transfer due to NDC limit"
       },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/block_transfer.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -740,9 +738,9 @@
         },
         {
           "id": 3,
-          "description": "Get Settlement account balance",
+          "description": "Get PAYER Settlement account balances for Liquidity and Position",
           "meta": {
-            "info": "Get Settlement account balance"
+            "info": "Get PAYER Settlement account balances for Liquidity and Position"
           },
           "apiVersion": {
             "minorVersion": 0,
@@ -772,20 +770,30 @@
             ]
           },
           "delay": "500",
+          "scriptingEngine": "javascript",
           "scripts": {
             "postRequest": {
               "exec": [
-                "const jsonData = response.body",
-                "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === environment.currency) {",
-                "    environment.payerSettlementAccountBalance = jsonData[i].value",
-                "  }",
-                "}",
+                "// Find the Settlement account for the set currency to determine the liquidity of the payer",
+                "const settlementAccount = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY && item.ledgerAccountType === 'SETTLEMENT'))",
+                "environment.payerSettlementAccountBalance = settlementAccount?.value",
+                "",
+                "console.log(`environment.payerSettlementAccountBalance=${environment.payerSettlementAccountBalance}`)",
+                "",
+                "// Find the Position account for the set currency to determine the position of the payer",
+                "const positionAccount = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY && item.ledgerAccountType === 'POSITION'))",
+                "environment.payerPositionBeforeTransfer = positionAccount?.value",
+                "",
+                "console.log(`environment.payerPositionBeforeTransfer=${environment.payerPositionBeforeTransfer}`)",
+                "",
+                "",
+                "environment.payerReservedPositionBeforeTransfer = positionAccount?.reservedValue",
+                "",
+                "console.log(`environment.payerReservedPositionBeforeTransfer=${environment.payerReservedPositionBeforeTransfer}`)",
                 ""
               ]
             }
-          },
-          "scriptingEngine": "javascript"
+          }
         },
         {
           "id": 4,
@@ -811,71 +819,57 @@
             }
           },
           "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
           "scripts": {
             "preRequest": {
               "exec": [
-                "environment.tempNDCLimit = -Number(environment.payerSettlementAccountBalance) - 1000"
-              ]
-            }
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 5,
-          "meta": {
-            "info": "GET SIMPAYER position before the transfer"
-          },
-          "description": "GET SIMPAYER position before the transfer",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/positions",
-          "path": "/participants/{$inputs.fromFspId}/positions",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.fromFspId}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Payer FSP position correctly set",
-                "exec": [
-                  "expect(environment.payerPositionBeforeTransfer).to.not.equal(undefined)"
-                ]
-              }
-            ]
-          },
-          "scriptingEngine": "javascript",
-          "headers": {
-            "FSPIOP-Source": "{$inputs.fromFspId}",
-            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
-          },
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY))",
-                "environment.payerPositionBeforeTransfer = positionItem.value"
+                "// environment.tempNDCLimit = -Number(environment.payerSettlementAccountBalance) - 1000",
+                "",
+                "",
+                "console.log(`environment.payerNetDebitCapLimit=${environment.payerNetDebitCapLimit}`)",
+                "",
+                "console.log(`environment.payerSettlementAccountBalance=${environment.payerSettlementAccountBalance}`)",
+                "",
+                "console.log(`environment.payerPositionBeforeTransfer=${environment.payerPositionBeforeTransfer}`)",
+                "",
+                "console.log(`environment.payerReservedPositionBeforeTransfer=${environment.payerReservedPositionBeforeTransfer}`)",
+                "",
+                "const payerLiquidityCover = -Number(environment.payerSettlementAccountBalance);",
+                "",
+                "console.log(`payerLiquidityCover=${payerLiquidityCover}`)",
+                "",
+                "const payerPositionBeforeTransfer = Number(environment.payerPositionBeforeTransfer);",
+                "",
+                "console.log(`payerPositionBeforeTransfer=${payerPositionBeforeTransfer}`)",
+                "",
+                "const payerReservedPositionBeforeTransfer = Number(environment.payerReservedPositionBeforeTransfer);",
+                "",
+                "console.log(`payerReservedPositionBeforeTransfer=${payerReservedPositionBeforeTransfer}`)",
+                "",
+                "// const effectivePosition = payerPositionBeforeTransfer + payerReservedPositionBeforeTransfer;",
+                "",
+                "// console.log(`effectivePosition=${effectivePosition}`)",
+                "",
+                "// const liquidityAndPositionDifference = (payerLiquidityCover - effectivePosition);",
+                " ",
+                "// console.log(`liquidityAndPositionDifference=${liquidityAndPositionDifference}`);",
+                "",
+                "// environment.tempNDCLimit = (liquidityAndPositionDifference - 1000).toFixed(2);",
+                "",
+                "// console.log(`environment.tempNDCLimitt=${environment.tempNDCLimit}`)",
+                "",
+                "environment.tempNDCLimit = (Math.abs(payerLiquidityCover) - 1000).toFixed(2)",
+                ""
               ]
             }
           }
@@ -1141,7 +1135,35 @@
                 "requestVariables.quoteId = '{$function.generic.generateUUID}'",
                 "requestVariables.transactionId = '{$function.generic.generateUUID}'",
                 "",
-                "requestVariables.amount = Number((-Number(environment.payerSettlementAccountBalance).toFixed(2) - Number(environment.payerPositionBeforeTransfer).toFixed(2) - 500).toFixed(2));",
+                "console.log(`environment.payerNetDebitCapLimit=${environment.payerNetDebitCapLimit}`)",
+                "",
+                "console.log(`environment.payerPositionBeforeTransfer=${environment.payerPositionBeforeTransfer}`)",
+                "",
+                "console.log(`environment.payerReservedPositionBeforeTransfer=${environment.payerReservedPositionBeforeTransfer}`)",
+                "",
+                "console.log(`environment.tempNDCLimit=${environment.tempNDCLimit}`)",
+                "",
+                "const currentNDCLimit = environment.tempNDCLimit",
+                "",
+                "const payerPositionBeforeTransfer = Number(environment.payerPositionBeforeTransfer);",
+                "",
+                "console.log(`payerPositionBeforeTransfer=${payerPositionBeforeTransfer}`)",
+                "",
+                "const payerReservedPositionBeforeTransfer = Number(environment.payerReservedPositionBeforeTransfer);",
+                "",
+                "console.log(`payerReservedPositionBeforeTransfer=${payerReservedPositionBeforeTransfer}`)",
+                "",
+                "const effectivePosition = payerPositionBeforeTransfer + payerReservedPositionBeforeTransfer;",
+                "",
+                "console.log(`effectivePosition=${effectivePosition}`)",
+                "",
+                "const positionLimitDifference = Math.abs(currentNDCLimit - effectivePosition)",
+                " ",
+                "console.log(`positionLimitDifference=${positionLimitDifference}`);",
+                "",
+                "requestVariables.amount = (positionLimitDifference + 1).toFixed(2);",
+                "",
+                "console.log(`requestVariables.amount=${requestVariables.amount}`)",
                 "",
                 "if(environment.ENABLE_JWS_SIGNING) {",
                 "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
@@ -1420,13 +1442,6 @@
             }
           },
           "scriptingEngine": "javascript",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "environment.tempNDCLimit = -environment.payerSettlementAccountBalance + 200"
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -1437,6 +1452,13 @@
                 ]
               }
             ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tempNDCLimit = -environment.payerSettlementAccountBalance + 200"
+              ]
+            }
           }
         }
       ]
