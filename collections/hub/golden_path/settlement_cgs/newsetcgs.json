@@ -670,6 +670,238 @@
     },
     {
       "id": 3,
+      "name": "Deposit Funds into Settlement Account (Funds-In)",
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "labels": [
+          "settlements"
+        ]
+      },
+      "requests": [
+        {
+          "id": 41,
+          "meta": {
+            "info": "Deposit Funds in Settlement Account - payerfsp"
+          },
+          "description": "Deposit Funds in Settlement Account - testfsp1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM1_NAME}/accounts/64",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM1_NAME}",
+            "id": "36"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateUUID}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$requestVariables.payerfspfundsInPrepareAmount}",
+              "currency": "{$inputs.cgscurrency}"
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.SIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP1 = environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP1 || 2000;",
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP1);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 42,
+          "meta": {
+            "info": "Deposit Funds in Settlement Account - payerfsp"
+          },
+          "description": "Deposit Funds in Settlement Account - testfsp2",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts/64",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}",
+            "id": "44"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateUUID}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$requestVariables.payerfspfundsInPrepareAmount}",
+              "currency": "{$inputs.cgscurrency}"
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP2 = environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP2 || 2000;",
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP2);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 43,
+          "meta": {
+            "info": "Deposit Funds in Settlement Account - payerfsp"
+          },
+          "description": "Deposit Funds in Settlement Account - testfsp3",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM3_NAME}/accounts/64",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}",
+            "id": "64"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateUUID}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$requestVariables.payerfspfundsInPrepareAmount}",
+              "currency": "{$inputs.cgscurrency}"
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP3 = environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP3 || 2000;",
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP3);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 44,
+          "meta": {
+            "info": "Deposit Funds in Settlement Account - payerfsp"
+          },
+          "description": "Deposit Funds in Settlement Account - testfsp4",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM4_NAME}/accounts/64",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM4_NAME}",
+            "id": "68"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateUUID}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$requestVariables.payerfspfundsInPrepareAmount}",
+              "currency": "{$inputs.cgscurrency}"
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.SIM4_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP4 = environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP4 || 2000;",
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP4);"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
       "name": "[new sims]  transfers, positions CGS Window1 tests (OTC-649, OTC-645)",
       "meta": {
         "info": "[new sims]  transfers, positions CGS Window1 tests (OTC-649, OTC-645)"
@@ -715,6 +947,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "scriptingEngine": "javascript",
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -785,6 +1018,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "scriptingEngine": "javascript",
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -853,6 +1087,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "scriptingEngine": "javascript",
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -922,6 +1157,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "scriptingEngine": "javascript",
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -1041,6 +1277,7 @@
             ]
           },
           "ignoreCallbacks": true,
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -1275,6 +1512,7 @@
           "queryParams": {
             "": ""
           },
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -1439,6 +1677,7 @@
           },
           "scriptingEngine": "javascript",
           "delay": "{$inputs.DELAY_CGS}",
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -2165,6 +2404,7 @@
             "Content-Type": "application/json"
           },
           "disabled": false,
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -2258,10 +2498,13 @@
             "Content-Type": "application/json"
           },
           "disabled": false,
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "environment.SETTLEMENT_CGS_TX_AMOUNT_5 = environment.SETTLEMENT_CGS_TX_AMOUNT_5 || 14.21",
+                "environment.SETTLEMENT_CGS_TX_AMOUNT_5 = environment.SETTLEMENT_CGS_TX_AMOUNT_5 || 14.05",
+                "",
+                "console.log(`environment.SETTLEMENT_CGS_TX_AMOUNT_5=${environment.SETTLEMENT_CGS_TX_AMOUNT_5}`)",
                 ""
               ]
             }
@@ -2351,6 +2594,7 @@
             "Content-Type": "application/json"
           },
           "disabled": false,
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -3065,7 +3309,7 @@
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "name": "Close any window before transfers",
       "meta": {
         "info": "Close any window before transfers"
@@ -3166,7 +3410,7 @@
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "name": "[new sims] new transfers window1",
       "meta": {
         "info": "[new sims] new transfers window1"
@@ -3781,7 +4025,7 @@
       ]
     },
     {
-      "id": 6,
+      "id": 7,
       "name": "Close any window1",
       "meta": {
         "info": "Close any window1"
@@ -3890,7 +4134,7 @@
       ]
     },
     {
-      "id": 7,
+      "id": 8,
       "name": "[new sims] new transfers window2",
       "meta": {
         "info": "[new sims] new transfers window2"
@@ -4505,7 +4749,7 @@
       ]
     },
     {
-      "id": 8,
+      "id": 9,
       "name": "Close any window2",
       "meta": {
         "info": "Close any window2"
@@ -4614,7 +4858,7 @@
       ]
     },
     {
-      "id": 9,
+      "id": 10,
       "name": "[new sims] new transfers window3",
       "meta": {
         "info": "[new sims] new transfers window3"
@@ -5229,7 +5473,7 @@
       ]
     },
     {
-      "id": 10,
+      "id": 11,
       "name": "Close any window3",
       "meta": {
         "info": "Close any window3"
@@ -5338,7 +5582,7 @@
       ]
     },
     {
-      "id": 11,
+      "id": 12,
       "name": "[new sims] new transfers window4",
       "meta": {
         "info": "[new sims] new transfers window4"
@@ -5953,7 +6197,7 @@
       ]
     },
     {
-      "id": 12,
+      "id": 13,
       "name": "Close any window4",
       "meta": {
         "info": "Close any window4"
@@ -6062,7 +6306,7 @@
       ]
     },
     {
-      "id": 13,
+      "id": 14,
       "name": "[new sims] new transfers window5",
       "meta": {
         "info": "[new sims] new transfers window5"
@@ -6677,7 +6921,7 @@
       ]
     },
     {
-      "id": 14,
+      "id": 15,
       "name": "Close any window5",
       "meta": {
         "info": "Close any window5"
@@ -6786,7 +7030,7 @@
       ]
     },
     {
-      "id": 15,
+      "id": 16,
       "name": "Create Settlement for previously  closed 5 windows",
       "meta": {
         "info": "Create Settlement for previously  closed 5 windows"
@@ -6952,7 +7196,7 @@
       ]
     },
     {
-      "id": 16,
+      "id": 17,
       "name": "negative requests",
       "meta": {
         "info": "negative requests"
@@ -7108,7 +7352,7 @@
       ]
     },
     {
-      "id": 17,
+      "id": 18,
       "name": "Add Users to new Sims ; ALS registration (random MSISDN)",
       "meta": {
         "info": "Add Users to new Sims ; ALS registration (random MSISDN)"
