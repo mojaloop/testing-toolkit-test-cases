@@ -165,7 +165,7 @@
               "exec": [
                 "var uuid = require('uuid');",
                 "",
-                "const delay = environment.EXPIRATION_DELAY_MS || 1000 * 3600 * 24",
+                "const delay = 1000 * 3600 * 24",
                 "const bulkTransferId = uuid.v4();",
                 "const bulkQuoteId = uuid.v4();",
                 "const transferId = uuid.v4();",
@@ -261,36 +261,6 @@
               "errorCode": "5100",
               "errorDescription": "An error occured"
             }
-          },
-          "scriptingEngine": "javascript",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "payerfsp callback - payer should be informed of payee abort",
-                "exec": [
-                  "expect(environment.payerCallbackNotification.body).to.have.property(\"errorInformation\")",
-                  "expect(JSON.stringify(environment.payerCallbackNotification.body.errorInformation)).to.equal(JSON.stringify(request.body.errorInformation))"
-                ]
-              }
-            ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "// Retrieve the payer fsp callback that is expected to be recieved after the payee fsp ",
-                "// sends a fulfil request",
-                "await inboundEvent.addListener('payer-callback', 'put', '/bulkTransfers/{$environment.bulkTransferId}/error')"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "environment.payerCallbackNotification = await inboundEvent.getMessage('payer-callback')",
-                "console.log(environment.payerCallbackNotification)",
-                "console.log(request.body.errorInformation)",
-                ""
-              ]
-            }
           }
         },
         {
@@ -354,7 +324,7 @@
                 "id": 5,
                 "description": "payerfsp callback - fspiop-uri should be as expected",
                 "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
+                  "expect(callback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}/error`)"
                 ]
               },
               {
@@ -366,17 +336,19 @@
               },
               {
                 "id": 8,
-                "description": "payerfsp callback - bulkTransfer should be REJECTED",
+                "description": "payerfsp callback - errorInformation should be set correctly",
                 "exec": [
-                  "expect(callback.body).to.have.property(\"bulkTransferState\")",
-                  "expect(callback.body.bulkTransferState).to.equal(\"REJECTED\")"
+                  "expect(callback.body).to.have.property(\"errorInformation\")",
+                  "expect(JSON.stringify(callback.body.errorInformation)).to.equal(JSON.stringify({",
+                  "  errorCode: \"5100\",",
+                  "  errorDescription: \"An error occured\"",
+                  "}))"
                 ]
               }
             ]
           },
           "ignoreCallbacks": false,
           "scriptingEngine": "javascript",
-          "delay": "1000",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -388,7 +360,8 @@
                 ""
               ]
             }
-          }
+          },
+          "delay": "1000"
         },
         {
           "id": 7,
@@ -800,7 +773,7 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "const delay = environment.EXPIRATION_DELAY_MS || 1000 * 3600 * 24",
+                "const delay = 1000 * 3600 * 24",
                 "const now = new Date()",
                 "const expirationDate = new Date(now.getTime() + delay).toISOString();",
                 "const completedTimestamp = now.toISOString();",
