@@ -8,7 +8,7 @@
         "info": "Store settlement and position balances before-transfers"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -523,7 +523,7 @@
         "info": "Close window before tranfers"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -672,12 +672,292 @@
       "id": 3,
       "name": "Deposit Funds into Settlement Account (Funds-In)",
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
       },
       "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "testfsp1/accounts (settlement, position, interchange) BEFORE Funds-In transfer"
+          },
+          "description": "testfsp1/accounts (settlement, position, interchange) BEFORE Funds-In transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM1_NAME}",
+            "id": ""
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp1SettlementBalanceBefore= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp1PositionBalanceBefore= curAccount.value",
+                "        }  ",
+                "        ",
+                "          if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "  environment.testfsp1InterchFeeBalanceBefore= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp1SettlementBalanceBefore);",
+                "console.log(environment.testfsp1PositionBalanceBefore);",
+                "console.log(environment.testfsp1InterchFeeBalanceBefore);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "testfsp2/accounts (settlement, position, interchange) BEFORE Funds-In transfer"
+          },
+          "description": "testfsp2/accounts (settlement, position, interchange) BEFORE Funds-In transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp2SettlementBalanceBefore= curAccount.value",
+                "        }",
+                "        ",
+                "if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp2PositionBalanceBefore= curAccount.value",
+                "        }",
+                "  if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "  environment.testfsp2InterchFeeBalanceBefore= curAccount.value",
+                "        }",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp2SettlementBalanceBefore);",
+                "console.log(environment.testfsp2PositionBalanceBefore);",
+                "console.log(environment.testfsp2InterchFeeBalanceBefore);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "testfsp3/accounts (settlement, position, interchange) BEFORE Funds-In transfer"
+          },
+          "description": "testfsp3/accounts (settlement, position, interchange) BEFORE Funds-In transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM3_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp3SettlementBalanceBefore= curAccount.value",
+                "        }",
+                "        ",
+                "if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp3PositionBalanceBefore= curAccount.value",
+                "        }",
+                "",
+                "  if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "  environment.testfsp3InterchFeeBalanceBefore= curAccount.value",
+                "        }  ",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp3SettlementBalanceBefore);",
+                "console.log(environment.testfsp3PositionBalanceBefore);",
+                "console.log(environment.testfsp3InterchFeeBalanceBefore);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "testfsp4/accounts (settlement, position, interchange) BEFORE Funds-In transfer"
+          },
+          "description": "testfsp4/accounts (settlement, position, interchange) BEFORE Funds-In transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM4_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM4_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.testfsp4SettlementBalanceBefore= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.testfsp4PositionBalanceBefore= curAccount.value",
+                "        }     ",
+                " if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "  environment.testfsp4InterchFeeBalanceBefore= curAccount.value",
+                "        }  ",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.testfsp4SettlementBalanceBefore);",
+                "console.log(environment.testfsp4PositionBalanceBefore);",
+                "console.log(environment.testfsp4InterchFeeBalanceBefore);"
+              ]
+            }
+          }
+        },
         {
           "id": 41,
           "meta": {
@@ -728,7 +1008,8 @@
             "preRequest": {
               "exec": [
                 "environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP1 = environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP1 || 2000;",
-                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP1);"
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP1);",
+                ""
               ]
             }
           }
@@ -783,7 +1064,8 @@
             "preRequest": {
               "exec": [
                 "environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP2 = environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP2 || 2000;",
-                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP2);"
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP2);",
+                ""
               ]
             }
           }
@@ -838,7 +1120,8 @@
             "preRequest": {
               "exec": [
                 "environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP3 = environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP3 || 2000;",
-                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP3);"
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP3);",
+                ""
               ]
             }
           }
@@ -897,6 +1180,654 @@
               ]
             }
           }
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "testfsp1/accounts (settlement, position, interchange) AFTER Funds-In transfer"
+          },
+          "description": "testfsp1/accounts (settlement, position, interchange) AFTER Funds-In transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check that settlement account value changes by transfer amount ",
+                "exec": [
+                  "expect(environment.testfsp1SettlementBalanceAfterExpected).to.eql(environment.testfsp1SettlementBalanceAfterActual);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check that position account value remains unchanged",
+                "exec": [
+                  "expect(requestVariables.testfsp1PositionBalanceBefore).to.eql(environment.testfsp1PositionBalanceAfter);"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "check that interchange fee have been changed by",
+                "exec": [
+                  "expect(Number(requestVariables.testfsp1InterchFeeBalanceBefore)).to.eql(Number(environment.testfsp1InterchFeeBalanceAfter));"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "delay": "{$inputs.DELAY_CGS}",
+          "queryParams": {
+            "": ""
+          },
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "// lets get retry configs",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 10;",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 200;",
+                "",
+                "const envSettlementRuleInterchangeFee = Number.parseFloat(environment.SETTLEMENT_RULE_INTERCHANGE_FEE) || 0.006;",
+                "",
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP1);",
+                "",
+                "// var maxRetryWait = 1;",
+                "",
+                "var res = response.body;",
+                "",
+                "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "  console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`);",
+                "  // console.log(res);",
+                "  res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "      ",
+                "    if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "      environment.testfsp1SettlementBalanceAfter= curAccount.value",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "      environment.testfsp1PositionBalanceAfter= curAccount.value",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "      environment.testfsp1InterchFeeBalanceAfter= curAccount.value",
+                "    }",
+                "  })",
+                "",
+                "  /*",
+                "  console.log(environment.testfsp1SettlementBalanceAfterTransfer1);",
+                "  console.log(environment.testfsp1PositionBalanceAfter);",
+                "  console.log(environment.testfsp1InterchFeeBalanceAfter);*/",
+                "",
+                "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
+                "  const transferAmount = requestVariables.payerfspfundsInPrepareAmount;",
+                "",
+                "  console.log(`transferAmount=${transferAmount}`)",
+                "  ",
+                "  environment.testfsp1SettlementBalanceAfterExpected = (Number.parseFloat(environment.testfsp1SettlementBalanceBefore) - Number.parseFloat(transferAmount)).toFixed(2);",
+                "",
+                "",
+                "  console.log(`testfsp1SettlementBalanceAfterExpected=${environment.testfsp1SettlementBalanceAfterExpected}`)",
+                "",
+                "  environment.testfsp1SettlementBalanceAfterActual = Number.parseFloat(environment.testfsp1SettlementBalanceAfter).toFixed(2);",
+                "",
+                "  console.log(`testfsp1SettlementBalanceAfterActual=${environment.testfsp1SettlementBalanceAfterActual}`)",
+                "",
+                "  console.log(environment.testfsp1SettlementBalanceAfterActual === environment.testfsp1SettlementBalanceAfterExpected)",
+                "",
+                "  console.log('extracted testfsp1 settlement balance before transfers',environment.testfsp1SettlementBalanceBefore);",
+                "  console.log('extracted testfsp1 settlement balance after first transfer ACTUAL',environment.testfsp1SettlementBalanceAfterActual);",
+                "  console.log('calculated testfsp1 settlement balance before transfers '+environment.testfsp1SettlementBalanceBefore +' transfer amount -'+transferAmount, environment.testfsp1SettlementBalanceAfterExpected);",
+                "",
+                "  console.log('test fsp3 positions account before',environment.testfsp1PositionBalanceBefore);",
+                "  console.log('test fsp3 positions account after',environment.testfsp1PositionBalanceAfter);",
+                "",
+                "  console.log(`environment.testfsp1InterchFeeBalanceAfter=${environment.testfsp1InterchFeeBalanceAfter}`)",
+                "  console.log(`environment.testfsp1InterchFeeBalanceBefore=${environment.testfsp1InterchFeeBalanceBefore}`)",
+                "",
+                "  console.log(`environment.testfsp1PositionBalanceBefore (${environment.testfsp1PositionBalanceBefore}) == environment.testfsp1PositionBalanceAfter (${environment.testfsp1PositionBalanceAfter})`)",
+                "  console.log(`environment.testfsp1SettlementBalanceAfterExpected (${environment.testfsp1SettlementBalanceAfterExpected}) == environment.testfsp1SettlementBalanceAfterActual (${environment.testfsp1SettlementBalanceAfterActual})`)",
+                "  console.log(`environment.testfsp1InterchFeeBalanceBefore (${environment.testfsp1InterchFeeBalanceBefore}) == environment.testfsp1InterchFeeBalanceAfter (${environment.testfsp1InterchFeeBalanceAfter})`)",
+                "",
+                "  if ((environment.testfsp1PositionBalanceBefore == environment.testfsp1PositionBalanceAfter) &&",
+                "  (environment.testfsp1SettlementBalanceAfterExpected == environment.testfsp1SettlementBalanceAfterActual) &&",
+                "  (environment.testfsp1InterchFeeBalanceBefore == environment.testfsp1InterchFeeBalanceAfter)) {",
+                "    console.log('Everything is ok, lets continue')",
+                "    break; // lets break out of while loop",
+                "  } else {",
+                "    console.log(`Everything is NOT OK, lets wait for ${maxRetryWait}ms, and try again...`)",
+                "    await custom.sleep(maxRetryWait);",
+                "    const axioResponse = await axios.get(`${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIM3_NAME}/accounts`)",
+                "    res = axioResponse.data;",
+                "  }",
+                "}",
+                "",
+                "// Store *BalanceBefore in a local variable for assertion test",
+                "requestVariables.testfsp1PositionBalanceBefore = environment.testfsp1PositionBalanceBefore",
+                "requestVariables.testfsp1InterchFeeBalanceBefore = environment.testfsp1InterchFeeBalanceBefore",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.testfsp1PositionBalanceBefore = environment.testfsp1PositionBalanceAfter",
+                "environment.testfsp1SettlementBalanceBefore = environment.testfsp1SettlementBalanceAfter",
+                "environment.testfsp1InterchFeeBalanceBefore = environment.testfsp1InterchFeeBalanceAfter",
+                "",
+                "console.log(`RESET - environment.testfsp1PositionBalanceBefore=${environment.testfsp1PositionBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp1SettlementBalanceBefore=${environment.testfsp1SettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp1InterchFeeBalanceBefore=${environment.testfsp1InterchFeeBalanceBefore}`)",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 45,
+          "description": "testfsp2/accounts (settlement, position, interchange) AFTER Funds-In transfer",
+          "meta": {
+            "info": "testfsp2/accounts (settlement, position, interchange) AFTER Funds-In transfer"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check that settlement account value changes by transfer amount ",
+                "exec": [
+                  "expect(environment.testfsp2SettlementBalanceAfterExpected).to.eql(environment.testfsp2SettlementBalanceAfterActual);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check that position account value remains unchanged",
+                "exec": [
+                  "expect(requestVariables.testfsp2PositionBalanceBefore).to.eql(environment.testfsp2PositionBalanceAfter);"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "check that interchange fee have been changed by",
+                "exec": [
+                  "expect(Number(requestVariables.testfsp2InterchFeeBalanceBefore)).to.eql(Number(environment.testfsp2InterchFeeBalanceAfter));"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "delay": "{$inputs.DELAY_CGS}",
+          "queryParams": {
+            "": ""
+          },
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "// lets get retry configs",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 10;",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 200;",
+                "",
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP2);",
+                "",
+                "// var maxRetryWait = 1;",
+                "",
+                "var res = response.body;",
+                "",
+                "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "  console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`);",
+                "  // console.log(res);",
+                "  res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "      ",
+                "    if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "      environment.testfsp2SettlementBalanceAfter= curAccount.value",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "      environment.testfsp2PositionBalanceAfter= curAccount.value",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "      environment.testfsp2InterchFeeBalanceAfter= curAccount.value",
+                "    }",
+                "  })",
+                "",
+                "  /*",
+                "  console.log(environment.testfsp2SettlementBalanceAfterTransfer1);",
+                "  console.log(environment.testfsp2PositionBalanceAfter);",
+                "  console.log(environment.testfsp2InterchFeeBalanceAfter);*/",
+                "",
+                "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
+                "  const transferAmount = requestVariables.payerfspfundsInPrepareAmount;",
+                "",
+                "  console.log(`transferAmount=${transferAmount}`)",
+                "",
+                "  console.log(`testfsp2SettlementBalanceBefore=${environment.testfsp2SettlementBalanceBefore}`)",
+                "  ",
+                "  environment.testfsp2SettlementBalanceAfterExpected = (Number.parseFloat(environment.testfsp2SettlementBalanceBefore) - Number.parseFloat(transferAmount)).toFixed(2);",
+                "",
+                "",
+                "  console.log(`testfsp2SettlementBalanceAfterExpected=${environment.testfsp2SettlementBalanceAfterExpected}`)",
+                "",
+                "  environment.testfsp2SettlementBalanceAfterActual = Number.parseFloat(environment.testfsp2SettlementBalanceAfter).toFixed(2);",
+                "",
+                "  console.log(`testfsp2SettlementBalanceAfterActual=${environment.testfsp2SettlementBalanceAfterActual}`)",
+                "",
+                "  console.log(environment.testfsp2SettlementBalanceAfterActual === environment.testfsp2SettlementBalanceAfterExpected)",
+                "",
+                "  console.log('extracted testfsp2 settlement balance before transfers',environment.testfsp2SettlementBalanceBefore);",
+                "  console.log('extracted testfsp2 settlement balance after first transfer ACTUAL',environment.testfsp2SettlementBalanceAfterActual);",
+                "  console.log('calculated testfsp2 settlement balance before transfers '+environment.testfsp2SettlementBalanceBefore +' transfer amount -'+transferAmount, environment.testfsp2SettlementBalanceAfterExpected);",
+                "",
+                "  console.log('test fsp3 positions account before',environment.testfsp2PositionBalanceBefore);",
+                "  console.log('test fsp3 positions account after',environment.testfsp2PositionBalanceAfter);",
+                "",
+                "  console.log(`environment.testfsp2InterchFeeBalanceAfter=${environment.testfsp2InterchFeeBalanceAfter}`)",
+                "  console.log(`environment.testfsp2InterchFeeBalanceBefore=${environment.testfsp2InterchFeeBalanceBefore}`)",
+                "",
+                "  console.log(`environment.testfsp2PositionBalanceBefore (${environment.testfsp2PositionBalanceBefore}) == environment.testfsp2PositionBalanceAfter (${environment.testfsp2PositionBalanceAfter})`)",
+                "  console.log(`environment.testfsp2SettlementBalanceAfterExpected (${environment.testfsp2SettlementBalanceAfterExpected}) == environment.testfsp2SettlementBalanceAfterActual (${environment.testfsp2SettlementBalanceAfterActual})`)",
+                "  console.log(`environment.testfsp2InterchFeeBalanceBefore (${environment.testfsp2InterchFeeBalanceBefore}) == environment.testfsp2InterchFeeBalanceAfter (${environment.testfsp2InterchFeeBalanceAfter})`)",
+                "",
+                "  if ((environment.testfsp2PositionBalanceBefore == environment.testfsp2PositionBalanceAfter) &&",
+                "  (environment.testfsp2SettlementBalanceAfterExpected == environment.testfsp2SettlementBalanceAfterActual) &&",
+                "  (environment.testfsp2InterchFeeBalanceBefore == environment.testfsp2InterchFeeBalanceAfter)) {",
+                "    console.log('Everything is ok, lets continue')",
+                "    break; // lets break out of while loop",
+                "  } else {",
+                "    console.log(`Everything is NOT OK, lets wait for ${maxRetryWait}ms, and try again...`)",
+                "    await custom.sleep(maxRetryWait);",
+                "    const axioResponse = await axios.get(`${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIM3_NAME}/accounts`)",
+                "    res = axioResponse.data;",
+                "  }",
+                "}",
+                "",
+                "// Store *BalanceBefore in a local variable for assertion test",
+                "requestVariables.testfsp2PositionBalanceBefore = environment.testfsp2PositionBalanceBefore",
+                "requestVariables.testfsp2InterchFeeBalanceBefore = environment.testfsp2InterchFeeBalanceBefore",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.testfsp2PositionBalanceBefore = environment.testfsp2PositionBalanceAfter",
+                "environment.testfsp2SettlementBalanceBefore = environment.testfsp2SettlementBalanceAfter",
+                "environment.testfsp2InterchFeeBalanceBefore = environment.testfsp2InterchFeeBalanceAfter",
+                "",
+                "console.log(`RESET - environment.testfsp2PositionBalanceBefore=${environment.testfsp2PositionBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp2SettlementBalanceBefore=${environment.testfsp2SettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp2InterchFeeBalanceBefore=${environment.testfsp2InterchFeeBalanceBefore}`)",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 46,
+          "description": "testfsp3/accounts (settlement, position, interchange) AFTER Funds-In transfer",
+          "meta": {
+            "info": "testfsp3/accounts (settlement, position, interchange) AFTER Funds-In transfer"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM3_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check that settlement account value changes by transfer amount ",
+                "exec": [
+                  "expect(environment.testfsp3SettlementBalanceAfterExpected).to.eql(environment.testfsp3SettlementBalanceAfterActual);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check that position account value remains unchanged",
+                "exec": [
+                  "expect(requestVariables.testfsp3PositionBalanceBefore).to.eql(environment.testfsp3PositionBalanceAfter);"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "check that interchange fee have been changed by",
+                "exec": [
+                  "expect(Number(requestVariables.testfsp3InterchFeeBalanceBefore)).to.eql(Number(environment.testfsp3InterchFeeBalanceAfter));"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "delay": "{$inputs.DELAY_CGS}",
+          "queryParams": {
+            "": ""
+          },
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "// lets get retry configs",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 10;",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 200;",
+                "",
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP3);",
+                "",
+                "// var maxRetryWait = 1;",
+                "",
+                "var res = response.body;",
+                "",
+                "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "  console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`);",
+                "  // console.log(res);",
+                "  res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "      ",
+                "    if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "      environment.testfsp3SettlementBalanceAfter= curAccount.value",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "      environment.testfsp3PositionBalanceAfter= curAccount.value",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "      environment.testfsp3InterchFeeBalanceAfter= curAccount.value",
+                "    }",
+                "  })",
+                "",
+                "  /*",
+                "  console.log(environment.testfsp3SettlementBalanceAfterTransfer1);",
+                "  console.log(environment.testfsp3PositionBalanceAfter);",
+                "  console.log(environment.testfsp3InterchFeeBalanceAfter);*/",
+                "",
+                "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
+                "  const transferAmount = requestVariables.payerfspfundsInPrepareAmount;",
+                "",
+                "  console.log(`transferAmount=${transferAmount}`)",
+                "",
+                "  console.log(`testfsp3SettlementBalanceBefore=${environment.testfsp3SettlementBalanceBefore}`)",
+                "  ",
+                "  environment.testfsp3SettlementBalanceAfterExpected = (Number.parseFloat(environment.testfsp3SettlementBalanceBefore) - Number.parseFloat(transferAmount)).toFixed(2);",
+                "",
+                "",
+                "  console.log(`testfsp3SettlementBalanceAfterExpected=${environment.testfsp3SettlementBalanceAfterExpected}`)",
+                "",
+                "  environment.testfsp3SettlementBalanceAfterActual = Number.parseFloat(environment.testfsp3SettlementBalanceAfter).toFixed(2);",
+                "",
+                "  console.log(`testfsp3SettlementBalanceAfterActual=${environment.testfsp3SettlementBalanceAfterActual}`)",
+                "",
+                "  console.log(environment.testfsp3SettlementBalanceAfterActual === environment.testfsp3SettlementBalanceAfterExpected)",
+                "",
+                "  console.log('extracted testfsp3 settlement balance before transfers',environment.testfsp3SettlementBalanceBefore);",
+                "  console.log('extracted testfsp3 settlement balance after first transfer ACTUAL',environment.testfsp3SettlementBalanceAfterActual);",
+                "  console.log('calculated testfsp3 settlement balance before transfers '+environment.testfsp3SettlementBalanceBefore +' transfer amount -'+transferAmount, environment.testfsp3SettlementBalanceAfterExpected);",
+                "",
+                "  console.log('test fsp3 positions account before',environment.testfsp3PositionBalanceBefore);",
+                "  console.log('test fsp3 positions account after',environment.testfsp3PositionBalanceAfter);",
+                "",
+                "  console.log(`environment.testfsp3InterchFeeBalanceAfter=${environment.testfsp3InterchFeeBalanceAfter}`)",
+                "  console.log(`environment.testfsp3InterchFeeBalanceBefore=${environment.testfsp3InterchFeeBalanceBefore}`)",
+                "",
+                "  console.log(`environment.testfsp3PositionBalanceBefore (${environment.testfsp3PositionBalanceBefore}) == environment.testfsp3PositionBalanceAfter (${environment.testfsp3PositionBalanceAfter})`)",
+                "  console.log(`environment.testfsp3SettlementBalanceAfterExpected (${environment.testfsp3SettlementBalanceAfterExpected}) == environment.testfsp3SettlementBalanceAfterActual (${environment.testfsp3SettlementBalanceAfterActual})`)",
+                "  console.log(`environment.testfsp3InterchFeeBalanceBefore (${environment.testfsp3InterchFeeBalanceBefore}) == environment.testfsp3InterchFeeBalanceAfter (${environment.testfsp3InterchFeeBalanceAfter})`)",
+                "",
+                "  if ((environment.testfsp3PositionBalanceBefore == environment.testfsp3PositionBalanceAfter) &&",
+                "  (environment.testfsp3SettlementBalanceAfterExpected == environment.testfsp3SettlementBalanceAfterActual) &&",
+                "  (environment.testfsp3InterchFeeBalanceBefore == environment.testfsp3InterchFeeBalanceAfter)) {",
+                "    console.log('Everything is ok, lets continue')",
+                "    break; // lets break out of while loop",
+                "  } else {",
+                "    console.log(`Everything is NOT OK, lets wait for ${maxRetryWait}ms, and try again...`)",
+                "    await custom.sleep(maxRetryWait);",
+                "    const axioResponse = await axios.get(`${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIM3_NAME}/accounts`)",
+                "    res = axioResponse.data;",
+                "  }",
+                "}",
+                "",
+                "// Store *BalanceBefore in a local variable for assertion test",
+                "requestVariables.testfsp3PositionBalanceBefore = environment.testfsp3PositionBalanceBefore",
+                "requestVariables.testfsp3InterchFeeBalanceBefore = environment.testfsp3InterchFeeBalanceBefore",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.testfsp3PositionBalanceBefore = environment.testfsp3PositionBalanceAfter",
+                "environment.testfsp3SettlementBalanceBefore = environment.testfsp3SettlementBalanceAfter",
+                "environment.testfsp3InterchFeeBalanceBefore = environment.testfsp3InterchFeeBalanceAfter",
+                "",
+                "console.log(`RESET - environment.testfsp3PositionBalanceBefore=${environment.testfsp3PositionBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp3SettlementBalanceBefore=${environment.testfsp3SettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp3InterchFeeBalanceBefore=${environment.testfsp3InterchFeeBalanceBefore}`)",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 47,
+          "description": "testfsp4/accounts (settlement, position, interchange) AFTER Funds-In transfer",
+          "meta": {
+            "info": "testfsp4/accounts (settlement, position, interchange) AFTER Funds-In transfer"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM4_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM4_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check that settlement account value changes by transfer amount ",
+                "exec": [
+                  "expect(environment.testfsp4SettlementBalanceAfterExpected).to.eql(environment.testfsp4SettlementBalanceAfterActual);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check that position account value remains unchanged",
+                "exec": [
+                  "expect(requestVariables.testfsp4PositionBalanceBefore).to.eql(environment.testfsp4PositionBalanceAfter);"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "check that interchange fee have been changed by",
+                "exec": [
+                  "expect(Number(requestVariables.testfsp4InterchFeeBalanceBefore)).to.eql(Number(environment.testfsp4InterchFeeBalanceAfter));"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "delay": "{$inputs.DELAY_CGS}",
+          "queryParams": {
+            "": ""
+          },
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "// lets get retry configs",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 10;",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 200;",
+                "",
+                "requestVariables.payerfspfundsInPrepareAmount = Number(environment.SETTLEMENT_CGS_FUNDSIN_TESTFSP4);",
+                "",
+                "// var maxRetryWait = 1;",
+                "",
+                "var res = response.body;",
+                "",
+                "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "  console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`);",
+                "  // console.log(res);",
+                "  res.filter(account => account.currency === environment.cgscurrency).forEach(curAccount => {",
+                "      ",
+                "    if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "      environment.testfsp4SettlementBalanceAfter= curAccount.value",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "      environment.testfsp4PositionBalanceAfter= curAccount.value",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "      environment.testfsp4InterchFeeBalanceAfter= curAccount.value",
+                "    }",
+                "  })",
+                "",
+                "  /*",
+                "  console.log(environment.testfsp4SettlementBalanceAfterTransfer1);",
+                "  console.log(environment.testfsp4PositionBalanceAfter);",
+                "  console.log(environment.testfsp4InterchFeeBalanceAfter);*/",
+                "",
+                "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
+                "  const transferAmount = requestVariables.payerfspfundsInPrepareAmount;",
+                "",
+                "  console.log(`transferAmount=${transferAmount}`)",
+                "",
+                "  console.log(`testfsp4SettlementBalanceBefore=${environment.testfsp4SettlementBalanceBefore}`)",
+                "  ",
+                "  environment.testfsp4SettlementBalanceAfterExpected = (Number.parseFloat(environment.testfsp4SettlementBalanceBefore) - Number.parseFloat(transferAmount)).toFixed(2);",
+                "",
+                "",
+                "  console.log(`testfsp4SettlementBalanceAfterExpected=${environment.testfsp4SettlementBalanceAfterExpected}`)",
+                "",
+                "  environment.testfsp4SettlementBalanceAfterActual = Number.parseFloat(environment.testfsp4SettlementBalanceAfter).toFixed(2);",
+                "",
+                "  console.log(`testfsp4SettlementBalanceAfterActual=${environment.testfsp4SettlementBalanceAfterActual}`)",
+                "",
+                "  console.log(environment.testfsp4SettlementBalanceAfterActual === environment.testfsp4SettlementBalanceAfterExpected)",
+                "",
+                "  console.log('extracted testfsp4 settlement balance before transfers',environment.testfsp4SettlementBalanceBefore);",
+                "  console.log('extracted testfsp4 settlement balance after first transfer ACTUAL',environment.testfsp4SettlementBalanceAfterActual);",
+                "  console.log('calculated testfsp4 settlement balance before transfers '+environment.testfsp4SettlementBalanceBefore +' transfer amount -'+transferAmount, environment.testfsp4SettlementBalanceAfterExpected);",
+                "",
+                "  console.log('test fsp3 positions account before',environment.testfsp4PositionBalanceBefore);",
+                "  console.log('test fsp3 positions account after',environment.testfsp4PositionBalanceAfter);",
+                "",
+                "  console.log(`environment.testfsp4InterchFeeBalanceAfter=${environment.testfsp4InterchFeeBalanceAfter}`)",
+                "  console.log(`environment.testfsp4InterchFeeBalanceBefore=${environment.testfsp4InterchFeeBalanceBefore}`)",
+                "",
+                "  console.log(`environment.testfsp4PositionBalanceBefore (${environment.testfsp4PositionBalanceBefore}) == environment.testfsp4PositionBalanceAfter (${environment.testfsp4PositionBalanceAfter})`)",
+                "  console.log(`environment.testfsp4SettlementBalanceAfterExpected (${environment.testfsp4SettlementBalanceAfterExpected}) == environment.testfsp4SettlementBalanceAfterActual (${environment.testfsp4SettlementBalanceAfterActual})`)",
+                "  console.log(`environment.testfsp4InterchFeeBalanceBefore (${environment.testfsp4InterchFeeBalanceBefore}) == environment.testfsp4InterchFeeBalanceAfter (${environment.testfsp4InterchFeeBalanceAfter})`)",
+                "",
+                "  if ((environment.testfsp4PositionBalanceBefore == environment.testfsp4PositionBalanceAfter) &&",
+                "  (environment.testfsp4SettlementBalanceAfterExpected == environment.testfsp4SettlementBalanceAfterActual) &&",
+                "  (environment.testfsp4InterchFeeBalanceBefore == environment.testfsp4InterchFeeBalanceAfter)) {",
+                "    console.log('Everything is ok, lets continue')",
+                "    break; // lets break out of while loop",
+                "  } else {",
+                "    console.log(`Everything is NOT OK, lets wait for ${maxRetryWait}ms, and try again...`)",
+                "    await custom.sleep(maxRetryWait);",
+                "    const axioResponse = await axios.get(`${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIM3_NAME}/accounts`)",
+                "    res = axioResponse.data;",
+                "  }",
+                "}",
+                "",
+                "// Store *BalanceBefore in a local variable for assertion test",
+                "requestVariables.testfsp4PositionBalanceBefore = environment.testfsp4PositionBalanceBefore",
+                "requestVariables.testfsp4InterchFeeBalanceBefore = environment.testfsp4InterchFeeBalanceBefore",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.testfsp4PositionBalanceBefore = environment.testfsp4PositionBalanceAfter",
+                "environment.testfsp4SettlementBalanceBefore = environment.testfsp4SettlementBalanceAfter",
+                "environment.testfsp4InterchFeeBalanceBefore = environment.testfsp4InterchFeeBalanceAfter",
+                "",
+                "console.log(`RESET - environment.testfsp4PositionBalanceBefore=${environment.testfsp4PositionBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp4SettlementBalanceBefore=${environment.testfsp4SettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.testfsp4InterchFeeBalanceBefore=${environment.testfsp4InterchFeeBalanceBefore}`)",
+                ""
+              ]
+            }
+          }
         }
       ]
     },
@@ -907,7 +1838,7 @@
         "info": "[new sims]  transfers, positions CGS Window1 tests (OTC-649, OTC-645)"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -3315,7 +4246,7 @@
         "info": "Close any window before transfers"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -3416,7 +4347,7 @@
         "info": "[new sims] new transfers window1"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -4031,7 +4962,7 @@
         "info": "Close any window1"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -4140,7 +5071,7 @@
         "info": "[new sims] new transfers window2"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -4755,7 +5686,7 @@
         "info": "Close any window2"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -4864,7 +5795,7 @@
         "info": "[new sims] new transfers window3"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -5479,7 +6410,7 @@
         "info": "Close any window3"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -5588,7 +6519,7 @@
         "info": "[new sims] new transfers window4"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -6203,7 +7134,7 @@
         "info": "Close any window4"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -6312,7 +7243,7 @@
         "info": "[new sims] new transfers window5"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -6927,7 +7858,7 @@
         "info": "Close any window5"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -7036,7 +7967,7 @@
         "info": "Create Settlement for previously  closed 5 windows"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -7202,7 +8133,7 @@
         "info": "negative requests"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
@@ -7358,7 +8289,7 @@
         "info": "Add Users to new Sims ; ALS registration (random MSISDN)"
       },
       "fileInfo": {
-        "path": "hub/golden_path/settlement_cgs/newsetcgs.json",
+        "path": "hub/golden_path/settlement_cgs/newsetcgs-new.json",
         "labels": [
           "settlements"
         ]
