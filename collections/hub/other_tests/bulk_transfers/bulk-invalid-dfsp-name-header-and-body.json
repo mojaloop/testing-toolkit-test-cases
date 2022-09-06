@@ -1,0 +1,911 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "negative scenario - invalid Payee FSP ID in request",
+      "meta": {
+        "info": "negative scenario - invalid Payee FSP ID"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/bulk-invalid-dfsp-name-header-and-body.json"
+      },
+      "requests": [
+        {
+          "id": 3,
+          "meta": {
+            "info": "Send Bulk Prepare. Invalid Payer FSP ID should return error."
+          },
+          "description": "Send Prepare invalid Payer FSP ID body only",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "payeeFsp": "DUMMY",
+            "payerFsp": "{$environment.fromFspId}",
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "extKey1",
+                      "value": "extValue1"
+                    },
+                    {
+                      "key": "extKey2",
+                      "value": "extValue2"
+                    }
+                  ]
+                }
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "GBP",
+                  "amount": "2"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}"
+              }
+            ],
+            "expiration": "{$environment.expirationDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 17,
+                "description": "payer callback - should be error 3203. request.body participant not found.",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3203')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal(`Payee FSP ID not found - Participant {$request.body.payeeFsp} not found`)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "params": {
+            "name": "testingtoolkitdfsp"
+          },
+          "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const delay = environment.EXPIRATION_DELAY_MS || 1000 * 3600 * 24",
+                "const now = new Date()",
+                "const expirationDate = new Date(now.getTime() + delay).toISOString();",
+                "const completedTimestamp = now.toISOString();",
+                "",
+                "environment[\"bulkTransferId\"] = request.body.bulkTransferId",
+                "environment[\"bulkQuoteId\"] = request.body.bulkQuoteId",
+                "environment[\"transferId\"] = request.body.individualTransfers[0].transferId",
+                "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
+                "environment[\"expirationDate\"] = expirationDate",
+                "environment[\"completedTimestamp\"] = completedTimestamp",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.bulkTransferId}', 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "Send Prepare Invalid Payee FSP ID header only",
+          "meta": {
+            "info": "Send Bulk Prepare. Invalid Payer FSP ID should return error."
+          },
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "DUMMY"
+          },
+          "body": {
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "payeeFsp": "{$environment.toFspId}",
+            "payerFsp": "{$environment.fromFspId}",
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "extKey1",
+                      "value": "extValue1"
+                    },
+                    {
+                      "key": "extKey2",
+                      "value": "extValue2"
+                    }
+                  ]
+                }
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "GBP",
+                  "amount": "2"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}"
+              }
+            ],
+            "expiration": "{$environment.expirationDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "payer callback - should be error 3203. request.headers['FSPIOP-Destination'] participant not found.",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3203')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal(`Payee FSP ID not found - Participant {$request.headers['FSPIOP-Destination']} not found`)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "params": {
+            "name": "testingtoolkitdfsp",
+            "ID": ""
+          },
+          "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const delay = environment.EXPIRATION_DELAY_MS || 1000 * 3600 * 24",
+                "const now = new Date()",
+                "const expirationDate = new Date(now.getTime() + delay).toISOString();",
+                "const completedTimestamp = now.toISOString();",
+                "",
+                "environment[\"bulkTransferId\"] = request.body.bulkTransferId",
+                "environment[\"bulkQuoteId\"] = request.body.bulkQuoteId",
+                "environment[\"transferId\"] = request.body.individualTransfers[0].transferId",
+                "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
+                "environment[\"expirationDate\"] = expirationDate",
+                "environment[\"completedTimestamp\"] = completedTimestamp",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.bulkTransferId}', 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 8,
+          "description": "Send Prepare Invalid Payee FSP ID header and body",
+          "meta": {
+            "info": "Send Bulk Prepare. Invalid Payer FSP ID should return error."
+          },
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "DUMMY"
+          },
+          "body": {
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "payeeFsp": "DUMMY",
+            "payerFsp": "{$environment.fromFspId}",
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "extKey1",
+                      "value": "extValue1"
+                    },
+                    {
+                      "key": "extKey2",
+                      "value": "extValue2"
+                    }
+                  ]
+                }
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "GBP",
+                  "amount": "2"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}"
+              }
+            ],
+            "expiration": "{$environment.expirationDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "payer callback - should be error 3203. request.headers['FSPIOP-Destination'] participant not found.",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3203')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal(`Payee FSP ID not found - Participant {$request.headers['FSPIOP-Destination']} not found`)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "params": {
+            "name": "testingtoolkitdfsp",
+            "ID": ""
+          },
+          "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const delay = environment.EXPIRATION_DELAY_MS || 1000 * 3600 * 24",
+                "const now = new Date()",
+                "const expirationDate = new Date(now.getTime() + delay).toISOString();",
+                "const completedTimestamp = now.toISOString();",
+                "",
+                "environment[\"bulkTransferId\"] = request.body.bulkTransferId",
+                "environment[\"bulkQuoteId\"] = request.body.bulkQuoteId",
+                "environment[\"transferId\"] = request.body.individualTransfers[0].transferId",
+                "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
+                "environment[\"expirationDate\"] = expirationDate",
+                "environment[\"completedTimestamp\"] = completedTimestamp",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.bulkTransferId}', 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "negative scenario - invalid Payer FSP ID in request",
+      "meta": {
+        "info": "negative scenario - invalid Payer FSP ID"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/bulk-invalid-dfsp-name-header-and-body.json"
+      },
+      "requests": [
+        {
+          "id": 3,
+          "meta": {
+            "info": "Send Bulk Prepare. Mismatching Payer FSP ID in header and body should return error."
+          },
+          "description": "Send Prepare invalid Payer FSP ID body only",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "payeeFsp": "{$inputs.toFspId}",
+            "payerFsp": "DUMMY",
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "extKey1",
+                      "value": "extValue1"
+                    },
+                    {
+                      "key": "extKey2",
+                      "value": "extValue2"
+                    }
+                  ]
+                }
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "GBP",
+                  "amount": "2"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}"
+              }
+            ],
+            "expiration": "{$environment.expirationDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "payer callback - should be error 3100. FSPIOP-Source header should match Payer FSP ID.",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3100')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal(`Generic validation error - FSPIOP-Source header should match Payer FSP`)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "params": {
+            "name": "testingtoolkitdfsp"
+          },
+          "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const delay = environment.EXPIRATION_DELAY_MS || 1000 * 3600 * 24",
+                "const now = new Date()",
+                "const expirationDate = new Date(now.getTime() + delay).toISOString();",
+                "const completedTimestamp = now.toISOString();",
+                "",
+                "environment[\"bulkTransferId\"] = request.body.bulkTransferId",
+                "environment[\"bulkQuoteId\"] = request.body.bulkQuoteId",
+                "environment[\"transferId\"] = request.body.individualTransfers[0].transferId",
+                "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
+                "environment[\"expirationDate\"] = expirationDate",
+                "environment[\"completedTimestamp\"] = completedTimestamp",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.bulkTransferId}', 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "negative scenario - inactive Payer FSP ID in request",
+      "meta": {
+        "info": "negative scenario - inactive Payer FSP ID"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/bulk-invalid-dfsp-name-header-and-body.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Update participant ({$inputs.fromFspId} to inactive)"
+          },
+          "description": "Update participant ({$inputs.fromFspId} to inactive)",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}",
+          "path": "/participants/{$inputs.fromFspId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "isActive": false
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Send Bulk Prepare. Inactive Payer FSP ID should return error."
+          },
+          "description": "Send Prepare inactive Payer FSP ID",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "payeeFsp": "{$inputs.toFspId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "extKey1",
+                      "value": "extValue1"
+                    },
+                    {
+                      "key": "extKey2",
+                      "value": "extValue2"
+                    }
+                  ]
+                }
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "GBP",
+                  "amount": "2"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}"
+              }
+            ],
+            "expiration": "{$environment.expirationDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "payer callback - should be error 3202. Inactive participant error.",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3202')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal(`Payer FSP ID not found - Participant {$inputs.fromFspId} is inactive`)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "params": {
+            "name": "testingtoolkitdfsp"
+          },
+          "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const delay = environment.EXPIRATION_DELAY_MS || 1000 * 3600 * 24",
+                "const now = new Date()",
+                "const expirationDate = new Date(now.getTime() + delay).toISOString();",
+                "const completedTimestamp = now.toISOString();",
+                "",
+                "environment[\"bulkTransferId\"] = request.body.bulkTransferId",
+                "environment[\"bulkQuoteId\"] = request.body.bulkQuoteId",
+                "environment[\"transferId\"] = request.body.individualTransfers[0].transferId",
+                "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
+                "environment[\"expirationDate\"] = expirationDate",
+                "environment[\"completedTimestamp\"] = completedTimestamp",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.bulkTransferId}', 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Update participant ({$inputs.fromFspId} to active)"
+          },
+          "description": "Update participant ({$inputs.fromFspId} to active)",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}",
+          "path": "/participants/{$inputs.fromFspId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "isActive": true
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "negative scenario - inactive Payee FSP ID in request",
+      "meta": {
+        "info": "negative scenario - inactive Payee FSP ID"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/bulk-invalid-dfsp-name-header-and-body.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Update participant ({$inputs.toFspId} to inactive)"
+          },
+          "description": "Update participant ({$inputs.toFspId} to inactive)",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}",
+          "path": "/participants/{$inputs.toFspId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.toFspId}"
+          },
+          "body": {
+            "isActive": false
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Send Bulk Prepare. Inactive Payee FSP ID should return error."
+          },
+          "description": "Send Prepare inactive Payee FSP ID",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "payeeFsp": "{$inputs.toFspId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "extKey1",
+                      "value": "extValue1"
+                    },
+                    {
+                      "key": "extKey2",
+                      "value": "extValue2"
+                    }
+                  ]
+                }
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "GBP",
+                  "amount": "2"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}"
+              }
+            ],
+            "expiration": "{$environment.expirationDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "payer callback - should be error 3203. Inactive participant error.",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3203')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal(`Payee FSP ID not found - Participant {$inputs.toFspId} is inactive`)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "params": {
+            "name": "testingtoolkitdfsp"
+          },
+          "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const delay = environment.EXPIRATION_DELAY_MS || 1000 * 3600 * 24",
+                "const now = new Date()",
+                "const expirationDate = new Date(now.getTime() + delay).toISOString();",
+                "const completedTimestamp = now.toISOString();",
+                "",
+                "environment[\"bulkTransferId\"] = request.body.bulkTransferId",
+                "environment[\"bulkQuoteId\"] = request.body.bulkQuoteId",
+                "environment[\"transferId\"] = request.body.individualTransfers[0].transferId",
+                "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
+                "environment[\"expirationDate\"] = expirationDate",
+                "environment[\"completedTimestamp\"] = completedTimestamp",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.bulkTransferId}', 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Update participant ({$inputs.toFspId} to active)"
+          },
+          "description": "Update participant ({$inputs.toFspId} to active)",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}",
+          "path": "/participants/{$inputs.toFspId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.toFspId}"
+          },
+          "body": {
+            "isActive": true
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          }
+        }
+      ]
+    }
+  ]
+}
