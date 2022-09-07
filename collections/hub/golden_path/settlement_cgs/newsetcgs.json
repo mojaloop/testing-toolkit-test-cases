@@ -4230,9 +4230,41 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "environment.settlementId= response.body.id",
+                "var res = response;",
                 "",
-                "console.log(environment.settlementId);"
+                "// lets get retry configs",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20;",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250;",
+                "",
+                "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "  console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "  console.log(res)",
+                "  if (res.code === 200) {",
+                "    console.log('Everything is ok, lets continue')",
+                "    break; // lets break out of while loop",
+                "  } else {",
+                "    console.log(`Everything is NOT OK, lets wait for ${maxRetryWait}ms, and try again...`)",
+                "    await custom.sleep(maxRetryWait);",
+                "    const axioResponse = await axios.post(",
+                "      `${environment.HOST_CENTRAL_SETTLEMENT}/settlements`,",
+                "      {",
+                "        \"settlementModel\":\"InterchangeFee\",",
+                "        \"reason\":\"TESTING\",",
+                "        \"settlementWindows\":",
+                "        [",
+                "          {",
+                "            \"id\": `${environment.openWindowID}`",
+                "          }",
+                "        ]",
+                "     }",
+                "    )",
+                "    res = axioResponse.data;",
+                "  }",
+                "}",
+                "",
+                "environment.settlementId = res.body.id",
+                "console.log(`environment.settlementId=${environment.settlementId}`);",
+                ""
               ]
             }
           }
