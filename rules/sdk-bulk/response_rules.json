@@ -600,7 +600,7 @@
     "priority": 9,
     "description": "post /bulkQuotes - bulk transfer test case - receiver sends success response for one transfer and failure for other",
     "apiVersion": {
-      "minorVersion": 4, 
+      "minorVersion": 4,
       "majorVersion": 1,
       "type": "mojaloop_simulator_inbound",
       "specFile": "spec_files/api_definitions/mojaloop_simulator_sim_1.4/api_spec.yaml",
@@ -793,6 +793,17 @@
               "payeeFspFeeAmountCurrency": "{$request.body.individualQuotes[0].currency}",
               "payeeFspCommissionAmount": "0",
               "payeeFspCommissionAmountCurrency": "{$request.body.individualQuotes[0].currency}"
+            },
+            {
+              "quoteId": "{$request.body.individualQuotes[1].quoteId}",
+              "transferAmount": "{$request.body.individualQuotes[1].amount}",
+              "transferAmountCurrency": "{$request.body.individualQuotes[1].currency}",
+              "payeeReceiveAmount": "{$request.body.individualQuotes[1].amount}",
+              "payeeReceiveAmountCurrency": "{$request.body.individualQuotes[1].currency}",
+              "payeeFspFeeAmount": "0",
+              "payeeFspFeeAmountCurrency": "{$request.body.individualQuotes[1].currency}",
+              "payeeFspCommissionAmount": "0",
+              "payeeFspCommissionAmountCurrency": "{$request.body.individualQuotes[1].currency}"
             }
           ]
         },
@@ -1005,6 +1016,9 @@
           "individualTransferResults": [
             {
               "transferId": "{$request.body.individualTransfers[0].transferId}"
+            },
+            {
+              "transferId": "{$request.body.individualTransfers[1].transferId}"
             }
           ]
         },
