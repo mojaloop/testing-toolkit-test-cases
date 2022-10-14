@@ -5,7 +5,7 @@
       "id": 1,
       "name": "TC-BHP1. Happy Path",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "hub/sdk-bulk/bulk-happy-path.json"
       },
       "requests": [
         {
@@ -53,12 +53,48 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "56781234"
+                    "partyIdentifier": "56781234001"
                   }
                 },
                 "amountType": "SEND",
                 "currency": "USD",
-                "amount": "123.45"
+                "amount": "100"
+              },
+              {
+                "homeTransactionId": "abc2",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "56781234002"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "USD",
+                "amount": "100"
+              },
+              {
+                "homeTransactionId": "abc3",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "56781235001"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "USD",
+                "amount": "100"
+              },
+              {
+                "homeTransactionId": "abc4",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "56781235002"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "USD",
+                "amount": "100"
               }
             ]
           },
@@ -77,14 +113,7 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptPartyCallback.body.individualTransferResults.length).to.equal(1)"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "Check response MSISDN is same as in the request",
-                "exec": [
-                  "expect(environment.acceptPartyCallback.body.individualTransferResults[0].to.partyIdInfo.partyIdentifier).to.equal('56781234')"
+                  "expect(environment.acceptPartyCallback.body.individualTransferResults.length).to.equal(4)"
                 ]
               },
               {
@@ -161,8 +190,23 @@
             "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
+                "homeTransactionId": "abc1",
                 "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "acceptParty": true
+              },
+              {
+                "homeTransactionId": "abc2",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "acceptParty": true
+              },
+              {
+                "homeTransactionId": "abc3",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[2].transactionId}",
+                "acceptParty": true
+              },
+              {
+                "homeTransactionId": "abc4",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[3].transactionId}",
                 "acceptParty": true
               }
             ]
@@ -202,6 +246,7 @@
               }
             ]
           },
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -246,8 +291,23 @@
             "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
+                "homeTransactionId": "abc1",
                 "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "acceptQuote": true
+              },
+              {
+                "homeTransactionId": "abc2",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "acceptQuote": true
+              },
+              {
+                "homeTransactionId": "abc3",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[2].transactionId}",
+                "acceptQuote": true
+              },
+              {
+                "homeTransactionId": "abc4",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[3].transactionId}",
                 "acceptQuote": true
               }
             ]
@@ -266,14 +326,7 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.transfersCallback.body.individualTransferResults.length).to.equal(1)"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "Check response MSISDN is same as in the request",
-                "exec": [
-                  "expect(environment.transfersCallback.body.individualTransferResults[0].to.partyIdInfo.partyIdentifier).to.equal('56781234')"
+                  "expect(environment.transfersCallback.body.individualTransferResults.length).to.equal(4)"
                 ]
               },
               {
@@ -336,6 +389,7 @@
               }
             ]
           },
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
