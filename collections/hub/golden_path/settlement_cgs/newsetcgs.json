@@ -728,14 +728,17 @@
                 "    ",
                 "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
                 "  environment.testfsp1SettlementBalanceBefore= curAccount.value",
+                "  environment.testfsp1SettlementAccountId = curAccount.id",
                 "        }",
                 "        ",
                 "    if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "  environment.testfsp1PositionBalanceBefore= curAccount.value",
+                "  environment.testfsp1PositionAccountId = curAccount.id",
                 "        }  ",
                 "        ",
                 "          if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
                 "  environment.testfsp1InterchFeeBalanceBefore= curAccount.value",
+                "  environment.testfsp1InterchFeeAccountId = curAccount.id",
                 "        }     ",
                 "",
                 "",
@@ -745,7 +748,10 @@
                 "                      ",
                 "console.log(environment.testfsp1SettlementBalanceBefore);",
                 "console.log(environment.testfsp1PositionBalanceBefore);",
-                "console.log(environment.testfsp1InterchFeeBalanceBefore);"
+                "console.log(environment.testfsp1InterchFeeBalanceBefore);",
+                "console.log(environment.testfsp1SettlementAccountId);",
+                "console.log(environment.testfsp1PositionAccountId);",
+                "console.log(environment.testfsp1InterchFeeAccountId);"
               ]
             }
           }
@@ -799,13 +805,16 @@
                 "    ",
                 "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
                 "  environment.testfsp2SettlementBalanceBefore= curAccount.value",
+                "  environment.testfsp2SettlementAccountId = curAccount.id",
                 "        }",
                 "        ",
                 "if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "  environment.testfsp2PositionBalanceBefore= curAccount.value",
+                "  environment.testfsp2PositionAccountId = curAccount.id",
                 "        }",
                 "  if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
                 "  environment.testfsp2InterchFeeBalanceBefore= curAccount.value",
+                "  environment.testfsp2InterchFeeAccountId = curAccount.id",
                 "        }",
                 "",
                 "})",
@@ -814,7 +823,10 @@
                 "                      ",
                 "console.log(environment.testfsp2SettlementBalanceBefore);",
                 "console.log(environment.testfsp2PositionBalanceBefore);",
-                "console.log(environment.testfsp2InterchFeeBalanceBefore);"
+                "console.log(environment.testfsp2InterchFeeBalanceBefore);",
+                "console.log(environment.testfsp2SettlementAccountId);",
+                "console.log(environment.testfsp2PositionAccountId);",
+                "console.log(environment.testfsp2InterchFeeAccountId);"
               ]
             }
           }
@@ -868,14 +880,17 @@
                 "    ",
                 "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
                 "  environment.testfsp3SettlementBalanceBefore= curAccount.value",
+                "  environment.testfsp3SettlementAccountId = curAccount.id",
                 "        }",
                 "        ",
                 "if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "  environment.testfsp3PositionBalanceBefore= curAccount.value",
+                "  environment.testfsp3PositionAccountId = curAccount.id",
                 "        }",
                 "",
                 "  if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
                 "  environment.testfsp3InterchFeeBalanceBefore= curAccount.value",
+                "  environment.testfsp3InterchFeeAccountId = curAccount.id",
                 "        }  ",
                 "",
                 "})",
@@ -884,7 +899,10 @@
                 "                      ",
                 "console.log(environment.testfsp3SettlementBalanceBefore);",
                 "console.log(environment.testfsp3PositionBalanceBefore);",
-                "console.log(environment.testfsp3InterchFeeBalanceBefore);"
+                "console.log(environment.testfsp3InterchFeeBalanceBefore);",
+                "console.log(environment.testfsp3SettlementAccountId);",
+                "console.log(environment.testfsp3PositionAccountId);",
+                "console.log(environment.testfsp3InterchFeeAccountId);"
               ]
             }
           }
@@ -938,13 +956,16 @@
                 "    ",
                 "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
                 "  environment.testfsp4SettlementBalanceBefore= curAccount.value",
+                "  environment.testfsp4SettlementAccountId = curAccount.id",
                 "        }",
                 "        ",
                 "    if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "  environment.testfsp4PositionBalanceBefore= curAccount.value",
+                "  environment.testfsp4PositionAccountId = curAccount.id",
                 "        }     ",
                 " if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
                 "  environment.testfsp4InterchFeeBalanceBefore= curAccount.value",
+                "  environment.testfsp4InterchFeeAccountId = curAccount.id",
                 "        }  ",
                 "",
                 "})",
@@ -953,7 +974,10 @@
                 "                      ",
                 "console.log(environment.testfsp4SettlementBalanceBefore);",
                 "console.log(environment.testfsp4PositionBalanceBefore);",
-                "console.log(environment.testfsp4InterchFeeBalanceBefore);"
+                "console.log(environment.testfsp4InterchFeeBalanceBefore);",
+                "console.log(environment.testfsp4SettlementAccountId);",
+                "console.log(environment.testfsp4PositionAccountId);",
+                "console.log(environment.testfsp4InterchFeeAccountId);"
               ]
             }
           }
@@ -970,11 +994,11 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.SIM1_NAME}/accounts/64",
+          "path": "/participants/{$inputs.SIM1_NAME}/accounts/{$environment.testfsp1SettlementAccountId}",
           "method": "post",
           "params": {
             "name": "{$inputs.SIM1_NAME}",
-            "id": "36"
+            "id": "{$environment.testfsp1SettlementAccountId}"
           },
           "body": {
             "transferId": "{$function.generic.generateUUID}",
@@ -1026,11 +1050,11 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.SIM2_NAME}/accounts/64",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts/{$environment.testfsp2SettlementAccountId}",
           "method": "post",
           "params": {
             "name": "{$inputs.SIM2_NAME}",
-            "id": "44"
+            "id": "{$environment.testfsp2SettlementAccountId}"
           },
           "body": {
             "transferId": "{$function.generic.generateUUID}",
@@ -1082,11 +1106,11 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.SIM3_NAME}/accounts/64",
+          "path": "/participants/{$inputs.SIM3_NAME}/accounts/{$environment.testfsp3SettlementAccountId}",
           "method": "post",
           "params": {
             "name": "{$inputs.SIM3_NAME}",
-            "id": "64"
+            "id": "{$environment.testfsp3SettlementAccountId}"
           },
           "body": {
             "transferId": "{$function.generic.generateUUID}",
@@ -1138,11 +1162,11 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.SIM4_NAME}/accounts/64",
+          "path": "/participants/{$inputs.SIM4_NAME}/accounts/{$environment.testfsp4SettlementAccountId}",
           "method": "post",
           "params": {
             "name": "{$inputs.SIM4_NAME}",
-            "id": "68"
+            "id": "{$environment.testfsp4SettlementAccountId}"
           },
           "body": {
             "transferId": "{$function.generic.generateUUID}",
