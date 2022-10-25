@@ -44,8 +44,8 @@
             "from": {
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
-                "partyIdentifier": "{$inputs.SIM1_MSISDN_1}",
-                "fspId": "{$inputs.SIM1_FSPID}"
+                "partyIdentifier": "{$inputs.TTKSIM1_MSISDN_1}",
+                "fspId": "{$inputs.TTKSIM1_FSPID}"
               }
             },
             "individualTransfers": [
@@ -54,11 +54,11 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.SIM2_MSISDN_1}"
+                    "partyIdentifier": "{$inputs.TTKTTKSIM2_MSISDN_1}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "{$inputs.SIM2_CURRENCY}",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78"
               },
               {
@@ -66,11 +66,11 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.SIM2_MSISDN_2}"
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_2}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "{$inputs.SIM2_CURRENCY}",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "678.91"
               },
               {
@@ -78,11 +78,11 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.SIM3_MSISDN_1}"
+                    "partyIdentifier": "{$inputs.TTKSIM3_MSISDN_1}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "{$inputs.SIM3_CURRENCY}",
+                "currency": "{$inputs.TTKSIM3_CURRENCY}",
                 "amount": "678.91"
               },
               {
@@ -90,16 +90,16 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.SIM3_MSISDN_2}"
+                    "partyIdentifier": "{$inputs.TTKSIM3_MSISDN_2}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "{$inputs.SIM3_CURRENCY}",
+                "currency": "{$inputs.TTKSIM3_CURRENCY}",
                 "amount": "678.91"
               }
             ]
           },
-          "url": "{$inputs.SIM1_SDK_BACKEND_ENDPOINT}",
+          "url": "{$inputs.TTKSIM1_SDK_BACKEND_ENDPOINT}",
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -167,7 +167,7 @@
           "params": {
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
-          "url": "{$inputs.SIM1_SDK_BACKEND_ENDPOINT}",
+          "url": "{$inputs.TTKSIM1_SDK_BACKEND_ENDPOINT}",
           "body": {
             "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
@@ -307,7 +307,7 @@
           "params": {
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
-          "url": "{$inputs.SIM1_SDK_BACKEND_ENDPOINT}",
+          "url": "{$inputs.TTKSIM1_SDK_BACKEND_ENDPOINT}",
           "body": {
             "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
@@ -354,62 +354,236 @@
                 "id": 3,
                 "description": "Check response MSISDN is same as in the request",
                 "exec": [
-                  "expect(environment.transfersCallback.body.individualTransferResults[0].to.partyIdInfo.partyIdentifier).to.equal('56781234')"
+                  "expect(requestVariables.ttksim2msisdn1response.to.partyIdInfo.partyIdentifier).to.equal('{$inputs.TTKSIM2_MSISDN_1}')"
                 ]
               },
               {
                 "id": 4,
                 "description": "Check response has the receiver fspid populated",
                 "exec": [
-                  "expect(environment.transfersCallback.body.individualTransferResults[0].to.partyIdInfo.fspId).to.not.be.empty"
+                  "expect(requestVariables.ttksim2msisdn1response.to.partyIdInfo.fspId).to.not.be.empty"
                 ]
               },
               {
                 "id": 5,
                 "description": "Check response receiver first name is ReceiverFirst",
                 "exec": [
-                  "expect(environment.transfersCallback.body.individualTransferResults[0].to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
+                  "expect(requestVariables.ttksim2msisdn1response.to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
                 ]
               },
               {
                 "id": 6,
                 "description": "Check response receiver last name is ReceiverLast",
                 "exec": [
-                  "expect(environment.transfersCallback.body.individualTransferResults[0].to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
+                  "expect(requestVariables.ttksim2msisdn1response.to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
                 ]
               },
               {
                 "id": 7,
                 "description": "Check response has quote result",
                 "exec": [
-                  "expect(environment.transfersCallback.body.individualTransferResults[0].quoteResponse).to.exist;"
+                  "expect(requestVariables.ttksim2msisdn1response.quoteResponse).to.exist;"
                 ]
               },
               {
                 "id": 8,
                 "description": "Check response has ilpPacket and condition",
                 "exec": [
-                  "expect(environment.transfersCallback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
+                  "expect(requestVariables.ttksim2msisdn1response.quoteResponse.ilpPacket).to.not.be.empty;",
                   "",
-                  "expect(environment.transfersCallback.body.individualTransferResults[0].quoteResponse.condition).to.not.be.empty;"
+                  "expect(requestVariables.ttksim2msisdn1response.quoteResponse.condition).to.not.be.empty;"
                 ]
               },
               {
                 "id": 9,
                 "description": "Check response has  fulfillment",
                 "exec": [
-                  "expect(environment.transfersCallback.body.individualTransferResults[0].fulfil.fulfilment).to.exist;"
+                  "expect(requestVariables.ttksim2msisdn1response.fulfil.fulfilment).to.exist;"
                 ]
               },
               {
                 "id": 10,
                 "description": "Check response has  COMPLETED state",
                 "exec": [
-                  "expect(environment.transfersCallback.body.individualTransferResults[0].fulfil.transferState).to.equal('COMMITTED');"
+                  "expect(requestVariables.ttksim2msisdn1response.fulfil.transferState).to.equal('COMMITTED');"
                 ]
               },
               {
                 "id": 11,
+                "description": "Check response MSISDN is same as in the request",
+                "exec": [
+                  "expect(requestVariables.ttksim2msisdn2response.to.partyIdInfo.partyIdentifier).to.equal('{$inputs.TTKSIM2_MSISDN_2}')"
+                ]
+              },
+              {
+                "id": 12,
+                "description": "Check response has the receiver fspid populated",
+                "exec": [
+                  "expect(requestVariables.ttksim2msisdn2response.to.partyIdInfo.fspId).to.not.be.empty"
+                ]
+              },
+              {
+                "id": 13,
+                "description": "Check response receiver first name is ReceiverFirst",
+                "exec": [
+                  "expect(requestVariables.ttksim2msisdn2response.to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
+                ]
+              },
+              {
+                "id": 14,
+                "description": "Check response receiver last name is ReceiverLast",
+                "exec": [
+                  "expect(requestVariables.ttksim2msisdn2response.to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
+                ]
+              },
+              {
+                "id": 15,
+                "description": "Check response has quote result",
+                "exec": [
+                  "expect(requestVariables.ttksim2msisdn2response.quoteResponse).to.exist;"
+                ]
+              },
+              {
+                "id": 16,
+                "description": "Check response has ilpPacket and condition",
+                "exec": [
+                  "expect(requestVariables.ttksim2msisdn2response.quoteResponse.ilpPacket).to.not.be.empty;",
+                  "",
+                  "expect(requestVariables.ttksim2msisdn2response.quoteResponse.condition).to.not.be.empty;"
+                ]
+              },
+              {
+                "id": 17,
+                "description": "Check response has  fulfillment",
+                "exec": [
+                  "expect(requestVariables.ttksim2msisdn2response.fulfil.fulfilment).to.exist;"
+                ]
+              },
+              {
+                "id": 18,
+                "description": "Check response has  COMPLETED state",
+                "exec": [
+                  "expect(requestVariables.ttksim2msisdn2response.fulfil.transferState).to.equal('COMMITTED');"
+                ]
+              },
+              {
+                "id": 19,
+                "description": "Check response MSISDN is same as in the request",
+                "exec": [
+                  "expect(requestVariables.ttksim3msisdn1response.to.partyIdInfo.partyIdentifier).to.equal('{$inputs.TTKSIM3_MSISDN_1}')"
+                ]
+              },
+              {
+                "id": 20,
+                "description": "Check response has the receiver fspid populated",
+                "exec": [
+                  "expect(requestVariables.ttksim3msisdn1response.to.partyIdInfo.fspId).to.not.be.empty"
+                ]
+              },
+              {
+                "id": 21,
+                "description": "Check response receiver first name is ReceiverFirst",
+                "exec": [
+                  "expect(requestVariables.ttksim3msisdn1response.to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
+                ]
+              },
+              {
+                "id": 22,
+                "description": "Check response receiver last name is ReceiverLast",
+                "exec": [
+                  "expect(requestVariables.ttksim3msisdn1response.to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
+                ]
+              },
+              {
+                "id": 23,
+                "description": "Check response has quote result",
+                "exec": [
+                  "expect(requestVariables.ttksim3msisdn1response.quoteResponse).to.exist;"
+                ]
+              },
+              {
+                "id": 24,
+                "description": "Check response has ilpPacket and condition",
+                "exec": [
+                  "expect(requestVariables.ttksim3msisdn1response.quoteResponse.ilpPacket).to.not.be.empty;",
+                  "",
+                  "expect(requestVariables.ttksim3msisdn1response.quoteResponse.condition).to.not.be.empty;"
+                ]
+              },
+              {
+                "id": 25,
+                "description": "Check response has  fulfillment",
+                "exec": [
+                  "expect(requestVariables.ttksim3msisdn1response.fulfil.fulfilment).to.exist;"
+                ]
+              },
+              {
+                "id": 26,
+                "description": "Check response has  COMPLETED state",
+                "exec": [
+                  "expect(requestVariables.ttksim3msisdn1response.fulfil.transferState).to.equal('COMMITTED');"
+                ]
+              },
+              {
+                "id": 27,
+                "description": "Check response MSISDN is same as in the request",
+                "exec": [
+                  "expect(requestVariables.sim3msisdn2response.to.partyIdInfo.partyIdentifier).to.equal('{$inputs.TTKSIM3_MSISDN_2}')"
+                ]
+              },
+              {
+                "id": 28,
+                "description": "Check response has the receiver fspid populated",
+                "exec": [
+                  "expect(requestVariables.sim3msisdn2response.to.partyIdInfo.fspId).to.not.be.empty"
+                ]
+              },
+              {
+                "id": 29,
+                "description": "Check response receiver first name is ReceiverFirst",
+                "exec": [
+                  "expect(requestVariables.sim3msisdn2response.to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
+                ]
+              },
+              {
+                "id": 30,
+                "description": "Check response receiver last name is ReceiverLast",
+                "exec": [
+                  "expect(requestVariables.sim3msisdn2response.to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
+                ]
+              },
+              {
+                "id": 31,
+                "description": "Check response has quote result",
+                "exec": [
+                  "expect(requestVariables.sim3msisdn2response.quoteResponse).to.exist;"
+                ]
+              },
+              {
+                "id": 32,
+                "description": "Check response has ilpPacket and condition",
+                "exec": [
+                  "expect(requestVariables.sim3msisdn2response.quoteResponse.ilpPacket).to.not.be.empty;",
+                  "",
+                  "expect(requestVariables.sim3msisdn2response.quoteResponse.condition).to.not.be.empty;"
+                ]
+              },
+              {
+                "id": 33,
+                "description": "Check response has  fulfillment",
+                "exec": [
+                  "expect(requestVariables.sim3msisdn2response.fulfil.fulfilment).to.exist;"
+                ]
+              },
+              {
+                "id": 34,
+                "description": "Check response has  COMPLETED state",
+                "exec": [
+                  "expect(requestVariables.sim3msisdn2response.fulfil.transferState).to.equal('COMMITTED');"
+                ]
+              },
+              {
+                "id": 35,
                 "description": "Check overall bulk transaction state is COMPLETED",
                 "exec": [
                   "expect(environment.transfersCallback.body.currentState).to.equal('COMPLETED')"
@@ -433,13 +607,13 @@
                 "",
                 "environment.transfersCallback = transfersCallback;",
                 "",
-                "requestVariables.sim2msisdn1response = transfersCallback.body.individualTransferResults.filter(transfer => (transfer.to.partyIdInfo.partyIdentifier === environment.SIM2_MSISDN_1))[0]",
+                "requestVariables.ttksim2msisdn1response = transfersCallback.body.individualTransferResults.filter(transfer => (transfer.to.partyIdInfo.partyIdentifier === environment.TTKSIM2_MSISDN_1))[0]",
                 "",
-                "requestVariables.sim2msisdn2response = transfersCallback.body.individualTransferResults.filter(transfer => (transfer.to.partyIdInfo.partyIdentifier === environment.SIM2_MSISDN_2))[0]",
+                "requestVariables.ttksim2msisdn2response = transfersCallback.body.individualTransferResults.filter(transfer => (transfer.to.partyIdInfo.partyIdentifier === environment.TTKSIM2_MSISDN_2))[0]",
                 "",
-                "requestVariables.sim3msisdn1response = transfersCallback.body.individualTransferResults.filter(transfer => (transfer.to.partyIdInfo.partyIdentifier === environment.SIM3_MSISDN_1))[0]",
+                "requestVariables.ttksim3msisdn1response = transfersCallback.body.individualTransferResults.filter(transfer => (transfer.to.partyIdInfo.partyIdentifier === environment.TTKSIM3_MSISDN_1))[0]",
                 "",
-                "requestVariables.sim3msisdn2response = transfersCallback.body.individualTransferResults.filter(transfer => (transfer.to.partyIdInfo.partyIdentifier === environment.SIM3_MSISDN_2))[0]"
+                "requestVariables.sim3msisdn2response = transfersCallback.body.individualTransferResults.filter(transfer => (transfer.to.partyIdInfo.partyIdentifier === environment.TTKSIM3_MSISDN_2))[0]"
               ]
             }
           }
@@ -489,8 +663,8 @@
             "from": {
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
-                "partyIdentifier": "{$inputs.SIM1_MSISDN_1}",
-                "fspId": "{$inputs.SIM1_FSPID}"
+                "partyIdentifier": "{$inputs.TTKSIM1_MSISDN_1}",
+                "fspId": "{$inputs.TTKSIM1_FSPID}"
               }
             },
             "individualTransfers": [
@@ -499,12 +673,12 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.SIM2_MSISDN_1}",
-                    "fspId": "{$inputs.SIM2_FSPID}"
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "{$inputs.SIM2_CURRENCY}",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78"
               },
               {
@@ -512,12 +686,12 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.SIM2_MSISDN_2}",
-                    "fspId": "{$inputs.SIM2_FSPID}"
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_2}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "{$inputs.SIM2_CURRENCY}",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "678.91"
               },
               {
@@ -525,17 +699,17 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.SIM2_MSISDN_2}",
-                    "fspId": "{$inputs.SIM2_FSPID}"
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_2}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "{$inputs.SIM2_CURRENCY}",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "678.91"
               }
             ]
           },
-          "url": "{$inputs.SIM1_SDK_BACKEND_ENDPOINT}",
+          "url": "{$inputs.TTKSIM1_SDK_BACKEND_ENDPOINT}",
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -856,7 +1030,7 @@
             "from": {
               "partyIdInfo": {
                 "partyIdType": "DOESNOTEXIST",
-                "partyIdentifier": "{$inputs.SIM1_MSISDN_1}"
+                "partyIdentifier": "{$inputs.TTKSIM1_MSISDN_1}"
               }
             },
             "individualTransfers": [
@@ -865,8 +1039,8 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "DOESNOTEXIST",
-                    "partyIdentifier": "{$SIM2_MSISDN_1}",
-                    "fspId": "{$SIM2_FSPID}"
+                    "partyIdentifier": "{$TTKSIM2_MSISDN_1}",
+                    "fspId": "{$TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
@@ -878,8 +1052,8 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$SIM2_MSISDN_2}",
-                    "fspId": "{$SIM2_FSPID}"
+                    "partyIdentifier": "{$TTKSIM2_MSISDN_2}",
+                    "fspId": "{$TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
