@@ -569,7 +569,7 @@
                 "id": 35,
                 "description": "Check overall bulk transaction state is COMPLETED",
                 "exec": [
-                  "expect(environment.transfersCallback.body.currentState).to.equal('COMPLETED')"
+                  "expect(callback.body.currentState).to.equal('COMPLETED')"
                 ]
               }
             ]
@@ -976,6 +976,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -1037,7 +1038,6 @@
               }
             ]
           },
-          "url": "{}",
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -1081,12 +1081,7 @@
             },
             "postRequest": {
               "exec": [
-                "const acceptPartyCallback = await inboundEvent.getMessage('acceptPartyCallback')",
-                "console.log(acceptPartyCallback);",
-                "",
-                "environment.bulkTransactionId = acceptPartyCallback.body.bulkTransactionId;",
-                "",
-                "environment.acceptPartyCallback = acceptPartyCallback;"
+                ""
               ]
             }
           }
