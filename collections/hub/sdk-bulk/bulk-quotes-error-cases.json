@@ -40,7 +40,7 @@
               },
               "skipPartyLookup": true,
               "synchronous": false,
-              "bulkExpiration": "2016-05-24T08:38:08.699-04:00"
+              "bulkExpiration": "{$requestVariables.bulkTimeout}"
             },
             "from": {
               "partyIdInfo": {
@@ -60,7 +60,7 @@
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
                 "note": "blkqtbatchfailure"
               }
@@ -87,6 +87,11 @@
             ]
           },
           "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
+              ]
+            },
             "postRequest": {
               "exec": [
                 "environment.acceptPartyCallback = callback;"
@@ -140,43 +145,43 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults.length).to.equal(1)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(1)"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check that the response has an http status code of 500",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].lastError.httpStatusCode).to.equal(500)"
+                  "expect(callback.body.individualTransferResults[0].lastError.httpStatusCode).to.equal(500)"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check that the response has an error code of 4001",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorCode).to.equal('2001')"
+                  "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorCode).to.equal('2001')"
                 ]
               },
               {
                 "id": 4,
                 "description": "Check that the response has an error description of Error processing bulk quote",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Error processing bulk quote')"
+                  "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Error processing bulk quote')"
                 ]
               },
               {
                 "id": 5,
                 "description": "Check state is COMPLETED",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.currentState).to.equal('COMPLETED')"
+                  "expect(callback.body.currentState).to.equal('COMPLETED')"
                 ]
               }
             ]
           },
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "environment.acceptQuoteCallback = callback;"
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
               ]
             }
           }
@@ -222,7 +227,7 @@
               },
               "skipPartyLookup": true,
               "synchronous": false,
-              "bulkExpiration": "2016-05-24T08:38:08.699-04:00"
+              "bulkExpiration": "{$requestVariables.bulkTimeout}"
             },
             "from": {
               "partyIdInfo": {
@@ -263,15 +268,15 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptPartyCallback.body.individualTransferResults.length).to.equal(1)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(1)"
                 ]
               }
             ]
           },
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "environment.acceptPartyCallback = callback;"
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
               ]
             }
           }
@@ -322,24 +327,17 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults.length).to.equal(1)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(1)"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check response has quote result for first transfer",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].lastError.httpStatusCode).to.equal(504);"
+                  "expect(callback.body.individualTransferResults[0].lastError.httpStatusCode).to.equal(504);"
                 ]
               }
             ]
-          },
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "environment.acceptQuoteCallback = callback;"
-              ]
-            }
           }
         }
       ]
@@ -846,8 +844,8 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "123456789",
-                    "fspId": "ttksim2"
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
@@ -860,18 +858,17 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "123456789",
-                    "fspId": "ttksim2"
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_2}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "678.91",
                 "note": "blkqtbatchwith1qtresponse"
               }
             ]
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -900,19 +897,9 @@
             ]
           },
           "scripts": {
-            "preRequest": {
-              "exec": [
-                "await inboundEvent.addListener('acceptPartyCallback', 'put', '/bulkTransactions/{$request.body.bulkTransactionId}')"
-              ]
-            },
             "postRequest": {
               "exec": [
-                "const acceptPartyCallback = await inboundEvent.getMessage('acceptPartyCallback')",
-                "console.log(acceptPartyCallback);",
-                "",
-                "environment.bulkTransactionId = acceptPartyCallback.body.bulkTransactionId;",
-                "",
-                "environment.acceptPartyCallback = acceptPartyCallback;"
+                "environment.acceptPartyCallback = callback;"
               ]
             }
           }
@@ -939,7 +926,6 @@
           "params": {
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "body": {
             "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
