@@ -15,6 +15,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -65,7 +66,6 @@
               }
             ]
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -81,27 +81,15 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptPartyCallback.body.individualTransferResults.length).to.equal(1)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(1)"
                 ]
               }
             ]
           },
           "scripts": {
-            "preRequest": {
-              "exec": [
-                "await inboundEvent.addListener('acceptPartyCallback', 'put', '/bulkTransactions/{$request.body.bulkTransactionId}')"
-              ]
-            },
             "postRequest": {
               "exec": [
-                "const acceptPartyCallback = await inboundEvent.getMessage('acceptPartyCallback')",
-                "console.log(acceptPartyCallback);",
-                "",
-                "environment.bulkTransactionId = acceptPartyCallback.body.bulkTransactionId;",
-                "",
-                "environment.acceptPartyCallback = acceptPartyCallback;",
-                "",
-                "environment.individualTransferId1 = acceptPartyCallback.body.individualTransferResults[0].transactionId;"
+                "environment.acceptPartyCallback = callback;"
               ]
             }
           }
@@ -113,6 +101,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -127,7 +116,6 @@
           "params": {
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "body": {
             "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
@@ -186,20 +174,9 @@
             ]
           },
           "scripts": {
-            "preRequest": {
-              "exec": [
-                "console.log(environment.bulkTransactionId)",
-                "",
-                "await inboundEvent.addListener('acceptQuoteCallback', 'put', `/bulkTransactions/${environment.bulkTransactionId}`)"
-              ]
-            },
             "postRequest": {
               "exec": [
-                "const acceptQuoteCallback = await inboundEvent.getMessage('acceptQuoteCallback')",
-                "",
-                "console.log(acceptQuoteCallback)",
-                "",
-                "environment.acceptQuoteCallback = acceptQuoteCallback;"
+                "environment.acceptQuoteCallback = callback;"
               ]
             }
           }
@@ -220,6 +197,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -264,13 +242,12 @@
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
                 "note": "blkqtbatchtimesout"
               }
             ]
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -292,23 +269,9 @@
             ]
           },
           "scripts": {
-            "preRequest": {
-              "exec": [
-                "await inboundEvent.addListener('acceptPartyCallback', 'put', '/bulkTransactions/{$request.body.bulkTransactionId}')"
-              ]
-            },
             "postRequest": {
               "exec": [
-                "const acceptPartyCallback = await inboundEvent.getMessage('acceptPartyCallback')",
-                "console.log(acceptPartyCallback);",
-                "",
-                "environment.bulkTransactionId = acceptPartyCallback.body.bulkTransactionId;",
-                "",
-                "environment.acceptPartyCallback = acceptPartyCallback;",
-                "",
-                "environment.individualTransferId1 = acceptPartyCallback.body.individualTransferResults[0].transactionId;",
-                "",
-                "environment.individualTransferId2 = acceptPartyCallback.body.individualTransferResults[1].transactionId;"
+                "environment.acceptPartyCallback = callback;"
               ]
             }
           }
@@ -320,6 +283,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -334,7 +298,6 @@
           "params": {
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "body": {
             "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
@@ -372,20 +335,9 @@
             ]
           },
           "scripts": {
-            "preRequest": {
-              "exec": [
-                "console.log(environment.bulkTransactionId)",
-                "",
-                "await inboundEvent.addListener('acceptQuoteCallback', 'put', `/bulkTransactions/${environment.bulkTransactionId}`)"
-              ]
-            },
             "postRequest": {
               "exec": [
-                "const acceptQuoteCallback = await inboundEvent.getMessage('acceptQuoteCallback')",
-                "",
-                "console.log(acceptQuoteCallback)",
-                "",
-                "environment.acceptQuoteCallback = acceptQuoteCallback;"
+                "environment.acceptQuoteCallback = callback;"
               ]
             }
           }
@@ -406,6 +358,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -523,6 +476,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -644,6 +598,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -683,12 +638,12 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "123456789",
-                    "fspId": "ttksim2"
+                    "partyIdentifier": "{$inputs.TTKSIM1_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
                 "note":"blkqtbatchwith1qtresponse"
               },
@@ -697,18 +652,17 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "123456789",
-                    "fspId": "ttksim2"
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_2}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
                 "note":"blkqtbatchwith1qtresponse"
               }
             ]
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -730,23 +684,9 @@
             ]
           },
           "scripts": {
-            "preRequest": {
-              "exec": [
-                "await inboundEvent.addListener('acceptPartyCallback', 'put', '/bulkTransactions/{$request.body.bulkTransactionId}')"
-              ]
-            },
             "postRequest": {
               "exec": [
-                "const acceptPartyCallback = await inboundEvent.getMessage('acceptPartyCallback')",
-                "console.log(acceptPartyCallback);",
-                "",
-                "environment.bulkTransactionId = acceptPartyCallback.body.bulkTransactionId;",
-                "",
-                "environment.acceptPartyCallback = acceptPartyCallback;",
-                "",
-                "environment.individualTransferId1 = acceptPartyCallback.body.individualTransferResults[0].transactionId;",
-                "",
-                "environment.individualTransferId2 = acceptPartyCallback.body.individualTransferResults[1].transactionId;"
+                "environment.acceptPartyCallback = callback;"
               ]
             }
           }
@@ -758,6 +698,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -865,6 +806,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -982,6 +924,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
