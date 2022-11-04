@@ -54,7 +54,7 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_DOES_NOT_EXIST}"
+                    "partyIdentifier": "{$inputs.TTKSIM2_PARTY_NOT_FOUND}"
                   }
                 },
                 "amountType": "SEND",
@@ -85,22 +85,22 @@
                 "id": 2,
                 "description": "Check error description is ID Not Found",
                 "exec": [
-                  "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorDescription).to.equal('ID Not Found')"
+                  "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorDescription).to.equal('Party Not Found in the backend application')"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check the response state is PARTY_REJECTED",
                 "exec": [
-                  "expect(callback.body.currentState).to.equal('PARTY_REJECTED')"
+                  "expect(callback.body.currentState).to.equal('COMPLETED')"
                 ]
               }
             ]
           },
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "environment.acceptPartyCallback = callback;"
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
               ]
             }
           }
@@ -160,7 +160,7 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_TIMES_OUT}"
+                    "partyIdentifier": "{$inputs.TTKSIM2_PARTY_TIMES_OUT}"
                   }
                 },
                 "amountType": "SEND",
@@ -211,9 +211,9 @@
             ]
           },
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "environment.acceptPartyCallback = callback;"
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
               ]
             }
           }
@@ -304,9 +304,9 @@
             ]
           },
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "environment.acceptPartyCallback = callback;"
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
               ]
             }
           }
@@ -378,7 +378,7 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_DOES_NOT_EXIST}"
+                    "partyIdentifier": "{$inputs.TTKSIM2_PARTY_NOT_FOUND}"
                   }
                 },
                 "amountType": "SEND",
@@ -437,7 +437,7 @@
                 "id": 7,
                 "description": "Check that the response has an error description of ID Not Found",
                 "exec": [
-                  "expect(requestVariables.partyFailure.lastError.mojaloopError.errorDescription).to.equal('ID Not Found')"
+                  "expect(requestVariables.partyFailure.lastError.mojaloopError.errorDescription).to.equal('Party Not Found in the backend application')"
                 ]
               },
               {
@@ -450,6 +450,11 @@
             ]
           },
           "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
+              ]
+            },
             "postRequest": {
               "exec": [
                 "requestVariables.acceptPartyCallback = callback;",
@@ -533,7 +538,7 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_TIMES_OUT}"
+                    "partyIdentifier": "{$inputs.TTKSIM2_PARTY_TIMES_OUT}"
                   }
                 },
                 "amountType": "SEND",
@@ -605,6 +610,11 @@
             ]
           },
           "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
+              ]
+            },
             "postRequest": {
               "exec": [
                 "requestVariables.acceptPartyCallback = callback;",
