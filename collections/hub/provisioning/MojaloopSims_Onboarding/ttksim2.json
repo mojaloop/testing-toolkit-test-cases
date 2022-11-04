@@ -1647,6 +1647,101 @@
           }
         }
       ]
+    },
+    {
+      "id": 5,
+      "name": "ttksim2 oracle_registration for negative test cases",
+      "meta": {
+        "info": "ttksim2 oracle_registration for negative test cases"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Add TTKSIM2_MSISDN_DOES_NOT_EXIST in MSISDN Oracle"
+          },
+          "description": "Add TTKSIM2_MSISDN_DOES_NOT_EXIST in MSISDN Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/MSISDN/{$inputs.TTKSIM2_MSISDN_DOES_NOT_EXIST}",
+          "method": "post",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.TTKSIM2_MSISDN_DOES_NOT_EXIST}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "fspId": "{$inputs.TTKSIM2_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Add TTKSIM2_MSISDN_TIMES_OUT in MSISDN Oracle"
+          },
+          "description": "Add TTKSIM2_MSISDN_TIMES_OUT in MSISDN Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/MSISDN/{$inputs.TTKSIM2_MSISDN_DOES_NOT_EXIST}",
+          "method": "post",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.TTKSIM2_MSISDN_DOES_NOT_EXIST}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "fspId": "{$inputs.TTKSIM2_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true
+        }
+      ]
     }
   ]
 }
