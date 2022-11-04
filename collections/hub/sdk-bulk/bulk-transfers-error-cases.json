@@ -552,7 +552,7 @@
                 "id": 3,
                 "description": "Check response MSISDN is same as in the request",
                 "exec": [
-                  "expect(callback.body.individualTransferResults[0].to.partyIdInfo.partyIdentifier).to.equal('56781234')"
+                  "expect(callback.body.individualTransferResults[0].to.partyIdInfo.partyIdentifier).to.equal('{$inputs.TTKSIM2_MSISDN_1}')"
                 ]
               },
               {
@@ -560,20 +560,6 @@
                 "description": "Check response has the receiver fspid populated",
                 "exec": [
                   "expect(callback.body.individualTransferResults[0].to.partyIdInfo.fspId).to.not.be.empty"
-                ]
-              },
-              {
-                "id": 5,
-                "description": "Check response receiver first name is ReceiverFirst",
-                "exec": [
-                  "expect(callback.body.individualTransferResults[0].to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
-                ]
-              },
-              {
-                "id": 6,
-                "description": "Check response receiver last name is ReceiverLast",
-                "exec": [
-                  "expect(callback.body.individualTransferResults[0].to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
                 ]
               },
               {
@@ -594,9 +580,11 @@
               },
               {
                 "id": 10,
-                "description": "Check response has  COMPLETED state",
+                "description": "Check both the transfer responses are failed",
                 "exec": [
-                  "expect(callback.body.individualTransferResults[0].fulfil.transferState).to.equal('COMMITTED');"
+                  "expect(callback.body.individualTransferResults[0].lastError.httpStatusCode).to.equal('504');",
+                  "",
+                  "expect(callback.body.individualTransferResults[1].lastError.httpStatusCode).to.equal('504');"
                 ]
               },
               {
@@ -625,6 +613,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
