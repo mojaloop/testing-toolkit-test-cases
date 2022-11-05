@@ -415,18 +415,17 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "123456789",
-                    "fspId": "ttksim2"
+                    "partyIdentifier": "{$inputs.TTKSIM2_PARTY_NOT_FOUND}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "678.91",
                 "note":"blkqtbatchpartialsuccess"
               }
             ]
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -442,14 +441,14 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptPartyCallback.body.individualTransferResults.length).to.equal(2)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check current state is WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
-                  "expect(environment.acceptPartyCallback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
+                  "expect(callback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
                 ]
               }
             ]
@@ -457,17 +456,12 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "await inboundEvent.addListener('acceptPartyCallback', 'put', '/bulkTransactions/{$request.body.bulkTransactionId}')"
+                "requestVariables.bulkTimeout = (new Date(Date.now()+240000)).toISOString()"
               ]
             },
             "postRequest": {
               "exec": [
-                "const acceptPartyCallback = await inboundEvent.getMessage('acceptPartyCallback')",
-                "console.log(acceptPartyCallback);",
-                "",
-                "environment.bulkTransactionId = acceptPartyCallback.body.bulkTransactionId;",
-                "",
-                "environment.acceptPartyCallback = acceptPartyCallback;"
+                "environment.acceptPartyCallback = callback;"
               ]
             }
           }
@@ -494,7 +488,6 @@
           "params": {
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "body": {
             "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
@@ -524,65 +517,47 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults.length).to.equal(2)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check response has quote result for first quote result",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse).to.exist;"
+                  "expect(callback.body.individualTransferResults[0].quoteResponse).to.exist;"
                 ]
               },
               {
                 "id": 4,
                 "description": "Check response has ilpPacket and condition for first quote result",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
+                  "expect(callback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
                   "",
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse.condition).to.not.be.empty;"
+                  "expect(callback.body.individualTransferResults[0].quoteResponse.condition).to.not.be.empty;"
                 ]
               },
               {
                 "id": 5,
                 "description": "Check response has error code for second quote result",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[1].quoteResponse.lastError.mojaloopError.errorInformation.errorCode).to.equal('5100');"
+                  "expect(callback.body.individualTransferResults[1].quoteResponse.lastError.mojaloopError.errorInformation.errorCode).to.equal('5101');"
                 ]
               },
               {
                 "id": 6,
                 "description": "Check response has error description for second quote result",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[1].quoteResponse.lastError.mojaloopError.errorInformation.errorDescription).to.equal('Generic Payee rejection');"
+                  "expect(callback.body.individualTransferResults[1].quoteResponse.lastError.mojaloopError.errorInformation.errorDescription).to.equal('Payee rejected quote - Payee Rejected Quote');"
                 ]
               },
               {
                 "id": 7,
                 "description": "Check state is WAITING_FOR_QUOTE_ACCEPTANCE",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
+                  "expect(callback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
                 ]
               }
             ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "console.log(environment.bulkTransactionId)",
-                "",
-                "await inboundEvent.addListener('acceptQuoteCallback', 'put', `/bulkTransactions/${environment.bulkTransactionId}`)"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "const acceptQuoteCallback = await inboundEvent.getMessage('acceptQuoteCallback')",
-                "",
-                "console.log(acceptQuoteCallback)",
-                "",
-                "environment.acceptQuoteCallback = acceptQuoteCallback;"
-              ]
-            }
           }
         }
       ]
@@ -626,7 +601,7 @@
               },
               "skipPartyLookup": true,
               "synchronous": false,
-              "bulkExpiration": "2016-05-24T08:38:08.699-04:00"
+              "bulkExpiration": "{$requestVariables.bulkTimeout}"
             },
             "from": {
               "partyIdInfo": {
@@ -681,12 +656,17 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptPartyCallback.body.individualTransferResults.length).to.equal(2)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
                 ]
               }
             ]
           },
           "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+240000)).toISOString()"
+              ]
+            },
             "postRequest": {
               "exec": [
                 "environment.acceptPartyCallback = callback;"
@@ -716,18 +696,17 @@
           "params": {
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "body": {
             "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
                 "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transactionId": "{$callback.body.individualTransferResults[0].transactionId}",
                 "acceptParty": true
               },
               {
                 "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transactionId": "{$callback.body.individualTransferResults[1].transactionId}",
                 "acceptParty": true
               }
             ]
@@ -746,51 +725,33 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults.length).to.equal(2)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check response has quote result for first transfer",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse).to.exist;"
+                  "expect(callback.body.individualTransferResults[0].quoteResponse).to.exist;"
                 ]
               },
               {
                 "id": 4,
                 "description": "Check response has ilpPacket and condition for first transfer",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
+                  "expect(callback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
                   "",
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse.condition).to.not.be.empty;"
+                  "expect(callback.body.individualTransferResults[0].quoteResponse.condition).to.not.be.empty;"
                 ]
               },
               {
                 "id": 7,
                 "description": "Check state is WAITING_FOR_QUOTE_ACCEPTANCE",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
+                  "expect(callback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
                 ]
               }
             ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "console.log(environment.bulkTransactionId)",
-                "",
-                "await inboundEvent.addListener('acceptQuoteCallback', 'put', `/bulkTransactions/${environment.bulkTransactionId}`)"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "const acceptQuoteCallback = await inboundEvent.getMessage('acceptQuoteCallback')",
-                "",
-                "console.log(acceptQuoteCallback)",
-                "",
-                "environment.acceptQuoteCallback = acceptQuoteCallback;"
-              ]
-            }
           }
         }
       ]
@@ -834,7 +795,7 @@
               },
               "skipPartyLookup": true,
               "synchronous": false,
-              "bulkExpiration": "2016-05-24T08:38:08.699-04:00"
+              "bulkExpiration": "{$requestVariables.bulkTimeout}"
             },
             "from": {
               "partyIdInfo": {
@@ -854,7 +815,7 @@
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
                 "note": "blkqtbatchwith1qtresponse"
               },
@@ -889,19 +850,24 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptPartyCallback.body.individualTransferResults.length).to.equal(2)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check current state is WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
-                  "expect(environment.acceptPartyCallback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
+                  "expect(callback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
                 ]
               }
             ]
           },
           "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+240000)).toISOString()"
+              ]
+            },
             "postRequest": {
               "exec": [
                 "environment.acceptPartyCallback = callback;"
@@ -960,51 +926,33 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults.length).to.equal(1)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(1)"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check response has quote result for first transfer",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse).to.exist;"
+                  "expect(callback.body.individualTransferResults[0].quoteResponse).to.exist;"
                 ]
               },
               {
                 "id": 4,
                 "description": "Check response has ilpPacket and condition for first transfer",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
+                  "expect(callback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
                   "",
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse.condition).to.not.be.empty;"
+                  "expect(callback.body.individualTransferResults[0].quoteResponse.condition).to.not.be.empty;"
                 ]
               },
               {
                 "id": 5,
                 "description": "Check state is WAITING_FOR_QUOTE_ACCEPTANCE",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
+                  "expect(callback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
                 ]
               }
             ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "console.log(environment.bulkTransactionId)",
-                "",
-                "await inboundEvent.addListener('acceptQuoteCallback', 'put', `/bulkTransactions/${environment.bulkTransactionId}`)"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "const acceptQuoteCallback = await inboundEvent.getMessage('acceptQuoteCallback')",
-                "",
-                "console.log(acceptQuoteCallback)",
-                "",
-                "environment.acceptQuoteCallback = acceptQuoteCallback;"
-              ]
-            }
           }
         }
       ]
@@ -1965,6 +1913,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -1989,7 +1938,7 @@
               },
               "skipPartyLookup": true,
               "synchronous": false,
-              "bulkExpiration": "2016-05-24T08:38:08.699-04:00"
+              "bulkExpiration": "{$requestVariables.bulkTimeout}"
             },
             "from": {
               "partyIdInfo": {
@@ -2004,12 +1953,12 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "123456789",
-                    "fspId": "ttksim2"
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
                 "note":"blkqtbatchfailure"
               },
@@ -2018,12 +1967,12 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "123456789",
-                    "fspId": "ttksim2"
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_2}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
                 "note":"blkqtbatchfailure"
               },
@@ -2032,12 +1981,12 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "123456007",
-                    "fspId": "ttksim3"
+                    "partyIdentifier": "{$inputs.TTKSIM3_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM3_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM3_CURRENCY}",
                 "amount": "678.91",
                 "note":"blkqtbatchfailure"
               },
@@ -2046,18 +1995,17 @@
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
-                    "partyIdentifier": "123456007",
-                    "fspId": "ttksim3"
+                    "partyIdentifier": "{$inputs.TTKSIM3_MSISDN_2}",
+                    "fspId": "{$inputs.TTKSIM3_FSPID}"
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM3_CURRENCY}",
                 "amount": "678.91",
                 "note":"blkqtbatchfailure"
               }
             ]
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -2073,14 +2021,14 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptPartyCallback.body.individualTransferResults.length).to.equal(4)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(4)"
                 ]
               },
               {
                 "id": 3,
                 "description": "Check current state is WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
-                  "expect(environment.acceptPartyCallback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
+                  "expect(callback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
                 ]
               }
             ]
@@ -2088,17 +2036,12 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "await inboundEvent.addListener('acceptPartyCallback', 'put', '/bulkTransactions/{$request.body.bulkTransactionId}')"
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
               ]
             },
             "postRequest": {
               "exec": [
-                "const acceptPartyCallback = await inboundEvent.getMessage('acceptPartyCallback')",
-                "console.log(acceptPartyCallback);",
-                "",
-                "environment.bulkTransactionId = acceptPartyCallback.body.bulkTransactionId;",
-                "",
-                "environment.acceptPartyCallback = acceptPartyCallback;",
+                "environment.acceptPartyCallback = callback;",
                 "",
                 "environment.individualTransferId1 = acceptPartyCallback.body.individualTransferResults[0].transactionId;",
                 "",
@@ -2114,6 +2057,7 @@
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "scheme_adapter_outbound",
+            "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
             "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
@@ -2128,7 +2072,6 @@
           "params": {
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
-          "url": "http://payer-sdk-api-svc:4001",
           "body": {
             "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
@@ -2168,81 +2111,61 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults.length).to.equal(4)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(4)"
                 ]
               },
               {
                 "id": 3,
-                "description": "Check response has quote result for first transfer",
+                "description": "Check first quote has an error",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse).to.exist;"
+                  "expect(callback.body.individualTransferResults[0].lastError.httpStatusCode).to.equal(500);",
+                  "",
+                  "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorCode).to.equal('2001')",
+                  "",
+                  "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Error processing bulk quote')"
                 ]
               },
               {
                 "id": 4,
-                "description": "Check response has ilpPacket and condition for first transfer",
+                "description": "Check second quote has an error",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
+                  "expect(callback.body.individualTransferResults[1].lastError.httpStatusCode).to.equal(500);",
                   "",
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse.condition).to.not.be.empty;"
+                  "expect(callback.body.individualTransferResults[1].lastError.mojaloopError.errorInformation.errorCode).to.equal('2001')",
+                  "",
+                  "expect(callback.body.individualTransferResults[1].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Error processing bulk quote')"
                 ]
               },
               {
                 "id": 5,
-                "description": "Check response has quote result for second transfer",
+                "description": "Check third quote has an error",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[1].quoteResponse).to.exist;"
+                  "expect(callback.body.individualTransferResults[2].lastError.httpStatusCode).to.equal(500);",
+                  "",
+                  "expect(callback.body.individualTransferResults[2].lastError.mojaloopError.errorInformation.errorCode).to.equal('2001')",
+                  "",
+                  "expect(callback.body.individualTransferResults[2].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Error processing bulk quote')"
                 ]
               },
               {
                 "id": 6,
-                "description": "Check response has ilpPacket and condition for second transfer",
+                "description": "Check fourth quote has an error",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[1].quoteResponse.ilpPacket).to.not.be.empty;",
+                  "expect(callback.body.individualTransferResults[3].lastError.httpStatusCode).to.equal(500);",
                   "",
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[1].quoteResponse.condition).to.not.be.empty;"
+                  "expect(callback.body.individualTransferResults[3].lastError.mojaloopError.errorInformation.errorCode).to.equal('2001')",
+                  "",
+                  "expect(callback.body.individualTransferResults[3].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Error processing bulk quote')"
                 ]
               },
               {
                 "id": 7,
-                "description": "Check quote result for third transfer has an error",
+                "description": "Check state is COMPLETED",
                 "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[2].quoteResponse).to.exist;"
-                ]
-              },
-              {
-                "id": 8,
-                "description": "Check quote result for fourth transfer has an error",
-                "exec": [
-                  "expect(environment.acceptQuoteCallback.body.individualTransferResults[3].quoteResponse).to.exist;"
-                ]
-              },
-              {
-                "id": 7,
-                "description": "Check state is WAITING_FOR_QUOTE_ACCEPTANCE",
-                "exec": [
-                  "expect(environment.acceptQuoteCallback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
+                  "expect(callback.body.currentState).to.equal('COMPLETED')"
                 ]
               }
             ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "console.log(environment.bulkTransactionId)",
-                "",
-                "await inboundEvent.addListener('acceptQuoteCallback', 'put', `/bulkTransactions/${environment.bulkTransactionId}`)"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "const acceptQuoteCallback = await inboundEvent.getMessage('acceptQuoteCallback')",
-                "",
-                "console.log(acceptQuoteCallback)",
-                "",
-                "environment.acceptQuoteCallback = acceptQuoteCallback;"
-              ]
-            }
           }
         }
       ]
