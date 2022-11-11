@@ -150,9 +150,9 @@
               },
               {
                 "id": 3,
-                "description": "Check that the response has an http status code of 500",
+                "description": "Check that the response has an http status code of 504",
                 "exec": [
-                  "expect(callback.body.individualTransferResults[0].lastError.httpStatusCode).to.equal(500)"
+                  "expect(callback.body.individualTransferResults[0].lastError.httpStatusCode).to.equal(504)"
                 ]
               },
               {
@@ -406,7 +406,7 @@
                   }
                 },
                 "amountType": "SEND",
-                "currency": "USD",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
                 "note":"blkqtbatchpartialsuccess"
               },
@@ -764,6 +764,236 @@
       ]
     },
     {
+      "id": 9,
+      "name": "TC-BQ9. Given the transfers in the bulk request have 2 different receiver fsp ids, When one of the receivers sends an error, Then the PUT response should have details of the 2 transfers with success and failure details.",
+      "fileInfo": {
+        "path": "ttk-testcases/mvp-bulk.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Post /bulkTransaction",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/bulkTransactions",
+          "path": "/bulkTransactions",
+          "method": "post",
+          "body": {
+            "bulkHomeTransactionID": "abc123",
+            "bulkTransactionId": "{$function.generic.generateUUID}",
+            "options": {
+              "onlyValidateParty": true,
+              "autoAcceptParty": {
+                "enabled": false
+              },
+              "autoAcceptQuote": {
+                "enabled": false
+              },
+              "skipPartyLookup": true,
+              "synchronous": false,
+              "bulkExpiration": "{$requestVariables.bulkTimeout}"
+            },
+            "from": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.TTKSIM1_MSISDN_1}",
+                "fspId": "{$inputs.TTKSIM1_FSPID}"
+              }
+            },
+            "individualTransfers": [
+              {
+                "homeTransactionId": "abc1",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "456.78",
+                "note":"blkqtbatch"
+              },
+              {
+                "homeTransactionId": "abc3",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "{$inputs.TTKSIM3_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM3_FSPID}"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM3_CURRENCY}",
+                "amount": "678.91",
+                "note":"blkqtbatchfailure"
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check Return Status Code",
+                "exec": [
+                  "expect(response.status).to.equal(202)",
+                  ""
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check number of returned transfers",
+                "exec": [
+                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check current state is WAITING_FOR_PARTY_ACCEPTANCE",
+                "exec": [
+                  "expect(callback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+240000)).toISOString()"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.acceptPartyCallback = callback;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "put bulk transaction",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/bulkTransactions/{bulkTransactionId}",
+          "path": "/bulkTransactions/{$prev.1.request.body.bulkTransactionId}",
+          "method": "put",
+          "params": {
+            "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
+          },
+          "body": {
+            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
+            "individualTransfers": [
+              {
+                "homeTransactionId": "abc1",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "acceptParty": true
+              },
+              {
+                "homeTransactionId": "abc2",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "acceptParty": true
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check Return Status Code",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check number of returned transfers",
+                "exec": [
+                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check response has successful quote",
+                "exec": [
+                  "expect(requestVariables.quoteSuccess).to.exist;"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check success response has ilpPacket and condition for first transfer",
+                "exec": [
+                  "expect(requestVariables.quoteSuccess.quoteResponse.ilpPacket).to.not.be.empty;",
+                  "",
+                  "expect(requestVariables.quoteSuccess.quoteResponse.condition).to.not.be.empty;"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Check response for failure quote",
+                "exec": [
+                  "expect(requestVariables.quoteFailure).to.exist;"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Check failure quote response has error code and error description",
+                "exec": [
+                  "expect(requestVariables.quoteFailure.lastError.mojaloopError.errorInformation.errorCode).to.equal('2001');",
+                  "",
+                  "expect(requestVariables.quoteFailure.lastError.mojaloopError.errorInformation.errorDescription).to.equal('Error processing bulk quote');"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Check state is WAITING_FOR_QUOTE_ACCEPTANCE",
+                "exec": [
+                  "expect(callback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "callback.body.individualTransferResults.forEach(individualTransferResult => {",
+                "  if(individualTransferResult.quoteResponse){",
+                "    requestVariables.quoteSuccess = individualTransferResult;",
+                "  } else{",
+                "    requestVariables.quoteFailure = individualTransferResult;",
+                "  }",
+                "});"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "id": 10,
       "name": "TC-BQ10. Given the transfers in the bulk request have 2 different receiver fsp ids, When both of the receivers sends an error, Then the PUT response should have details of failure details of all the 4 transfers.",
       "fileInfo": {
@@ -1030,6 +1260,378 @@
                 ]
               }
             ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "TC-BQ11. Given there are 2 transfers in the bulk request with different receiver fsp ids, When one of the receivers timesout, Then the PUT response should have details of the 2 transfers with success and timeout details.",
+      "fileInfo": {
+        "path": "ttk-testcases/mvp-bulk.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Post /bulkTransaction",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/bulkTransactions",
+          "path": "/bulkTransactions",
+          "method": "post",
+          "body": {
+            "bulkHomeTransactionID": "abc123",
+            "bulkTransactionId": "{$function.generic.generateUUID}",
+            "options": {
+              "onlyValidateParty": true,
+              "autoAcceptParty": {
+                "enabled": false
+              },
+              "autoAcceptQuote": {
+                "enabled": false
+              },
+              "skipPartyLookup": true,
+              "synchronous": false,
+              "bulkExpiration": "{$requestVariables.bulkTimeout}"
+            },
+            "from": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.TTKSIM1_MSISDN_1}",
+                "fspId": "{$inputs.TTKSIM1_FSPID}"
+              }
+            },
+            "individualTransfers": [
+              {
+                "homeTransactionId": "abc1",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM2_CURRENCY}",
+                "amount": "456.78",
+                "note":"blkqtbatch"
+              },
+              {
+                "homeTransactionId": "abc4",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "{$inputs.TTKSIM3_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM3_FSPID}"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM3_CURRENCY}",
+                "amount": "678.91",
+                "note":"blkqtbatchtimesout"
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check Return Status Code",
+                "exec": [
+                  "expect(response.status).to.equal(202)",
+                  ""
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check number of returned transfers",
+                "exec": [
+                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check current state is WAITING_FOR_PARTY_ACCEPTANCE",
+                "exec": [
+                  "expect(callback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+240000)).toISOString()"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.acceptPartyCallback = callback;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "put bulk transaction",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/bulkTransactions/{bulkTransactionId}",
+          "path": "/bulkTransactions/{$prev.1.request.body.bulkTransactionId}",
+          "method": "put",
+          "params": {
+            "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
+          },
+          "body": {
+            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
+            "individualTransfers": [
+              {
+                "homeTransactionId": "abc456",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "acceptParty": true
+              },
+              {
+                "homeTransactionId": "abc456",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "acceptParty": true
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check Return Status Code",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check number of returned transfers",
+                "exec": [
+                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check state is WAITING_FOR_QUOTE_ACCEPTANCE",
+                "exec": [
+                  "expect(callback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "TC-BQ13. When payer fsp sends a request that has unsupported currency, Then the PUT response should have error details about the unsupported currency.",
+      "fileInfo": {
+        "path": "ttk-testcases/mvp-bulk.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Post /bulkTransaction",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/bulkTransactions",
+          "path": "/bulkTransactions",
+          "method": "post",
+          "body": {
+            "bulkHomeTransactionID": "abc123",
+            "bulkTransactionId": "{$function.generic.generateUUID}",
+            "options": {
+              "onlyValidateParty": true,
+              "autoAcceptParty": {
+                "enabled": false
+              },
+              "autoAcceptQuote": {
+                "enabled": false
+              },
+              "skipPartyLookup": true,
+              "synchronous": false,
+              "bulkExpiration": "{$requestVariables.bulkTimeout}"
+            },
+            "from": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.TTKSIM1_MSISDN_1}",
+                "fspId":"{$inputs.TTKSIM1_FSPID}"
+              }
+            },
+            "individualTransfers": [
+              {
+                "homeTransactionId": "abc1",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "{$inputs.TTKSIM2_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM2_FSPID}"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "AUD",
+                "amount": "456.78",
+                "note": "blkqtbatch"
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check Return Status Code",
+                "exec": [
+                  "expect(response.status).to.equal(202)",
+                  ""
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check number of returned transfers",
+                "exec": [
+                  "expect(callback.body.individualTransferResults.length).to.equal(1)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.acceptPartyCallback = callback;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "put bulk transaction for acceptParty",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/bulkTransactions/{bulkTransactionId}",
+          "path": "/bulkTransactions/{$prev.1.request.body.bulkTransactionId}",
+          "method": "put",
+          "params": {
+            "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
+          },
+          "body": {
+            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
+            "individualTransfers": [
+              {
+                "homeTransactionId": "abc456",
+                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "acceptParty": true
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check Return Status Code",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check number of returned transfers",
+                "exec": [
+                  "expect(callback.body.individualTransferResults.length).to.equal(1)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check that the response has an http status code of 504",
+                "exec": [
+                  "expect(callback.body.individualTransferResults[0].lastError.httpStatusCode).to.equal(504)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check that the response has an error code of 4001",
+                "exec": [
+                  "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorCode).to.equal('2001')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check that the response has an error description of Error processing bulk quote",
+                "exec": [
+                  "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Error processing bulk quote')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Check state is COMPLETED",
+                "exec": [
+                  "expect(callback.body.currentState).to.equal('COMPLETED')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.bulkTimeout = (new Date(Date.now()+120000)).toISOString()"
+              ]
+            }
           }
         }
       ]
