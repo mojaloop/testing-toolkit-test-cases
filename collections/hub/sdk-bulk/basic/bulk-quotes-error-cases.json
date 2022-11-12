@@ -5,7 +5,7 @@
       "id": 1,
       "name": "TC-BQ1. Given party lookup is skipped and bulk quotes request is submitted, When receiver fsp fails the entire batch and sends the error, Then the PUT response should have error details about the transfer.",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-quotes-error-cases.json"
       },
       "requests": [
         {
@@ -46,7 +46,7 @@
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
                 "partyIdentifier": "{$inputs.TTKSIM1_MSISDN_1}",
-                "fspId":"{$inputs.TTKSIM1_FSPID}"
+                "fspId": "{$inputs.TTKSIM1_FSPID}"
               }
             },
             "individualTransfers": [
@@ -122,11 +122,9 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptParty": true
               }
             ]
@@ -192,7 +190,7 @@
       "id": 2,
       "name": "TC-BQ2. Given party lookup is skipped and bulk quotes request is submitted, When receiver fsp times out while sending bulk quotes reponse, Then the PUT response should have error details about timeout.",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-quotes-error-cases.json"
       },
       "requests": [
         {
@@ -233,7 +231,7 @@
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
                 "partyIdentifier": "{$inputs.TTKSIM1_MSISDN_1}",
-                "fspId":"{$inputs.TTKSIM1_FSPID}"
+                "fspId": "{$inputs.TTKSIM1_FSPID}"
               }
             },
             "individualTransfers": [
@@ -309,11 +307,9 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptParty": true
               }
             ]
@@ -351,7 +347,7 @@
       "id": 3,
       "name": "TC-BQ3. Given there are 2 transfers in the bulk request and acceptParty is true for both the transfers, When the receiver fsp sends success response for first quote and failure for the second quote, Then the PUT response should have details of success and failure for both the quotes.",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-quotes-error-cases.json"
       },
       "requests": [
         {
@@ -408,7 +404,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
-                "note":"blkqtbatchpartialsuccess"
+                "note": "blkqtbatchpartialsuccess"
               },
               {
                 "homeTransactionId": "abc2",
@@ -422,7 +418,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "678.91",
-                "note":"blkqtbatchpartialsuccess"
+                "note": "blkqtbatchpartialsuccess"
               }
             ]
           },
@@ -489,16 +485,13 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptParty": true
               }
             ]
@@ -566,7 +559,7 @@
       "id": 5,
       "name": "TC-BQ5. Given there are 2 transfers in the bulk request, When the sender fsp sends the acceptParty:true for 1 transfer and acceptParty:false for the second transfer, Then the PUT response should have details of the 1 quote for which the acceptParty:true response was sent.",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-quotes-error-cases.json"
       },
       "requests": [
         {
@@ -704,16 +697,14 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptParty": true
               },
               {
                 "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptParty": false
               }
             ]
@@ -767,7 +758,7 @@
       "id": 9,
       "name": "TC-BQ9. Given the transfers in the bulk request have 2 different receiver fsp ids, When one of the receivers sends an error, Then the PUT response should have details of the 2 transfers with success and failure details.",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-quotes-error-cases.json"
       },
       "requests": [
         {
@@ -824,7 +815,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
-                "note":"blkqtbatch"
+                "note": "blkqtbatch"
               },
               {
                 "homeTransactionId": "abc3",
@@ -838,7 +829,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM3_CURRENCY}",
                 "amount": "678.91",
-                "note":"blkqtbatchfailure"
+                "note": "blkqtbatchfailure"
               }
             ]
           },
@@ -905,16 +896,13 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc1",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc2",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptParty": true
               }
             ]
@@ -997,7 +985,7 @@
       "id": 10,
       "name": "TC-BQ10. Given the transfers in the bulk request have 2 different receiver fsp ids, When both of the receivers sends an error, Then the PUT response should have details of failure details of all the 4 transfers.",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-quotes-error-cases.json"
       },
       "requests": [
         {
@@ -1054,7 +1042,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
-                "note":"blkqtbatchfailure"
+                "note": "blkqtbatchfailure"
               },
               {
                 "homeTransactionId": "abc2",
@@ -1068,7 +1056,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
-                "note":"blkqtbatchfailure"
+                "note": "blkqtbatchfailure"
               },
               {
                 "homeTransactionId": "abc3",
@@ -1082,7 +1070,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM3_CURRENCY}",
                 "amount": "678.91",
-                "note":"blkqtbatchfailure"
+                "note": "blkqtbatchfailure"
               },
               {
                 "homeTransactionId": "abc4",
@@ -1096,7 +1084,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM3_CURRENCY}",
                 "amount": "678.91",
-                "note":"blkqtbatchfailure"
+                "note": "blkqtbatchfailure"
               }
             ]
           },
@@ -1167,26 +1155,21 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc789",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[2].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[2].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc789",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[3].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[3].transferId}",
                 "acceptParty": true
               }
             ]
@@ -1268,7 +1251,7 @@
       "id": 11,
       "name": "TC-BQ11. Given there are 2 transfers in the bulk request with different receiver fsp ids, When one of the receivers timesout, Then the PUT response should have details of the 2 transfers with success and timeout details.",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-quotes-error-cases.json"
       },
       "requests": [
         {
@@ -1325,7 +1308,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM2_CURRENCY}",
                 "amount": "456.78",
-                "note":"blkqtbatch"
+                "note": "blkqtbatch"
               },
               {
                 "homeTransactionId": "abc4",
@@ -1339,7 +1322,7 @@
                 "amountType": "SEND",
                 "currency": "{$inputs.TTKSIM3_CURRENCY}",
                 "amount": "678.91",
-                "note":"blkqtbatchtimesout"
+                "note": "blkqtbatchtimesout"
               }
             ]
           },
@@ -1406,16 +1389,13 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptParty": true
               }
             ]

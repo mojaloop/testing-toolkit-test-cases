@@ -5,7 +5,7 @@
       "id": 1,
       "name": "TC-BHP1. When there are 4 transfers in the bulk request 2 of which that have the same receiver fsp id and the others has a different receiver fsp id and acceptParty is true for all the transfers, Then the PUT response should have details of all the 4 transfers.",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-happy-path.json"
       },
       "requests": [
         {
@@ -163,26 +163,21 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[2].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[2].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc789",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[3].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[3].transferId}",
                 "acceptParty": true
               }
             ]
@@ -267,7 +262,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -292,26 +288,21 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptQuote": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptQuote": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[2].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[2].transferId}",
                 "acceptQuote": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[3].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[3].transferId}",
                 "acceptQuote": true
               }
             ]
@@ -593,7 +584,8 @@
                 "requestVariables.sim3msisdn2response = callback.body.individualTransferResults.filter(transfer => (transfer.to.partyIdInfo.partyIdentifier === environment.TTKSIM3_MSISDN_2))[0]"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ]
     },
@@ -601,7 +593,7 @@
       "id": 2,
       "name": "TC-BHP3. When the incoming request has a format issue that fails schema validation, Then the return code should be 400 instead of 202",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-happy-path.json"
       },
       "requests": [
         {

@@ -174,7 +174,6 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": []
           },
           "scriptingEngine": "javascript",
@@ -235,9 +234,8 @@
                 "const individualTransfers = []",
                 "for(let i=1; i<=environment.totalIndividualTransfers; i++) {",
                 "  individualTransfers.push({",
-                "    transactionId: environment.acceptPartyCallback.body.individualTransferResults[i-1].transactionId,",
+                "    transferId: environment.acceptPartyCallback.body.individualTransferResults[i-1].transferId,",
                 "    acceptParty: true,",
-                "    homeTransactionId: 'abc' + i,",
                 "  })",
                 "}",
                 "",
@@ -277,7 +275,6 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": []
           },
           "scriptingEngine": "javascript",
@@ -388,9 +385,8 @@
                 "const individualTransfers = []",
                 "for(let i=1; i<=environment.totalIndividualTransfers; i++) {",
                 "  individualTransfers.push({",
-                "    transactionId: environment.acceptPartyCallback.body.individualTransferResults[i-1].transactionId,",
+                "    transferId: environment.acceptPartyCallback.body.individualTransferResults[i-1].transferId,",
                 "    acceptQuote: true,",
-                "    homeTransactionId: 'abc' + i,",
                 "  })",
                 "}",
                 "",
@@ -407,7 +403,10 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "sdk-bulk/basic/bulk-high-volume_dynamic.json"
+      }
     }
   ]
 }
