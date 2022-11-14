@@ -5,7 +5,7 @@
       "id": 1,
       "name": "TC-BT1. Given partyLookup is skipped And there are 2 transfers with the same receiver fspid in the request and acceptParty, acceptQuote is true for both the requests, When the receiver fsp fails the entire transfer batch, Then the callback response should have the party and quote results and a failure for transfer",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-transfers-error-cases.json"
       },
       "requests": [
         {
@@ -143,16 +143,13 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptParty": true
               }
             ]
@@ -200,16 +197,13 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptQuote": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptQuote": true
               }
             ]
@@ -315,7 +309,7 @@
       "id": 2,
       "name": "TC-BT2. Given partyLookup is skipped And there are 2 transfers with the same receiver fspid in the request and acceptParty, acceptQuote is true for both the requests, When the receiver fsp times out the entire transfer batch, Then the callback response should have the party and quote results and time out failure for transfer",
       "fileInfo": {
-        "path": "ttk-testcases/mvp-bulk.json"
+        "path": "sdk-bulk/basic/bulk-transfers-error-cases.json"
       },
       "requests": [
         {
@@ -453,16 +447,13 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptParty": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptParty": true
               }
             ]
@@ -517,16 +508,13 @@
             "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
           },
           "body": {
-            "bulkHomeTransactionID": "{$prev.1.request.body.bulkHomeTransactionID}",
             "individualTransfers": [
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[0].transferId}",
                 "acceptQuote": true
               },
               {
-                "homeTransactionId": "abc456",
-                "transactionId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transactionId}",
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptQuote": true
               }
             ]
