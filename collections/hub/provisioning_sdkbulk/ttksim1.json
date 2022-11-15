@@ -1,0 +1,1642 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "ttksim1 account",
+      "meta": {
+        "info": "ttksim1 account"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Add ttksim1"
+          },
+          "description": "Add ttksim1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Add initial position and limits - ttksim1"
+          },
+          "description": "Add initial position and limits - ttksim1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.currency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 500000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "ttksim1 Get Status Request before deposit"
+          },
+          "description": "ttksim1 Get Status Request before deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "    pm.environment.set(\"ttksim1SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"ttksim1SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Deposit Funds in Settlement Account - ttksim1"
+          },
+          "description": "Deposit Funds in Settlement Account - ttksim1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts/{$environment.ttksim1SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "id": "{$environment.ttksim1SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.ttksim1fundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.ttksim1fundsInPrepareAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('ttksim1fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('ttksim1fundsInPrepareAmount', 500000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "ttksim1 Get Status Request after deposit"
+          },
+          "description": "ttksim1 Get Status Request after deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "ttksim1 Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.ttksim1SettlementAccountBalanceAfterFundsIn).to.equal(+environment.ttksim1SettlementAccountBalanceBeforeFundsIn - +environment.ttksim1fundsInPrepareAmount)"
+                ]
+              }
+            ]
+          },
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "    pm.environment.set(\"ttksim1SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Add ttksim1 with different currency for default settlement case"
+          },
+          "description": "Add ttksim1 with different currency for default settlement case",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "Add initial position and limits with different currency - ttksim1"
+          },
+          "description": "Add initial position and limits with different currency - ttksim1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.currency2}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 500000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 8,
+          "description": "Add ttksim1 with different currency for default settlement case CGS",
+          "meta": {
+            "info": "Add ttksim1 with different currency for default settlement case"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "currency": "{$inputs.cgscurrency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 9,
+          "description": "Add initial position and limits with different currency - ttksim1 CGS",
+          "meta": {
+            "info": "Add initial position and limits with different currency - ttksim1"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 500000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 10,
+          "description": "Get Status Request before deposit for currency2",
+          "meta": {
+            "info": "Get Status Request before deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "    pm.environment.set(\"ttksim1Currency2SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"ttksim1Currency2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 11,
+          "description": "Deposit Funds in Settlement Account currency2",
+          "meta": {
+            "info": "Deposit Funds in Settlement Account"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts/{$environment.ttksim1Currency2SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "id": "{$environment.ttksim1Currency2SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.ttksim1fundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.ttksim1fundsInPrepareAmountCurrency2}",
+              "currency": "{$inputs.currency2}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('ttksim1fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('ttksim1fundsInPrepareAmountCurrency2', 500000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 12,
+          "description": "Get Status Request after deposit for currency2",
+          "meta": {
+            "info": "Get Status Request after deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.ttksim1Currency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.ttksim1Currency2SettlementAccountBalanceBeforeFundsIn - +environment.ttksim1fundsInPrepareAmountCurrency2)"
+                ]
+              }
+            ]
+          },
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "    pm.environment.set(\"ttksim1Currency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ttksim1 callbacks",
+      "meta": {
+        "info": "ttksim1 callbacks"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Add ttksim1 callback - AUTHORIZATIONS"
+          },
+          "description": "Add ttksim1 callback - AUTHORIZATIONS",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_AUTHORIZATIONS",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Add ttksim1 callback - PARTICIPANT PUT"
+          },
+          "description": "Add ttksim1 callback - PARTICIPANT PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Add ttksim1 callback - PARTICIPANT PUT Error"
+          },
+          "description": "Add ttksim1 callback - PARTICIPANT PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Add ttksim1 callback - PARTICIPANT PUT Batch"
+          },
+          "description": "Add ttksim1 callback - PARTICIPANT PUT Batch",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{requestId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "Add ttksim1 callback - PARTICIPANT PUT Batch Error"
+          },
+          "description": "Add ttksim1 callback - PARTICIPANT PUT Batch Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{requestId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Add ttksim1 callback - PARTIES GET"
+          },
+          "description": "Add ttksim1 callback - PARTIES GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "Add ttksim1 callback - PARTIES PUT"
+          },
+          "description": "Add ttksim1 callback - PARTIES PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 8,
+          "meta": {
+            "info": "Add ttksim1 callback - PARTIES PUT Error"
+          },
+          "description": "Add ttksim1 callback - PARTIES PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 9,
+          "meta": {
+            "info": "Add ttksim1 callback - QUOTES"
+          },
+          "description": "Add ttksim1 callback - QUOTES",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_QUOTES",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 10,
+          "meta": {
+            "info": "Add ttksim1 callback - TXN REQUEST"
+          },
+          "description": "Add ttksim1 callback - TXN REQUEST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 11,
+          "meta": {
+            "info": "Add ttksim1 callback - TRANSFERS POST"
+          },
+          "description": "Add ttksim1 callback - TRANSFERS POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 12,
+          "meta": {
+            "info": "Add ttksim1 callback - TRANSFERS PUT"
+          },
+          "description": "Add ttksim1 callback - TRANSFERS PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/transfers/{{transferId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 13,
+          "meta": {
+            "info": "Add ttksim1 callback - TRANSFERS ERROR"
+          },
+          "description": "Add ttksim1 callback - TRANSFERS ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/transfers/{{transferId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 14,
+          "meta": {
+            "info": "Add ttksim1 callback - BULK-TRANSFER POST"
+          },
+          "description": "Add ttksim1 callback - BULK-TRANSFER POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/bulkTransfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 15,
+          "meta": {
+            "info": "Add ttksim1 callback - BULK-TRANSFER PUT"
+          },
+          "description": "Add ttksim1 callback - BULK-TRANSFER PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/bulkTransfers/{{id}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 16,
+          "meta": {
+            "info": "Add ttksim1 callback - BULK-TRANSFER ERROR"
+          },
+          "description": "Add ttksim1 callback - BULK-TRANSFER ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/bulkTransfers/{{id}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 21,
+          "meta": {
+            "info": "Add callback - PARTICIPANT SUB-ID PUT"
+          },
+          "description": "Add callback - PARTICIPANT SUB-ID PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 22,
+          "meta": {
+            "info": "Add callback - PARTICIPANT SUB-ID PUT Error"
+          },
+          "description": "Add callback - PARTICIPANT SUB-ID PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 23,
+          "meta": {
+            "info": "Add callback - PARTICIPANT SUB-ID DELETE"
+          },
+          "description": "Add callback - PARTICIPANT SUB-ID DELETE",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 24,
+          "meta": {
+            "info": "Add callback - PARTIES SUB-ID GET"
+          },
+          "description": "Add callback - PARTIES SUB-ID GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 25,
+          "meta": {
+            "info": "Add callback - PARTIES SUB-ID PUT"
+          },
+          "description": "Add callback - PARTIES SUB-ID PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 26,
+          "meta": {
+            "info": "Add callback - PARTIES SUB-ID ERROR PUT"
+          },
+          "description": "Add callback - PARTIES SUB-ID ERROR PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 27,
+          "meta": {
+            "info": "Add ttksim1 callback - FSPIOP_CALLBACK_URL_BULK_QUOTES"
+          },
+          "description": "Add ttksim1 callback - FSPIOP_CALLBACK_URL_BULK_QUOTES",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_QUOTES",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "ttksim1 notification_emails",
+      "meta": {
+        "info": "ttksim1 notification_emails"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+            "value": "{$inputs.ttksim1Email}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+            "value": "{$inputs.ttksim1Email}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL"
+          },
+          "description": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+            "value": "{$inputs.ttksim1Email}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "ttksim1 oracle_registration",
+      "meta": {
+        "info": "ttksim1 oracle_registration"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Add TTKSIM1_MSISDN in MSISDN Oracle"
+          },
+          "description": "Add TTKSIM1_MSISDN in MSISDN Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/MSISDN/{$inputs.TTKSIM1_MSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.TTKSIM1_MSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "fspId": "{$inputs.TTKSIM1_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true
+        }
+      ]
+    }
+  ]
+}
