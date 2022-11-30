@@ -890,7 +890,7 @@
     },
     {
       "id": 11,
-      "name": "TC-BT11. Given partyLookup is skipped And there are 2 transfers with the different receiver fspid in the request and acceptParty, acceptQuote is true for both the requests, When one of the receiver fsp timesout the entire transfer batch, while the other receiving fsp sends succesful reponse,  Then the callback response should have the party, quote, transfer results for the batch that sends success response and only party and quote result for the batch that is timedout.",
+      "name": "TC-BT11. Given partyLookup is skipped And there are 2 transfers with the different receiver fspid in the request and acceptParty, acceptQuote is true for both the requests, When one of the receiver fsp fails the entire transfer batch, while the other receiving fsp sends succesful reponse,  Then the callback response should have the party, quote, transfer results for the batch that sends success response and only party and quote result for the batch that is failed.",
       "fileInfo": {
         "path": "sdk-bulk/basic/bulk-transfers-error-cases.json"
       },
@@ -951,11 +951,25 @@
                 "amount": "789.56"
               },
               {
-                "homeTransactionId": "abc1",
+                "homeTransactionId": "abc2",
                 "to": {
                   "partyIdInfo": {
                     "partyIdType": "MSISDN",
                     "partyIdentifier": "{$inputs.TTKSIM3_MSISDN_1}",
+                    "fspId": "{$inputs.TTKSIM3_FSPID}"
+                  }
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.TTKSIM3_CURRENCY}",
+                "amount": "789.56",
+                "note": "blktrbatchtimesout"
+              },
+              {
+                "homeTransactionId": "abc3",
+                "to": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "{$inputs.TTKSIM3_MSISDN_2}",
                     "fspId": "{$inputs.TTKSIM3_FSPID}"
                   }
                 },
@@ -981,7 +995,7 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(3)"
                 ]
               },
               {
@@ -1037,6 +1051,10 @@
               {
                 "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptParty": true
+              },
+              {
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[2].transferId}",
+                "acceptParty": true
               }
             ]
           },
@@ -1091,6 +1109,10 @@
               {
                 "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[1].transferId}",
                 "acceptQuote": true
+              },
+              {
+                "transferId": "{$environment.acceptPartyCallback.body.individualTransferResults[2].transferId}",
+                "acceptQuote": true
               }
             ]
           },
@@ -1108,85 +1130,57 @@
                 "id": 2,
                 "description": "Check number of returned transfers",
                 "exec": [
-                  "expect(callback.body.individualTransferResults.length).to.equal(2)"
+                  "expect(callback.body.individualTransferResults.length).to.equal(3)"
                 ]
               },
               {
                 "id": 4,
-                "description": "Check first response has the receiver fspid populated",
+                "description": "Check there are 2 tranfer failures",
                 "exec": [
-                  "expect(callback.body.individualTransferResults[0].to.partyIdInfo.fspId).to.not.be.empty"
+                  "expect(requestVariables.transferFailures.length).to.equal(2)"
                 ]
               },
               {
                 "id": 5,
-                "description": "Check first response has quote result",
+                "description": "Check success response has transfer result",
                 "exec": [
-                  "expect(callback.body.individualTransferResults[0].quoteResponse).to.exist;"
-                ]
-              },
-              {
-                "id": 6,
-                "description": "Check first response has ilpPacket and condition",
-                "exec": [
-                  "expect(callback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
-                  "",
-                  "expect(callback.body.individualTransferResults[0].quoteResponse.condition).to.not.be.empty;"
+                  "expect(requestVariables.transferSuccess.fulfil).to.exist;"
                 ]
               },
               {
                 "id": 7,
-                "description": "Check first response has error details for transfer response",
+                "description": "Check first failure response has error details for transfer response",
                 "exec": [
-                  "expect(callback.body.individualTransferResults[0].lastError.httpStatusCode).to.equal(500);",
+                  "expect(requestVariables.transferFailures[0].lastError.httpStatusCode).to.equal(504);",
                   "",
-                  "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorCode).to.equal('4001');",
-                  "",
-                  "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Cannot process the bulk transfer');"
+                  "expect(requestVariables.transferFailures[0].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Server timed out');"
                 ]
               },
               {
-                "id": 8,
-                "description": "Check second response has the receiver fspid populated",
+                "id": 7,
+                "description": "Check second failure response has error details for transfer response",
                 "exec": [
-                  "expect(callback.body.individualTransferResults[1].to.partyIdInfo.fspId).to.not.be.empty"
-                ]
-              },
-              {
-                "id": 9,
-                "description": "Check second response has quote result",
-                "exec": [
-                  "expect(callback.body.individualTransferResults[1].quoteResponse).to.exist;"
-                ]
-              },
-              {
-                "id": 10,
-                "description": "Check second response has ilpPacket and condition",
-                "exec": [
-                  "expect(callback.body.individualTransferResults[1].quoteResponse.ilpPacket).to.not.be.empty;",
+                  "expect(requestVariables.transferFailures[1].lastError.httpStatusCode).to.equal(504);",
                   "",
-                  "expect(callback.body.individualTransferResults[1].quoteResponse.condition).to.not.be.empty;"
-                ]
-              },
-              {
-                "id": 11,
-                "description": "Check second response has error details for transfer response",
-                "exec": [
-                  "expect(callback.body.individualTransferResults[1].lastError.httpStatusCode).to.equal(500);",
-                  "",
-                  "expect(callback.body.individualTransferResults[1].lastError.mojaloopError.errorInformation.errorCode).to.equal('4001');",
-                  "",
-                  "expect(callback.body.individualTransferResults[1].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Cannot process the bulk transfer');"
-                ]
-              },
-              {
-                "id": 12,
-                "description": "Check overall bulk transaction state is COMPLETED",
-                "exec": [
-                  "expect(callback.body.currentState).to.equal('COMPLETED')"
+                  "expect(requestVariables.transferFailures[1].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Server timed out');"
                 ]
               }
             ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "let transferFailures = []",
+                "callback.body.individualTransferResults.forEach(individualTransferResult => {",
+                "  if(individualTransferResult.fulfil){",
+                "    requestVariables.transferSuccess = individualTransferResult;",
+                "  } else{",
+                "    transferFailures.push(individualTransferResult);",
+                "  }",
+                "});",
+                "requestVariables.transferFailures = transferFailures"
+              ]
+            }
           }
         }
       ]
