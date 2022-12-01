@@ -1,0 +1,635 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Bulk warmup 1",
+      "meta": {
+        "info": "Bulk warmup 1"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/bulk-warm-up.json"
+      },
+      "requests": [
+        {
+          "id": 3,
+          "meta": {
+            "info": "POST Bulk Transfer"
+          },
+          "description": "POST Bulk Transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "payeeFsp": "{$inputs.toFspId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "extKey1",
+                      "value": "extValue1"
+                    },
+                    {
+                      "key": "extKey2",
+                      "value": "extValue2"
+                    }
+                  ]
+                }
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency2}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}"
+              }
+            ],
+            "expiration": "{$environment.expirationDate}"
+          },
+          "tests": {
+            "assertions": []
+          },
+          "ignoreCallbacks": false,
+          "params": {
+            "name": "testingtoolkitdfsp"
+          },
+          "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const delay = 1000 * 3600 * 24",
+                "const now = new Date()",
+                "const expirationDate = new Date(now.getTime() + delay).toISOString();",
+                "const completedTimestamp = now.toISOString();",
+                "",
+                "environment[\"bulkTransferId\"] = request.body.bulkTransferId",
+                "environment[\"bulkQuoteId\"] = request.body.bulkQuoteId",
+                "environment[\"transferId\"] = request.body.individualTransfers[0].transferId",
+                "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
+                "environment[\"expirationDate\"] = expirationDate",
+                "environment[\"completedTimestamp\"] = completedTimestamp",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.bulkTransferId}', 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "GET Bulk Transfer - PayeeFSP"
+          },
+          "description": "GET Bulk Transfer - PayeeFSP",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers/{ID}",
+          "path": "/bulkTransfers/{$environment.bulkTransferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.bulkTransferId}",
+            "name": ""
+          },
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "FSPIOP-Destination": "switch"
+          },
+          "tests": {
+            "assertions": []
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/' + environment.bulkTransferId, 'payeeCallback')",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "GET Bulk Transfer - PayerFSP"
+          },
+          "description": "GET Bulk Transfer - PayerFSP",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers/{ID}",
+          "path": "/bulkTransfers/{$environment.bulkTransferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.bulkTransferId}",
+            "name": ""
+          },
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "testingtoolkitdfsp",
+            "FSPIOP-Destination": "switch"
+          },
+          "tests": {
+            "assertions": []
+          },
+          "ignoreCallbacks": false,
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Bulk warmup 2",
+      "meta": {
+        "info": "Bulk warmup 2"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/bulk-warm-up.json"
+      },
+      "requests": [
+        {
+          "id": 3,
+          "meta": {
+            "info": "POST Bulk Transfer"
+          },
+          "description": "POST Bulk Transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "payeeFsp": "{$inputs.toFspId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "extKey1",
+                      "value": "extValue1"
+                    },
+                    {
+                      "key": "extKey2",
+                      "value": "extValue2"
+                    }
+                  ]
+                }
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency2}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}"
+              }
+            ],
+            "expiration": "{$environment.expirationDate}"
+          },
+          "tests": {
+            "assertions": []
+          },
+          "ignoreCallbacks": false,
+          "params": {
+            "name": "testingtoolkitdfsp"
+          },
+          "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const delay = 1000 * 3600 * 24",
+                "const now = new Date()",
+                "const expirationDate = new Date(now.getTime() + delay).toISOString();",
+                "const completedTimestamp = now.toISOString();",
+                "",
+                "environment[\"bulkTransferId\"] = request.body.bulkTransferId",
+                "environment[\"bulkQuoteId\"] = request.body.bulkQuoteId",
+                "environment[\"transferId\"] = request.body.individualTransfers[0].transferId",
+                "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
+                "environment[\"expirationDate\"] = expirationDate",
+                "environment[\"completedTimestamp\"] = completedTimestamp",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.bulkTransferId}', 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "GET Bulk Transfer - PayeeFSP"
+          },
+          "description": "GET Bulk Transfer - PayeeFSP",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers/{ID}",
+          "path": "/bulkTransfers/{$environment.bulkTransferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.bulkTransferId}",
+            "name": ""
+          },
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "FSPIOP-Destination": "switch"
+          },
+          "tests": {
+            "assertions": []
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/' + environment.bulkTransferId, 'payeeCallback')",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "GET Bulk Transfer - PayerFSP"
+          },
+          "description": "GET Bulk Transfer - PayerFSP",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers/{ID}",
+          "path": "/bulkTransfers/{$environment.bulkTransferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.bulkTransferId}",
+            "name": ""
+          },
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "testingtoolkitdfsp",
+            "FSPIOP-Destination": "switch"
+          },
+          "tests": {
+            "assertions": []
+          },
+          "ignoreCallbacks": false,
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Bulk warmup 3",
+      "meta": {
+        "info": "Bulk warmup 3"
+      },
+      "fileInfo": {
+        "path": "hub/other_tests/bulk_transfers/bulk-warm-up.json"
+      },
+      "requests": [
+        {
+          "id": 3,
+          "meta": {
+            "info": "POST Bulk Transfer"
+          },
+          "description": "POST Bulk Transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "bulkTransferId": "{$function.generic.generateUUID}",
+            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "payeeFsp": "{$inputs.toFspId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "individualTransfers": [
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "extKey1",
+                      "value": "extValue1"
+                    },
+                    {
+                      "key": "extKey2",
+                      "value": "extValue2"
+                    }
+                  ]
+                }
+              },
+              {
+                "transferId": "{$function.generic.generateUUID}",
+                "transferAmount": {
+                  "currency": "{$inputs.currency2}",
+                  "amount": "1"
+                },
+                "ilpPacket": "{$environment.validIlpPacket2}",
+                "condition": "{$environment.validCondition2}"
+              }
+            ],
+            "expiration": "{$environment.expirationDate}"
+          },
+          "tests": {
+            "assertions": []
+          },
+          "ignoreCallbacks": false,
+          "params": {
+            "name": "testingtoolkitdfsp"
+          },
+          "path": "/bulkTransfers",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const delay = 1000 * 3600 * 24",
+                "const now = new Date()",
+                "const expirationDate = new Date(now.getTime() + delay).toISOString();",
+                "const completedTimestamp = now.toISOString();",
+                "",
+                "environment[\"bulkTransferId\"] = request.body.bulkTransferId",
+                "environment[\"bulkQuoteId\"] = request.body.bulkQuoteId",
+                "environment[\"transferId\"] = request.body.individualTransfers[0].transferId",
+                "environment[\"transferId2\"] = request.body.individualTransfers[1].transferId",
+                "environment[\"expirationDate\"] = expirationDate",
+                "environment[\"completedTimestamp\"] = completedTimestamp",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.bulkTransferId}', 'payeeRequest')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.bulkTransferId}', 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "GET Bulk Transfer - PayeeFSP"
+          },
+          "description": "GET Bulk Transfer - PayeeFSP",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers/{ID}",
+          "path": "/bulkTransfers/{$environment.bulkTransferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.bulkTransferId}",
+            "name": ""
+          },
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "FSPIOP-Destination": "switch"
+          },
+          "tests": {
+            "assertions": []
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.bulkTransfersNegativeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/' + environment.bulkTransferId, 'payeeCallback')",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "GET Bulk Transfer - PayerFSP"
+          },
+          "description": "GET Bulk Transfer - PayerFSP",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/bulkTransfers/{ID}",
+          "path": "/bulkTransfers/{$environment.bulkTransferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.bulkTransferId}",
+            "name": ""
+          },
+          "url": "{$inputs.HOST_BULK_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptBulkTransfers}",
+            "Content-Type": "{$inputs.contentBulkTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "testingtoolkitdfsp",
+            "FSPIOP-Destination": "switch"
+          },
+          "tests": {
+            "assertions": []
+          },
+          "ignoreCallbacks": false,
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
