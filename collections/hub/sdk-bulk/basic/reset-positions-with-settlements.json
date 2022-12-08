@@ -295,6 +295,37 @@
                   "expect(response.status).to.equal(200)",
                   "}"
                 ]
+              },
+              {
+                "id": 2,
+                "description": "Overall state is PS_TRANSFERS_RECORDED",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.state).to.equal('PS_TRANSFERS_RECORDED')",
+                  "}"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Settlement Window state is PENDING_SETTLEMENT",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.settlementWindows[0].state).to.equal('PENDING_SETTLEMENT')",
+                  "}"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Participants state is PS_TRANSFERS_RECORDED",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "  response.body.participants.forEach(participant => {",
+                  "      participant.accounts.forEach(account => {",
+                  "          expect(account.state).to.equal('PS_TRANSFERS_RECORDED')",
+                  "      });",
+                  "  });",
+                  "}"
+                ]
               }
             ]
           },
@@ -391,6 +422,37 @@
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
                   "expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Overall state is PS_TRANSFERS_RESERVED",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.state).to.equal('PS_TRANSFERS_RESERVED')",
+                  "}"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Settlement Window state is PENDING_SETTLEMENT",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.settlementWindows[0].state).to.equal('PENDING_SETTLEMENT')",
+                  "}"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Participants state is PS_TRANSFERS_RESERVED",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "  response.body.participants.forEach(participant => {",
+                  "      participant.accounts.forEach(account => {",
+                  "          expect(account.state).to.equal('PS_TRANSFERS_RESERVED')",
+                  "      });",
+                  "  });",
                   "}"
                 ]
               }
@@ -490,6 +552,37 @@
                   "expect(response.status).to.equal(200)",
                   "}"
                 ]
+              },
+              {
+                "id": 2,
+                "description": "Overall state is PS_TRANSFERS_COMMITTED",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.state).to.equal('PS_TRANSFERS_COMMITTED')",
+                  "}"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Settlement Window state is PENDING_SETTLEMENT",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.settlementWindows[0].state).to.equal('PENDING_SETTLEMENT')",
+                  "}"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Participants state is PS_TRANSFERS_COMMITTED",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "  response.body.participants.forEach(participant => {",
+                  "      participant.accounts.forEach(account => {",
+                  "          expect(account.state).to.equal('PS_TRANSFERS_COMMITTED')",
+                  "      });",
+                  "  });",
+                  "}"
+                ]
               }
             ]
           },
@@ -585,6 +678,37 @@
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
                   "expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Overall state is SETTLED",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.state).to.equal('SETTLED')",
+                  "}"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Settlement Window state is SETTLED",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.settlementWindows[0].state).to.equal('SETTLED')",
+                  "}"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Participants state is SETTLED",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "  response.body.participants.forEach(participant => {",
+                  "      participant.accounts.forEach(account => {",
+                  "          expect(account.state).to.equal('SETTLED')",
+                  "      });",
+                  "  });",
                   "}"
                 ]
               }
