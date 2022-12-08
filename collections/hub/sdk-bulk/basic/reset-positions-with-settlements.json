@@ -1,11 +1,14 @@
 {
-  "name": "Reset Positions with Settlements",
+  "name": "multi",
   "test_cases": [
     {
       "id": 1,
       "name": "Create Settlement on the current open window",
       "meta": {
         "info": "Create Settlement on the current open window"
+      },
+      "fileInfo": {
+        "path": "reset-positions-with-settlements.json"
       },
       "requests": [
         {
@@ -36,7 +39,9 @@
               {
                 "id": 1,
                 "description": "Response status to be 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               },
               {
                 "id": 2,
@@ -217,7 +222,7 @@
           },
           "scriptingEngine": "javascript",
           "body": {
-            "settlementModel": "DEFERREDNET{$inputs.TTKSIM1_CURRENCY}",
+            "settlementModel": "DEFAULTDEFERREDNET",
             "reason": "TESTING",
             "settlementWindows": [
               {
@@ -229,10 +234,11 @@
             "postRequest": {
               "exec": [
                 "var jsonData = response.body;",
+                "environment.settlementData = jsonData",
                 "environment.settlementId = jsonData.id;",
                 "environment.winstate = jsonData.state;",
                 "",
-                "if (response.body.errorInformation.errorCode === \"3100\"){",
+                "if ( response.body.errorInformation?.errorCode === \"3100\"){",
                 "  ",
                 "  environment.WINDOWISEMPTY = true;",
                 "  console.log(\"Window is empty\");",
@@ -267,11 +273,14 @@
           },
           "operationPath": "/settlements/{id}",
           "path": "/settlements/{$environment.settlementId}",
-          "method": "get",
+          "method": "put",
           "params": {
             "id": "{$environment.settlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "body": {
+            "participants": []
+          },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
@@ -292,11 +301,10 @@
           "scriptingEngine": "javascript",
           "delay": "2500",
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "var res = response.body;",
-                "console.log(environment.settlementId);",
-                "//environment.settlementId = 6;",
+                "var res = environment.settlementData;",
+                "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
                 "var dfspsacc = [];",
                 "var callbackpayer;",
@@ -305,49 +313,48 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
-                "//for(const curAccount of account) {     ",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.TTKSIM1_CURRENCY).forEach(curAccount => {",
                 "",
                 " dfspsacc[i] = {",
                 "        dfspid: participant.id,",
                 "        dfspaccid: curAccount.id ",
                 "    }",
                 "    i++;",
-                "//}",
                 "})",
                 " })",
                 "    ",
                 "",
-                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "var participants = []",
                 "for(let dfspsaccx of dfspsacc){",
-                "  console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
-                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
-                "              \"participants\": [",
-                "                {",
-                "                  \"id\": dfspsaccx.dfspid,",
-                "                  \"accounts\": [",
-                "                    {",
-                "                      \"id\": dfspsaccx.dfspaccid,",
-                "                      \"reason\": \"Transfers recorded for payer\",",
-                "                      \"state\": \"PS_TRANSFERS_RECORDED\"",
-                "                    }",
-                "                  ]",
-                "                }",
-                "              ]",
-                "            },config)    ",
-                "console.log(callbackpayer.data);  ",
+                "  console.log('dfspid: ', dfspsaccx.dfspid)",
+                "  console.log('dfspaccid: ',dfspsaccx.dfspaccid)",
+                "  let participant = { ",
+                "    id: dfspsaccx.dfspid,",
+                "    accounts: [",
+                "        {",
+                "          id: dfspsaccx.dfspaccid,",
+                "          reason: \"Transfers recorded for payer\",",
+                "          state: \"PS_TRANSFERS_RECORDED\"",
+                "        }",
+                "      ]",
+                "  };",
+                "  participants.push(participant);",
                 "}",
+                "console.log('participants:',participants);",
+                "",
+                "custom.appendRequestBody({",
+                "  participants: participants",
+                "})",
+                "",
                 "}else{",
                 "  console.log(\"Window is empty\")",
-                "}",
-                "/*res.participants.map(participant => {",
-                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('currency'))",
-                "    .forEach(curAccount => {*/",
-                "  "
+                "}"
               ]
             },
-            "preRequest": {
-              "exec": [""]
+            "postRequest": {
+              "exec": [
+                "environment.preparedData = response.body;"
+              ]
             }
           }
         },
@@ -364,11 +371,14 @@
           },
           "operationPath": "/settlements/{id}",
           "path": "/settlements/{$environment.settlementId}",
-          "method": "get",
+          "method": "put",
           "params": {
             "id": "{$environment.settlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "body": {
+            "participants": []
+          },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
@@ -388,59 +398,59 @@
           },
           "scriptingEngine": "javascript",
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "var res = response.body;",
-                "//environment.settlementId = 1;",
+                "var res = environment.preparedData;",
+                "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
                 "var dfspsacc = [];",
                 "var callbackpayer;",
                 "",
                 "environment.winstate = res.state;",
-                "",
                 "if(environment.winstate===\"PS_TRANSFERS_RECORDED\"){",
                 "",
-                "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
-                "//for(const curAccount of account) {     ",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.TTKSIM1_CURRENCY).forEach(curAccount => {",
                 "",
                 " dfspsacc[i] = {",
                 "        dfspid: participant.id,",
                 "        dfspaccid: curAccount.id ",
                 "    }",
                 "    i++;",
-                "//}",
                 "})",
                 " })",
                 "    ",
                 "",
-                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "var participants = []",
                 "for(let dfspsaccx of dfspsacc){",
-                "  //console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
-                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
-                "              \"participants\": [",
-                "                {",
-                "                  \"id\": dfspsaccx.dfspid,",
-                "                  \"accounts\": [",
-                "                    {",
-                "                      \"id\": dfspsaccx.dfspaccid,",
-                "                      \"reason\": \"Transfers reserved\",",
-                "                      \"state\": \"PS_TRANSFERS_RESERVED\"",
-                "                    }",
-                "                  ]",
-                "                }",
-                "              ]",
-                "            },config)    ",
-                "console.log(callbackpayer.data);  ",
+                "  console.log('dfspid: ', dfspsaccx.dfspid)",
+                "  console.log('dfspaccid: ',dfspsaccx.dfspaccid)",
+                "  let participant = { ",
+                "    id: dfspsaccx.dfspid,",
+                "    accounts: [",
+                "        {",
+                "          id: dfspsaccx.dfspaccid,",
+                "          reason: \"Transfers reserved for payer\",",
+                "          state: \"PS_TRANSFERS_RESERVED\"",
+                "        }",
+                "      ]",
+                "  };",
+                "  participants.push(participant);",
                 "}",
+                "console.log('participants:',participants);",
+                "",
+                "custom.appendRequestBody({",
+                "  participants: participants",
+                "})",
+                "",
                 "}else{",
                 "  console.log(\"Window is empty\")",
-                "}",
-                "/*res.participants.map(participant => {",
-                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('currency'))",
-                "    .forEach(curAccount => {*/",
-                "  "
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.reservedData = response.body;"
               ]
             }
           }
@@ -458,11 +468,14 @@
           },
           "operationPath": "/settlements/{id}",
           "path": "/settlements/{$environment.settlementId}",
-          "method": "get",
+          "method": "put",
           "params": {
             "id": "{$environment.settlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "body": {
+            "participants": []
+          },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
@@ -482,59 +495,59 @@
           },
           "scriptingEngine": "javascript",
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "var res = response.body;",
-                "//environment.settlementId = 1;",
+                "var res = environment.reservedData;",
+                "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
                 "var dfspsacc = [];",
                 "var callbackpayer;",
                 "",
                 "environment.winstate = res.state;",
-                "",
                 "if(environment.winstate===\"PS_TRANSFERS_RESERVED\"){",
                 "",
-                "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
-                "//for(const curAccount of account) {     ",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.TTKSIM1_CURRENCY).forEach(curAccount => {",
                 "",
                 " dfspsacc[i] = {",
                 "        dfspid: participant.id,",
                 "        dfspaccid: curAccount.id ",
                 "    }",
                 "    i++;",
-                "//}",
                 "})",
                 " })",
                 "    ",
                 "",
-                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "var participants = []",
                 "for(let dfspsaccx of dfspsacc){",
-                "  //console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
-                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
-                "              \"participants\": [",
-                "                {",
-                "                  \"id\": dfspsaccx.dfspid,",
-                "                  \"accounts\": [",
-                "                    {",
-                "                      \"id\": dfspsaccx.dfspaccid,",
-                "                      \"reason\": \"Transfers committed\",",
-                "                      \"state\": \"PS_TRANSFERS_COMMITTED\"",
-                "                    }",
-                "                  ]",
-                "                }",
-                "              ]",
-                "            },config)    ",
-                "console.log(callbackpayer.data);  ",
+                "  console.log('dfspid: ', dfspsaccx.dfspid)",
+                "  console.log('dfspaccid: ',dfspsaccx.dfspaccid)",
+                "  let participant = { ",
+                "    id: dfspsaccx.dfspid,",
+                "    accounts: [",
+                "        {",
+                "          id: dfspsaccx.dfspaccid,",
+                "          reason: \"Transfers committed for payer\",",
+                "          state: \"PS_TRANSFERS_COMMITTED\"",
+                "        }",
+                "      ]",
+                "  };",
+                "  participants.push(participant);",
                 "}",
+                "console.log('participants:',participants);",
+                "",
+                "custom.appendRequestBody({",
+                "  participants: participants",
+                "})",
+                "",
                 "}else{",
                 "  console.log(\"Window is empty\")",
-                "}",
-                "/*res.participants.map(participant => {",
-                "  participant.accounts.filter(account => account.netSettlementAmount.currency === pm.environment.get('currency'))",
-                "    .forEach(curAccount => {*/",
-                "  "
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.committedData = response.body;"
               ]
             }
           }
@@ -552,11 +565,14 @@
           },
           "operationPath": "/settlements/{id}",
           "path": "/settlements/{$environment.settlementId}",
-          "method": "get",
+          "method": "put",
           "params": {
             "id": "{$environment.settlementId}"
           },
           "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "body": {
+            "participants": []
+          },
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
@@ -576,57 +592,54 @@
           },
           "scriptingEngine": "javascript",
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "var res = response.body;",
-                "//environment.settlementId = 1;",
+                "var res = environment.committedData;",
+                "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
                 "var dfspsacc = [];",
                 "var callbackpayer;",
                 "",
                 "environment.winstate = res.state;",
-                "",
                 "if(environment.winstate===\"PS_TRANSFERS_COMMITTED\"){",
                 "",
-                "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
-                "//for(const curAccount of account) {     ",
+                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.TTKSIM1_CURRENCY).forEach(curAccount => {",
                 "",
                 " dfspsacc[i] = {",
                 "        dfspid: participant.id,",
                 "        dfspaccid: curAccount.id ",
                 "    }",
                 "    i++;",
-                "//}",
                 "})",
                 " })",
                 "    ",
                 "",
-                "const config = { headers: {'Content-Type': 'application/json','FSPIOP-Source': 'testingtoolkitdfsp'} };",
+                "var participants = []",
                 "for(let dfspsaccx of dfspsacc){",
-                "  //console.log(dfspsaccx.dfspid,dfspsaccx.dfspaccid)",
-                "callbackpayer = await axios.put(environment.HOST_CENTRAL_SETTLEMENT + '/settlements/'+environment.settlementId, {",
-                "              \"participants\": [",
-                "                {",
-                "                  \"id\": dfspsaccx.dfspid,",
-                "                  \"accounts\": [",
-                "                    {",
-                "                      \"id\": dfspsaccx.dfspaccid,",
-                "                      \"reason\": \"Transfers settled for payer\",",
-                "                      \"state\": \"SETTLED\"",
-                "                    }",
-                "                  ]",
-                "                }",
-                "              ]",
-                "            },config)    ",
-                "console.log(callbackpayer.data);  ",
+                "  console.log('dfspid: ', dfspsaccx.dfspid)",
+                "  console.log('dfspaccid: ',dfspsaccx.dfspaccid)",
+                "  let participant = { ",
+                "    id: dfspsaccx.dfspid,",
+                "    accounts: [",
+                "        {",
+                "          id: dfspsaccx.dfspaccid,",
+                "          reason: \"Transfers settled for payer\",",
+                "          state: \"SETTLED\"",
+                "        }",
+                "      ]",
+                "  };",
+                "  participants.push(participant);",
                 "}",
+                "console.log('participants:',participants);",
+                "",
+                "custom.appendRequestBody({",
+                "  participants: participants",
+                "})",
+                "",
                 "}else{",
                 "  console.log(\"Window is empty\")",
-                "}",
-                "",
-                "  "
+                "}"
               ]
             }
           }
