@@ -1,0 +1,310 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "payer transfer timeout",
+      "meta": {
+        "info": "payee_abort_v1.1"
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payer_transfer_timeout.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Store SIMPAYER position before prepare"
+          },
+          "description": "Store SIMPAYER position before prepare",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment[environment.fromFspId + 'PositionBeforePrepare'] = response.body[0].value"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Store NORESPONSE_SIMPAYEE position before prepare"
+          },
+          "description": "Store NORESPONSE_SIMPAYEE position before prepare",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.NORESPONSE_SIMPAYEE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment[environment.NORESPONSE_SIMPAYEE_NAME + 'PositionBeforePrepare'] = response.body[0].value"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Send Prepare"
+          },
+          "description": "Send Prepare",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateUUID}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "amount": {
+              "amount": "105.11",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "{$requestVariables.transferExpiration}",
+            "ilpPacket": "{$inputs.ilpPacket}",
+            "condition": "{$inputs.validCondition}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback Header - content-type",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  ""
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback Header - fspiop-source is switch",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('switch')",
+                  ""
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback Header - fspiop-destination is request.header.fspiop-source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}')",
+                  ""
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback body - errorInformation.errorCode = '3303'",
+                "exec": [
+                  "expect(callback.body.errorInformation && callback.body.errorInformation.errorCode).to.equal('3303')",
+                  ""
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 2000).toISOString()"
+              ]
+            }
+          }
+        },
+        {
+          "id": 9,
+          "meta": {
+            "info": "Check SIMPAYER position after Abort"
+          },
+          "description": "Check SIMPAYER position after Abort",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}",
+            "ID": ""
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payeefsp position after after Payee ABORT should be same as position before prepare",
+                "exec": [
+                  "expect(response.body[0].value).to.equal(+environment[environment.fromFspId + 'PositionBeforePrepare'])"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "",
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 10,
+          "meta": {
+            "info": "Check NORESPONSE_SIMPAYEE position after Abort"
+          },
+          "description": "Check NORESPONSE_SIMPAYEE position after Abort",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.NORESPONSE_SIMPAYEE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "ID": ""
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payeefsp position after Payee ABORT should be same as position before prepare",
+                "exec": [
+                  "expect(response.body[0].value).to.equal(+environment[environment.NORESPONSE_SIMPAYEE_NAME + 'PositionBeforePrepare'])"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "",
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
