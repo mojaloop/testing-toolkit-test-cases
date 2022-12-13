@@ -13,308 +13,299 @@
       "requests": [
         {
           "id": 1,
-          "name": "Validate settlement and position balances for ttksim1",
           "meta": {
-            "info": "Validate settlement and position balances for ttksim1"
+            "info": "get balances for ttksim1"
           },
-          "requests": [
-            {
-              "id": 1,
-              "meta": {
-                "info": "get balances for ttksim1"
-              },
-              "description": "get balances for ttksim1",
-              "apiVersion": {
-                "minorVersion": 0,
-                "majorVersion": 1,
-                "type": "central_admin"
-              },
-              "operationPath": "/participants/{name}/accounts",
-              "path": "/participants/{$inputs.TTKSIM1_FSPID}/accounts",
-              "method": "get",
-              "params": {
-                "name": "{$inputs.TTKSIM1_FSPID}"
-              },
-              "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-              "tests": {
-                "assertions": [
-                  {
-                    "id": 1,
-                    "description": "Response code is 200",
-                    "exec": [
-                      "expect(response.status).to.equal(200)"
-                    ]
-                  },
-                  {
-                    "id": 2,
-                    "description": "ttksim1 settlement account balance before and  after Settlement should be the same",
-                    "exec": [
-                      "expect(environment.ttksim1SettleAccountBalanceAfterTransfer).to.equal(environment.ttksim1SettleAccountBalanceBeforeTransfer);"
-                    ]
-                  },
-                  {
-                    "id": 3,
-                    "description": "testfsp1 position account balance before and  after Settle should be the same.",
-                    "exec": [
-                      "expect(environment.ttksim1PositionAccountBalanceAfterTransfer).to.equal(environment.ttksim1PositionAccountBalanceBeforeTransfer);"
-                    ]
-                  }
+          "description": "get balances for ttksim1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
                 ]
               },
-              "headers": {
-                "FSPIOP-Source": "{$inputs.fromFspId}",
-                "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+              {
+                "id": 2,
+                "description": "ttksim1 settlement account balance before and  after Settlement should be the same",
+                "exec": [
+                  "expect(environment.ttksim1SettleAccountBalanceAfterTransfer).to.equal(inputs.TTKSIM1_SETTLEMENT_BALANCE_PRE_BULK_TRANSFER);"
+                ]
               },
-              "scriptingEngine": "javascript",
-              "scripts": {
-                "preRequest": {
-                  "exec": [
-                    ""
-                  ]
-                },
-                "postRequest": {
-                  "exec": [
-                    "var res = response.body;",
-                    "",
-                    "",
-                    "   res.filter(account => account.currency === environment.TTKSIM1_CURRENCY).forEach(curAccount => {",
-                    "    ",
-                    "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                    "  environment.ttksim1SettleAccountBalanceAfterTransfer= curAccount.value",
-                    "        }",
-                    "        ",
-                    "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                    "  environment.ttksim1PositionAccountBalanceAfterTransfer= curAccount.value",
-                    "        }     ",
-                    "",
-                    "",
-                    "})",
-                    "//})",
-                    "",
-                    "                      ",
-                    "console.log(environment.ttksim1SettleAccountBalanceAfterTransfer);",
-                    "console.log(environment.ttksim1PositionAccountBalanceAfterTransfer);"
-                  ]
-                }
+              {
+                "id": 3,
+                "description": "testfsp1 position account balance before and  after Settle should be the same.",
+                "exec": [
+                  "expect(environment.ttksim1PositionAccountBalanceAfterTransfer).to.equal(inputs.TTKSIM1_POSITION_BALANCE_PRE_BULK_TRANSFER);"
+                ]
               }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
             },
-            {
-              "id": 2,
-              "meta": {
-                "info": "get balances for ttksim2"
-              },
-              "description": "get balances for ttksim2",
-              "apiVersion": {
-                "minorVersion": 0,
-                "majorVersion": 1,
-                "type": "central_admin"
-              },
-              "operationPath": "/participants/{name}/accounts",
-              "path": "/participants/{$inputs.TTKSIM2_FSPID}/accounts",
-              "method": "get",
-              "params": {
-                "name": "{$inputs.TTKSIM2_FSPID}"
-              },
-              "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-              "tests": {
-                "assertions": [
-                  {
-                    "id": 1,
-                    "description": "Response code is 200",
-                    "exec": [
-                      "expect(response.status).to.equal(200)"
-                    ]
-                  },
-                  {
-                    "id": 2,
-                    "description": "ttksim2 settlement account balance before and  after Settlement should be the same",
-                    "exec": [
-                      "expect(environment.ttksim2SettleAccountBalanceAfterTransfer).to.equal(environment.ttksim2SettleAccountBalanceBeforeTransfer);"
-                    ]
-                  },
-                  {
-                    "id": 3,
-                    "description": "testfsp1 position account balance before and  after Settle should be the same.",
-                    "exec": [
-                      "expect(environment.ttksim2PositionAccountBalanceAfterTransfer).to.equal(environment.ttksim2PositionAccountBalanceBeforeTransfer);"
-                    ]
-                  }
-                ]
-              },
-              "headers": {
-                "FSPIOP-Source": "{$inputs.fromFspId}",
-                "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
-              },
-              "scriptingEngine": "javascript",
-              "scripts": {
-                "preRequest": {
-                  "exec": [
-                    ""
-                  ]
-                },
-                "postRequest": {
-                  "exec": [
-                    "var res = response.body;",
-                    "",
-                    "",
-                    "   res.filter(account => account.currency === environment.TTKSIM2_CURRENCY).forEach(curAccount => {",
-                    "    ",
-                    "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                    "  environment.ttksim2SettleAccountBalanceBeforeTransfer= curAccount.value",
-                    "        }",
-                    "        ",
-                    "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                    "  environment.ttksim2PositionAccountBalanceBeforeTransfer= curAccount.value",
-                    "        }     ",
-                    "",
-                    "",
-                    "})",
-                    "//})",
-                    "",
-                    "                      ",
-                    "console.log(environment.ttksim2SettleAccountBalanceBeforeTransfer);",
-                    "console.log(environment.ttksim2PositionAccountBalanceBeforeTransfer);"
-                  ]
-                }
-              }
-            },
-            {
-              "id": 3,
-              "meta": {
-                "info": "get balances for ttksim3"
-              },
-              "description": "get balances for ttksim3",
-              "apiVersion": {
-                "minorVersion": 0,
-                "majorVersion": 1,
-                "type": "central_admin"
-              },
-              "operationPath": "/participants/{name}/accounts",
-              "path": "/participants/{$inputs.TTKSIM3_FSPID}/accounts",
-              "method": "get",
-              "params": {
-                "name": "{$inputs.TTKSIM3_FSPID}"
-              },
-              "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-              "tests": {
-                "assertions": [
-                  {
-                    "id": 1,
-                    "description": "Response code is 200",
-                    "exec": [
-                      "expect(response.status).to.equal(200)"
-                    ]
-                  },
-                  {
-                    "id": 2,
-                    "description": "ttksim1 settlement account balance before and  after Settlement should be the same",
-                    "exec": [
-                      "expect(environment.ttksim3SettleAccountBalanceAfterTransfer).to.equal(environment.ttksim3SettleAccountBalanceBeforeTransfer);"
-                    ]
-                  },
-                  {
-                    "id": 3,
-                    "description": "testfsp1 position account balance before and  after Settle should be the same.",
-                    "exec": [
-                      "expect(environment.ttksim3PositionAccountBalanceAfterTransfer).to.equal(environment.ttksim3PositionAccountBalanceBeforeTransfer);"
-                    ]
-                  }
-                ]
-              },
-              "headers": {
-                "FSPIOP-Source": "{$inputs.fromFspId}",
-                "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
-              },
-              "scriptingEngine": "javascript",
-              "scripts": {
-                "preRequest": {
-                  "exec": [
-                    ""
-                  ]
-                },
-                "postRequest": {
-                  "exec": [
-                    "var res = response.body;",
-                    "",
-                    "",
-                    "   res.filter(account => account.currency === environment.TTKSIM3_CURRENCY).forEach(curAccount => {",
-                    "    ",
-                    "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                    "  environment.ttksim3SettleAccountBalanceBeforeTransfer= curAccount.value",
-                    "        }",
-                    "        ",
-                    "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                    "  environment.ttksim3PositionAccountBalanceBeforeTransfer= curAccount.value",
-                    "        }     ",
-                    "",
-                    "",
-                    "})",
-                    "//})",
-                    "",
-                    "                      ",
-                    "console.log(environment.ttksim3SettleAccountBalanceBeforeTransfer);",
-                    "console.log(environment.ttksim3PositionAccountBalanceBeforeTransfer);"
-                  ]
-                }
-              }
-            },
-            {
-              "id": 5,
-              "meta": {
-                "info": "Get Hub balances"
-              },
-              "description": "Get Hub balances",
-              "apiVersion": {
-                "minorVersion": 0,
-                "majorVersion": 1,
-                "type": "central_admin"
-              },
-              "operationPath": "/participants/{name}/accounts",
-              "path": "/participants/Hub/accounts",
-              "method": "get",
-              "params": {
-                "name": "Hub"
-              },
-              "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-              "headers": {
-                "FSPIOP-Source": "{$inputs.fromFspId}",
-                "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
-              },
-              "tests": {
-                "assertions": [
-                  {
-                    "id": 1,
-                    "description": "Response code is 200",
-                    "exec": [
-                      "expect(response.status).to.equal(200)"
-                    ]
-                  }
-                ]
-              },
-              "scriptingEngine": "javascript",
-              "scripts": {
-                "postRequest": {
-                  "exec": [
-                    "var jsonData = response.body;\r",
-                    "jsonData\r",
-                    "    .filter(account => account.currency === environment.TTKSIM1_CURRENCY)\r",
-                    "    .forEach(curAccount => {\r",
-                    "        if(curAccount.ledgerAccountType === \"HUB_RECONCILIATION\") {\r",
-                    "            environment.hubReconciliationAccountBalanceBeforeTransfer=curAccount.value;\r",
-                    "        }\r",
-                    "        if(curAccount.ledgerAccountType === \"HUB_MULTILATERAL_SETTLEMENT\") {\r",
-                    "            environment.hubMultilateralAccountBalanceBeforeTransfer=curAccount.value;\r",
-                    "        }\r",
-                    "    })\r",
-                    "\r",
-                    "\r",
-                    "console.log(environment.hubReconciliationAccountBalanceBeforeTransfer);\r",
-                    "console.log(environment.hubMultilateralAccountBalanceBeforeTransfer);"
-                  ]
-                }
-              }
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.TTKSIM1_CURRENCY).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.ttksim1SettleAccountBalanceAfterTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.ttksim1PositionAccountBalanceAfterTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim1SettleAccountBalanceAfterTransfer);",
+                "console.log(environment.ttksim1PositionAccountBalanceAfterTransfer);"
+              ]
             }
-          ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "get balances for ttksim2"
+          },
+          "description": "get balances for ttksim2",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM2_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM2_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "ttksim2 settlement account balance before and  after Settlement should be the same",
+                "exec": [
+                  "expect(environment.ttksim2SettleAccountBalanceAfterTransfer).to.equal(environment.ttksim2SettleAccountBalanceBeforeTransfer);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "testfsp1 position account balance before and  after Settle should be the same.",
+                "exec": [
+                  "expect(environment.ttksim2PositionAccountBalanceAfterTransfer).to.equal(environment.ttksim2PositionAccountBalanceBeforeTransfer);"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.TTKSIM2_CURRENCY).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.ttksim2SettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.ttksim2PositionAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim2SettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.ttksim2PositionAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "get balances for ttksim3"
+          },
+          "description": "get balances for ttksim3",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM3_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM3_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "ttksim1 settlement account balance before and  after Settlement should be the same",
+                "exec": [
+                  "expect(environment.ttksim3SettleAccountBalanceAfterTransfer).to.equal(environment.ttksim3SettleAccountBalanceBeforeTransfer);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "testfsp1 position account balance before and  after Settle should be the same.",
+                "exec": [
+                  "expect(environment.ttksim3PositionAccountBalanceAfterTransfer).to.equal(environment.ttksim3PositionAccountBalanceBeforeTransfer);"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.TTKSIM3_CURRENCY).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "  environment.ttksim3SettleAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "  environment.ttksim3PositionAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim3SettleAccountBalanceBeforeTransfer);",
+                "console.log(environment.ttksim3PositionAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "Get Hub balances"
+          },
+          "description": "Get Hub balances",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/Hub/accounts",
+          "method": "get",
+          "params": {
+            "name": "Hub"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;\r",
+                "jsonData\r",
+                "    .filter(account => account.currency === environment.TTKSIM1_CURRENCY)\r",
+                "    .forEach(curAccount => {\r",
+                "        if(curAccount.ledgerAccountType === \"HUB_RECONCILIATION\") {\r",
+                "            environment.hubReconciliationAccountBalanceBeforeTransfer=curAccount.value;\r",
+                "        }\r",
+                "        if(curAccount.ledgerAccountType === \"HUB_MULTILATERAL_SETTLEMENT\") {\r",
+                "            environment.hubMultilateralAccountBalanceBeforeTransfer=curAccount.value;\r",
+                "        }\r",
+                "    })\r",
+                "\r",
+                "\r",
+                "console.log(environment.hubReconciliationAccountBalanceBeforeTransfer);\r",
+                "console.log(environment.hubMultilateralAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
         }
       ]
     }
