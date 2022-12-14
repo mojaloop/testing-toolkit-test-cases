@@ -1459,6 +1459,124 @@
           }
         }
       ]
+    },
+    {
+      "id": 4,
+      "name": "Run Interchange fee, cgs settlement model for all the closed windows",
+      "meta": {
+        "info": "Run Interchange fee, cgs settlement model for all the closed windows"
+      },
+      "fileInfo": {
+        "path": "run-settlements.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Create Settlement for Closed Window in Interchange fee, cgs settlement model "
+          },
+          "description": "Create Settlement for Closed Window in Interchange fee, cgs settlement model ",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements",
+          "path": "/settlements",
+          "method": "post",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Settlement State should be PENDING_SETTLEMENT",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(environment.winstate).to.equal(\"PENDING_SETTLEMENT\")",
+                  "}"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Number of associated windows should be 1",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.settlementWindows.length).to.equal(1)",
+                  "}"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Associated Settlement Window ID is the correct one",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.settlementWindows[0].id).to.equal(environment.closedWindowID)",
+                  "}"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Associated Settlement Window state should be PENDING_SETTLEMENT",
+                "exec": [
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.body.settlementWindows[0].state).to.equal(\"PENDING_SETTLEMENT\")",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "body": {
+            "settlementModel": "InterchangeFee",
+            "reason": "TESTING",
+            "settlementWindows": []
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var settlementWindows = [];",
+                "environment.closedWindowsData.forEach(closedWindow => {",
+                "  let windowData = {",
+                "    id: closedWindow.settlementWindowId",
+                "  };",
+                "  settlementWindows.push(windowData);",
+                "});",
+                "",
+                "custom.appendRequestBody({",
+                "  settlementWindows: settlementWindows",
+                "});"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.settlementData = response.body",
+                "environment.settlementId = response.body.id;",
+                "if (response.body.errorInformation?.errorCode === \"3100\"){",
+                "  ",
+                "  environment.WINDOWISEMPTY = true;",
+                "  console.log(\"Window is empty\");",
+                "}else{",
+                "  environment.WINDOWISEMPTY = false;",
+                "}"
+              ]
+            }
+          }
+        }
+      ]
     }
   ]
 }
