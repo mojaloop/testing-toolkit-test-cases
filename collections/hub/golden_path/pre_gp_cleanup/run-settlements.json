@@ -3,9 +3,9 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "Close current open window and store data for all closed wondows",
+      "name": "Close current open window and store data for all closed windows",
       "meta": {
-        "info": "Close current open window and store data for all closed wondows"
+        "info": "Close current open window and store data for all closed windows"
       },
       "fileInfo": {
         "path": "run-settlements.json"
@@ -145,7 +145,8 @@
                 "",
                 "console.log(environment.openWindowstate);",
                 "console.log(environment.closedWindowID);",
-                "//}"
+                "//}",
+                "await custom.sleep(5000);"
               ]
             }
           }
@@ -287,42 +288,6 @@
                   "expect(response.status).to.equal(200)",
                   "}"
                 ]
-              },
-              {
-                "id": 2,
-                "description": "Settlement State should be PENDING_SETTLEMENT",
-                "exec": [
-                  "if(environment.WINDOWISEMPTY === false){",
-                  "expect(environment.winstate).to.equal(\"PENDING_SETTLEMENT\")",
-                  "}"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "Number of associated windows should be 1",
-                "exec": [
-                  "if(environment.WINDOWISEMPTY === false){",
-                  "expect(response.body.settlementWindows.length).to.equal(1)",
-                  "}"
-                ]
-              },
-              {
-                "id": 4,
-                "description": "Associated Settlement Window ID is the correct one",
-                "exec": [
-                  "if(environment.WINDOWISEMPTY === false){",
-                  "expect(response.body.settlementWindows[0].id).to.equal(environment.closedWindowID)",
-                  "}"
-                ]
-              },
-              {
-                "id": 5,
-                "description": "Associated Settlement Window state should be PENDING_SETTLEMENT",
-                "exec": [
-                  "if(environment.WINDOWISEMPTY === false){",
-                  "expect(response.body.settlementWindows[0].state).to.equal(\"PENDING_SETTLEMENT\")",
-                  "}"
-                ]
               }
             ]
           },
@@ -333,7 +298,6 @@
                 "requestVariables.settlementModel = environment.settlementModels.deferred[environment.currency];",
                 "var settlementWindows = [];",
                 "environment.closedWindowsData.forEach(closedWindow => {",
-                "  console.log(closedWindow);",
                 "  let windowData = {",
                 "    id: closedWindow.settlementWindowId",
                 "  };",
@@ -959,16 +923,16 @@
             "preRequest": {
               "exec": [
                 "var settlementWindows = [];",
-                "for(let closedWindow in environment.closedWindowsData) {",
+                "environment.closedWindowsData.forEach(closedWindow => {",
                 "  let windowData = {",
                 "    id: closedWindow.settlementWindowId",
                 "  };",
                 "  settlementWindows.push(windowData);",
-                "}",
-                "console.log(settlementWindows);",
+                "});",
+                "",
                 "custom.appendRequestBody({",
                 "  settlementWindows: settlementWindows",
-                "})"
+                "});"
               ]
             },
             "postRequest": {
