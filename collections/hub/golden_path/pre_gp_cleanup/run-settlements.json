@@ -178,9 +178,16 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Response status to be 200",
+                "description": "Response status to be 200/400",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "if(response.status === 400){",
+                  "  expect(response.status).to.equal(400)",
+                  "}",
+                  "else{",
+                  "  expect(response.status).to.equal(200)",
+                  "}",
+                  "",
+                  ""
                 ]
               }
             ]
@@ -284,9 +291,7 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "if(environment.WINDOWISEMPTY === false){",
-                  "expect(response.status).to.equal(200)",
-                  "}"
+                  "expect(response.status).to.equal(200)"
                 ]
               }
             ]
@@ -1582,10 +1587,7 @@
       "id": 5,
       "name": "Deposit Funds into Settlement Account (Funds-In)",
       "fileInfo": {
-        "path": "run-settlements.json",
-        "labels": [
-          "settlements"
-        ]
+        "path": "run-settlements.json"
       },
       "requests": [
         {
@@ -2765,6 +2767,5 @@
         }
       ]
     }
-    
   ]
 }
