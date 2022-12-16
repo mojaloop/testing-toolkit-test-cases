@@ -101,6 +101,7 @@
                 "description": "Status code is 200 or 400",
                 "exec": [
                   "if(response.status === 400){",
+                  "  environment.isFailed = true",
                   "  expect(response.status).to.equal(400)",
                   "}",
                   "else{",
@@ -133,6 +134,13 @@
           },
           "scriptingEngine": "javascript",
           "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.isFailed === true) {",
+                "   custom.skipRequest();",
+                " }"
+              ]
+            },
             "postRequest": {
               "exec": [
                 "var jsonData = response.body;",
@@ -194,6 +202,13 @@
           },
           "scriptingEngine": "javascript",
           "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.isFailed === true) {",
+                "   custom.skipRequest();",
+                " }"
+              ]
+            },
             "postRequest": {
               "exec": [
                 "environment.closedWindowsData = response.body;"
@@ -229,6 +244,13 @@
             ]
           },
           "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.isFailed === true) {",
+                "   custom.skipRequest();",
+                " }"
+              ]
+            },
             "postRequest": {
               "exec": [
                 "var jsonData = response.body;",
