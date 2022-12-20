@@ -101,7 +101,6 @@
                 "description": "Status code is 200 or 400",
                 "exec": [
                   "if(response.status === 400){",
-                  "  environment.isFailed = true",
                   "  expect(response.status).to.equal(400)",
                   "}",
                   "else{",
@@ -136,13 +135,14 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "if(environment.isFailed === true) {",
-                "   custom.skipRequest();",
-                " }"
+                ""
               ]
             },
             "postRequest": {
               "exec": [
+                "if(response.status === 400){",
+                "  environment.isFailed = true;",
+                "}",
                 "var jsonData = response.body;",
                 "var rcode = Number(response.status);",
                 "//console.log(rcode);",
@@ -338,6 +338,9 @@
             },
             "postRequest": {
               "exec": [
+                "if(response.status === 400){",
+                "  environment.isFailed = true",
+                "}",
                 "environment.settlementData = response.body",
                 "environment.settlementId = response.body.id;",
                 "if (response.body.errorInformation?.errorCode === \"3100\"){",
@@ -425,6 +428,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.isFailed === true) {",
+                "   custom.skipRequest();",
+                " }",
+                "",
                 "var res = environment.settlementData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
@@ -553,6 +560,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.isFailed === true) {",
+                "   custom.skipRequest();",
+                " }",
+                "",
                 "var res = environment.preparedData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
@@ -681,6 +692,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.isFailed === true) {",
+                "   custom.skipRequest();",
+                " }",
+                "",
                 "var res = environment.reservedData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
@@ -809,6 +824,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.isFailed === true) {",
+                "   custom.skipRequest();",
+                " }",
+                "",
                 "var res = environment.committedData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
@@ -964,6 +983,10 @@
             },
             "postRequest": {
               "exec": [
+                "if(response.status === 400){",
+                " environment.isFailed = true; ",
+                "}",
+                "",
                 "environment.settlementData = response.body",
                 "environment.settlementId = response.body.id;",
                 "if (response.body.errorInformation?.errorCode === \"3100\"){",
@@ -1051,6 +1074,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.isFailed === true) {",
+                "  custom.skipRequest(); ",
+                "}",
+                "",
                 "var res = environment.settlementData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
@@ -1179,6 +1206,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.isFailed === true) {",
+                "  custom.skipRequest(); ",
+                "}",
+                "",
                 "var res = environment.preparedData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
@@ -1307,6 +1338,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.isFailed === true) {",
+                "  custom.skipRequest(); ",
+                "}",
+                "",
                 "var res = environment.reservedData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
@@ -1435,6 +1470,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.isFailed === true) {",
+                "  custom.skipRequest(); ",
+                "}",
+                "",
                 "var res = environment.committedData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
