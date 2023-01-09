@@ -1,0 +1,166 @@
+{
+  "options": {},
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Subscenario",
+      "fileInfo": {
+        "path": "subscenario.json"
+      },
+      "meta": {
+        "info": "MAS1 - Outbound SDK post /transfers supports subScenario field and is forwarded to payee DFSP in FSPIOP post /quotes request."
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "POST /transfers",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "{$inputs.TTKSIM2_MSISDN_1_FIRST_NAME}",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}"
+            },
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM2_MSISDN_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.TTKSIM1_CURRENCY}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "subScenario": "SUBSCENARIO",
+            "initiatorType": "CONSUMER",
+            "note": "test payment",
+            "homeTransactionId": "123ABC"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "subScenario present in response",
+                "exec": [
+                  "expect(response.body.subScenario).to.equal('SUBSCENARIO')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.transferId = response.body.transferId;",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "PUT /transfers - accept party",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$environment.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$environment.transferId}"
+          },
+          "body": {
+            "acceptParty": true
+          },
+          "scriptingEngine": "javascript",
+          "url": null,
+          "queryParams": {},
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "subScenario present in quote request",
+                "exec": [
+                  "expect(environment.quoteRequest.transactionType.subScenario).to.equal('SUBSCENARIO')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.quoteRequest = JSON.parse(response.body.quoteRequest.body);",
+                "console.log(environment.quoteRequest)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "PUT /transfers - accept quote",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$environment.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$environment.transferId}"
+          },
+          "body": {
+            "acceptQuote": true
+          },
+          "scriptingEngine": "javascript",
+          "url": null,
+          "queryParams": {},
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
