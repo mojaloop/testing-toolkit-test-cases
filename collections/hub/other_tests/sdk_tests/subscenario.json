@@ -334,12 +334,12 @@
     },
     {
       "id": 3,
-      "name": "Invalid value in subscenario should trigger a 400-Bad Request response.",
+      "name": "MAS3 -  Invalid value in subscenario should trigger a 400-Bad Request response.",
       "fileInfo": {
         "path": "testing-toolkit-test-cases/collections/hub/other_tests/sdk_tests/subscenario.json"
       },
       "meta": {
-        "info": "Invalid value in subscenario should trigger a 400-Bad Request response."
+        "info": "MAS3 -  Invalid value in subscenario should trigger a 400-Bad Request response."
       },
       "requests": [
         {
@@ -388,6 +388,13 @@
                 "description": "statusCode is 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "error message is present",
+                "exec": [
+                  "expect(response.body.message).to.equal('must match pattern \"^[A-Z_]{1,32}$\"')"
                 ]
               }
             ]
