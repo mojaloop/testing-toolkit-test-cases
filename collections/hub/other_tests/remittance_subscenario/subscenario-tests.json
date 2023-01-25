@@ -1,0 +1,857 @@
+{
+  "options": {},
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "MAS1 - Outbound SDK post /transfers with subScenario",
+      "meta": {
+        "info": "MAS1 - Outbound SDK post /transfers with subScenario"
+      },
+      "fileInfo": {
+        "path": "mas-poc-test.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Get position and settlement remittance values for sender before transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT_REMITTANCE\") {",
+                "  environment.ttksim1SettleRemittanceAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION_REMITTANCE\") {",
+                "  environment.ttksim1PositionRemittanceAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim1SettleRemittanceAccountBalanceBeforeTransfer);",
+                "console.log(environment.ttksim1PositionRemittanceAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Get position and settlement remittance values for receiver before transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM2_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM2_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT_REMITTANCE\") {",
+                "  environment.ttksim2SettleRemittanceAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION_REMITTANCE\") {",
+                "  environment.ttksim2PositionRemittanceAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim2SettleRemittanceAccountBalanceBeforeTransfer);",
+                "console.log(environment.ttksim2PositionRemittanceAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "POST /transfers",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mojaloop_sdk_outbound_scheme_adapter"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "{$inputs.TTKSIM2_MSISDN_1_FIRST_NAME}",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}"
+            },
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM2_MSISDN_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "subScenario": "REMITTANCE",
+            "initiatorType": "CONSUMER",
+            "note": "test payment",
+            "homeTransactionId": "123ABC"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              }
+            ]
+          },
+          "url": "{$inputs.TTKSIM1_SDK_OUTBOUND_URL}",
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": ["environment.transferId = response.body.transferId;", ""]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "description": "PUT /transfers - accept party",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mojaloop_sdk_outbound_scheme_adapter"
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$environment.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$environment.transferId}"
+          },
+          "body": {
+            "acceptParty": true
+          },
+          "scriptingEngine": "javascript",
+          "url": "{$inputs.TTKSIM1_SDK_OUTBOUND_URL}",
+          "queryParams": {},
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              }
+            ]
+          },
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.quoteRequest = JSON.parse(response.body.quoteRequest.body);",
+                "console.log(environment.quoteRequest)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "description": "PUT /transfers - accept quote",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mojaloop_sdk_outbound_scheme_adapter"
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$environment.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$environment.transferId}"
+          },
+          "body": {
+            "acceptQuote": true
+          },
+          "scriptingEngine": "javascript",
+          "url": "{$inputs.TTKSIM1_SDK_OUTBOUND_URL}",
+          "queryParams": {},
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "description": "Get position and settlement remittance values for sender after transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "ttksim1 remittance settlement account balance before and  after transfer should be the same",
+                "exec": [
+                  "expect(environment.ttksim1SettleRemittanceAccountBalanceAfterTransfer).to.equal(environment.ttksim1SettleRemittanceAccountBalanceBeforeTransfer);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "ttksim1 position remittance account balance before and  after transfer should differ by the transfer amount.",
+                "exec": [
+                  "expect(environment.ttksim1PositionRemittanceAccountBalanceAfterTransfer).to.equal(environment.ttksim1PositionRemittanceAccountBalanceBeforeTransfer+10);"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT_REMITTANCE\") {",
+                "  environment.ttksim1SettleRemittanceAccountBalanceAfterTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION_REMITTANCE\") {",
+                "  environment.ttksim1PositionRemittanceAccountBalanceAfterTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim1SettleRemittanceAccountBalanceAfterTransfer);",
+                "console.log(environment.ttksim1PositionRemittanceAccountBalanceAfterTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "Get position and settlement remittance values for receiver after transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM2_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM2_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "ttksim2 remittance settlement account balance before and  after transfer should be the same",
+                "exec": [
+                  "expect(environment.ttksim2SettleRemittanceAccountBalanceAfterTransfer).to.equal(environment.ttksim2SettleRemittanceAccountBalanceBeforeTransfer);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "ttksim2 position remittance account balance before and  after transfer should differ by the transfer amount.",
+                "exec": [
+                  "expect(environment.ttksim2PositionRemittanceAccountBalanceAfterTransfer).to.equal(environment.ttksim2PositionRemittanceAccountBalanceBeforeTransfer-10);"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT_REMITTANCE\") {",
+                "  environment.ttksim2SettleRemittanceAccountBalanceAfterTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION_REMITTANCE\") {",
+                "  environment.ttksim2PositionRemittanceAccountBalanceAfterTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim2SettleRemittanceAccountBalanceAfterTransfer);",
+                "console.log(environment.ttksim2PositionRemittanceAccountBalanceAfterTransfer);"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "MAS2 - 3 phase transfer via SDK",
+      "fileInfo": {
+        "path": "mas-poc-test.json"
+      },
+      "meta": {
+        "info": "MAS2 - 3 phase transfer via SDK"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Get position and settlement remittance values for sender before transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT_REMITTANCE\") {",
+                "  environment.ttksim1SettleRemittanceAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION_REMITTANCE\") {",
+                "  environment.ttksim1PositionRemittanceAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim1SettleRemittanceAccountBalanceBeforeTransfer);",
+                "console.log(environment.ttksim1PositionRemittanceAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Get position and settlement remittance values for receiver before transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM2_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM2_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT_REMITTANCE\") {",
+                "  environment.ttksim2SettleRemittanceAccountBalanceBeforeTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION_REMITTANCE\") {",
+                "  environment.ttksim2PositionRemittanceAccountBalanceBeforeTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim2SettleRemittanceAccountBalanceBeforeTransfer);",
+                "console.log(environment.ttksim2PositionRemittanceAccountBalanceBeforeTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Get Party Information",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mojaloop_sdk_outbound_scheme_adapter",
+            "prefix": "sdk-out",
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/MSISDN/{$inputs.TTKSIM2_MSISDN_1}",
+          "method": "get",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.TTKSIM2_MSISDN_1}"
+          },
+          "url": "{$inputs.TTKSIM1_SDK_OUTBOUND_URL}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "description": "Get Quote",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mojaloop_sdk_outbound_scheme_adapter",
+            "prefix": "sdk-out",
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.TTKSIM1_SDK_OUTBOUND_URL}",
+          "body": {
+            "fspId": "{$prev.1.response.body.party.body.partyIdInfo.fspId}",
+            "quotesPostRequest": {
+              "quoteId": "{$function.generic.generateUUID}",
+              "transactionId": "{$function.generic.generateUUID}",
+              "payee": {
+                "partyIdInfo": {
+                  "partyIdType": "{$prev.1.response.body.party.body.partyIdInfo.partyIdType}",
+                  "partyIdentifier": "{$prev.1.response.body.party.body.partyIdInfo.partyIdentifier}",
+                  "fspId": "{$prev.1.response.body.party.body.partyIdInfo.fspId}"
+                },
+                "merchantClassificationCode": "1234",
+                "name": "{$prev.1.response.body.party.body.name}",
+                "personalInfo": {
+                  "complexName": {
+                    "firstName": "{$prev.1.response.body.party.body.personalInfo.complexName.firstName}",
+                    "middleName": "{$prev.1.response.body.party.body.personalInfo.complexName.middleName}",
+                    "lastName": "{$prev.1.response.body.party.body.personalInfo.complexName.lastName}"
+                  },
+                  "dateOfBirth": "{$prev.1.response.body.party.body.personalInfo.dateOfBirth}"
+                }
+              },
+              "payer": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.fromIdType}",
+                  "partyIdentifier": "{$inputs.TTKSIM1_MSISDN_1}",
+                  "fspId": "{$inputs.TTKSIM1_FSPID}"
+                },
+                "merchantClassificationCode": "4321",
+                "name": "{$inputs.TTKSIM1_NAME}",
+                "personalInfo": {
+                  "complexName": {
+                    "firstName": "{$inputs.TTKSIM1_MSISDN_1_FIRST_NAME}",
+                    "middleName": "G",
+                    "lastName": "{$inputs.TTKSIM1_MSISDN_1_LAST_NAME}"
+                  },
+                  "dateOfBirth": "1970-01-01"
+                }
+              },
+              "amountType": "SEND",
+              "amount": {
+                "currency": "{$inputs.currency}",
+                "amount": "10"
+              },
+              "transactionType": {
+                "scenario": "TRANSFER",
+                "subScenario": "REMITTANCE",
+                "initiator": "PAYER",
+                "initiatorType": "CONSUMER"
+              },
+              "note": "string",
+              "expiration": "2024-01-24T11:56:19.782Z"
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              }
+            ]
+          }
+        },
+        {
+          "id": 5,
+          "description": "Execute Transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mojaloop_sdk_outbound_scheme_adapter",
+            "prefix": "sdk-out",
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/simpleTransfers",
+          "path": "/simpleTransfers",
+          "method": "post",
+          "url": "{$inputs.TTKSIM1_SDK_OUTBOUND_URL}",
+          "body": {
+            "fspId": "{$prev.1.response.body.party.body.partyIdInfo.fspId}",
+            "transfersPostRequest": {
+              "transferId": "{$prev.2.request.body.quotesPostRequest.transactionId}",
+              "payeeFsp": "{$prev.1.response.body.party.body.partyIdInfo.fspId}",
+              "payerFsp": "{$inputs.TTKSIM1_FSPID}",
+              "amount": {
+                "currency": "{$prev.2.request.body.quotesPostRequest.amount.currency}",
+                "amount": "{$prev.2.request.body.quotesPostRequest.amount.amount}"
+              },
+              "ilpPacket": "{$prev.2.response.body.quotes.body.ilpPacket}",
+              "condition": "{$prev.2.response.body.quotes.body.condition}",
+              "expiration": "{$prev.2.response.body.quotes.body.expiration}"
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "description": "Get position and settlement remittance values for sender after transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "ttksim1 remittance settlement account balance before and  after transfer should be the same",
+                "exec": [
+                  "expect(environment.ttksim1SettleRemittanceAccountBalanceAfterTransfer).to.equal(environment.ttksim1SettleRemittanceAccountBalanceBeforeTransfer);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "ttksim1 position remittance account balance before and  after transfer should differ by the transfer amount.",
+                "exec": [
+                  "expect(environment.ttksim1PositionRemittanceAccountBalanceAfterTransfer).to.equal(environment.ttksim1PositionRemittanceAccountBalanceBeforeTransfer+10);"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT_REMITTANCE\") {",
+                "  environment.ttksim1SettleRemittanceAccountBalanceAfterTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION_REMITTANCE\") {",
+                "  environment.ttksim1PositionRemittanceAccountBalanceAfterTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim1SettleRemittanceAccountBalanceAfterTransfer);",
+                "console.log(environment.ttksim1PositionRemittanceAccountBalanceAfterTransfer);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "Get position and settlement remittance values for receiver after transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM2_FSPID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM2_FSPID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": 2,
+                "description": "ttksim2 remittance settlement account balance before and  after transfer should be the same",
+                "exec": [
+                  "expect(environment.ttksim2SettleRemittanceAccountBalanceAfterTransfer).to.equal(environment.ttksim2SettleRemittanceAccountBalanceBeforeTransfer);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "ttksim2 position remittance account balance before and  after transfer should differ by the transfer amount.",
+                "exec": [
+                  "expect(environment.ttksim2PositionRemittanceAccountBalanceAfterTransfer).to.equal(environment.ttksim2PositionRemittanceAccountBalanceBeforeTransfer-10);"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [""]
+            },
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "",
+                "   res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    ",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT_REMITTANCE\") {",
+                "  environment.ttksim2SettleRemittanceAccountBalanceAfterTransfer= curAccount.value",
+                "        }",
+                "        ",
+                "    if(curAccount.ledgerAccountType === \"POSITION_REMITTANCE\") {",
+                "  environment.ttksim2PositionRemittanceAccountBalanceAfterTransfer= curAccount.value",
+                "        }     ",
+                "",
+                "",
+                "})",
+                "//})",
+                "",
+                "                      ",
+                "console.log(environment.ttksim2SettleRemittanceAccountBalanceAfterTransfer);",
+                "console.log(environment.ttksim2PositionRemittanceAccountBalanceAfterTransfer);"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
