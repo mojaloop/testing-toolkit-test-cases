@@ -852,6 +852,74 @@
           }
         }
       ]
+    },
+    {
+      "id": 3,
+      "name": "MAS3 -  Invalid value in subscenario should trigger a 400-Bad Request response.",
+      "fileInfo": {
+        "path": "testing-toolkit-test-cases/collections/hub/other_tests/sdk_tests/subscenario.json"
+      },
+      "meta": {
+        "info": "MAS3 -  Invalid value in subscenario should trigger a 400-Bad Request response."
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "POST /transfers",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "body": {
+            "from": {
+              "displayName": "{$inputs.TTKSIM2_MSISDN_1_FIRST_NAME}",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}"
+            },
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM2_MSISDN_1}"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.currency}",
+            "amount": "10",
+            "transactionType": "TRANSFER",
+            "subScenario": "SUBSCENARIOSUBSCENARIOSUBSCENARIO1",
+            "initiatorType": "CONSUMER",
+            "note": "test payment",
+            "homeTransactionId": "123ABC"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "statusCode is 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "error message is present",
+                "exec": [
+                  "expect(response.body.message).to.equal('must match pattern \"^[A-Z_]{1,32}$\"')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }
