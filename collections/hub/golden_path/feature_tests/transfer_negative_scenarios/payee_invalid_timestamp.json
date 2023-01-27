@@ -7,6 +7,9 @@
       "meta": {
         "info": "payee_invalid_timestamp"
       },
+      "fileInfo": {
+        "path": "golden_path/feature_tests/transfer_negative_scenarios/payee_invalid_timestamp.json"
+      },
       "requests": [
         {
           "id": 1,
@@ -581,7 +584,7 @@
                 "id": 17,
                 "description": "Callback Header - fspiop-uri is /transfers/transferId",
                 "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/' + request.params.ID + '/error')",
+                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/' + request.params.ID)",
                   ""
                 ]
               },
@@ -595,18 +598,16 @@
               },
               {
                 "id": 19,
-                "description": "Callback Body -  errorCode is 3303",
+                "description": "Callback Body - error cause in extensionList",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorCode).to.equal('3303')",
-                  ""
-                ]
-              },
-              {
-                "id": 20,
-                "description": "Callback Body -  errorDesciption is Transfer expired",
-                "exec": [
-                  "expect(callback.body.errorInformation.errorDescription).to.equal('Transfer expired')",
-                  ""
+                  "expect(callback.body).to.have.property('extensionList')",
+                  "expect(callback.body.extensionList).to.have.property('extension')",
+                  "",
+                  "const filteredExtensionListForCause = callback.body.extensionList.extension.filter(ext => ext.key === \"cause\")",
+                  "",
+                  "expect(filteredExtensionListForCause.length).to.equal(1)",
+                  "",
+                  "expect(filteredExtensionListForCause[0].value).to.equal(\"3303: Transfer expired\")"
                 ]
               }
             ]
