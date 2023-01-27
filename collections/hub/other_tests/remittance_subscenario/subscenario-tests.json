@@ -9,7 +9,7 @@
         "info": "MAS1 - Outbound SDK post /transfers with subScenario"
       },
       "fileInfo": {
-        "path": "mas-poc-test.json"
+        "path": "subscenario-tests.json"
       },
       "requests": [
         {
@@ -38,14 +38,18 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               }
             ]
           },
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
-              "exec": [""]
+              "exec": [
+                ""
+              ]
             },
             "postRequest": {
               "exec": [
@@ -99,14 +103,18 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               }
             ]
           },
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
-              "exec": [""]
+              "exec": [
+                ""
+              ]
             },
             "postRequest": {
               "exec": [
@@ -170,7 +178,9 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               }
             ]
           },
@@ -178,7 +188,10 @@
           "disabled": false,
           "scripts": {
             "postRequest": {
-              "exec": ["environment.transferId = response.body.transferId;", ""]
+              "exec": [
+                "environment.transferId = response.body.transferId;",
+                ""
+              ]
             }
           }
         },
@@ -207,14 +220,18 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               }
             ]
           },
           "disabled": false,
           "scripts": {
             "preRequest": {
-              "exec": [""]
+              "exec": [
+                ""
+              ]
             },
             "postRequest": {
               "exec": [
@@ -250,13 +267,17 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               }
             ]
           },
           "scripts": {
             "preRequest": {
-              "exec": [""]
+              "exec": [
+                ""
+              ]
             }
           }
         },
@@ -286,7 +307,9 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               },
               {
                 "id": 2,
@@ -307,7 +330,9 @@
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
-              "exec": [""]
+              "exec": [
+                ""
+              ]
             },
             "postRequest": {
               "exec": [
@@ -361,7 +386,9 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               },
               {
                 "id": 2,
@@ -382,7 +409,9 @@
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
-              "exec": [""]
+              "exec": [
+                ""
+              ]
             },
             "postRequest": {
               "exec": [
@@ -416,7 +445,7 @@
       "id": 2,
       "name": "MAS2 - 3 phase transfer via SDK",
       "fileInfo": {
-        "path": "mas-poc-test.json"
+        "path": "subscenario-tests.json"
       },
       "meta": {
         "info": "MAS2 - 3 phase transfer via SDK"
@@ -448,14 +477,18 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               }
             ]
           },
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
-              "exec": [""]
+              "exec": [
+                ""
+              ]
             },
             "postRequest": {
               "exec": [
@@ -509,14 +542,18 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               }
             ]
           },
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
-              "exec": [""]
+              "exec": [
+                ""
+              ]
             },
             "postRequest": {
               "exec": [
@@ -571,7 +608,9 @@
               {
                 "id": 1,
                 "description": "Status is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               }
             ]
           }
@@ -595,25 +634,25 @@
           "method": "post",
           "url": "{$inputs.TTKSIM1_SDK_OUTBOUND_URL}",
           "body": {
-            "fspId": "{$prev.1.response.body.party.body.partyIdInfo.fspId}",
+            "fspId": "{$prev.3.response.body.party.body.partyIdInfo.fspId}",
             "quotesPostRequest": {
               "quoteId": "{$function.generic.generateUUID}",
               "transactionId": "{$function.generic.generateUUID}",
               "payee": {
                 "partyIdInfo": {
-                  "partyIdType": "{$prev.1.response.body.party.body.partyIdInfo.partyIdType}",
-                  "partyIdentifier": "{$prev.1.response.body.party.body.partyIdInfo.partyIdentifier}",
-                  "fspId": "{$prev.1.response.body.party.body.partyIdInfo.fspId}"
+                  "partyIdType": "{$prev.3.response.body.party.body.partyIdInfo.partyIdType}",
+                  "partyIdentifier": "{$prev.3.response.body.party.body.partyIdInfo.partyIdentifier}",
+                  "fspId": "{$prev.3.response.body.party.body.partyIdInfo.fspId}"
                 },
                 "merchantClassificationCode": "1234",
-                "name": "{$prev.1.response.body.party.body.name}",
+                "name": "{$prev.3.response.body.party.body.name}",
                 "personalInfo": {
                   "complexName": {
-                    "firstName": "{$prev.1.response.body.party.body.personalInfo.complexName.firstName}",
-                    "middleName": "{$prev.1.response.body.party.body.personalInfo.complexName.middleName}",
-                    "lastName": "{$prev.1.response.body.party.body.personalInfo.complexName.lastName}"
+                    "firstName": "{$prev.3.response.body.party.body.personalInfo.complexName.firstName}",
+                    "middleName": "{$prev.3.response.body.party.body.personalInfo.complexName.middleName}",
+                    "lastName": "{$prev.3.response.body.party.body.personalInfo.complexName.lastName}"
                   },
-                  "dateOfBirth": "{$prev.1.response.body.party.body.personalInfo.dateOfBirth}"
+                  "dateOfBirth": "{$prev.3.response.body.party.body.personalInfo.dateOfBirth}"
                 }
               },
               "payer": {
@@ -653,7 +692,9 @@
               {
                 "id": 1,
                 "description": "Status is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               }
             ]
           }
@@ -677,18 +718,18 @@
           "method": "post",
           "url": "{$inputs.TTKSIM1_SDK_OUTBOUND_URL}",
           "body": {
-            "fspId": "{$prev.1.response.body.party.body.partyIdInfo.fspId}",
+            "fspId": "{$prev.3.response.body.party.body.partyIdInfo.fspId}",
             "transfersPostRequest": {
-              "transferId": "{$prev.2.request.body.quotesPostRequest.transactionId}",
-              "payeeFsp": "{$prev.1.response.body.party.body.partyIdInfo.fspId}",
+              "transferId": "{$prev.4.request.body.quotesPostRequest.transactionId}",
+              "payeeFsp": "{$prev.3.response.body.party.body.partyIdInfo.fspId}",
               "payerFsp": "{$inputs.TTKSIM1_FSPID}",
               "amount": {
-                "currency": "{$prev.2.request.body.quotesPostRequest.amount.currency}",
-                "amount": "{$prev.2.request.body.quotesPostRequest.amount.amount}"
+                "currency": "{$prev.4.request.body.quotesPostRequest.amount.currency}",
+                "amount": "{$prev.4.request.body.quotesPostRequest.amount.amount}"
               },
-              "ilpPacket": "{$prev.2.response.body.quotes.body.ilpPacket}",
-              "condition": "{$prev.2.response.body.quotes.body.condition}",
-              "expiration": "{$prev.2.response.body.quotes.body.expiration}"
+              "ilpPacket": "{$prev.4.response.body.quotes.body.ilpPacket}",
+              "condition": "{$prev.4.response.body.quotes.body.condition}",
+              "expiration": "{$prev.4.response.body.quotes.body.expiration}"
             }
           },
           "tests": {
@@ -696,7 +737,9 @@
               {
                 "id": 1,
                 "description": "Status is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               }
             ]
           }
@@ -727,7 +770,9 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               },
               {
                 "id": 2,
@@ -748,7 +793,9 @@
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
-              "exec": [""]
+              "exec": [
+                ""
+              ]
             },
             "postRequest": {
               "exec": [
@@ -802,7 +849,9 @@
               {
                 "id": 1,
                 "description": "Response code is 200",
-                "exec": ["expect(response.status).to.equal(200)"]
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
               },
               {
                 "id": 2,
@@ -823,7 +872,9 @@
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
-              "exec": [""]
+              "exec": [
+                ""
+              ]
             },
             "postRequest": {
               "exec": [
@@ -857,7 +908,7 @@
       "id": 3,
       "name": "MAS3 -  Invalid value in subscenario should trigger a 400-Bad Request response.",
       "fileInfo": {
-        "path": "testing-toolkit-test-cases/collections/hub/other_tests/sdk_tests/subscenario.json"
+        "path": "subscenario-tests.json"
       },
       "meta": {
         "info": "MAS3 -  Invalid value in subscenario should trigger a 400-Bad Request response."
@@ -907,7 +958,9 @@
               {
                 "id": 1,
                 "description": "statusCode is 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
