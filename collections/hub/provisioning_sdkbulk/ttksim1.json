@@ -592,6 +592,171 @@
               ]
             }
           }
+        },
+        {
+          "id": 13,
+          "description": "ttksim1 Get Status Request before deposit",
+          "meta": {
+            "info": "ttksim1 Get Status Request before deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT_REMITTANCE' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "    pm.environment.set(\"ttksim1SettlementRemittanceAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"ttksim1SettlementRemittanceAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 14,
+          "description": "Deposit Funds in Settlement Remittance Account - ttksim1",
+          "meta": {
+            "info": "Deposit Funds in Settlement Account - ttksim1"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts/{$environment.ttksim1SettlementRemittanceAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "id": "{$environment.ttksim1SettlementRemittanceAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.ttksim1fundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.ttksim1fundsInPrepareAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('ttksim1fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('ttksim1fundsInPrepareAmount', 500000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 15,
+          "description": "ttksim1 Get Status Request after deposit",
+          "meta": {
+            "info": "ttksim1 Get Status Request after deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "ttksim1 Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.ttksim1SettlementRemittanceAccountBalanceAfterFundsIn).to.equal(+environment.ttksim1SettlementRemittanceAccountBalanceBeforeFundsIn - +environment.ttksim1fundsInPrepareAmount)"
+                ]
+              }
+            ]
+          },
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT_REMITTANCE' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "    pm.environment.set(\"ttksim1SettlementRemittanceAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
         }
       ]
     },
