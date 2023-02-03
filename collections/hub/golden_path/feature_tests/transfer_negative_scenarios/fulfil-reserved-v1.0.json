@@ -7,9 +7,6 @@
       "meta": {
         "info": "Fulfil Reserved 1.0"
       },
-      "fileInfo": {
-        "path": "golden_path/feature_tests/transfer_negative_scenarios/fulfil-reserved-v1.0.json"
-      },
       "requests": [
         {
           "id": 1,
@@ -72,6 +69,34 @@
             "note": "{$inputs.note}"
           },
           "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                ""
+              ]
+            }
+          },
           "tests": {
             "assertions": [
               {
@@ -243,35 +268,7 @@
               }
             ]
           },
-          "ignoreCallbacks": false,
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "if(environment.ENABLE_JWS_SIGNING) {",
-                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                "}"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if(environment.ENABLE_JWS_VALIDATION) {",
-                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
-                "}",
-                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}",
-                ""
-              ]
-            }
-          }
+          "ignoreCallbacks": false
         },
         {
           "id": 2,
@@ -310,6 +307,16 @@
             "expiration": "{$requestVariables.transferExpiration}"
           },
           "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "const additionalTimeoutExpiration = Number.parseFloat(environment.ADDITIONAL_TIMEOUT_EXPIRATION_MS) || 2000;",
+                "",
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + additionalTimeoutExpiration).toISOString()",
+                ""
+              ]
+            }
+          },
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -321,16 +328,6 @@
                 ]
               }
             ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "const additionalTimeoutExpiration = Number.parseFloat(environment.ADDITIONAL_TIMEOUT_EXPIRATION_MS) || 2000;",
-                "",
-                "requestVariables.transferExpiration = new Date(new Date().getTime() + additionalTimeoutExpiration).toISOString()",
-                ""
-              ]
-            }
           }
         },
         {
@@ -365,6 +362,13 @@
           },
           "ignoreCallbacks": true,
           "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(collectionVariables)"
+              ]
+            }
+          },
           "tests": {
             "assertions": [
               {
@@ -376,14 +380,7 @@
               }
             ]
           },
-          "delay": "500",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "console.log(collectionVariables)"
-              ]
-            }
-          }
+          "delay": "500"
         },
         {
           "id": 4,
@@ -410,6 +407,14 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "Content-Type": "{$inputs.contentTypeTransfers}"
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "// environment.newDateString = new Date(new Date().getTime() + 16000).toUTCString()",
+                "// console.log(environment.newDateString)"
+              ]
+            }
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -494,15 +499,7 @@
               }
             ]
           },
-          "delay": "500",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "// environment.newDateString = new Date(new Date().getTime() + 16000).toUTCString()",
-                "// console.log(environment.newDateString)"
-              ]
-            }
-          }
+          "delay": "500"
         },
         {
           "id": 5,
@@ -529,6 +526,13 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "Content-Type": "{$inputs.contentTypeTransfers}"
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
           },
           "scriptingEngine": "javascript",
           "delay": "16000",
@@ -590,9 +594,9 @@
               },
               {
                 "id": 17,
-                "description": "Callback Header - fspiop-uri is /transfers/transferId",
+                "description": "Callback Header - fspiop-uri is /transfers/transferId/error",
                 "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/' + request.params.ID)",
+                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/' + request.params.ID+'/error')",
                   ""
                 ]
               },
@@ -605,38 +609,22 @@
                 ]
               },
               {
-                "id": 21,
-                "description": "Callback Body - transferState is ABORTED",
+                "id": 19,
+                "description": "Callback Body -  errorCode is 3303",
                 "exec": [
-                  "expect(callback.body.transferState).to.equal('ABORTED')",
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3303')",
                   ""
                 ]
               },
               {
-                "id": 22,
-                "description": "Callback Body - error cause in extensionList",
+                "id": 20,
+                "description": "Callback Body -  errorDescription is Transfer expired",
                 "exec": [
-                  "",
-                  "expect(callback.body).to.have.property('extensionList')",
-                  "expect(callback.body.extensionList).to.have.property('extension')",
-                  "",
-                  "const filteredExtensionListForCause = callback.body.extensionList.extension.filter(ext => ext.key === \"cause\")",
-                  "",
-                  "expect(filteredExtensionListForCause.length).to.equal(1)",
-                  "",
-                  "expect(filteredExtensionListForCause[0].value).to.equal(\"3303: Transfer expired\")",
-                  "",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('Transfer expired')",
                   ""
                 ]
               }
             ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                ""
-              ]
-            }
           }
         }
       ]
