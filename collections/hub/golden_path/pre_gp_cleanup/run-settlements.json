@@ -1,4 +1,5 @@
 {
+  "options": {},
   "name": "multi",
   "test_cases": [
     {
@@ -8,7 +9,10 @@
         "info": "Close current open window and store data for all closed windows"
       },
       "fileInfo": {
-        "path": "run-settlements.json"
+        "path": "hub/golden_path/pre_gp_cleanup/run-settlements.json",
+        "labels": [
+          "settlements"
+        ]
       },
       "requests": [
         {
@@ -279,7 +283,10 @@
         "info": "Run deferred currency settlement model for all the closed windows"
       },
       "fileInfo": {
-        "path": "run-settlements.json"
+        "path": "hub/golden_path/pre_gp_cleanup/run-settlements.json",
+        "labels": [
+          "settlements"
+        ]
       },
       "requests": [
         {
@@ -313,7 +320,9 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "}"
                 ]
               }
             ]
@@ -322,6 +331,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.WINDOWISEMPTY === true){",
+                "  custom.skipRequest()",
+                "}",
+                "",
                 "requestVariables.settlementModel = environment.settlementModels.deferred[environment.currency];",
                 "var settlementWindows = [];",
                 "environment.closedWindowsData.forEach(closedWindow => {",
@@ -428,6 +441,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.WINDOWISEMPTY === true){",
+                "  custom.skipRequest()",
+                "}",
+                "",
                 "if(environment.isFailed === true) {",
                 "   custom.skipRequest();",
                 " }",
@@ -560,6 +577,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.WINDOWISEMPTY === true){",
+                "  custom.skipRequest()",
+                "}",
+                "",
                 "if(environment.isFailed === true) {",
                 "   custom.skipRequest();",
                 " }",
@@ -692,6 +713,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.WINDOWISEMPTY === true){",
+                "  custom.skipRequest()",
+                "}",
+                "",
                 "if(environment.isFailed === true) {",
                 "   custom.skipRequest();",
                 " }",
@@ -824,6 +849,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.WINDOWISEMPTY === true){",
+                "  custom.skipRequest()",
+                "}",
+                "",
                 "if(environment.isFailed === true) {",
                 "   custom.skipRequest();",
                 " }",
@@ -887,7 +916,10 @@
         "info": "Run default deferred settlement model for all the closed windows"
       },
       "fileInfo": {
-        "path": "run-settlements.json"
+        "path": "hub/golden_path/pre_gp_cleanup/run-settlements.json",
+        "labels": [
+          "settlements"
+        ]
       },
       "requests": [
         {
@@ -968,6 +1000,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.WINDOWISEMPTY === true){",
+                "  custom.skipRequest()",
+                "}",
+                "",
                 "var settlementWindows = [];",
                 "environment.closedWindowsData.forEach(closedWindow => {",
                 "  let windowData = {",
@@ -1074,6 +1110,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.WINDOWISEMPTY === true){",
+                "  custom.skipRequest()",
+                "}",
+                "",
                 "if(environment.isFailed === true) {",
                 "  custom.skipRequest(); ",
                 "}",
@@ -1206,6 +1246,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.WINDOWISEMPTY === true){",
+                "  custom.skipRequest()",
+                "}",
+                "",
                 "if(environment.isFailed === true) {",
                 "  custom.skipRequest(); ",
                 "}",
@@ -1338,6 +1382,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.WINDOWISEMPTY === true){",
+                "  custom.skipRequest()",
+                "}",
+                "",
                 "if(environment.isFailed === true) {",
                 "  custom.skipRequest(); ",
                 "}",
@@ -1470,6 +1518,10 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.WINDOWISEMPTY === true){",
+                "  custom.skipRequest()",
+                "}",
+                "",
                 "if(environment.isFailed === true) {",
                 "  custom.skipRequest(); ",
                 "}",
@@ -1533,7 +1585,10 @@
         "info": "Run Interchange fee, cgs settlement model for all the closed windows"
       },
       "fileInfo": {
-        "path": "run-settlements.json"
+        "path": "hub/golden_path/pre_gp_cleanup/run-settlements.json",
+        "labels": [
+          "settlements"
+        ]
       },
       "requests": [
         {
@@ -1648,7 +1703,13 @@
       "id": 5,
       "name": "Deposit Funds into Settlement Account (Funds-In)",
       "fileInfo": {
-        "path": "run-settlements.json"
+        "path": "hub/golden_path/pre_gp_cleanup/run-settlements.json",
+        "labels": [
+          "settlements"
+        ]
+      },
+      "meta": {
+        "info": "Deposit Funds into Settlement Account (Funds-In)"
       },
       "requests": [
         {
