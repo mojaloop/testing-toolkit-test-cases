@@ -160,12 +160,12 @@
             "id": "{$environment.noresponsepayeefspSettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.payeefspfundsInPrepareTransferId}",
+            "transferId": "{$environment.noresponsepayeefspfundsInPrepareTransferId}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.payeefspfundsInPrepareAmount}",
+              "amount": "{$environment.noresponsepayeefspfundsInPrepareAmount}",
               "currency": "{$inputs.currency}"
             },
             "extensionList": {
@@ -238,7 +238,7 @@
                 "id": 2,
                 "description": "noresponsepayeefsp Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.payeefspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.noresponsepayeefspSettlementAccountBalanceBeforeFundsIn - +environment.payeefspfundsInPrepareAmount)"
+                  "expect(+environment.noresponsepayeefspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.noresponsepayeefspSettlementAccountBalanceBeforeFundsIn - +environment.noresponsepayeefspfundsInPrepareAmount)"
                 ]
               }
             ]
@@ -251,7 +251,7 @@
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"payeefspSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "    pm.environment.set(\"noresponsepayeefspSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
@@ -468,8 +468,8 @@
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
-                "    pm.environment.set(\"payeefspCurrency2SettlementAccountId\", jsonData[i].id)",
-                "    pm.environment.set(\"payeefspCurrency2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "    pm.environment.set(\"noresponsepayeefspCurrency2SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"noresponsepayeefspCurrency2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
@@ -488,19 +488,19 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.NORESPONSE_SIMPAYEE_NAME}/accounts/{$environment.payeefspCurrency2SettlementAccountId}",
+          "path": "/participants/{$inputs.NORESPONSE_SIMPAYEE_NAME}/accounts/{$environment.noresponsepayeefspCurrency2SettlementAccountId}",
           "method": "post",
           "params": {
             "name": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
-            "id": "{$environment.payeefspCurrency2SettlementAccountId}"
+            "id": "{$environment.noresponsepayeefspCurrency2SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.payeefspfundsInPrepareTransferId}",
+            "transferId": "{$environment.noresponsepayeefspfundsInPrepareTransferId}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.payeefspfundsInPrepareAmountCurrency2}",
+              "amount": "{$environment.noresponsepayeefspfundsInPrepareAmountCurrency2}",
               "currency": "{$inputs.currency2}"
             },
             "extensionList": {
@@ -573,7 +573,7 @@
                 "id": 2,
                 "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.payeefspCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.payeefspCurrency2SettlementAccountBalanceBeforeFundsIn - +environment.payeefspfundsInPrepareAmountCurrency2)"
+                  "expect(+environment.noresponsepayeefspCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.noresponsepayeefspCurrency2SettlementAccountBalanceBeforeFundsIn - +environment.noresponsepayeefspfundsInPrepareAmountCurrency2)"
                 ]
               }
             ]
@@ -586,7 +586,7 @@
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
-                "    pm.environment.set(\"payeefspCurrency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "    pm.environment.set(\"noresponsepayeefspCurrency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
