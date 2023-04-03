@@ -1,4 +1,5 @@
 {
+  "options": {},
   "name": "multi",
   "test_cases": [
     {
@@ -69,34 +70,6 @@
             "note": "{$inputs.note}"
           },
           "scriptingEngine": "javascript",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "if(environment.ENABLE_JWS_SIGNING) {",
-                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                "}"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if(environment.ENABLE_JWS_VALIDATION) {",
-                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
-                "}",
-                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}",
-                ""
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -268,7 +241,35 @@
               }
             ]
           },
-          "ignoreCallbacks": false
+          "ignoreCallbacks": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                ""
+              ]
+            }
+          }
         },
         {
           "id": 2,
@@ -307,14 +308,6 @@
             "expiration": "{$requestVariables.transferExpiration}"
           },
           "ignoreCallbacks": true,
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "requestVariables.transferExpiration = new Date(new Date().getTime() + 60000).toISOString()",
-                ""
-              ]
-            }
-          },
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -326,6 +319,14 @@
                 ]
               }
             ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 60000).toISOString()",
+                ""
+              ]
+            }
           }
         },
         {
@@ -361,18 +362,6 @@
           },
           "ignoreCallbacks": true,
           "scriptingEngine": "javascript",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                ""
-              ]
-            },
-            "preRequest": {
-              "exec": [
-                "environment.fulfillCompletedTimestamp = new Date().toISOString()"
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -384,7 +373,19 @@
               }
             ]
           },
-          "delay": "500"
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "environment.fulfillCompletedTimestamp = new Date().toISOString()"
+              ]
+            }
+          }
         },
         {
           "id": 6,
@@ -419,18 +420,6 @@
           },
           "ignoreCallbacks": true,
           "scriptingEngine": "javascript",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                ""
-              ]
-            },
-            "preRequest": {
-              "exec": [
-                ""
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -442,7 +431,19 @@
               }
             ]
           },
-          "delay": "500"
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
         },
         {
           "id": 4,
@@ -469,14 +470,6 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "Content-Type": "{$inputs.contentTypeTransfers}"
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "// environment.newDateString = new Date(new Date().getTime() + 16000).toUTCString()",
-                "// console.log(environment.newDateString)"
-              ]
-            }
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -569,7 +562,15 @@
               }
             ]
           },
-          "delay": "500"
+          "delay": "500",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "// environment.newDateString = new Date(new Date().getTime() + 16000).toUTCString()",
+                "// console.log(environment.newDateString)"
+              ]
+            }
+          }
         }
       ]
     },
@@ -641,34 +642,6 @@
             "note": "{$inputs.note}"
           },
           "scriptingEngine": "javascript",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "if(environment.ENABLE_JWS_SIGNING) {",
-                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                "}"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if(environment.ENABLE_JWS_VALIDATION) {",
-                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
-                "}",
-                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}",
-                ""
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -840,7 +813,35 @@
               }
             ]
           },
-          "ignoreCallbacks": false
+          "ignoreCallbacks": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                ""
+              ]
+            }
+          }
         },
         {
           "id": 2,
@@ -879,14 +880,6 @@
             "expiration": "{$requestVariables.transferExpiration}"
           },
           "ignoreCallbacks": true,
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "requestVariables.transferExpiration = new Date(new Date().getTime() + 60000).toISOString()",
-                ""
-              ]
-            }
-          },
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -898,6 +891,14 @@
                 ]
               }
             ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 60000).toISOString()",
+                ""
+              ]
+            }
           }
         },
         {
@@ -933,18 +934,6 @@
           },
           "ignoreCallbacks": true,
           "scriptingEngine": "javascript",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                ""
-              ]
-            },
-            "preRequest": {
-              "exec": [
-                "environment.fulfillCompletedTimestamp = new Date().toISOString()"
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -956,7 +945,19 @@
               }
             ]
           },
-          "delay": "500"
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "environment.fulfillCompletedTimestamp = new Date().toISOString()"
+              ]
+            }
+          }
         },
         {
           "id": 6,
@@ -991,23 +992,6 @@
           },
           "ignoreCallbacks": true,
           "scriptingEngine": "javascript",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  requestVariables.payeeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
-                "}",
-                ""
-              ]
-            },
-            "preRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.2.request.body.transferId}', 'payeeCallback')",
-                "}"
-              ]
-            }
-          },
           "tests": {
             "assertions": [
               {
@@ -1028,86 +1012,90 @@
                 "id": 3,
                 "description": "Payee Side Callback Header - fspiop-source is switch",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.headers['fspiop-source']).to.equal('switch')",
-                  "}"
+                  "expect(requestVariables.payeeCallback.headers['fspiop-source']).to.equal('switch')",
+                  ""
                 ]
               },
               {
                 "id": 4,
                 "description": "Payee Side Callback Header - fspiop-destination is NORESPONSE_SIMPAYEE_NAME",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.headers['fspiop-destination']).to.equal('{$inputs.NORESPONSE_SIMPAYEE_NAME}')",
-                  "}"
+                  "expect(requestVariables.payeeCallback.headers['fspiop-destination']).to.equal('{$inputs.NORESPONSE_SIMPAYEE_NAME}')",
+                  ""
                 ]
               },
               {
                 "id": 5,
                 "description": "Payee Side Callback Header - fspiop-signature is not empty",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.headers['fspiop-signature']).to.not.equal(undefined)",
-                  "}"
+                  "expect(requestVariables.payeeCallback.headers['fspiop-signature']).to.not.equal(undefined)",
+                  ""
                 ]
               },
               {
                 "id": 6,
                 "description": "Payee Side Callback Header - accept is empty",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.headers['accept']).to.equal(undefined)",
-                  "}"
+                  "expect(requestVariables.payeeCallback.headers['accept']).to.equal(undefined)",
+                  ""
                 ]
               },
               {
                 "id": 7,
                 "description": "Payee Side Callback Header - content-type is same",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.headers['content-type']).to.equal(request.headers['Content-Type'])",
-                  "}"
+                  "expect(requestVariables.payeeCallback.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  ""
                 ]
               },
               {
                 "id": 8,
                 "description": "Payee Side Callback Header - fspiop-uri is /transfers/tranderId/error",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.headers['fspiop-uri']).to.equal('/transfers/{$prev.2.request.body.transferId}/error')",
-                  "}"
+                  "expect(requestVariables.payeeCallback.headers['fspiop-uri']).to.equal('/transfers/{$prev.2.request.body.transferId}/error')",
+                  ""
                 ]
               },
               {
                 "id": 9,
                 "description": "Payee Side Callback Header - fspiop-http-method is PUT",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.headers['fspiop-http-method']).to.equal('PUT')",
-                  "}"
+                  "expect(requestVariables.payeeCallback.headers['fspiop-http-method']).to.equal('PUT')",
+                  ""
                 ]
               },
               {
                 "id": 10,
                 "description": "Payee Side Callback Body - Response Error Code is 3106",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.data.errorInformation['errorCode']).to.equal('3106')",
-                  "}"
+                  "expect(requestVariables.payeeCallback.body.errorInformation['errorCode']).to.equal('3106')",
+                  ""
                 ]
               },
               {
                 "id": 11,
                 "description": "Payee Side Callback Body - Response Error Desription is Modified request",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeCallback.data.errorInformation['errorDescription']).to.equal('Modified request')",
-                  "}"
+                  "expect(requestVariables.payeeCallback.body.errorInformation['errorDescription']).to.equal('Modified request')",
+                  ""
                 ]
               }
             ]
           },
-          "delay": "500"
+          "delay": "5000",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "requestVariables.payeeCallback = await inboundEvent.getMessage('put-error-callback')",
+                "console.log(requestVariables.payeeCallback)"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "await inboundEvent.addListener('put-error-callback', 'put', '/transfers/{$prev.2.request.body.transferId}/error')"
+              ]
+            }
+          }
         }
       ]
     }
