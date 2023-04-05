@@ -1,4 +1,5 @@
 {
+  "options": {},
   "name": "multi",
   "test_cases": [
     {
@@ -6,9 +7,6 @@
       "name": "Fulfil Reserved 1.0",
       "meta": {
         "info": "Fulfil Reserved 1.0"
-      },
-      "fileInfo": {
-        "path": "golden_path/feature_tests/transfer_negative_scenarios/fulfil-reserved-v1.0.json"
       },
       "requests": [
         {
@@ -328,7 +326,17 @@
                 "const additionalTimeoutExpiration = Number.parseFloat(environment.ADDITIONAL_TIMEOUT_EXPIRATION_MS) || 2000;",
                 "",
                 "requestVariables.transferExpiration = new Date(new Date().getTime() + additionalTimeoutExpiration).toISOString()",
-                ""
+                "",
+                "",
+                "await inboundEvent.addListener('payeePostTransfer', 'post', '/transfers', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payeePostTransfer = await inboundEvent.getMessage('payeePostTransfer')",
+                "console.log(requestVariables.payeePostTransfer)"
               ]
             }
           }
@@ -376,11 +384,20 @@
               }
             ]
           },
-          "delay": "500",
           "scripts": {
             "postRequest": {
               "exec": [
-                "console.log(collectionVariables)"
+                "requestVariables.payerCallback = await inboundEvent.getMessage('payerFulfilCallback')",
+                "console.log(requestVariables.payerCallback)",
+                "console.log(collectionVariables)",
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.2.request.body.transferId}/error', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
+                "})"
               ]
             }
           }
@@ -494,7 +511,6 @@
               }
             ]
           },
-          "delay": "500",
           "scripts": {
             "preRequest": {
               "exec": [

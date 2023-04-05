@@ -1,4 +1,5 @@
 {
+  "options": {},
   "name": "multi",
   "test_cases": [
     {
@@ -410,7 +411,23 @@
             ]
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
-          "ignoreCallbacks": true
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "await inboundEvent.addListener('payeePostTransfer', 'post', '/transfers', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payeePostTransfer = await inboundEvent.getMessage('payeePostTransfer')",
+                "console.log(requestVariables.payeePostTransfer)"
+              ]
+            }
+          }
         },
         {
           "id": 5,
@@ -471,7 +488,6 @@
             ]
           },
           "scriptingEngine": "javascript",
-          "delay": "2000",
           "scripts": {
             "preRequest": {
               "exec": [

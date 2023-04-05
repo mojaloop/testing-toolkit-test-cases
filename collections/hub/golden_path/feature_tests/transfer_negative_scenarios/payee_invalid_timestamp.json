@@ -1,4 +1,5 @@
 {
+  "options": {},
   "name": "multi",
   "test_cases": [
     {
@@ -6,9 +7,6 @@
       "name": "payee_invalid_timestamp",
       "meta": {
         "info": "payee_invalid_timestamp"
-      },
-      "fileInfo": {
-        "path": "golden_path/feature_tests/transfer_negative_scenarios/payee_invalid_timestamp.json"
       },
       "requests": [
         {
@@ -434,12 +432,16 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.transferExpiration = new Date(new Date().getTime() + 2000).toISOString()"
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 2000).toISOString()",
+                "await inboundEvent.addListener('payeePostTransfer', 'post', '/transfers', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})"
               ]
             },
             "postRequest": {
               "exec": [
-                ""
+                "requestVariables.payeePostTransfer = await inboundEvent.getMessage('payeePostTransfer')",
+                "console.log(requestVariables.payeePostTransfer)"
               ]
             }
           }
