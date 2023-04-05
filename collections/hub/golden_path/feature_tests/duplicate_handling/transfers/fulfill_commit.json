@@ -6,7 +6,7 @@
       "id": 1,
       "name": "positive",
       "meta": {
-        "info": "positive"
+        "info": "Duplicate valid fulfil request after a successful valid fufil request from Payee FSP should return callback to Payee FSP containing transfer information."
       },
       "requests": [
         {
@@ -324,7 +324,16 @@
             "preRequest": {
               "exec": [
                 "requestVariables.transferExpiration = new Date(new Date().getTime() + 60000).toISOString()",
+                "await inboundEvent.addListener('payeePostTransfer', 'post', '/transfers', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})",
                 ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payeePostTransfer = await inboundEvent.getMessage('payeePostTransfer')",
+                "console.log(requestVariables.payeePostTransfer)"
               ]
             }
           }
@@ -373,16 +382,21 @@
               }
             ]
           },
-          "delay": "500",
           "scripts": {
             "postRequest": {
               "exec": [
+                "requestVariables.payerCallback = await inboundEvent.getMessage('payerFulfilCallback')",
+                "console.log(requestVariables.payerCallback)",
                 ""
               ]
             },
             "preRequest": {
               "exec": [
-                "environment.fulfillCompletedTimestamp = new Date().toISOString()"
+                "environment.fulfillCompletedTimestamp = new Date().toISOString()",
+                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.2.request.body.transferId}', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
+                "})",
+                ""
               ]
             }
           }
@@ -390,7 +404,7 @@
         {
           "id": 6,
           "meta": {
-            "info": "Duplicate Fulfill"
+            "info": "Duplicate Fulfill request should return transfer status, timestamp and fulfilment."
           },
           "description": "Duplicate Fulfill",
           "apiVersion": {
@@ -428,18 +442,43 @@
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
+              },
+              {
+                "id": 2,
+                "description": "Duplicate Fulfill Callback Body - transferState is COMMITED ",
+                "exec": [
+                  "expect(requestVariables.payeeDuplicateCallback.body.transferState).to.equal('COMMITTED')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Duplicate Fulfill Callback Body - fulfilment is same as request",
+                "exec": [
+                  "expect(requestVariables.payeeDuplicateCallback.body.fulfilment).to.equal('{$inputs.validFulfillment}')",
+                  ""
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Duplicate Fulfill Callback Body - fspiop-http-method is PUT",
+                "exec": [
+                  "expect(requestVariables.payeeDuplicateCallback.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
               }
             ]
           },
-          "delay": "500",
           "scripts": {
             "postRequest": {
               "exec": [
-                ""
+                "requestVariables.payeeDuplicateCallback = await inboundEvent.getMessage('payeeDuplicateCallback')",
+                "console.log(requestVariables.payeeDuplicateCallback)"
               ]
             },
             "preRequest": {
               "exec": [
+                "await inboundEvent.addListener('payeeDuplicateCallback', 'put', '/transfers/{$prev.2.request.body.transferId}', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})",
                 ""
               ]
             }
@@ -546,7 +585,7 @@
               },
               {
                 "id": 19,
-                "description": "Callback Body -  transferState is RESERVED",
+                "description": "Callback Body -  transferState is COMMITED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')",
                   ""
@@ -562,7 +601,6 @@
               }
             ]
           },
-          "delay": "500",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -578,7 +616,7 @@
       "id": 2,
       "name": "negative",
       "meta": {
-        "info": "negative"
+        "info": "Duplicate invalid fulfil request after a successful valid fufil request from Payee FSP should return callback to Payee FSP containing transfer information."
       },
       "requests": [
         {
@@ -896,7 +934,16 @@
             "preRequest": {
               "exec": [
                 "requestVariables.transferExpiration = new Date(new Date().getTime() + 60000).toISOString()",
+                "await inboundEvent.addListener('payeePostTransfer', 'post', '/transfers', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})",
                 ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payeePostTransfer = await inboundEvent.getMessage('payeePostTransfer')",
+                "console.log(requestVariables.payeePostTransfer)"
               ]
             }
           }
@@ -945,16 +992,21 @@
               }
             ]
           },
-          "delay": "500",
           "scripts": {
             "postRequest": {
               "exec": [
+                "requestVariables.payerCallback = await inboundEvent.getMessage('payerFulfilCallback')",
+                "console.log(requestVariables.payerCallback)",
                 ""
               ]
             },
             "preRequest": {
               "exec": [
-                "environment.fulfillCompletedTimestamp = new Date().toISOString()"
+                "environment.fulfillCompletedTimestamp = new Date().toISOString()",
+                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.2.request.body.transferId}', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
+                "})",
+                ""
               ]
             }
           }
@@ -1050,7 +1102,7 @@
               },
               {
                 "id": 8,
-                "description": "Payee Side Callback Header - fspiop-uri is /transfers/tranderId/error",
+                "description": "Payee Side Callback Header - fspiop-uri is /transfers/transferId/error",
                 "exec": [
                   "expect(requestVariables.payeeCallback.headers['fspiop-uri']).to.equal('/transfers/{$prev.2.request.body.transferId}/error')",
                   ""
@@ -1074,7 +1126,7 @@
               },
               {
                 "id": 11,
-                "description": "Payee Side Callback Body - Response Error Desription is Modified request",
+                "description": "Payee Side Callback Body - Response Error Description is Modified request",
                 "exec": [
                   "expect(requestVariables.payeeCallback.body.errorInformation['errorDescription']).to.equal('Modified request')",
                   ""
@@ -1082,7 +1134,6 @@
               }
             ]
           },
-          "delay": "5000",
           "scripts": {
             "postRequest": {
               "exec": [
