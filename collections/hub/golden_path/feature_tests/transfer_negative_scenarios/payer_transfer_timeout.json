@@ -1,14 +1,12 @@
 {
+  "options": {},
   "name": "multi",
   "test_cases": [
     {
       "id": 1,
       "name": "payer transfer timeout",
       "meta": {
-        "info": "payee_abort_v1.1"
-      },
-      "fileInfo": {
-        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payer_transfer_timeout.json"
+        "info": "Payer and payee should receive a callback notification when a transfer prepare request times out after receiving no fulfil request.\n"
       },
       "requests": [
         {
@@ -147,33 +145,65 @@
               },
               {
                 "id": 2,
-                "description": "Callback Header - content-type",
+                "description": "Payer FSP Callback Header - content-type",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  "expect(requestVariables.payerCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
                   ""
                 ]
               },
               {
                 "id": 3,
-                "description": "Callback Header - fspiop-source is switch",
+                "description": "Payer FSP Callback Header - fspiop-source is switch",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal('switch')",
+                  "expect(requestVariables.payerCallback.headers['fspiop-source']).to.equal('switch')",
                   ""
                 ]
               },
               {
                 "id": 4,
-                "description": "Callback Header - fspiop-destination is request.header.fspiop-source",
+                "description": "Payer FSP Callback Header - fspiop-destination is request.header.fspiop-source",
                 "exec": [
-                  "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}')",
+                  "expect(requestVariables.payerCallback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}')",
                   ""
                 ]
               },
               {
                 "id": 5,
-                "description": "Callback body - errorInformation.errorCode = '3303'",
+                "description": "Payer FSP Callback body - errorInformation.errorCode = '3303'",
                 "exec": [
-                  "expect(callback.body.errorInformation && callback.body.errorInformation.errorCode).to.equal('3303')",
+                  "expect(requestVariables.payerCallback.body.errorInformation && callback.body.errorInformation.errorCode).to.equal('3303')",
+                  ""
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Payee FSP Callback Header - content-type",
+                "exec": [
+                  "expect(requestVariables.payeeCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  ""
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Payee FSP Callback Header - fspiop-source is switch",
+                "exec": [
+                  "expect(requestVariables.payeeCallback.headers['fspiop-source']).to.equal('switch')",
+                  ""
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Payee FSP Callback Header - fspiop-destination is request.header.fspiop-destination",
+                "exec": [
+                  "expect(requestVariables.payeeCallback.headers['fspiop-destination']).to.equal('{$inputs.NORESPONSE_SIMPAYEE_NAME}')",
+                  ""
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Payee FSP Callback body - errorInformation.errorCode = '3303'",
+                "exec": [
+                  "expect(requestVariables.payeeCallback.body.errorInformation && callback.body.errorInformation.errorCode).to.equal('3303')",
                   ""
                 ]
               }
@@ -185,7 +215,23 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.transferExpiration = new Date(new Date().getTime() + 2000).toISOString()"
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 2000).toISOString()",
+                "await inboundEvent.addListener('payerCallback', 'put', '/transfers/{$request.body.transferId}/error', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
+                "})",
+                "",
+                "await inboundEvent.addListener('payeeCallback', 'put', '/transfers/{$request.body.transferId}/error', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payerCallback = await inboundEvent.getMessage('payerCallback')",
+                "console.log(requestVariables.payerCallback)",
+                "requestVariables.payeeCallback = await inboundEvent.getMessage('payeeCallback')",
+                "console.log(requestVariables.payeeCallback)"
               ]
             }
           }
