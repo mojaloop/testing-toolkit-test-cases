@@ -252,8 +252,16 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                ""
+                "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.3.request.body.quoteId}', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
+                "})"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payerPutQuotes = await inboundEvent.getMessage('payerPutQuotes')",
+                "console.log(requestVariables.payerPutQuotes)"
               ]
             }
           }

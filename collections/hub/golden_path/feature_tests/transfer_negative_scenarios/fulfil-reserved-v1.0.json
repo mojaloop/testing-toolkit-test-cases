@@ -106,7 +106,7 @@
           }
         },
         {
-          "id": 7,
+          "id": 2,
           "description": "Send Quote - Response",
           "apiVersion": {
             "minorVersion": 1,
@@ -168,14 +168,22 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                ""
+                "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.1.request.body.quoteId}', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
+                "})"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payerPutQuotes = await inboundEvent.getMessage('payerPutQuotes')",
+                "console.log(requestVariables.payerPutQuotes)"
               ]
             }
           }
         },
         {
-          "id": 2,
+          "id": 3,
           "meta": {
             "info": "Send Transfer-Prepare"
           },
@@ -245,7 +253,7 @@
           }
         },
         {
-          "id": 3,
+          "id": 4,
           "meta": {
             "info": "Send Fulfill-Reserved"
           },
@@ -301,7 +309,7 @@
           }
         },
         {
-          "id": 4,
+          "id": 5,
           "meta": {
             "info": "Check Transfer status immediately"
           },
@@ -313,10 +321,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.2.request.body.transferId}",
+          "path": "/transfers/{$prev.3.request.body.transferId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.2.request.body.transferId}"
+            "ID": "{$prev.3.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -419,7 +427,7 @@
           }
         },
         {
-          "id": 5,
+          "id": 6,
           "meta": {
             "info": "Check Transfer status after expiry time"
           },
@@ -431,10 +439,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.2.request.body.transferId}",
+          "path": "/transfers/{$prev.3.request.body.transferId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.2.request.body.transferId}"
+            "ID": "{$prev.3.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {

@@ -4,7 +4,7 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "",
+      "name": "positive",
       "meta": {
         "info": "Duplicate valid fulfil request after a successful valid fulfil request from Payee FSP should return callback to Payee FSP containing transfer information."
       },
@@ -106,7 +106,7 @@
           }
         },
         {
-          "id": 7,
+          "id": 2,
           "description": "Send Quote - Response",
           "apiVersion": {
             "minorVersion": 1,
@@ -168,14 +168,22 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                ""
+                "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.1.request.body.quoteId}', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
+                "})"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payerPutQuotes = await inboundEvent.getMessage('payerPutQuotes')",
+                "console.log(requestVariables.payerPutQuotes)"
               ]
             }
           }
         },
         {
-          "id": 2,
+          "id": 3,
           "meta": {
             "info": "Send Transfer-Prepare"
           },
@@ -242,7 +250,7 @@
           }
         },
         {
-          "id": 3,
+          "id": 4,
           "meta": {
             "info": "Send Fulfill"
           },
@@ -254,10 +262,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.2.request.body.transferId}",
+          "path": "/transfers/{$prev.3.request.body.transferId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.2.request.body.transferId}"
+            "ID": "{$prev.3.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -305,7 +313,7 @@
           }
         },
         {
-          "id": 6,
+          "id": 5,
           "meta": {
             "info": "Duplicate Fulfill request should return transfer status, timestamp and fulfilment."
           },
@@ -317,10 +325,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.2.request.body.transferId}",
+          "path": "/transfers/{$prev.3.request.body.transferId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.2.request.body.transferId}"
+            "ID": "{$prev.3.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -379,7 +387,7 @@
             },
             "preRequest": {
               "exec": [
-                "await inboundEvent.addListener('payeeDuplicateCallback', 'put', '/transfers/{$prev.2.request.body.transferId}', (headers, body) => {",
+                "await inboundEvent.addListener('payeeDuplicateCallback', 'put', '/transfers/{$prev.3.request.body.transferId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
                 "})",
                 ""
@@ -388,7 +396,7 @@
           }
         },
         {
-          "id": 4,
+          "id": 6,
           "meta": {
             "info": "Check Transfer status"
           },
@@ -400,10 +408,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.2.request.body.transferId}",
+          "path": "/transfers/{$prev.3.request.body.transferId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.2.request.body.transferId}"
+            "ID": "{$prev.3.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -503,10 +511,6 @@
                 ]
               }
             ]
-          },
-          "scripts": {
-            "preRequest": {
-            }
           }
         }
       ]
@@ -516,9 +520,6 @@
       "name": "negative",
       "meta": {
         "info": "Duplicate invalid fulfil request after a successful valid fulfil request from Payee FSP should return callback to Payee FSP containing transfer information."
-      },
-      "fileInfo": {
-        "path": "testing-toolkit-test-cases/collections/hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json"
       },
       "requests": [
         {
@@ -618,7 +619,7 @@
           }
         },
         {
-          "id": 7,
+          "id": 2,
           "description": "Send Quote - Response",
           "apiVersion": {
             "minorVersion": 1,
@@ -680,14 +681,22 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                ""
+                "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.1.request.body.quoteId}', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
+                "})"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payerPutQuotes = await inboundEvent.getMessage('payerPutQuotes')",
+                "console.log(requestVariables.payerPutQuotes)"
               ]
             }
           }
         },
         {
-          "id": 2,
+          "id": 3,
           "meta": {
             "info": "Send Transfer-Prepare"
           },
@@ -754,7 +763,7 @@
           }
         },
         {
-          "id": 3,
+          "id": 4,
           "meta": {
             "info": "Send Fulfill"
           },
@@ -766,10 +775,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.2.request.body.transferId}",
+          "path": "/transfers/{$prev.3.request.body.transferId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.2.request.body.transferId}"
+            "ID": "{$prev.3.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -817,7 +826,7 @@
           }
         },
         {
-          "id": 6,
+          "id": 5,
           "meta": {
             "info": "Duplicate Fulfill"
           },
@@ -829,10 +838,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.2.request.body.transferId}",
+          "path": "/transfers/{$prev.3.request.body.transferId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.2.request.body.transferId}"
+            "ID": "{$prev.3.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -909,7 +918,7 @@
                 "id": 8,
                 "description": "Payee Side Callback Header - fspiop-uri is /transfers/transferId/error",
                 "exec": [
-                  "expect(requestVariables.payeeCallback.headers['fspiop-uri']).to.equal('/transfers/{$prev.2.request.body.transferId}/error')",
+                  "expect(requestVariables.payeeCallback.headers['fspiop-uri']).to.equal('/transfers/{$prev.3.request.body.transferId}/error')",
                   ""
                 ]
               },
@@ -948,7 +957,7 @@
             },
             "preRequest": {
               "exec": [
-                "await inboundEvent.addListener('put-error-callback', 'put', '/transfers/{$prev.2.request.body.transferId}/error')"
+                "await inboundEvent.addListener('put-error-callback', 'put', '/transfers/{$prev.3.request.body.transferId}/error')"
               ]
             }
           }
