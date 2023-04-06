@@ -54,19 +54,19 @@
         {
           "id": 2,
           "meta": {
-            "info": "Store SIMPAYEE position"
+            "info": "Store NORESPONSE_SIMPAYEE position"
           },
-          "description": "Store SIMPAYEE position",
+          "description": "Store NORESPONSE_SIMPAYEE position",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/positions",
-          "path": "/participants/{$inputs.SIMPAYEE_NAME}/positions",
+          "path": "/participants/{$inputs.NORESPONSE_SIMPAYEE_NAME}/positions",
           "method": "get",
           "params": {
-            "name": "{$inputs.SIMPAYEE_NAME}"
+            "name": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -88,7 +88,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "environment[environment.SIMPAYEE_NAME + 'PositionBeforeTransfer'] = response.body[0].value"
+                "environment[environment.NORESPONSE_SIMPAYEE_NAME + 'PositionBeforeTransfer'] = response.body[0].value"
               ]
             }
           }
@@ -106,6 +106,7 @@
             "asynchronous": true
           },
           "operationPath": "/quotes",
+          "path": "/quotes",
           "method": "post",
           "headers": {
             "Accept": "{$inputs.acceptQuotes}",
@@ -113,8 +114,9 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
-            "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}"
+            "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
             "transactionId": "{$function.generic.generateUUID}",
@@ -134,14 +136,14 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "MSISDN",
-                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
-                "fspId": "{$inputs.SIMPAYEE_NAME}"
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
               }
             },
             "amountType": "RECEIVE",
             "amount": {
-              "amount": "{$inputs.amount}",
+              "amount": "1",
               "currency": "{$inputs.currency}"
             },
             "transactionType": {
@@ -151,6 +153,7 @@
             },
             "note": "{$inputs.note}"
           },
+          "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
               {
@@ -166,200 +169,94 @@
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
-              },
-              {
-                "id": 3,
-                "description": "Callback Validate Protected Headers",
-                "exec": [
-                  "if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
-                  "}"
-                ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Validate JWS",
-                "exec": [
-                  "if (environment.ENABLE_JWS_VALIDATION) {",
-                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
-                  "}"
-                ]
-              },
-              {
-                "id": 5,
-                "description": "Payee Side Request Header - fspiop-source is same",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(request.headers['fspiop-source'])",
-                  "}"
-                ]
-              },
-              {
-                "id": 6,
-                "description": "Payee Side Request Header - fspiop-destination is same",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(request.headers['fspiop-destination'])",
-                  "}"
-                ]
-              },
-              {
-                "id": 7,
-                "description": "Payee Side Request Header - fspiop-signature is same",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
-                  "}"
-                ]
-              },
-              {
-                "id": 8,
-                "description": "Payee Side Request Header - accept is same",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
-                  "}"
-                ]
-              },
-              {
-                "id": 9,
-                "description": "Payee Side Request Header - content-type is same",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
-                  "}"
-                ]
-              },
-              {
-                "id": 10,
-                "description": "Payee Side Request Header - fspiop-uri is same",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(request.headers['fspiop-uri'])",
-                  "}"
-                ]
-              },
-              {
-                "id": 11,
-                "description": "Payee Side Request Header - fspiop-http-method is same",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(request.headers['fspiop-http-method'])",
-                  "}"
-                ]
-              },
-              {
-                "id": 12,
-                "description": "Callback Header - fspiop-source is fspiop-destination in request",
-                "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal(request.headers['fspiop-destination'])",
-                  ""
-                ]
-              },
-              {
-                "id": 13,
-                "description": "Callback Header - fspiop-desination is fspiop-source in request",
-                "exec": [
-                  "expect(callback.headers['fspiop-destination']).to.equal(request.headers['fspiop-source'])",
-                  ""
-                ]
-              },
-              {
-                "id": 14,
-                "description": "Callback Header - content-type is application/vnd.interoperability.quotes+json;version=1.0",
-                "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
-                  ""
-                ]
-              },
-              {
-                "id": 15,
-                "description": "Callback Header - accept is empty",
-                "exec": [
-                  "expect(callback.headers['accept']).to.equal(undefined)",
-                  ""
-                ]
-              },
-              {
-                "id": 16,
-                "description": "Callback Header - fspiop-uri is /quotes/quoteId",
-                "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal('/quotes/' + request.body.quoteId)",
-                  ""
-                ]
-              },
-              {
-                "id": 17,
-                "description": "Callback Header - fspiop-http-method is PUT",
-                "exec": [
-                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
-                  ""
-                ]
-              },
-              {
-                "id": 18,
-                "description": "Callback Body - quoteId is null",
-                "exec": [
-                  "expect(callback.body.quoteId).to.equal(undefined)",
-                  ""
-                ]
-              },
-              {
-                "id": 19,
-                "description": "Callback Body - ilpPacket is not null",
-                "exec": [
-                  "expect(callback.body.ilpPacket).to.not.equal(undefined)",
-                  ""
-                ]
-              },
-              {
-                "id": 20,
-                "description": "Callback Body - condition is not nul",
-                "exec": [
-                  "expect(callback.body.condition).to.not.equal(undefined)",
-                  ""
-                ]
               }
             ]
           },
-          "params": {
-            "Type": "MSISDN",
-            "ID": "{$inputs.toIdValue}"
-          },
-          "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "scriptingEngine": "javascript",
+          "ignoreCallbacks": true,
           "scripts": {
-            "postRequest": {
+            "preRequest": {
               "exec": [
-                "if(environment.ENABLE_JWS_VALIDATION) {",
-                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
-                "}",
-                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}",
                 ""
               ]
             },
-            "preRequest": {
+            "postRequest": {
               "exec": [
-                "if(environment.ENABLE_JWS_SIGNING) {",
-                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                "}"
+                ""
               ]
             }
           }
         },
         {
           "id": 4,
+          "description": "Send Quote - Response",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/{$prev.3.request.body.quoteId}",
+          "method": "put",
+          "params": {
+            "ID": "{$prev.3.request.body.quoteId}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "body": {
+            "transferAmount": {
+              "currency": "{$prev.3.request.body.amount.currency}",
+              "amount": "{$prev.3.request.body.amount.amount}"
+            },
+            "payeeReceiveAmount": {
+              "currency": "{$prev.3.request.body.amount.currency}",
+              "amount": "{$prev.3.request.body.amount.amount}"
+            },
+            "payeeFspFee": {
+              "currency": "{$prev.3.request.body.amount.currency}",
+              "amount": "0"
+            },
+            "payeeFspCommission": {
+              "currency": "{$prev.3.request.body.amount.currency}",
+              "amount": "0"
+            },
+            "expiration": "{$requestVariables.quoteExpiration}",
+            "ilpPacket": "{$inputs.ilpPacket}",
+            "condition": "{$inputs.validCondition}"
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "FSPIOP-Destination": "{$inputs.fromFspId}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
           "meta": {
             "info": "Send Prepare"
           },
@@ -389,8 +286,8 @@
               "currency": "{$inputs.currency}"
             },
             "expiration": "{$requestVariables.transferExpiration}",
-            "ilpPacket": "{$prev.3.callback.body.ilpPacket}",
-            "condition": "{$prev.3.callback.body.condition}"
+            "ilpPacket": "{$prev.4.request.body.ilpPacket}",
+            "condition": "{$prev.4.request.body.condition}"
           },
           "tests": {
             "assertions": [
@@ -447,7 +344,7 @@
           }
         },
         {
-          "id": 5,
+          "id": 6,
           "meta": {
             "info": "Send Payee Invalid Timestamp"
           },
@@ -500,7 +397,7 @@
           }
         },
         {
-          "id": 8,
+          "id": 7,
           "meta": {
             "info": "Check Transfer status on SIMPAYER - ABORTED"
           },
@@ -616,7 +513,7 @@
           }
         },
         {
-          "id": 7,
+          "id": 8,
           "meta": {
             "info": "Check Payeefsp position"
           },
@@ -627,10 +524,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/positions",
-          "path": "/participants/{$inputs.SIMPAYEE_NAME}/positions",
+          "path": "/participants/{$inputs.NORESPONSE_SIMPAYEE_NAME}/positions",
           "method": "get",
           "params": {
-            "name": "{$inputs.SIMPAYEE_NAME}"
+            "name": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -646,7 +543,7 @@
                 "id": 2,
                 "description": "Payeefsp position after Payee Invalid Fulfillment should be same as position before transfer.",
                 "exec": [
-                  "expect(response.body[0].value).to.equal(+environment.payeefspPositionBeforeTransfer)"
+                  "expect(response.body[0].value).to.equal(+environment[environment.NORESPONSE_SIMPAYEE_NAME + 'PositionBeforeTransfer'])"
                 ]
               }
             ]
@@ -673,9 +570,9 @@
         {
           "id": 9,
           "meta": {
-            "info": "Check Payerfsp positio"
+            "info": "Check Payerfsp position"
           },
-          "description": "Check Payerfsp positio",
+          "description": "Check Payerfsp position",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
