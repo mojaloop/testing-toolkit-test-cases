@@ -92,12 +92,15 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                ""
+                "await inboundEvent.addListener('payeePostQuotes', 'post', '/quotes', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})"
               ]
             },
             "postRequest": {
               "exec": [
-                ""
+                "requestVariables.payeePostQuotes = await inboundEvent.getMessage('payeePostQuotes')",
+                "console.log(requestVariables.payeePostQuotes)"
               ]
             }
           }
@@ -503,79 +506,6 @@
           },
           "scripts": {
             "preRequest": {
-              "exec": [
-                "// environment.newDateString = new Date(new Date().getTime() + 16000).toUTCString()",
-                "// console.log(environment.newDateString)"
-              ]
-            }
-          }
-        },
-        {
-          "id": 7,
-          "description": "Send Quote - Response",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "fspiop",
-            "asynchronous": true,
-            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
-          },
-          "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.1.request.body.quoteId}",
-          "method": "put",
-          "params": {
-            "ID": "{$prev.1.request.body.quoteId}"
-          },
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "body": {
-            "transferAmount": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "{$prev.1.request.body.amount.amount}"
-            },
-            "payeeReceiveAmount": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "{$prev.1.request.body.amount.amount}"
-            },
-            "payeeFspFee": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "0"
-            },
-            "payeeFspCommission": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "0"
-            },
-            "expiration": "{$requestVariables.quoteExpiration}",
-            "ilpPacket": "{$inputs.ilpPacket}",
-            "condition": "{$inputs.validCondition}"
-          },
-          "headers": {
-            "Content-Type": "{$inputs.contentTypeQuotes}",
-            "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
-            "FSPIOP-Destination": "{$inputs.fromFspId}"
-          },
-          "scriptingEngine": "javascript",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response status to be 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              }
-            ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "requestVariables.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                ""
-              ]
             }
           }
         }
@@ -674,28 +604,15 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "if(environment.ENABLE_JWS_SIGNING) {",
-                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                "}"
+                "await inboundEvent.addListener('payeePostQuotes', 'post', '/quotes', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})"
               ]
             },
             "postRequest": {
               "exec": [
-                "if(environment.ENABLE_JWS_VALIDATION) {",
-                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
-                "}",
-                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
-                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
-                "}",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}",
-                ""
+                "requestVariables.payeePostQuotes = await inboundEvent.getMessage('payeePostQuotes')",
+                "console.log(requestVariables.payeePostQuotes)"
               ]
             }
           }

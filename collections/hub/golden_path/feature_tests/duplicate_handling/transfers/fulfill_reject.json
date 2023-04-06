@@ -92,12 +92,15 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                ""
+                "await inboundEvent.addListener('payeePostQuotes', 'post', '/quotes', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})"
               ]
             },
             "postRequest": {
               "exec": [
-                ""
+                "requestVariables.payeePostQuotes = await inboundEvent.getMessage('payeePostQuotes')",
+                "console.log(requestVariables.payeePostQuotes)"
               ]
             }
           }
@@ -590,12 +593,15 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                ""
+                "await inboundEvent.addListener('payeePostQuotes', 'post', '/quotes', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})"
               ]
             },
             "postRequest": {
               "exec": [
-                ""
+                "requestVariables.payeePostQuotes = await inboundEvent.getMessage('payeePostQuotes')",
+                "console.log(requestVariables.payeePostQuotes)"
               ]
             }
           }
