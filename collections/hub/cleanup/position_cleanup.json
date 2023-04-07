@@ -882,7 +882,7 @@
     },
     {
       "id": 3,
-      "name": "Run default deferred settlement model for all the closed windows",
+      "name": "Run default deferred settlement model for all the closed and pending windows",
       "meta": {
         "info": "Run default deferred settlement model for all the closed windows"
       },
@@ -893,7 +893,121 @@
         {
           "id": 1,
           "meta": {
-            "info": "Create Settlement for Closed Window in default deferred settlement model "
+            "info": "Get list of all Closed Windows"
+          },
+          "description": "Get list of all Closed Windows",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows",
+          "path": "/settlementWindows",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "queryParams": {
+            "state": "CLOSED"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200/400",
+                "exec": [
+                  "if(response.status === 400){",
+                  "  expect(response.status).to.equal(400)",
+                  "}",
+                  "else{",
+                  "  expect(response.status).to.equal(200)",
+                  "}",
+                  "",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.isFailed === true) {",
+                "   custom.skipRequest();",
+                " }"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.closedWindowsData = response.body;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Get list of all pending Windows"
+          },
+          "description": "Get list of all pending Windows",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows",
+          "path": "/settlementWindows",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "queryParams": {
+            "state": "PENDING_SETTLEMENT"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200/400",
+                "exec": [
+                  "if(response.status === 400){",
+                  "  expect(response.status).to.equal(400)",
+                  "}",
+                  "else{",
+                  "  expect(response.status).to.equal(200)",
+                  "}",
+                  "",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.isFailed === true) {",
+                "   custom.skipRequest();",
+                " }"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.pendingWindowsData = response.body;"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Create Settlement for closed and pending windows in default deferred settlement model "
           },
           "description": "Create Settlement for Closed Window in default deferred settlement model ",
           "apiVersion": {
@@ -926,7 +1040,7 @@
                 "description": "Settlement State should be PENDING_SETTLEMENT",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
-                  "expect(environment.winstate).to.equal(\"PENDING_SETTLEMENT\")",
+                  "expect(response.body.state).to.equal(\"PENDING_SETTLEMENT\")",
                   "}"
                 ]
               },
@@ -968,10 +1082,21 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "if(environment.pendingWindowsData.size() === 0 && environment.closedWindowsData.size() === 0) {",
+                "  custom.skipRequest(); ",
+                "}",
+                "",
                 "var settlementWindows = [];",
                 "environment.closedWindowsData.forEach(closedWindow => {",
                 "  let windowData = {",
                 "    id: closedWindow.settlementWindowId",
+                "  };",
+                "  settlementWindows.push(windowData);",
+                "});",
+                "",
+                "environment.pendingWindowsData.forEach(pendingWindow => {",
+                "  let windowData = {",
+                "    id: pendingWindow.settlementWindowId",
                 "  };",
                 "  settlementWindows.push(windowData);",
                 "});",
@@ -1001,7 +1126,7 @@
           }
         },
         {
-          "id": 2,
+          "id": 4,
           "meta": {
             "info": "Prepare Settlement"
           },
@@ -1078,6 +1203,10 @@
                 "  custom.skipRequest(); ",
                 "}",
                 "",
+                "if(environment.pendingWindowsData.size() === 0 && environment.closedWindowsData.size() === 0) {",
+                "  custom.skipRequest(); ",
+                "}",
+                "",
                 "var res = environment.settlementData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
@@ -1088,11 +1217,11 @@
                 "if(environment.winstate===\"PENDING_SETTLEMENT\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
+                "   participant.accounts.forEach(account => {",
                 "",
                 " dfspsacc[i] = {",
                 "        dfspid: participant.id,",
-                "        dfspaccid: curAccount.id ",
+                "        dfspaccid: account.id ",
                 "    }",
                 "    i++;",
                 "})",
@@ -1134,7 +1263,7 @@
           }
         },
         {
-          "id": 3,
+          "id": 5,
           "meta": {
             "info": "Reserve Settlement"
           },
@@ -1210,6 +1339,10 @@
                 "  custom.skipRequest(); ",
                 "}",
                 "",
+                "if(environment.pendingWindowsData.size() === 0 && environment.closedWindowsData.size() === 0) {",
+                "  custom.skipRequest(); ",
+                "}",
+                "",
                 "var res = environment.preparedData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
@@ -1220,11 +1353,11 @@
                 "if(environment.winstate===\"PS_TRANSFERS_RECORDED\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
+                "   participant.accounts.forEach(account => {",
                 "",
                 " dfspsacc[i] = {",
                 "        dfspid: participant.id,",
-                "        dfspaccid: curAccount.id ",
+                "        dfspaccid: account.id ",
                 "    }",
                 "    i++;",
                 "})",
@@ -1266,7 +1399,7 @@
           }
         },
         {
-          "id": 4,
+          "id": 6,
           "meta": {
             "info": "Commit Settlement"
           },
@@ -1342,6 +1475,10 @@
                 "  custom.skipRequest(); ",
                 "}",
                 "",
+                "if(environment.pendingWindowsData.size() === 0 && environment.closedWindowsData.size() === 0) {",
+                "  custom.skipRequest(); ",
+                "}",
+                "",
                 "var res = environment.reservedData;",
                 "console.log('settlementId:',environment.settlementId);",
                 "var i=0;",
@@ -1352,11 +1489,11 @@
                 "if(environment.winstate===\"PS_TRANSFERS_RESERVED\"){",
                 "",
                 "res.participants.map(function (participant) {",
-                "   participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).forEach(curAccount => {",
+                "   participant.accounts.forEach(account => {",
                 "",
                 " dfspsacc[i] = {",
                 "        dfspid: participant.id,",
-                "        dfspaccid: curAccount.id ",
+                "        dfspaccid: account.id ",
                 "    }",
                 "    i++;",
                 "})",
@@ -1398,7 +1535,7 @@
           }
         },
         {
-          "id": 5,
+          "id": 7,
           "meta": {
             "info": "Settle Settlement"
           },
@@ -1471,6 +1608,10 @@
             "preRequest": {
               "exec": [
                 "if(environment.isFailed === true) {",
+                "  custom.skipRequest(); ",
+                "}",
+                "",
+                "if(environment.pendingWindowsData.size() === 0 && environment.closedWindowsData.size() === 0) {",
                 "  custom.skipRequest(); ",
                 "}",
                 "",
