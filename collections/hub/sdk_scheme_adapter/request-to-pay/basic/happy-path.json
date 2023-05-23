@@ -1,0 +1,199 @@
+{
+  "options": {},
+  "name": "basic_request-to-pay",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Request To Pay",
+      "fileInfo": {
+        "path": "basic/request-to-pay.json"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "POST /requestToPay",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/requestToPay",
+          "path": "/requestToPay",
+          "method": "post",
+          "body": {
+            "homeR2PTransactionId": "abc123",
+            "from": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM1_MSISDN_1}",
+              "displayName": "Henrik",
+              "firstName": "Henrik",
+              "lastName": "Karlsson",
+              "dateOfBirth": "1966-06-16",
+              "fspId": "ttksim1"
+            },
+            "to": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.TTKSIM2_MSISDN_1}"
+            },
+            "amountType": "RECEIVE",
+            "currency": "USD",
+            "amount": "123",
+            "transactionType": "DEPOSIT",
+            "authenticationType": "OTP"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check Return Status Code",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check response has fspid",
+                "exec": [
+                  "expect(response.body.to.fspId).to.equal('{$inputs.TTKSIM2_FSPID}')",
+                  ""
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Check response first name is ReceiverFirst",
+                "exec": [
+                  "expect(response.body.to.firstName).to.equal('ReceiverFirst')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Check response last name is ReceiverLast",
+                "exec": [
+                  "expect(response.body.to.lastName).to.equal('ReceiverLast')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Check response has party result",
+                "exec": [
+                  "expect(response.body.getPartiesResponse).to.exist;"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Check response has  WAITING_FOR_PARTY_ACCEPTANCE state",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE');"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Check response MSISDN is same as in the request",
+                "exec": [
+                  "expect(response.body.to.idValue).to.equal('{$inputs.TTKSIM2_MSISDN_1}')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "description": "PUT /requestToPay party confirmation",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "scheme_adapter_outbound",
+            "asynchronous": true,
+            "prefix": "/sdk-out",
+            "hostnames": [],
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+          },
+          "operationPath": "/requestToPay/{transactionRequestId}",
+          "path": "/requestToPay/{$prev.1.response.body.transactionRequestId}",
+          "method": "put",
+          "params": {
+            "transactionRequestId": "{$prev.1.response.body.transactionRequestId}"
+          },
+          "body": {
+            "acceptParty": true
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check Return Status Code",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Check response has fspid",
+                "exec": [
+                  "expect(response.body.to.fspId).to.equal('{$inputs.TTKSIM2_FSPID}')",
+                  ""
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Check response first name is ReceiverFirst",
+                "exec": [
+                  "expect(response.body.to.firstName).to.equal('ReceiverFirst')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Check response last name is ReceiverLast",
+                "exec": [
+                  "expect(response.body.to.lastName).to.equal('ReceiverLast')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Check response has party result",
+                "exec": [
+                  "expect(response.body.getPartiesResponse).to.exist;"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Check response has  COMPLETED state",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('COMPLETED');"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Check response has transactionRequest response",
+                "exec": [
+                  "expect(response.body.transactionRequestResponse).to.exist;"
+                ]
+              },
+              {
+                "id": 12,
+                "description": "Check response has transactionRequestState as RECEIVED",
+                "exec": [
+                  "expect(response.body.transactionRequestResponse.body.transactionRequestState).to.equal('RECEIVED');"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
