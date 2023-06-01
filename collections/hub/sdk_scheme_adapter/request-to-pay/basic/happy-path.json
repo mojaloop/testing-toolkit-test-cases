@@ -6,7 +6,7 @@
       "id": 1,
       "name": "Request To Pay",
       "fileInfo": {
-        "path": "basic/request-to-pay.json"
+        "path": "request-to-pay/basic/happy-path.json"
       },
       "requests": [
         {
@@ -189,8 +189,107 @@
                 "exec": [
                   "expect(response.body.transactionRequestResponse.body.transactionRequestState).to.equal('RECEIVED');"
                 ]
+              },
+              {
+                "id": 13,
+                "description": "Inbound Quotes Request - amount",
+                "exec": [
+                  "expect(environment.inboundQuotesRequest.body.amount).to.equal(response.body.amount)"
+                ]
+              },
+              {
+                "id": 14,
+                "description": "Inbound Quotes Request - currency",
+                "exec": [
+                  "expect(environment.inboundQuotesRequest.body.currency).to.equal(response.body.currency)"
+                ]
+              },
+              {
+                "id": 15,
+                "description": "Inbound Quotes Request - from idValue",
+                "exec": [
+                  "expect(environment.inboundQuotesRequest.body.from.idValue).to.equal(response.body.to.idValue)"
+                ]
+              },
+              {
+                "id": 16,
+                "description": "Inbound Quotes Request - to idValue",
+                "exec": [
+                  "expect(environment.inboundQuotesRequest.body.to.idValue).to.equal(response.body.from.idValue)"
+                ]
+              },
+              {
+                "id": 17,
+                "description": "Inbound Quotes Request - from fspId",
+                "exec": [
+                  "expect(environment.inboundQuotesRequest.body.from.fspId).to.equal(response.body.to.fspId)"
+                ]
+              },
+              {
+                "id": 18,
+                "description": "Inbound Quotes Request - transactionRequestId",
+                "exec": [
+                  "expect(environment.inboundQuotesRequest.body.transactionRequestId).to.equal(response.body.transactionRequestId)"
+                ]
+              },
+              {
+                "id": 19,
+                "description": "Inbound Quotes Request - homeR2PTransactionId",
+                "exec": [
+                  "expect(environment.inboundQuotesRequest.body.homeR2PTransactionId).to.equal(response.body.homeR2PTransactionId)"
+                ]
+              },
+              {
+                "id": 20,
+                "description": "Inbound Transfers Request - amount",
+                "exec": [
+                  "expect(environment.inboundTransfersRequest.body.amount).to.equal(response.body.amount)"
+                ]
+              },
+              {
+                "id": 21,
+                "description": "Inbound Transfers Request - currency",
+                "exec": [
+                  "expect(environment.inboundTransfersRequest.body.currency).to.equal(response.body.currency)"
+                ]
+              },
+              {
+                "id": 22,
+                "description": "Inbound Transfers Request - quoteId",
+                "exec": [
+                  "expect(environment.inboundTransfersRequest.body.quote.quoteId).to.equal(environment.inboundQuotesRequest.body.quoteId)"
+                ]
+              },
+              {
+                "id": 23,
+                "description": "Inbound Transfers Request - transactionRequestId",
+                "exec": [
+                  "expect(environment.inboundTransfersRequest.body.transactionRequestId).to.equal(response.body.transactionRequestId)"
+                ]
+              },
+              {
+                "id": 24,
+                "description": "Inbound Transfers Request - homeR2PTransactionId",
+                "exec": [
+                  "expect(environment.inboundTransfersRequest.body.homeR2PTransactionId).to.equal(response.body.homeR2PTransactionId)"
+                ]
               }
             ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "await inboundEvent.addListener('inbound-quotes-request', 'post', '/quoterequests')",
+                "await inboundEvent.addListener('inbound-transfers-request', 'post', '/transfers')"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.inboundQuotesRequest = await inboundEvent.getMessage('inbound-quotes-request')",
+                "environment.inboundTransfersRequest = await inboundEvent.getMessage('inbound-transfers-request')"
+              ]
+            }
           }
         }
       ]
