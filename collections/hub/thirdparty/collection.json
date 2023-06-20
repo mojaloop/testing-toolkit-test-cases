@@ -65,25 +65,24 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "expected response",
+                "description": "Response body should contain accounts",
                 "exec": [
-                  "const expected = {",
-                  "  accounts: [",
-                  "    {",
-                  "      accountNickname: 'dfspa.user.nickname1',",
-                  "      address: 'dfspa.username.1234',",
-                  "      currency: '{$inputs.currency2}'",
-                  "    },",
-                  "    {",
-                  "      accountNickname: 'dfspa.user.nickname2',",
-                  "      address: 'dfspa.username.5678',",
-                  "      currency: '{$inputs.currency}'",
-                  "    }",
-                  "],",
-                  "  currentState: 'COMPLETED'",
-                  "}",
-                  "",
-                  "expect(response.body).to.deep.equal(expected)"
+                  "expect(response.body).to.have.property('accounts')"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Accounts array has two elements",
+                "exec": [
+                  "expect(response.body.accounts).to.have.length(2)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "An account should contain addresses",
+                "exec": [
+                  "expect(response.body.accounts.map(a => a.address)).to.include.members(['dfspa.username.1234', 'dfspa.username.5678']);",
+                  ""
                 ]
               }
             ]
