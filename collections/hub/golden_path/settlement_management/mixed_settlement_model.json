@@ -3278,21 +3278,23 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "console.log(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}');",
+                "//console.log(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}');",
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'testfsp2callbacksq')",
+                "  //await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'testfsp2callbacksq')",
                 "}"
               ]
             },
             "postRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
+                "  await custom.sleep(500)",
+                "  // environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.testfsp2callbacks = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.quoteId}')).data;",
+                "  ",
                 "}",
                 "",
                 "console.log(environment.testfsp2callbacks);",
-                "",
                 ""
               ]
             }
@@ -3413,11 +3415,15 @@
             "postRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.testfsp2callbackst = await websocket.getMessage('testfsp2callbackst', environment.WS_ASSERTION_TIMEOUT)",
+                "  // environment.testfsp2callbackst = await websocket.getMessage('testfsp2callbackst', environment.WS_ASSERTION_TIMEOUT)",
+                "  await custom.sleep(500)",
+                "  environment.testfsp2callbackst = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.transferId}')).data",
+                "  console.log(environment.testfsp2callbackst)",
                 "}"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {

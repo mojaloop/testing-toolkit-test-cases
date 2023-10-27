@@ -1157,7 +1157,8 @@
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "  requestVariables.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "  // requestVariables.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "  requestVariables.payerCallback = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$inputs.testfsp1MSISDN}')).data",
                 "}",
                 "",
                 "  if (environment.ENABLE_JWS_VALIDATION) {",

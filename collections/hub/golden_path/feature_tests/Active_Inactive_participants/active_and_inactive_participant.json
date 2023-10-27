@@ -42,7 +42,8 @@
           "headers": {
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -242,7 +243,8 @@
                 ]
               }
             ]
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -420,7 +422,8 @@
                 ]
               }
             ]
-          }
+          },
+          "disabled": false
         },
         {
           "id": 4,
@@ -457,7 +460,8 @@
           "headers": {
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
-          }
+          },
+          "disabled": false
         },
         {
           "id": 5,
@@ -521,6 +525,7 @@
           },
           "ignoreCallbacks": true,
           "scriptingEngine": "javascript",
+          "delay": "250",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -538,7 +543,11 @@
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  requestVariables.sim1Callback = await websocket.getMessage('sim1Callback', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
                 "  requestVariables.sim2Request = await websocket.getMessage('sim2Request', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
+                "  requestVariables.sim2Request = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/requests/{$request.body.quoteId}')).data;",
+                "  ",
                 "  environment.sim1IlpPacket =  requestVariables.sim1Callback.data.ilpPacket",
                 "  environment.sim1Condition =  requestVariables.sim1Callback.data.condition",
                 "  // JWS Validation",
@@ -723,7 +732,8 @@
                 ]
               }
             ]
-          }
+          },
+          "disabled": false
         },
         {
           "id": 6,
@@ -782,7 +792,11 @@
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  requestVariables.sim1Callback = await websocket.getMessage('sim1Callback', environment.WS_ASSERTION_TIMEOUT)",
-                "  requestVariables.sim2Request = await websocket.getMessage('sim2Request', environment.WS_ASSERTION_TIMEOUT)",
+                "  //requestVariables.sim2Request = await websocket.getMessage('sim2Request', environment.WS_ASSERTION_TIMEOUT)",
+                "  requestVariables.sim2Request = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/requests/{$request.body.transferId}')).data;",
+                "  ",
+                "  console.log('sim2Request: ', requestVariables.sim2Request)",
+                "  ",
                 "  // JWS Validation",
                 "  if(environment.ENABLE_JWS_VALIDATION) {",
                 "    requestVariables.jwsValidationStatus =  custom.jws.validateCallback(requestVariables.sim1Callback.headers, requestVariables.sim1Callback.data, environment.TESTFSP2_JWS_PUB_KEY)",
@@ -956,7 +970,8 @@
                 ]
               }
             ]
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
