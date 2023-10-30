@@ -2610,6 +2610,7 @@
             "postRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
                 "  // environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
                 "  await custom.sleep(250)",
                 "  environment.testfsp2callbacks = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.quoteId}')).data",
