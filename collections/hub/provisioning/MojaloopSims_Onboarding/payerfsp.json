@@ -143,7 +143,7 @@
                 "    let isOk = false;",
                 "    ",
                 "    for(var i in jsonData) {",
-                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency') && Number.parseFloat(jsonData[i].value) != 0) {",
                 "        pm.environment.set(\"payerfspSettlementAccountId\", jsonData[i].id)",
                 "        pm.environment.set(\"payerfspSettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "        isOk = true",
