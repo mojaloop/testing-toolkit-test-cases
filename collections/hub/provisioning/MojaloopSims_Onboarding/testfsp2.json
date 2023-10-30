@@ -247,6 +247,10 @@
           "scripts": {
             "postRequest": {
               "exec": [
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"testfsp2SettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"testfsp2fundsInPrepareAmount\"))",
+                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"testfsp2SettlementAccountBalanceBeforeFundsIn\")))",
+                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"testfsp2fundsInPrepareAmount\")))",
+                "console.log(`expectedBalance: `, expectedBalance)",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
                 "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
@@ -261,7 +265,7 @@
                 "    let isOk = false;",
                 "    ",
                 "    for(var i in jsonData) {",
-                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency') && Number.parseFloat(jsonData[i].value) == expectedBalance) {",
                 "        pm.environment.set(\"testfsp2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "        isOk = true",
                 "      }",
@@ -630,6 +634,10 @@
           "scripts": {
             "postRequest": {
               "exec": [
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"testfsp2Currency2SettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"testfsp2fundsInPrepareAmountCurrency2\"))",
+                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"testfsp2Currency2SettlementAccountBalanceBeforeFundsIn\")))",
+                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"testfsp2fundsInPrepareAmountCurrency2\")))",
+                "console.log(`expectedBalance: `, expectedBalance)",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
                 "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
@@ -644,7 +652,7 @@
                 "    let isOk = false;",
                 "    ",
                 "    for(var i in jsonData) {",
-                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2') && Number.parseFloat(jsonData[i].value) != 0) {",
+                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2') && Number.parseFloat(jsonData[i].value) == expectedBalance) {",
                 "        pm.environment.set(\"testfsp2Currency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "        isOk = true",
                 "      }",
