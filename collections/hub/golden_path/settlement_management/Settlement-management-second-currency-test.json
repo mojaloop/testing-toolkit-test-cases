@@ -2611,7 +2611,8 @@
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  // environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
-                "  await custom.sleep(250)",
+                "  const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 250",
+                "  await custom.sleep(customSleep)",
                 "  environment.testfsp2callbacks = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.quoteId}')).data",
                 "}",
                 "",
