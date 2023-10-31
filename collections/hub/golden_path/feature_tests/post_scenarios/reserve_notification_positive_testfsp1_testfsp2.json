@@ -8,7 +8,7 @@
         "info": "Reserve Notification Positive - Testfsp1 Testfsp2"
       },
       "fileInfo": {
-        "path": "golden_path/feature_tests/post_scenarios/reserve_notification_positive_testfsp1_testfsp2.json"
+        "path": "hub/golden_path/feature_tests/post_scenarios/reserve_notification_positive_testfsp1_testfsp2.json"
       },
       "requests": [
         {
@@ -1143,7 +1143,8 @@
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  await websocket.connect(environment.TESTFSP1_SDK_TESTAPI_WS_URL + '/requests/{$inputs.testfsp1MSISDN}', 'payeeRequest')",
                 "  ",
-                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.testfsp1MSISDN}', 'payerCallback')",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.testfsp1MSISDN}', 'payerCallback')",
                 "}",
                 "",
                 "requestVariables.expectedPayeeFirstName = \"PayeeFirst\"",
@@ -1157,7 +1158,9 @@
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "  requestVariables.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // requestVariables.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "  requestVariables.payerCallback = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$inputs.testfsp1MSISDN}')).data",
                 "}",
                 "",
                 "  if (environment.ENABLE_JWS_VALIDATION) {",

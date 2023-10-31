@@ -129,8 +129,9 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "const jsonData = pm.response.body",
-                "console.log(jsonData)",
+                "const res = pm.response",
+                "const jsonData = res.body",
+                "",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
                 "    pm.environment.set(\"payerfspSettlementAccountId\", jsonData[i].id)",
@@ -139,7 +140,8 @@
                 "}"
               ]
             }
-          }
+          },
+          "delay": "{$inputs.DELAY_FUNDS_IN}"
         },
         {
           "id": 4,
@@ -243,17 +245,69 @@
               }
             ]
           },
-          "delay": "1000",
+          "delay": "{$inputs.DELAY_FUNDS_IN}",
           "scripts": {
             "postRequest": {
               "exec": [
-                "const jsonData = pm.response.body",
-                "console.log(jsonData)",
-                "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"payerfspSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"payerfspSettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"payerfspfundsInPrepareAmount\"))",
+                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"payerfspSettlementAccountBalanceBeforeFundsIn\")))",
+                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"payerfspfundsInPrepareAmount\")))",
+                "console.log(`expectedBalance: `, expectedBalance)",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 1000",
+                "",
+                "async function main() {",
+                "  let res = pm.response",
+                "  let jsonData = res.body",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    let isOk = false;",
+                "    ",
+                "    for(var i in jsonData) {",
+                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency') && Number.parseFloat(jsonData[i].value) == expectedBalance) {",
+                "        pm.environment.set(\"payerfspSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "        isOk = true",
+                "      }",
+                "    }",
+                "    if (isOk) {",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break; // lets break out of retry loop loop",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await wait(maxRetryWait)",
+                "      const pmResponse = await makeRequest()",
+                "      jsonData = JSON.parse(pmResponse.body)",
+                "    }",
                 "  }",
-                "}"
+                "}",
+                "",
+                "async function makeRequest() {",
+                "    const requestParams = {",
+                "        method: 'GET', ",
+                "        url: `${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIMPAYER_NAME}/accounts`,",
+                "        header: {",
+                "          'Content-Type': 'application/json',",
+                "        },",
+                "    };",
+                "    ",
+                "    return new Promise((resolve, reject) => {",
+                "      pm.sendRequest(requestParams, (error, response) => {",
+                "        if (error) reject(error)",
+                "        resolve(response)",
+                "      })",
+                "    })",
+                "}",
+                "",
+                "function wait(ms) {",
+                "  return new Promise((resolve) => {",
+                "    setTimeout(resolve, ms)",
+                "  });",
+                "}",
+                "",
+                "main()"
               ]
             }
           }
@@ -578,7 +632,7 @@
               }
             ]
           },
-          "delay": "500",
+          "delay": "{$inputs.DELAY_FUNDS_IN}",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -588,12 +642,71 @@
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
                 "    pm.environment.set(\"payerfspCurrency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
-                "}"
+                "}",
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let res = pm.response",
+                "  let jsonData = res.body",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    let isOk = false;",
+                "    ",
+                "    for(var i in jsonData) {",
+                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "        pm.environment.set(\"payerfspCurrency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "        isOk = true",
+                "      }",
+                "    }",
+                "    if (isOk) {",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break; // lets break out of retry loop loop",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await wait(maxRetryWait)",
+                "      const pmResponse = await makeRequest()",
+                "      jsonData = JSON.parse(pmResponse.body)",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "async function makeRequest() {",
+                "    const requestParams = {",
+                "        method: 'GET', ",
+                "        url: `${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIMPAYER_NAME}/accounts`,",
+                "        header: {",
+                "          'Content-Type': 'application/json',",
+                "        },",
+                "    };",
+                "    ",
+                "    return new Promise((resolve, reject) => {",
+                "      pm.sendRequest(requestParams, (error, response) => {",
+                "        if (error) reject(error)",
+                "        resolve(response)",
+                "      })",
+                "    })",
+                "}",
+                "",
+                "function wait(ms) {",
+                "  return new Promise((resolve) => {",
+                "    setTimeout(resolve, ms)",
+                "  });",
+                "}",
+                "",
+                "main()"
               ]
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/MojaloopSims_Onboarding/payerfsp.json"
+      }
     },
     {
       "id": 2,
@@ -1424,7 +1537,10 @@
             ]
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/MojaloopSims_Onboarding/payerfsp.json"
+      }
     },
     {
       "id": 3,
@@ -1547,7 +1663,10 @@
             ]
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/MojaloopSims_Onboarding/payerfsp.json"
+      }
     },
     {
       "id": 4,
@@ -1634,7 +1753,10 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/MojaloopSims_Onboarding/payerfsp.json"
+      }
     }
   ]
 }

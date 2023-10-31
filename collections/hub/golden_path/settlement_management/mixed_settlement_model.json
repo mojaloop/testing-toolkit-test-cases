@@ -676,7 +676,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 2,
@@ -1852,7 +1858,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 3,
@@ -2172,7 +2184,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 4,
@@ -2478,7 +2496,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 5,
@@ -2780,7 +2804,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 6,
@@ -3082,7 +3112,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 7,
@@ -3242,21 +3278,26 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "console.log(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}');",
+                "//console.log(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}');",
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'testfsp2callbacksq')",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'testfsp2callbacksq')",
                 "}"
               ]
             },
             "postRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 250",
+                "  await custom.sleep(customSleep)",
+                "  // environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
+                "  environment.testfsp2callbacks = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.quoteId}')).data;",
+                "  ",
                 "}",
                 "",
                 "console.log(environment.testfsp2callbacks);",
-                "",
                 ""
               ]
             }
@@ -3369,21 +3410,34 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'testfsp2callbackst')",
-                "}"
+                "// if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'testfsp2callbackst')",
+                "// }"
               ]
             },
             "postRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.testfsp2callbackst = await websocket.getMessage('testfsp2callbackst', environment.WS_ASSERTION_TIMEOUT)",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // environment.testfsp2callbackst = await websocket.getMessage('testfsp2callbackst', environment.WS_ASSERTION_TIMEOUT)",
+                "  const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 250",
+                "  await custom.sleep(customSleep)",
+                "  environment.testfsp2callbackst = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.transferId}')).data",
+                "  console.log(environment.testfsp2callbackst)",
                 "}"
               ]
             }
-          }
+          },
+          "disabled": false
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 8,
@@ -3685,7 +3739,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 9,
@@ -3987,7 +4047,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 10,
@@ -4319,7 +4385,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 11,
@@ -4577,7 +4649,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 12,
@@ -4966,7 +5044,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 13,
@@ -5257,7 +5341,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 14,
@@ -5646,7 +5736,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 15,
@@ -5956,7 +6052,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 16,
@@ -6345,7 +6447,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 17,
@@ -6699,7 +6807,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 18,
@@ -7088,7 +7202,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     },
     {
       "id": 19,
@@ -7374,7 +7494,13 @@
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/settlement_management/mixed_settlement_model.json",
+        "labels": [
+          "settlements"
+        ]
+      }
     }
   ]
 }
