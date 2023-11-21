@@ -560,6 +560,7 @@
           },
           "ignoreCallbacks": true,
           "scriptingEngine": "javascript",
+          "delay": "250",
           "scripts": {
             "preRequest": {
               "exec": [
@@ -569,7 +570,8 @@
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  await websocket.connect(environment.TESTFSP1_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'sim1Callback')",
-                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'sim2Request')",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'sim2Request')",
                 "}"
               ]
             },
@@ -577,7 +579,11 @@
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  requestVariables.sim1Callback = await websocket.getMessage('sim1Callback', environment.WS_ASSERTION_TIMEOUT)",
-                "  requestVariables.sim2Request = await websocket.getMessage('sim2Request', environment.WS_ASSERTION_TIMEOUT)",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // requestVariables.sim2Request = await websocket.getMessage('sim2Request', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
+                "  requestVariables.sim2Request = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/requests/{$request.body.quoteId}')).data;",
+                "  ",
                 "  environment.sim1IlpPacket =  requestVariables.sim1Callback.data.ilpPacket",
                 "  environment.sim1Condition =  requestVariables.sim1Callback.data.condition",
                 "  // JWS Validation",
@@ -821,7 +827,11 @@
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  requestVariables.sim1Callback = await websocket.getMessage('sim1Callback', environment.WS_ASSERTION_TIMEOUT)",
-                "  requestVariables.sim2Request = await websocket.getMessage('sim2Request', environment.WS_ASSERTION_TIMEOUT)",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // requestVariables.sim2Request = await websocket.getMessage('sim2Request', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
+                "  requestVariables.sim2Request = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/requests/{$request.body.transferId}')).data;",
+                "  ",
                 "  // JWS Validation",
                 "  if(environment.ENABLE_JWS_VALIDATION) {",
                 "    requestVariables.jwsValidationStatus =  custom.jws.validateCallback(requestVariables.sim1Callback.headers, requestVariables.sim1Callback.data, environment.TESTFSP2_JWS_PUB_KEY)",
@@ -997,7 +1007,10 @@
             ]
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/Active_Inactive_participants/active_and_inactive_participants_accounts.json"
+      }
     }
   ]
 }
