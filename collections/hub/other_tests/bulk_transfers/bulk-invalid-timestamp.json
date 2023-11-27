@@ -47,7 +47,8 @@
                 "environment[\"payerfspPositionBeforePrepare\"] = response.body[0].value"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -85,7 +86,8 @@
                 "environment[\"payeefspPositionBeforePrepare\"] = response.body[0].value"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -184,7 +186,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 4,
@@ -228,7 +231,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 9,
@@ -303,7 +307,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 6,
@@ -400,7 +405,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 7,
@@ -427,19 +433,64 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "expect(environment.participantsPositionResponse.code).to.equal(200)"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payerfsp position after Payer ABORT should be same as position before prepare.",
                 "exec": [
-                  "expect(response.body[0].value).to.equal(+environment.payerfspPositionBeforePrepare)"
+                  "expect(environment.participantsPositionResponse.body[0].value).to.equal(+environment.payerfspPositionBeforePrepare)"
                 ]
               }
             ]
           },
-          "delay": "10000"
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const expectedStatusCode = 200;",
+                "environment.participantsPositionResponse = null",
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let _response = response",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    const isOk = _response.code === expectedStatusCode;",
+                "    ",
+                "    if (isOk) {",
+                "      environment.participantsPositionResponse = _response",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await custom.sleep(maxRetryWait);",
+                "      const axiosRes = await makeRequest()",
+                "      _response = { body: axiosRes.data, code: axiosRes.status }",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "function makeRequest() {",
+                "    const reqParams = {",
+                "        method: 'get', ",
+                "        url: `{$inputs.HOST_CENTRAL_LEDGER}/participants/{$inputs.fromFspId}/positions`",
+                "    };",
+                "    ",
+                "    return axios(reqParams);",
+                "}",
+                "",
+                "await main()"
+              ]
+            }
+          },
+          "disabled": false
         },
         {
           "id": 8,
@@ -465,19 +516,64 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "expect(environment.participantsPositionResponse.code).to.equal(200)"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payeefsp position after Payee ABORT should be same as position before prepare.",
                 "exec": [
-                  "expect(response.body[0].value).to.equal(+environment.payeefspPositionBeforePrepare)"
+                  "expect(environment.participantsPositionResponse.body[0].value).to.equal(+environment.payeefspPositionBeforePrepare)"
                 ]
               }
             ]
           },
-          "delay": "10000"
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const expectedStatusCode = 200;",
+                "environment.participantsPositionResponse = null",
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let _response = response",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    const isOk = _response.code === expectedStatusCode;",
+                "    ",
+                "    if (isOk) {",
+                "      environment.participantsPositionResponse = _response",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await custom.sleep(maxRetryWait);",
+                "      const axiosRes = await makeRequest()",
+                "      _response = { body: axiosRes.data, code: axiosRes.status }",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "function makeRequest() {",
+                "    const reqParams = {",
+                "        method: 'get', ",
+                "        url: `{$inputs.HOST_CENTRAL_LEDGER}/participants/{$inputs.NORESPONSE_NAME}/positions`",
+                "    };",
+                "    ",
+                "    return axios(reqParams);",
+                "}",
+                "",
+                "await main()"
+              ]
+            }
+          }
         }
       ]
     }

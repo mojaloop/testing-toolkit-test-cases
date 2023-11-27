@@ -106,7 +106,8 @@
                 "console.log(requestVariables.payeePostQuotes)"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -183,7 +184,8 @@
                 "console.log(requestVariables.payerPutQuotes)"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -253,7 +255,8 @@
                 "console.log(requestVariables.payeePostTransfer)"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 4,
@@ -309,7 +312,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 5,
@@ -427,7 +431,8 @@
                 "// console.log(environment.newDateString)"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 6,
@@ -455,8 +460,8 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "Content-Type": "{$inputs.contentTypeTransfers}"
           },
+          "delay": "15000",
           "scriptingEngine": "javascript",
-          "delay": "24000",
           "tests": {
             "assertions": [
               {
@@ -560,6 +565,60 @@
             "preRequest": {
               "exec": [
                 ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "// const expectedTransferState = 'ABORTED'",
+                "",
+                "// // lets get retry config",
+                "// const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "// const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "// async function main() {",
+                "//   let jsonData = callback.body",
+                "",
+                "//   for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "//     console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "//     const isOk = jsonData.transferState === expectedTransferState;",
+                "    ",
+                "//     if (isOk) {",
+                "//       console.log(`Everything is OK, let's continue`)",
+                "//       break;",
+                "//     } else {",
+                "//       console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "//       await custom.sleep(maxRetryWait);",
+                "//       jsonData = (await makeRequest()).data",
+                "//       console.log('jsonData: ', jsonData)",
+                "//     }",
+                "//   }",
+                "// }",
+                "",
+                "// async function makeRequest() {",
+                "//     const reqParams = {",
+                "//         method: 'get', ",
+                "//         url: `{$inputs.HOST_ML_API_ADAPTER}/transfers/{$prev.3.request.body.transferId}`,",
+                "//         headers: {",
+                "//           'Content-Type': `{$inputs.contentTypeTransfers}`,",
+                "//           Accept: `{$inputs.acceptTransfers}`,",
+                "//           Date: `{$function.generic.curDate}`,",
+                "//           'FSPIOP-Source': `{$inputs.fromFspId}`,",
+                "//           Authorization: `{$inputs.TTK_BEARER_TOKEN}`",
+                "//         }",
+                "//     };",
+                "    ",
+                "//     /*",
+                "//     const reqParams = {",
+                "//       method: 'get',",
+                "//       url: `{$environment.PAYERFSP_SDK_TESTAPI_URL}/callbacks/{$prev.3.request.body.transferId}`",
+                "//     }",
+                "//     */",
+                "    ",
+                "//     return axios.get(reqParams);",
+                "// }",
+                "",
+                "// await main()"
               ]
             }
           }

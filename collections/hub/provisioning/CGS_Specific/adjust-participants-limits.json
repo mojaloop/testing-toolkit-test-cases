@@ -32,12 +32,60 @@
                 "id": 1,
                 "description": "response code 200",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "const statusCode = environment.participantLimitsResponseCode",
+                  "expect(statusCode).to.equal(200)"
                 ]
               }
             ]
           },
-          "delay": "{$inputs.DELAY_CGS}"
+          "delay": "{$inputs.DELAY_CGS}",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const expectedStatusCode = 200;",
+                "environment.participantLimitsResponseCode = null",
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let statusCode = response.code",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    const isOk = statusCode === expectedStatusCode;",
+                "    ",
+                "    if (isOk) {",
+                "      environment.participantLimitsResponseCode = statusCode",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await custom.sleep(maxRetryWait);",
+                "      statusCode = (await makeRequest()).status",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "function makeRequest() {",
+                "    const reqParams = {",
+                "        method: 'get', ",
+                "        url: `{$inputs.HOST_CENTRAL_LEDGER}/participants/limits`,",
+                "        headers: {",
+                "          'Content-Type': 'application/json',",
+                "        }",
+                "    };",
+                "    ",
+                "    return axios.get(reqParams);",
+                "}",
+                "",
+                "await main()"
+              ]
+            }
+          }
         },
         {
           "id": 2,
