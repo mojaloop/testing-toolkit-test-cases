@@ -343,61 +343,116 @@
                 "id": 1,
                 "description": "Status code is 202",
                 "exec": [
-                  "expect(response.status).to.equal(202)"
+                  "expect(environment.bulkTransferResponse.code).to.equal(202)"
                 ]
               },
               {
                 "id": 2,
                 "description": "payerfsp callback - date header should be set",
                 "exec": [
-                  "expect(callback.headers).to.have.property('date')"
+                  "expect(environment.bulkTransferCallback.headers).to.have.property('date')"
                 ]
               },
               {
                 "id": 3,
                 "description": "payerfsp callback - fspiop-source should be switch",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal('switch')"
+                  "expect(environment.bulkTransferCallback.headers['fspiop-source']).to.equal('switch')"
                 ]
               },
               {
                 "id": 4,
                 "description": "payerfsp callback - fspiop-destination should be testingtoolkitdfsp",
                 "exec": [
-                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
+                  "expect(environment.bulkTransferCallback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
                 ]
               },
               {
                 "id": 5,
                 "description": "payerfsp callback - fspiop-uri should be as expected",
                 "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
+                  "expect(environment.bulkTransferCallback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
                 "id": 6,
                 "description": "payerfsp callback - fspiop-http-method should be PUT",
                 "exec": [
-                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')"
+                  "expect(environment.bulkTransferCallback.headers['fspiop-http-method']).to.equal('PUT')"
                 ]
               },
               {
                 "id": 8,
                 "description": "payerfsp callback - errorInformation should be set correctly",
                 "exec": [
-                  "expect(callback.body).to.have.property(\"bulkTransferState\")",
-                  "expect(callback.body.bulkTransferState).to.equal(\"REJECTED\")"
+                  "expect(environment.bulkTransferCallback.body).to.have.property(\"bulkTransferState\")",
+                  "expect(environment.bulkTransferCallback.body.bulkTransferState).to.equal(\"REJECTED\")"
                 ]
               }
             ]
           },
           "ignoreCallbacks": false,
           "scriptingEngine": "javascript",
-          "delay": "1000",
           "scripts": {
             "postRequest": {
               "exec": [
-                ""
+                "environment.bulkTransferResponse = null",
+                "environment.bulkTransferCallback = null",
+                "const expectedBulkTransferState = 'REJECTED'",
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let _response = response",
+                "  let _callback = callback",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    const isOk = _callback?.body?.bulkTransferState === expectedBulkTransferState;",
+                "    ",
+                "    if (isOk) {",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      environment.bulkTransferResponse = _response",
+                "      environment.bulkTransferCallback = _callback",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      if (retryCount == 0) {",
+                "        const axiosRes = await makeRequest()",
+                "        _response = { code: axiosRes.status, status: axiosRes.statusText }",
+                "      }",
+                "      await custom.sleep(maxRetryWait)",
+                "      const callback_name = 'get-bulk-transfer'",
+                "      _callback = await inboundEvent.getMessage(callback_name)",
+                "      console.log(`${callback_name} callback result: `, _callback)",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "async function makeRequest(callback_name) {",
+                "    const reqParams = {",
+                "        method: 'get', ",
+                "        url: `{$inputs.HOST_BULK_ADAPTER}/bulkTransfers/{$environment.bulkTransferId}`,",
+                "        headers: {",
+                "          'Content-Type': `{$inputs.contentBulkTransfers}`,",
+                "          Accept: `{$inputs.acceptBulkTransfers}`,",
+                "          Date: `{$environment.headerDate}`,",
+                "          'FSPIOP-Source': `{$inputs.fromFspId}`,",
+                "          'FSPIOP-Destination': 'switch'",
+                "        }",
+                "    };",
+                "    ",
+                "    const callbackPath = `/bulkTransfers/{$environment.bulkTransferId}`",
+                "    ",
+                "    await inboundEvent.addListener(callback_name, 'get', callbackPath)",
+                "    ",
+                "    return axios(reqParams)",
+                "}",
+                "",
+                "await main()"
               ]
             },
             "preRequest": {
