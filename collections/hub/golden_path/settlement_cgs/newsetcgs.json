@@ -1902,7 +1902,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -1973,7 +1973,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -2042,7 +2042,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -2112,7 +2112,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "scriptingEngine": "javascript",
-          "disabled": true,
+          "disabled": false,
           "scripts": {
             "preRequest": {
               "exec": [
@@ -5417,7 +5417,7 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(requestVariables.scenarioResponse.status).to.equal(200)"
+                  "expect(requestVariables.scenarioResponse.code).to.equal(200)"
                 ]
               },
               {
@@ -5450,48 +5450,50 @@
             },
             "postRequest": {
               "exec": [
+                "// requestVariables.scenarioResponse = {...response, status: response.code}",
+                "",
                 "// lets get retry config",
-                " const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
-                " const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
                 " ",
-                " const expectedStatusCode = 200",
-                " requestVariables.scenarioResponse = null",
+                "const expectedStatusCode = 200",
+                "requestVariables.scenarioResponse = null",
                 " ",
-                " async function main() {",
-                "   let _response = response",
+                "async function main() {",
+                "  let _response = response",
                 " ",
-                "   for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
-                "     console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
                 "     ",
-                "     const isOk = _response.status === expectedStatusCode;",
+                "    const isOk = _response.code === expectedStatusCode;",
                 "     ",
-                "     if (isOk) {",
-                "       requestVariables.scenarioResponse = _response",
-                "       console.log(`Everything is OK, let's continue`)",
-                "       break;",
-                "     } else {",
-                "       console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
-                "       await custom.sleep(maxRetryWait);",
-                "       const axiosRes = await makeRequest()",
-                "       _response = { body: axiosRes.data, status: axiosRes.status }",
-                "     }",
-                "   }",
-                " }",
+                "    if (isOk) {",
+                "      requestVariables.scenarioResponse = _response",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await custom.sleep(maxRetryWait);",
+                "      const axiosRes = await makeRequest()",
+                "      _response = { body: axiosRes.data, code: axiosRes.status }",
+                "    }",
+                "  }",
+                "}",
                 " ",
-                " function makeRequest() {",
-                "     const reqParams = {",
-                "         method: request.method, ",
-                "         url: `${request.url}${request.path}`,",
-                "         data: request.body,",
-                "         headers: {",
-                "           'Content-Type': 'application/json',",
-                "         }",
-                "     };",
+                "function makeRequest() {",
+                "    const reqParams = {",
+                "        method: request.method, ",
+                "        url: `${request.url}${request.path}`,",
+                "        data: request.body,",
+                "        headers: {",
+                "          'Content-Type': 'application/json',",
+                "        }",
+                "    };",
                 "     ",
-                "     return axios(reqParams);",
-                " }",
+                "    return axios(reqParams);",
+                "}",
                 " ",
-                " await main()"
+                "await main()"
               ]
             }
           }
@@ -6294,7 +6296,7 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(requestVariables.scenarioResponse.status).to.equal(200)"
+                  "expect(requestVariables.scenarioResponse.code).to.equal(200)"
                 ]
               },
               {
@@ -6325,48 +6327,51 @@
             },
             "postRequest": {
               "exec": [
-                " // lets get retry config",
-                " const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
-                " const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "// requestVariables.scenarioResponse = {...response, status: response.code}",
+                "// console.log(requestVariables.scenarioResponse)",
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
                 " ",
-                " const expectedStatusCode = 200",
-                " requestVariables.scenarioResponse = null",
+                "const expectedStatusCode = 200",
+                "requestVariables.scenarioResponse = null",
                 " ",
-                " async function main() {",
-                "   let _response = response",
+                "async function main() {",
+                "  let _response = response",
                 " ",
-                "   for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
-                "     console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
                 "     ",
-                "     const isOk = _response.status === expectedStatusCode;",
+                "    const isOk = _response.code === expectedStatusCode;",
                 "     ",
-                "     if (isOk) {",
-                "       requestVariables.scenarioResponse = _response",
-                "       console.log(`Everything is OK, let's continue`)",
-                "       break;",
-                "     } else {",
-                "       console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
-                "       await custom.sleep(maxRetryWait);",
-                "       const axiosRes = await makeRequest()",
-                "       _response = { body: axiosRes.data, status: axiosRes.status }",
-                "     }",
-                "   }",
-                " }",
+                "    if (isOk) {",
+                "      requestVariables.scenarioResponse = _response",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await custom.sleep(maxRetryWait);",
+                "      const axiosRes = await makeRequest()",
+                "      _response = { body: axiosRes.data, code: axiosRes.status }",
+                "    }",
+                "  }",
+                "}",
                 " ",
-                " function makeRequest() {",
-                "     const reqParams = {",
-                "         method: request.method, ",
-                "         url: `${request.url}${request.path}`,",
-                "         data: request.body,",
-                "         headers: {",
-                "           'Content-Type': 'application/json',",
-                "         }",
-                "     };",
+                "function makeRequest() {",
+                "    const reqParams = {",
+                "        method: request.method, ",
+                "        url: `${request.url}${request.path}`,",
+                "        data: request.body,",
+                "        headers: {",
+                "          'Content-Type': 'application/json',",
+                "        }",
+                "    };",
                 "     ",
-                "     return axios(reqParams);",
-                " }",
+                "    return axios(reqParams);",
+                "}",
                 " ",
-                " await main()"
+                "await main()"
               ]
             }
           }
