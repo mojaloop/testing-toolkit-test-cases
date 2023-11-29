@@ -5417,14 +5417,14 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "expect(requestVariables.scenarioResponse.status).to.equal(200)"
                 ]
               },
               {
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
+                  "expect(requestVariables.scenarioResponse.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -5438,10 +5438,60 @@
                 "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.SIMPAYEE_MSISDN}', 'payerCallback')",
                 "}",
                 "*/",
-                "requestVariables.expectedPayeeFirstName = \"PayeeFirst\"",
-                "requestVariables.expectedPayeeLastName = \"PayeeLast\"",
-                "requestVariables.expectedPayeeDOB = \"2010-10-10\"",
-                "requestVariables.payerName = \"PayerFirst PayerLast\""
+                "// requestVariables.expectedPayeeFirstName = \"PayeeFirst\"",
+                "// requestVariables.expectedPayeeLastName = \"PayeeLast\"",
+                "// requestVariables.expectedPayeeDOB = \"2010-10-10\"",
+                "// requestVariables.payerName = \"PayerFirst PayerLast\"",
+                "",
+                "",
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "// lets get retry config",
+                " const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                " const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                " ",
+                " const expectedStatusCode = 200",
+                " requestVariables.scenarioResponse = null",
+                " ",
+                " async function main() {",
+                "   let _response = response",
+                " ",
+                "   for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "     console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "     ",
+                "     const isOk = _response.status === expectedStatusCode;",
+                "     ",
+                "     if (isOk) {",
+                "       requestVariables.scenarioResponse = _response",
+                "       console.log(`Everything is OK, let's continue`)",
+                "       break;",
+                "     } else {",
+                "       console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "       await custom.sleep(maxRetryWait);",
+                "       const axiosRes = await makeRequest()",
+                "       _response = { body: axiosRes.data, status: axiosRes.status }",
+                "     }",
+                "   }",
+                " }",
+                " ",
+                " function makeRequest() {",
+                "     const reqParams = {",
+                "         method: request.method, ",
+                "         url: `${request.url}${request.path}`,",
+                "         data: request.body,",
+                "         headers: {",
+                "           'Content-Type': 'application/json',",
+                "         }",
+                "     };",
+                "     ",
+                "     return axios(reqParams);",
+                " }",
+                " ",
+                " await main()"
               ]
             }
           }
@@ -5544,7 +5594,8 @@
                 "requestVariables.payerName = \"PayerFirst PayerLast\""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 5,
@@ -5644,7 +5695,8 @@
                 "requestVariables.payerName = \"PayerFirst PayerLast\""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 6,
@@ -5744,7 +5796,8 @@
                 "requestVariables.payerName = \"PayerFirst PayerLast\""
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ]
     },
@@ -6241,14 +6294,14 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "expect(requestVariables.scenarioResponse.status).to.equal(200)"
                 ]
               },
               {
                 "id": 55,
                 "description": "Transfer state is 'COMMITTED'",
                 "exec": [
-                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
+                  "expect(requestVariables.scenarioResponse.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
                 ]
               }
             ]
@@ -6262,10 +6315,58 @@
                 "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.SIMPAYEE_MSISDN}', 'payerCallback')",
                 "}",
                 "*/",
-                "requestVariables.expectedPayeeFirstName = \"PayeeFirst\"",
-                "requestVariables.expectedPayeeLastName = \"PayeeLast\"",
-                "requestVariables.expectedPayeeDOB = \"2010-10-10\"",
-                "requestVariables.payerName = \"PayerFirst PayerLast\""
+                "// requestVariables.expectedPayeeFirstName = \"PayeeFirst\"",
+                "// requestVariables.expectedPayeeLastName = \"PayeeLast\"",
+                "// requestVariables.expectedPayeeDOB = \"2010-10-10\"",
+                "// requestVariables.payerName = \"PayerFirst PayerLast\"",
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                " // lets get retry config",
+                " const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                " const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                " ",
+                " const expectedStatusCode = 200",
+                " requestVariables.scenarioResponse = null",
+                " ",
+                " async function main() {",
+                "   let _response = response",
+                " ",
+                "   for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "     console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "     ",
+                "     const isOk = _response.status === expectedStatusCode;",
+                "     ",
+                "     if (isOk && retryCount > 1) {",
+                "       requestVariables.scenarioResponse = _response",
+                "       console.log(`Everything is OK, let's continue`)",
+                "       break;",
+                "     } else {",
+                "       console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "       await custom.sleep(maxRetryWait);",
+                "       const axiosRes = await makeRequest()",
+                "       _response = { body: axiosRes.data, status: axiosRes.status }",
+                "     }",
+                "   }",
+                " }",
+                " ",
+                " function makeRequest() {",
+                "     const reqParams = {",
+                "         method: request.method, ",
+                "         url: `${request.url}${request.path}`,",
+                "         data: request.body,",
+                "         headers: {",
+                "           'Content-Type': 'application/json',",
+                "         }",
+                "     };",
+                "     ",
+                "     return axios(reqParams);",
+                " }",
+                " ",
+                " await main()"
               ]
             }
           }
