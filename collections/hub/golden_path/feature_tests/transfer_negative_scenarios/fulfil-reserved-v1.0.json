@@ -467,21 +467,21 @@
                 "id": 1,
                 "description": "Response status to be 202",
                 "exec": [
-                  "expect(environment.transferResponse.code).to.equal(202)"
+                  "expect(requestVariables.transferResponse.code).to.equal(202)"
                 ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Accepted",
                 "exec": [
-                  "expect(environment.transferResponse.status).to.equal('Accepted')"
+                  "expect(requestVariables.transferResponse.status).to.equal('Accepted')"
                 ]
               },
               {
                 "id": 12,
                 "description": "Callback Header - fspiop-source is switch",
                 "exec": [
-                  "expect(environment.transferCallback.headers['fspiop-source']).to.equal('switch')",
+                  "expect(requestVariables.transferCallback.headers['fspiop-source']).to.equal('switch')",
                   ""
                 ]
               },
@@ -489,7 +489,7 @@
                 "id": 13,
                 "description": "Callback Header - fspiop-desination is fspiop-source in request",
                 "exec": [
-                  "expect(environment.transferCallback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}')",
+                  "expect(requestVariables.transferCallback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}')",
                   ""
                 ]
               },
@@ -497,7 +497,7 @@
                 "id": 14,
                 "description": "Callback Header - content-type",
                 "exec": [
-                  "expect(environment.transferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  "expect(requestVariables.transferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
                   ""
                 ]
               },
@@ -505,7 +505,7 @@
                 "id": 15,
                 "description": "Callback Header - accept is empty",
                 "exec": [
-                  "expect(environment.transferCallback.headers['accept']).to.equal(undefined)",
+                  "expect(requestVariables.transferCallback.headers['accept']).to.equal(undefined)",
                   ""
                 ]
               },
@@ -513,7 +513,7 @@
                 "id": 16,
                 "description": "Callback Header - Date is not empty",
                 "exec": [
-                  "expect(environment.transferCallback.headers['date']).to.not.equal(undefined)",
+                  "expect(requestVariables.transferCallback.headers['date']).to.not.equal(undefined)",
                   ""
                 ]
               },
@@ -521,7 +521,7 @@
                 "id": 17,
                 "description": "Callback Header - fspiop-uri is /transfers/transferId",
                 "exec": [
-                  "expect(environment.transferCallback.headers['fspiop-uri']).to.equal('/transfers/' + request.params.ID)",
+                  "expect(requestVariables.transferCallback.headers['fspiop-uri']).to.equal('/transfers/' + request.params.ID)",
                   ""
                 ]
               },
@@ -529,7 +529,7 @@
                 "id": 18,
                 "description": "Callback Header - fspiop-http-method is PUT",
                 "exec": [
-                  "expect(environment.transferCallback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "expect(requestVariables.transferCallback.headers['fspiop-http-method']).to.equal('PUT')",
                   ""
                 ]
               },
@@ -537,7 +537,7 @@
                 "id": 21,
                 "description": "Callback Body - transferState is ABORTED",
                 "exec": [
-                  "expect(environment.transferCallback.body.transferState).to.equal('ABORTED')",
+                  "expect(requestVariables.transferCallback.body.transferState).to.equal('ABORTED')",
                   ""
                 ]
               },
@@ -546,10 +546,10 @@
                 "description": "Callback Body - error cause in extensionList",
                 "exec": [
                   "",
-                  "expect(environment.transferCallback.body).to.have.property('extensionList')",
-                  "expect(environment.transferCallback.body.extensionList).to.have.property('extension')",
+                  "expect(requestVariables.transferCallback.body).to.have.property('extensionList')",
+                  "expect(requestVariables.transferCallback.body.extensionList).to.have.property('extension')",
                   "",
-                  "const filteredExtensionListForCause = environment.transferCallback.body.extensionList.extension.filter(ext => ext.key === \"cause\")",
+                  "const filteredExtensionListForCause = requestVariables.transferCallback.body.extensionList.extension.filter(ext => ext.key === \"cause\")",
                   "",
                   "expect(filteredExtensionListForCause.length).to.equal(1)",
                   "",
@@ -568,8 +568,8 @@
             },
             "postRequest": {
               "exec": [
-                "environment.transferResponse = null",
-                "environment.transferCallback = null",
+                "requestVariables.transferResponse = null",
+                "requestVariables.transferCallback = null",
                 "const expectedTransferState = 'ABORTED'",
                 "",
                 "// lets get retry config",
@@ -590,8 +590,8 @@
                 "    ",
                 "    if (isOk) {",
                 "      console.log(`Everything is OK, let's continue`)",
-                "      environment.transferResponse = _response",
-                "      environment.transferCallback = _callback",
+                "      requestVariables.transferResponse = _response",
+                "      requestVariables.transferCallback = _callback",
                 "      break;",
                 "    } else {",
                 "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",

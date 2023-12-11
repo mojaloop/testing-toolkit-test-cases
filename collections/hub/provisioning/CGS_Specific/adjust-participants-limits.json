@@ -32,7 +32,7 @@
                 "id": 1,
                 "description": "response code 200",
                 "exec": [
-                  "const statusCode = environment.participantLimitsResponseCode",
+                  "const statusCode = requestVariables.participantLimitsResponseCode",
                   "expect(statusCode).to.equal(200)"
                 ]
               }
@@ -44,7 +44,7 @@
             "postRequest": {
               "exec": [
                 "const expectedStatusCode = 200;",
-                "environment.participantLimitsResponseCode = null",
+                "requestVariables.participantLimitsResponseCode = null",
                 "",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
@@ -59,7 +59,7 @@
                 "    const isOk = statusCode === expectedStatusCode;",
                 "    ",
                 "    if (isOk) {",
-                "      environment.participantLimitsResponseCode = statusCode",
+                "      requestVariables.participantLimitsResponseCode = statusCode",
                 "      console.log(`Everything is OK, let's continue`)",
                 "      break;",
                 "    } else {",

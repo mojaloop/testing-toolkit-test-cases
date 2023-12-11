@@ -302,14 +302,14 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(environment.participantsPositionResponse.code).to.equal(200)"
+                  "expect(requestVariables.participantsPositionResponse.code).to.equal(200)"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payerfsp position after (bulk) timeout should be same as position before prepare.",
                 "exec": [
-                  "expect(environment.participantsPositionResponse.body[0].value).to.equal(+environment.payerfspPositionBeforePrepare)"
+                  "expect(requestVariables.participantsPositionResponse.body[0].value).to.equal(+environment.payerfspPositionBeforePrepare)"
                 ]
               }
             ]
@@ -318,7 +318,7 @@
             "postRequest": {
               "exec": [
                 " const expectedStatusCode = 200;",
-                " environment.participantsPositionResponse = null",
+                " requestVariables.participantsPositionResponse = null",
                 " ",
                 " // lets get retry config",
                 " const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
@@ -333,7 +333,7 @@
                 "     const isOk = _response.code === expectedStatusCode && _response.body[0].value === (+environment.payerfspPositionBeforePrepare)",
                 "     ",
                 "     if (isOk) {",
-                "       environment.participantsPositionResponse = _response",
+                "       requestVariables.participantsPositionResponse = _response",
                 "       console.log(`Everything is OK, let's continue`)",
                 "       break;",
                 "     } else {",
@@ -384,14 +384,14 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(environment.participantsPositionResponse.code).to.equal(200)"
+                  "expect(requestVariables.participantsPositionResponse.code).to.equal(200)"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payeefsp position after timeout should be same as position before prepare.",
                 "exec": [
-                  "expect(environment.participantsPositionResponse.body[0].value).to.equal(+environment.payeefspPositionBeforePrepare)"
+                  "expect(requestVariables.participantsPositionResponse.body[0].value).to.equal(+environment.payeefspPositionBeforePrepare)"
                 ]
               }
             ]
@@ -401,7 +401,7 @@
             "postRequest": {
               "exec": [
                 " const expectedStatusCode = 200;",
-                " environment.participantsPositionResponse = null",
+                " requestVariables.participantsPositionResponse = null",
                 " ",
                 " // lets get retry config",
                 " const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
@@ -416,7 +416,7 @@
                 "     const isOk = _response.code === expectedStatusCode && _response.body[0].value === (+environment.payeefspPositionBeforePrepare)",
                 "     ",
                 "     if (isOk) {",
-                "       environment.participantsPositionResponse = _response",
+                "       requestVariables.participantsPositionResponse = _response",
                 "       console.log(`Everything is OK, let's continue`)",
                 "       break;",
                 "     } else {",

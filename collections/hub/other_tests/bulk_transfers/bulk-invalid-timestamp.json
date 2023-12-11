@@ -343,50 +343,50 @@
                 "id": 1,
                 "description": "Status code is 202",
                 "exec": [
-                  "expect(environment.bulkTransferResponse.code).to.equal(202)"
+                  "expect(requestVariables.bulkTransferResponse.code).to.equal(202)"
                 ]
               },
               {
                 "id": 2,
                 "description": "payerfsp callback - date header should be set",
                 "exec": [
-                  "expect(environment.bulkTransferCallback.headers).to.have.property('date')"
+                  "expect(requestVariables.bulkTransferCallback.headers).to.have.property('date')"
                 ]
               },
               {
                 "id": 3,
                 "description": "payerfsp callback - fspiop-source should be switch",
                 "exec": [
-                  "expect(environment.bulkTransferCallback.headers['fspiop-source']).to.equal('switch')"
+                  "expect(requestVariables.bulkTransferCallback.headers['fspiop-source']).to.equal('switch')"
                 ]
               },
               {
                 "id": 4,
                 "description": "payerfsp callback - fspiop-destination should be testingtoolkitdfsp",
                 "exec": [
-                  "expect(environment.bulkTransferCallback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
+                  "expect(requestVariables.bulkTransferCallback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
                 ]
               },
               {
                 "id": 5,
                 "description": "payerfsp callback - fspiop-uri should be as expected",
                 "exec": [
-                  "expect(environment.bulkTransferCallback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
+                  "expect(requestVariables.bulkTransferCallback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
                 "id": 6,
                 "description": "payerfsp callback - fspiop-http-method should be PUT",
                 "exec": [
-                  "expect(environment.bulkTransferCallback.headers['fspiop-http-method']).to.equal('PUT')"
+                  "expect(requestVariables.bulkTransferCallback.headers['fspiop-http-method']).to.equal('PUT')"
                 ]
               },
               {
                 "id": 8,
                 "description": "payerfsp callback - errorInformation should be set correctly",
                 "exec": [
-                  "expect(environment.bulkTransferCallback.body).to.have.property(\"bulkTransferState\")",
-                  "expect(environment.bulkTransferCallback.body.bulkTransferState).to.equal(\"REJECTED\")"
+                  "expect(requestVariables.bulkTransferCallback.body).to.have.property(\"bulkTransferState\")",
+                  "expect(requestVariables.bulkTransferCallback.body.bulkTransferState).to.equal(\"REJECTED\")"
                 ]
               }
             ]
@@ -396,8 +396,8 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "environment.bulkTransferResponse = null",
-                "environment.bulkTransferCallback = null",
+                "requestVariables.bulkTransferResponse = null",
+                "requestVariables.bulkTransferCallback = null",
                 "const expectedBulkTransferState = 'REJECTED'",
                 "const callbackPath = `/bulkTransfers/{$environment.bulkTransferId}`",
                 "const callbackName = 'put-bulk-transfer'",
@@ -417,8 +417,8 @@
                 "    ",
                 "    if (isOk) {",
                 "      console.log(`Everything is OK, let's continue`)",
-                "      environment.bulkTransferResponse = _response",
-                "      environment.bulkTransferCallback = _callback",
+                "      requestVariables.bulkTransferResponse = _response",
+                "      requestVariables.bulkTransferCallback = _callback",
                 "      break;",
                 "    } else {",
                 "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
@@ -485,14 +485,14 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(environment.participantsPositionResponse.code).to.equal(200)"
+                  "expect(requestVariables.participantsPositionResponse.code).to.equal(200)"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payerfsp position after Payer ABORT should be same as position before prepare.",
                 "exec": [
-                  "expect(environment.participantsPositionResponse.body[0].value).to.equal(+environment.payerfspPositionBeforePrepare)"
+                  "expect(requestVariables.participantsPositionResponse.body[0].value).to.equal(+environment.payerfspPositionBeforePrepare)"
                 ]
               }
             ]
@@ -502,7 +502,7 @@
             "postRequest": {
               "exec": [
                 "const expectedStatusCode = 200;",
-                "environment.participantsPositionResponse = null",
+                "requestVariables.participantsPositionResponse = null",
                 "",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
@@ -517,7 +517,7 @@
                 "    const isOk = _response.code === expectedStatusCode;",
                 "    ",
                 "    if (isOk) {",
-                "      environment.participantsPositionResponse = _response",
+                "      requestVariables.participantsPositionResponse = _response",
                 "      console.log(`Everything is OK, let's continue`)",
                 "      break;",
                 "    } else {",
@@ -568,14 +568,14 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(environment.participantsPositionResponse.code).to.equal(200)"
+                  "expect(requestVariables.participantsPositionResponse.code).to.equal(200)"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payeefsp position after Payee ABORT should be same as position before prepare.",
                 "exec": [
-                  "expect(environment.participantsPositionResponse.body[0].value).to.equal(+environment.payeefspPositionBeforePrepare)"
+                  "expect(requestVariables.participantsPositionResponse.body[0].value).to.equal(+environment.payeefspPositionBeforePrepare)"
                 ]
               }
             ]
@@ -586,7 +586,7 @@
             "postRequest": {
               "exec": [
                 "const expectedStatusCode = 200;",
-                "environment.participantsPositionResponse = null",
+                "requestVariables.participantsPositionResponse = null",
                 "",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
@@ -601,7 +601,7 @@
                 "    const isOk = _response.code === expectedStatusCode;",
                 "    ",
                 "    if (isOk) {",
-                "      environment.participantsPositionResponse = _response",
+                "      requestVariables.participantsPositionResponse = _response",
                 "      console.log(`Everything is OK, let's continue`)",
                 "      break;",
                 "    } else {",
