@@ -343,7 +343,7 @@
             "fulfilment": "{$inputs.validFulfillment}",
             "completedTimestamp": "{$environment.fulfillCompletedTimestamp}"
           },
-          "ignoreCallbacks": true,
+          "ignoreCallbacks": false,
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
@@ -382,7 +382,8 @@
             "postRequest": {
               "exec": [
                 "requestVariables.payeeDuplicateCallback = await inboundEvent.getMessage('payeeDuplicateCallback')",
-                "console.log(requestVariables.payeeDuplicateCallback)"
+                "console.log(requestVariables.payeeDuplicateCallback)",
+                ""
               ]
             },
             "preRequest": {

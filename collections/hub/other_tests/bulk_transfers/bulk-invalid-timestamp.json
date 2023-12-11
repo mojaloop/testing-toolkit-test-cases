@@ -47,7 +47,8 @@
                 "environment[\"payerfspPositionBeforePrepare\"] = response.body[0].value"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -85,7 +86,8 @@
                 "environment[\"payeefspPositionBeforePrepare\"] = response.body[0].value"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -184,7 +186,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 4,
@@ -228,7 +231,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 9,
@@ -303,7 +307,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 6,
@@ -338,61 +343,112 @@
                 "id": 1,
                 "description": "Status code is 202",
                 "exec": [
-                  "expect(response.status).to.equal(202)"
+                  "expect(requestVariables.bulkTransferResponse.code).to.equal(202)"
                 ]
               },
               {
                 "id": 2,
                 "description": "payerfsp callback - date header should be set",
                 "exec": [
-                  "expect(callback.headers).to.have.property('date')"
+                  "expect(requestVariables.bulkTransferCallback.headers).to.have.property('date')"
                 ]
               },
               {
                 "id": 3,
                 "description": "payerfsp callback - fspiop-source should be switch",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal('switch')"
+                  "expect(requestVariables.bulkTransferCallback.headers['fspiop-source']).to.equal('switch')"
                 ]
               },
               {
                 "id": 4,
                 "description": "payerfsp callback - fspiop-destination should be testingtoolkitdfsp",
                 "exec": [
-                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
+                  "expect(requestVariables.bulkTransferCallback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
                 ]
               },
               {
                 "id": 5,
                 "description": "payerfsp callback - fspiop-uri should be as expected",
                 "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
+                  "expect(requestVariables.bulkTransferCallback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
                 "id": 6,
                 "description": "payerfsp callback - fspiop-http-method should be PUT",
                 "exec": [
-                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')"
+                  "expect(requestVariables.bulkTransferCallback.headers['fspiop-http-method']).to.equal('PUT')"
                 ]
               },
               {
                 "id": 8,
                 "description": "payerfsp callback - errorInformation should be set correctly",
                 "exec": [
-                  "expect(callback.body).to.have.property(\"bulkTransferState\")",
-                  "expect(callback.body.bulkTransferState).to.equal(\"REJECTED\")"
+                  "expect(requestVariables.bulkTransferCallback.body).to.have.property(\"bulkTransferState\")",
+                  "expect(requestVariables.bulkTransferCallback.body.bulkTransferState).to.equal(\"REJECTED\")"
                 ]
               }
             ]
           },
           "ignoreCallbacks": false,
           "scriptingEngine": "javascript",
-          "delay": "1000",
           "scripts": {
             "postRequest": {
               "exec": [
-                ""
+                "requestVariables.bulkTransferResponse = null",
+                "requestVariables.bulkTransferCallback = null",
+                "const expectedBulkTransferState = 'REJECTED'",
+                "const callbackPath = `/bulkTransfers/{$environment.bulkTransferId}`",
+                "const callbackName = 'put-bulk-transfer'",
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let _response = response",
+                "  let _callback = callback",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    const isOk = _callback?.body?.bulkTransferState === expectedBulkTransferState;",
+                "    ",
+                "    if (isOk) {",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      requestVariables.bulkTransferResponse = _response",
+                "      requestVariables.bulkTransferCallback = _callback",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await custom.sleep(maxRetryWait)",
+                "      await inboundEvent.addListener(callbackName, 'put', callbackPath)",
+                "      const axiosRes = await makeRequest()",
+                "      _response = { code: axiosRes.status, status: axiosRes.statusText }",
+                "      _callback = await inboundEvent.getMessage(callbackName)",
+                "      console.log(`retryCount: ${retryCount+1} - ${callbackName} callback: `, _callback)",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "async function makeRequest(callback_name) {",
+                "    const reqParams = {",
+                "        method: 'get', ",
+                "        url: `{$inputs.HOST_BULK_ADAPTER}/bulkTransfers/{$environment.bulkTransferId}`,",
+                "        headers: {",
+                "          'Content-Type': `{$inputs.contentBulkTransfers}`,",
+                "          Accept: `{$inputs.acceptBulkTransfers}`,",
+                "          Date: `{$environment.headerDate}`,",
+                "          'FSPIOP-Source': `{$inputs.fromFspId}`,",
+                "          'FSPIOP-Destination': 'switch'",
+                "        }",
+                "    };",
+                "    ",
+                "    return axios(reqParams)",
+                "}",
+                "",
+                "await main()"
               ]
             },
             "preRequest": {
@@ -400,7 +456,9 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false,
+          "delay": "1000"
         },
         {
           "id": 7,
@@ -427,18 +485,64 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "expect(requestVariables.participantsPositionResponse.code).to.equal(200)"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payerfsp position after Payer ABORT should be same as position before prepare.",
                 "exec": [
-                  "expect(response.body[0].value).to.equal(+environment.payerfspPositionBeforePrepare)"
+                  "expect(requestVariables.participantsPositionResponse.body[0].value).to.equal(+environment.payerfspPositionBeforePrepare)"
                 ]
               }
             ]
-          }
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const expectedStatusCode = 200;",
+                "requestVariables.participantsPositionResponse = null",
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let _response = response",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    const isOk = _response.code === expectedStatusCode;",
+                "    ",
+                "    if (isOk) {",
+                "      requestVariables.participantsPositionResponse = _response",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await custom.sleep(maxRetryWait);",
+                "      const axiosRes = await makeRequest()",
+                "      _response = { body: axiosRes.data, code: axiosRes.status }",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "function makeRequest() {",
+                "    const reqParams = {",
+                "        method: 'get', ",
+                "        url: `{$inputs.HOST_CENTRAL_LEDGER}/participants/{$inputs.fromFspId}/positions`",
+                "    };",
+                "    ",
+                "    return axios(reqParams);",
+                "}",
+                "",
+                "await main()"
+              ]
+            }
+          },
+          "disabled": false
         },
         {
           "id": 8,
@@ -464,17 +568,63 @@
                 "id": 1,
                 "description": "Status code is 200",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "expect(requestVariables.participantsPositionResponse.code).to.equal(200)"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payeefsp position after Payee ABORT should be same as position before prepare.",
                 "exec": [
-                  "expect(response.body[0].value).to.equal(+environment.payeefspPositionBeforePrepare)"
+                  "expect(requestVariables.participantsPositionResponse.body[0].value).to.equal(+environment.payeefspPositionBeforePrepare)"
                 ]
               }
             ]
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const expectedStatusCode = 200;",
+                "requestVariables.participantsPositionResponse = null",
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let _response = response",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    const isOk = _response.code === expectedStatusCode;",
+                "    ",
+                "    if (isOk) {",
+                "      requestVariables.participantsPositionResponse = _response",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await custom.sleep(maxRetryWait);",
+                "      const axiosRes = await makeRequest()",
+                "      _response = { body: axiosRes.data, code: axiosRes.status }",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "function makeRequest() {",
+                "    const reqParams = {",
+                "        method: 'get', ",
+                "        url: `{$inputs.HOST_CENTRAL_LEDGER}/participants/{$inputs.NORESPONSE_NAME}/positions`",
+                "    };",
+                "    ",
+                "    return axios(reqParams);",
+                "}",
+                "",
+                "await main()"
+              ]
+            }
           }
         }
       ]

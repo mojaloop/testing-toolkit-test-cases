@@ -436,16 +436,20 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
-                "}"
+                "// NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "// if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "//   await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
+                "// }"
               ]
             },
             "postRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
+                "// NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API instead until it can be resolved.",
+                "// if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "//   environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "// }",
+                "",
+                "environment.payeeRequest = (await axios.get(environment.PAYEEFSP_SDK_TESTAPI_URL + '/requests/{$inputs.toIdValue}')).data"
               ]
             }
           }
@@ -636,16 +640,20 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                "}"
+                "// NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "// if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "//   await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "// }"
               ]
             },
             "postRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
+                "// NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API instead until it can be resolved.",
+                "// if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "//   environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "// }",
+                "",
+                "environment.payeeRequest = (await axios.get(environment.PAYEEFSP_SDK_TESTAPI_URL + '/requests/{$request.body.quoteId}')).data"
               ]
             }
           }
