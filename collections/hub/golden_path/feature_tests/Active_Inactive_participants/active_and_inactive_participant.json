@@ -128,6 +128,9 @@
                 "  if(environment.ENABLE_JWS_VALIDATION) {",
                 "    requestVariables.jwsValidationStatus =  custom.jws.validateCallback(requestVariables.sim1Callback.headers, requestVariables.sim1Callback.data, environment.TESTFSP2_JWS_PUB_KEY)",
                 "  }",
+                "  else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "    requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(requestVariables.sim1Callback.headers)",
+                "  }",
                 "}",
                 ""
               ]
@@ -151,9 +154,11 @@
               },
               {
                 "id": 3,
-                "description": "Callback FSPIOP-Signature header must be null",
+                "description": "Callback Validate Protected Headers",
                 "exec": [
-                  "expect(requestVariables.sim1Callback.headers['fspiop-signature']).to.equal(undefined)"
+                  "if(environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
+                  "}"
                 ]
               },
               {
