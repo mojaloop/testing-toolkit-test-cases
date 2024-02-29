@@ -39,7 +39,24 @@
             "currency": "{$inputs.currency}"
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "ignoreCallbacks": true
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.toIdValue}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
         },
         {
           "id": 2,
