@@ -22,3 +22,6 @@
   - [Merchant Provisioning Env](../../../environments/provisioning_merchant.json)
   - Change the `MERCHANT_ACQUIRER_ENDPOINT_BASE_URL` to the Acquirer Backend URL accessible from the TTK
   - Change the `MERCHANT_ORACLE_ENDPOINT_BASE_URL` to the Oracle Backend URL accessible from the TTK
+
+- Import and Run Merchant [Provisioning](./merchant_setup.json)
+- Import and Run Merchant [ALS Lookup Test](../other_tests/merchant/merchant-lookup.json)
