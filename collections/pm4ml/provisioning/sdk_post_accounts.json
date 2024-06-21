@@ -11,7 +11,7 @@
       "requests": [
         {
           "id": 1,
-          "description": "Add party",
+          "description": "Add a party for P2P",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 2,
@@ -24,8 +24,28 @@
           "body": [
             {
               "idType": "MSISDN",
-              "idValue": "16135551002",
-              "currency": "EUR"
+              "idValue": "{$inputs.P2P_DESTINATION_PARTY_ID_1}",
+              "currency": "{$inputs.P2P_CURRENCY}"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "description": "Add a party for FX P2P",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "operationPath": "/accounts",
+          "path": "/accounts",
+          "method": "post",
+          "body": [
+            {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.FX_DESTINATION_PARTY_ID_1}",
+              "currency": "{$inputs.FX_TARGET_CURRENCY}"
             }
           ]
         }
