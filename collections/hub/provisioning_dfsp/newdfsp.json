@@ -1091,6 +1091,154 @@
               }
             ]
           }
+        },
+        {
+          "id": 23,
+          "description": "Add callback - FX TRANSFERS POST",
+          "meta": {
+            "info": "Add DFSP callback - PARTIES SUB-ID ERROR PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.DFSP_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_POST",
+            "value": "{$inputs.DFSP_CALLBACK_URL}/fxTransfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 24,
+          "description": "Add callback - FX TRANSFERS PUT",
+          "meta": {
+            "info": "Add DFSP callback - PARTIES SUB-ID ERROR PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.DFSP_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
+            "value": "{$inputs.DFSP_CALLBACK_URL}/fxTransfers/{{commitRequestId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 25,
+          "description": "Add callback - FX TRANSFERS ERROR",
+          "meta": {
+            "info": "Add DFSP callback - PARTIES SUB-ID ERROR PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.DFSP_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
+            "value": "{$inputs.DFSP_CALLBACK_URL}/fxTransfers/{{commitRequestId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 26,
+          "description": "Add callback - FXQUOTES PUT",
+          "meta": {
+            "info": "Add DFSP callback - PARTIES SUB-ID ERROR PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.DFSP_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
+            "value": "{$inputs.DFSP_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
         }
       ],
       "fileInfo": {
