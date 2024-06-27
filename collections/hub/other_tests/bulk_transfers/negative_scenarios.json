@@ -318,7 +318,7 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$environment.headerDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": [
@@ -338,7 +338,7 @@
               },
               {
                 "id": 3,
-                "description": "payerfsp callback - fspiop-source should be switch",
+                "description": "payerfsp callback - fspiop-source should be {$inputs.HUB_NAME}",
                 "exec": [
                   "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
@@ -556,7 +556,7 @@
               },
               {
                 "id": 3,
-                "description": "payer callback fspiop-source should be switch",
+                "description": "payer callback fspiop-source should be {$inputs.HUB_NAME}",
                 "exec": [
                   "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
@@ -630,7 +630,7 @@
               },
               {
                 "id": 13,
-                "description": "payee callback - fspiop-source should be switch",
+                "description": "payee callback - fspiop-source should be $inputs.HUB_NAME",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
@@ -700,7 +700,7 @@
               },
               {
                 "id": 23,
-                "description": "request to payee - fspiop-source should be switch",
+                "description": "request to payee - fspiop-source should be $inputs.HUB_NAME",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
@@ -854,7 +854,7 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.toFspId}",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": [
@@ -874,7 +874,7 @@
               },
               {
                 "id": 3,
-                "description": "Callback - fspiop-source should be switch",
+                "description": "Callback - fspiop-source should be $inputs.HUB_NAME",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
@@ -981,7 +981,7 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": [
@@ -1001,7 +1001,7 @@
               },
               {
                 "id": 3,
-                "description": "Callback - fspiop-source should be switch",
+                "description": "Callback - fspiop-source should be $inputs.HUB_NAME",
                 "exec": [
                   "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
