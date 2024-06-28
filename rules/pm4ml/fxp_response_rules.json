@@ -505,9 +505,69 @@
         },
         "statusCode": "200",
         "scripts": {
-          "scriptingEngine": "postman"
+          "exec": [
+            "environment.completedTimestamp = new Date().toISOString()"
+          ],
+          "scriptingEngine": "javascript"
         },
         "delay": 300000
+      },
+      "type": "FIXED_RESPONSE"
+    },
+    "type": "response",
+    "version": 1
+  },
+  {
+    "ruleId": 16,
+    "priority": 1,
+    "description": "FXP - ABORTED state for post /fxTransfers",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 2,
+      "type": "mojaloop_connector_backend",
+      "asynchronous": false,
+      "specFile": "spec_files/api_definitions/mojaloop_connector_backend_2.1/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/mojaloop_connector_backend_2.1/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/mojaloop_connector_backend_2.1/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/mojaloop_connector_backend_2.1/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_connector_backend_2.1/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "506",
+          "path": "sourceAmount.amount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxTransfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": null,
+      "path": null,
+      "params": {
+        "body": {
+          "homeTransactionId": "{$request.body.homeTransactionId}",
+          "completedTimestamp": "{$environment.completedTimestamp}",
+          "conversionState": "ABORTED"
+        },
+        "statusCode": "200",
+        "scripts": {
+          "exec": [
+            "environment.completedTimestamp = new Date().toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        }
       },
       "type": "FIXED_RESPONSE"
     },
@@ -592,7 +652,7 @@
           "dateOfBirth": "1966-06-16",
           "displayName": "Yaro",
           "firstName": "Yaro",
-          "fspId": "testpayee",
+          "fspId": "pm4mltest2",
           "idType": "MSISDN",
           "idValue": "{$request.params.idValue}",
           "lastName": "Smith",
