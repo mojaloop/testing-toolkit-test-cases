@@ -72,10 +72,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/Hub/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -277,10 +277,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/Hub/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -363,9 +363,9 @@
               },
               {
                 "id": 2,
-                "description": "fspiop-source is switch",
+                "description": "fspiop-source is switch's name",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal('switch')"
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
               },
               {
