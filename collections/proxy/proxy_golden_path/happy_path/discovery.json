@@ -1,0 +1,169 @@
+{
+    "name": "Party Lookup Happy Path",
+    "test_cases": [
+      {
+        "id": "1",
+        "name": "Party Lookup for ProxyAB if not cached",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Send party lookup request",
+            "operationPath": "/parties/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.toIdType}",
+              "ID": "{$inputs.toIdValue}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.fromFspId}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "proxy header to be set",
+                    "exec": [
+                      "expect(callback.headers['fspiop-proxy']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                    ]
+                  }
+                ]
+              }
+          },
+          {
+            "id": "2",
+            "name": "Oracle Lookup",
+            "requests": [
+              {
+                "id": "1",
+                "description": "Send Oracle lookup request",
+                "operationPath": "/participants/{Type}/{ID}",
+                "method": "get",
+                "params": {
+                  "Type": "{$inputs.toIdType}",
+                  "ID": "{$inputs.toIdValue}"
+                },
+                "headers": {
+                  "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+                  "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+                  "Date": "{$function.generic.curDate}",
+                  "FSPIOP-Source": "payerfsp",
+                  "FSPIOP-Destination": "payeefsp"
+                },
+                "tests": {
+                    "assertions": [
+                      {
+                        "id": 1,
+                        "description": "Response status to be 200",
+                        "exec": [
+                          "expect(response.status).to.equal(200)"
+                        ]
+                      },
+                      {
+                        "id": 2,
+                        "description": "Oracle has payeeDFSP set",
+                        "exec": [
+                          "expect(response.fspId).to.equal('{$inputs.proxyDestinationFsp}')"
+                        ]
+                      }
+                    ]
+                  }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "Party Lookup for other proxy in Scheme if not cached",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Send party lookup request",
+            "operationPath": "/parties/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.toIdType}",
+              "ID": "{$inputs.toIdValue}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.fromFspId}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "an error callback is expected",
+                    "exec": [
+                      "expect(callback.errorInformation.errorCode).to.equal('')"
+                    ]
+                  }
+                ]
+              }
+          },
+          {
+            "id": "2",
+            "name": "Oracle Lookup",
+            "requests": [
+              {
+                "id": "1",
+                "description": "Send Oracle lookup request",
+                "operationPath": "/participants/{Type}/{ID}",
+                "method": "get",
+                "params": {
+                  "Type": "{$inputs.toIdType}",
+                  "ID": "{$inputs.toIdValue}"
+                },
+                "headers": {
+                  "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+                  "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+                  "Date": "{$function.generic.curDate}",
+                  "FSPIOP-Source": "payerfsp",
+                  "FSPIOP-Destination": "payeefsp"
+                },
+                "tests": {
+                    "assertions": [
+                      {
+                        "id": 1,
+                        "description": "Response status to be 200",
+                        "exec": [
+                          "expect(response.status).to.equal(200)"
+                        ]
+                      },
+                      {
+                        "id": 2,
+                        "description": "Oracle has payeeDFSP set",
+                        "exec": [
+                          "expect(response.fspId).to.equal('{$inputs.proxyDestinationFsp}')"
+                        ]
+                      }
+                    ]
+                  }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
