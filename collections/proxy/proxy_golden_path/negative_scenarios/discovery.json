@@ -1,0 +1,279 @@
+{
+    "name": "Party Lookup Negative Scenarios",
+    "test_cases": [
+      {
+        "id": "1",
+        "name": "Test Case for Bad Request - 400",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Send party lookup request",
+            "operationPath": "/parties/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+              "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Date": "{$function.generic.curDate}"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 400",
+                    "exec": [
+                      "expect(response.status).to.equal(400)"
+                    ]
+                  }
+                ]
+              }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "Test Case for error in Payer Scheme",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Negative test case for error code 2xxx",
+            "operationPath": "/parties/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+              "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('TBD')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('TBD')"
+                    ]
+                  }
+                ]
+              }
+          },
+          {
+            "id": "2",
+            "description": "Negative test case for error code 3xxx",
+            "operationPath": "/parties/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+              "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('TBD')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('TBD')"
+                    ]
+                  }
+                ]
+              }
+          },
+          {
+            "id": "3",
+            "description": "Negative test case for error code 4xxx",
+            "operationPath": "/parties/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+              "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('TBD')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('TBD')"
+                    ]
+                  }
+                ]
+              }
+          },
+          {
+            "id": "4",
+            "description": "Negative test case for error code 4xxx",
+            "operationPath": "/parties/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+              "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('TBD')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('TBD')"
+                    ]
+                  }
+                ]
+              }
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "name": "Test Case for scenario where the receiving dfsp is not in proxy cache",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Send party lookup request",
+            "operationPath": "/parties/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+              "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('3201')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('TBD')"
+                    ]
+                  }
+                ]
+              }
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "name": "Test Case for scenario when there is an error in proxy",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Send party lookup request",
+            "operationPath": "/parties/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+              "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Response Source Header should be proxy",
+                    "exec": [
+                      "expect('{$callback.headers['FSPIOP-Source']}').to.equal('TBD')"
+                    ]
+                  },
+                  {
+                    "id": 3,
+                    "description": "Response Destination Header same as Payerfsp Id",
+                    "exec": [
+                      "expect('{$callback.headers['FSPIOP-Destination']}').to.equal('{$inputs.PROXY_PAYERFSP_ID}')"
+                    ]
+                  },
+                  {
+                    "id": 4,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('3100')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('TBD')"
+                    ]
+                  }
+                ]
+              }
+          }
+        ]
+      }
+    ]
+  }
