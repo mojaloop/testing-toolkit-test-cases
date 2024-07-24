@@ -8,6 +8,13 @@
           {
             "id": "1",
             "description": "Send party lookup request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
             "operationPath": "/parties/{Type}/{ID}",
             "method": "get",
             "params": {
@@ -27,6 +34,13 @@
                     "exec": [
                       "expect(response.status).to.equal(400)"
                     ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Response error code to be 3102",
+                    "exec": [
+                      "expect(response.body.errorInformation.errorCode).to.equal('3102')"
+                    ]
                   }
                 ]
               }
@@ -40,6 +54,13 @@
           {
             "id": "1",
             "description": "Negative test case for error code 2xxx",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
             "operationPath": "/parties/{Type}/{ID}",
             "method": "get",
             "params": {

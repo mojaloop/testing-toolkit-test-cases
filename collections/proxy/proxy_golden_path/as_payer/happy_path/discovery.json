@@ -8,6 +8,13 @@
           {
             "id": "1",
             "description": "Send party lookup request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
             "operationPath": "/parties/{Type}/{ID}",
             "method": "get",
             "params": {
@@ -73,42 +80,43 @@
           },
           {
             "id": "2",
-            "name": "Oracle Lookup",
-            "requests": [
-              {
-                "id": "1",
-                "description": "Send Oracle lookup request",
-                "operationPath": "/participants/{Type}/{ID}",
-                "method": "get",
-                "params": {
-                    "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
-                    "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
-                },
-                "headers": {
-                  "Accept": "application/vnd.interoperability.participants+json;version=1.0",
-                  "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-                  "Date": "{$function.generic.curDate}"
-                },
-                "tests": {
-                    "assertions": [
-                      {
-                        "id": 1,
-                        "description": "Response status to be 200",
-                        "exec": [
-                          "expect(response.status).to.equal(200)"
-                        ]
-                      },
-                      {
-                        "id": 2,
-                        "description": "Oracle has Proxy Payee DFSP set",
-                        "exec": [
-                          "expect(response.fspId).to.equal('{$inputs.PROXY_PAYEEFSP_ID}')"
-                        ]
-                      }
+            "description": "Send Oracle lookup request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_ORACLE}",
+            "operationPath": "/participants/{Type}/{ID}",
+            "method": "get",
+            "params": {
+                "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+              "Date": "{$function.generic.curDate}"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 200",
+                    "exec": [
+                      "expect(response.status).to.equal(200)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Oracle has Proxy Payee DFSP set",
+                    "exec": [
+                      "expect(response.fspId).to.equal('{$inputs.PROXY_PAYEEFSP_ID}')"
                     ]
                   }
+                ]
               }
-            ]
           }
         ]
       },
@@ -119,6 +127,12 @@
           {
             "id": "1",
             "description": "Send party lookup request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
             "operationPath": "/parties/{Type}/{ID}",
             "method": "get",
             "params": {
@@ -175,44 +189,44 @@
           },
           {
             "id": "2",
-            "name": "Oracle Lookup",
-            "requests": [
-              {
-                "id": "1",
-                "description": "Send Oracle lookup request",
-                "operationPath": "/participants/{Type}/{ID}",
-                "method": "get",
-                "params": {
-                  "Type": "{$inputs.toIdType}",
-                  "ID": "{$inputs.toIdValue}"
-                },
-                "headers": {
-                  "Accept": "application/vnd.interoperability.participants+json;version=1.0",
-                  "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-                  "Date": "{$function.generic.curDate}",
-                  "FSPIOP-Source": "payerfsp",
-                  "FSPIOP-Destination": "payeefsp"
-                },
-                "tests": {
-                    "assertions": [
-                      {
-                        "id": 1,
-                        "description": "Response status to be 200",
-                        "exec": [
-                          "expect(response.status).to.equal(200)"
-                        ]
-                      },
-                      {
-                        "id": 2,
-                        "description": "Oracle should not have payeeDFSP set",
-                        "exec": [
-                          "expect(response.fspId).to.equal('')"
-                        ]
-                      }
+            "description": "Send Oracle lookup request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "operationPath": "/participants/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.toIdType}",
+              "ID": "{$inputs.toIdValue}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "payerfsp",
+              "FSPIOP-Destination": "payeefsp"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 200",
+                    "exec": [
+                      "expect(response.status).to.equal(200)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Oracle should not have payeeDFSP set",
+                    "exec": [
+                      "expect(response.fspId).to.equal('')"
                     ]
                   }
+                ]
               }
-            ]
           }
         ]
       },
@@ -223,6 +237,12 @@
           {
             "id": "1",
             "description": "Send party lookup request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
             "operationPath": "/parties/{Type}/{ID}",
             "method": "get",
             "params": {
@@ -281,44 +301,44 @@
           },
           {
             "id": "2",
-            "name": "Oracle Lookup",
-            "requests": [
-              {
-                "id": "1",
-                "description": "Send Oracle lookup request",
-                "operationPath": "/participants/{Type}/{ID}",
-                "method": "get",
-                "params": {
-                  "Type": "{$inputs.toIdType}",
-                  "ID": "{$inputs.toIdValue}"
-                },
-                "headers": {
-                  "Accept": "application/vnd.interoperability.participants+json;version=1.0",
-                  "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-                  "Date": "{$function.generic.curDate}",
-                  "FSPIOP-Source": "payerfsp",
-                  "FSPIOP-Destination": "payeefsp"
-                },
-                "tests": {
-                    "assertions": [
-                      {
-                        "id": 1,
-                        "description": "Response status to be 200",
-                        "exec": [
-                          "expect(response.status).to.equal(200)"
-                        ]
-                      },
-                      {
-                        "id": 2,
-                        "description": "Oracle should not have payeeDFSP set",
-                        "exec": [
-                          "expect(response.fspId).to.equal('')"
-                        ]
-                      }
+            "description": "Send Oracle lookup request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "operationPath": "/participants/{Type}/{ID}",
+            "method": "get",
+            "params": {
+              "Type": "{$inputs.toIdType}",
+              "ID": "{$inputs.toIdValue}"
+            },
+            "headers": {
+              "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "payerfsp",
+              "FSPIOP-Destination": "payeefsp"
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 200",
+                    "exec": [
+                      "expect(response.status).to.equal(200)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Oracle should not have payeeDFSP set",
+                    "exec": [
+                      "expect(response.fspId).to.equal('')"
                     ]
                   }
+                ]
               }
-            ]
           }
         ]
       }
