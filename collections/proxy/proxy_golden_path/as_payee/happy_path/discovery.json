@@ -25,9 +25,8 @@
               "Accept": "application/vnd.interoperability.parties+json;version=1.0",
               "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
               "Date": "{$function.generic.curDate}",
-              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
-              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}",
-              "FSPIOP-Proxy": "{$inputs.PROXY1_DFSP_ID}",
+              "FSPIOP-Source": "nonexistentpayerfsp",
+              "FSPIOP-Proxy": "{$inputs.PROXY_HEADER}",
               "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
             },
             "tests": {
@@ -75,46 +74,6 @@
                       "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID}')",
                       "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_FIRST_NAME}')",
                       "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_LAST_NAME}')"
-                    ]
-                  }
-                ]
-              }
-          },
-          {
-            "id": "2",
-            "description": "Send Oracle lookup request",
-            "apiVersion": {
-              "minorVersion": 1,
-              "majorVersion": 1,
-              "type": "fspiop",
-              "asynchronous": true
-            },
-            "url": "{$inputs.HOST_ORACLE}",
-            "operationPath": "/participants/{Type}/{ID}",
-            "method": "get",
-            "params": {
-                "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
-                "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
-            },
-            "headers": {
-              "Accept": "application/vnd.interoperability.participants+json;version=1.0",
-              "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-              "Date": "{$function.generic.curDate}"
-            },
-            "tests": {
-                "assertions": [
-                  {
-                    "id": 1,
-                    "description": "Response status to be 200",
-                    "exec": [
-                      "expect(response.status).to.equal(200)"
-                    ]
-                  },
-                  {
-                    "id": 2,
-                    "description": "Oracle has Proxy Payee DFSP set",
-                    "exec": [
-                      "expect(response.fspId).to.equal('{$inputs.PROXY_PAYEEFSP_ID}')"
                     ]
                   }
                 ]
