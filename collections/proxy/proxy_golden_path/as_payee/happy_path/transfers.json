@@ -1,116 +1,83 @@
 {
-    "name": "Party Lookup Happy Path",
+    "name": "Quotes Happy Path",
     "test_cases": [
       {
-        "id": "1",
-        "name": "Party Lookup for ProxyAB if not cached",
+        "id": 1,
+        "name": "Proxy Transfers Service",
         "requests": [
           {
-            "id": "1",
-            "description": "Send party lookup request",
-            "operationPath": "/parties/{Type}/{ID}",
-            "method": "get",
-            "params": {
-              "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
-              "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
+            "id": 1,
+            "meta": {
+              "info": "This request allows us to send a request for Transfer (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
             },
+            "description": "Send transfer",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_TRANSFERS_SERVICE}",
+            "operationPath": "/transfers",
+            "method": "post",
             "headers": {
-              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
-              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
               "Date": "{$function.generic.curDate}",
               "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
-              "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
             },
+            "body": {
+              "transferId": "{$function.generic.generateUUID}",
+              "payerFsp": "{$inputs.PROXY_PAYERFSP_ID}",
+              "payeeFsp": "{$inputs.PROXY_PAYEEFSP_ID}",
+              "amount": {
+                "amount": "{$inputs.PROXY_AMOUNT}",
+                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+              },
+              "expiration": "{$inputs.expiration}",
+              "ilpPacket": "{$inputs.ilpPacket}",
+              "condition": "{$inputs.condition}"
+            },
+            "scriptingEngine": "javascript",
             "tests": {
-                "assertions": [
-                  {
-                    "id": 1,
-                    "description": "Response status to be 202",
-                    "exec": [
-                      "expect(response.status).to.equal(202)"
-                    ]
-                  },
-                  {
-                    "id": 2,
-                    "description": "Response Proxy Header should be set",
-                    "exec": [
-                      "expect(callback.headers['fspiop-proxy']).to.equal('{$inputs.PROXY_HEADER}')"
-                    ]
-                  },
-                  {
-                    "id": 3,
-                    "description": "Response Source Header same as Payeefsp Id",
-                    "exec": [
-                      "expect('{$callback.headers['FSPIOP-Source']}').to.equal('{$inputs.PROXY_PAYEEFSP_ID}')"
-                    ]
-                  },
-                  {
-                    "id": 4,
-                    "description": "Response Destination Header same as Payerfsp Id",
-                    "exec": [
-                      "expect('{$callback.headers['FSPIOP-Destination']}').to.equal('{$inputs.PROXY_PAYERFSP_ID}')"
-                    ]
-                  },
-                  {
-                    "id": 5,
-                    "description": "Callback content-type to be parties",
-                    "exec": [
-                      "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
-                    ]
-                  },
-                  {
-                    "id": 6,
-                    "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
-                    "exec": [
-                      "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}')",
-                      "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID}')",
-                      "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_FIRST_NAME}')",
-                      "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_LAST_NAME}')"
-                    ]
-                  }
+              "assertions": [
+                {
+                  "id": 1,
+                  "description": "Response status to be 202",
+                  "exec": [
+                    "expect(response.status).to.equal(202)"
+                  ]
+                }
+              ]
+            },
+            "path": "/quotes",
+            
+            "scripts": {
+              "preRequest": {
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                  "}"
+                ]
+              },
+              "postRequest": {
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                  "}"
                 ]
               }
-          },
-          {
-            "id": "2",
-            "name": "Oracle Lookup",
-            "requests": [
-              {
-                "id": "1",
-                "description": "Send Oracle lookup request",
-                "operationPath": "/participants/{Type}/{ID}",
-                "method": "get",
-                "params": {
-                    "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
-                    "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
-                },
-                "headers": {
-                  "Accept": "application/vnd.interoperability.participants+json;version=1.0",
-                  "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-                  "Date": "{$function.generic.curDate}"
-                },
-                "tests": {
-                    "assertions": [
-                      {
-                        "id": 1,
-                        "description": "Response status to be 200",
-                        "exec": [
-                          "expect(response.status).to.equal(200)"
-                        ]
-                      },
-                      {
-                        "id": 2,
-                        "description": "Oracle has Proxy Payee DFSP set",
-                        "exec": [
-                          "expect(response.fspId).to.equal('{$inputs.PROXY_PAYEEFSP_ID}')"
-                        ]
-                      }
-                    ]
-                  }
-              }
-            ]
+            }
           }
-        ]
+        ],
+        "fileInfo": {
+          "path": "hub/golden_path/quoting_service/quoting_service.json",
+          "labels": [
+            "quotes"
+          ]
+        }
       },
       {
         "id": "2",
