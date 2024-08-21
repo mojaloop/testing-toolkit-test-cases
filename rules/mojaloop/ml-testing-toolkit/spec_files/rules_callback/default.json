@@ -1323,7 +1323,9 @@
             "currency": "{$request.body.amount.currency}",
             "amount": "{$environment.quotePayeeFspCommission}"
           },
-          "expiration": "{$environment.quoteExpiration}"
+          "expiration": "{$environment.quoteExpiration}",
+          "ilpPacket": "AYIBgQAAAAAAAASwNGxldmVsb25lLmRmc3AxLm1lci45T2RTOF81MDdqUUZERmZlakgyOVc4bXFmNEpLMHlGTFGCAUBQU0svMS4wCk5vbmNlOiB1SXlweUYzY3pYSXBFdzVVc05TYWh3CkVuY3J5cHRpb246IG5vbmUKUGF5bWVudC1JZDogMTMyMzZhM2ItOGZhOC00MTYzLTg0NDctNGMzZWQzZGE5OGE3CgpDb250ZW50LUxlbmd0aDogMTM1CkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbgpTZW5kZXItSWRlbnRpZmllcjogOTI4MDYzOTEKCiJ7XCJmZWVcIjowLFwidHJhbnNmZXJDb2RlXCI6XCJpbnZvaWNlXCIsXCJkZWJpdE5hbWVcIjpcImFsaWNlIGNvb3BlclwiLFwiY3JlZGl0TmFtZVwiOlwibWVyIGNoYW50XCIsXCJkZWJpdElkZW50aWZpZXJcIjpcIjkyODA2MzkxXCJ9IgA",
+          "condition": "f5sqb7tBTWPd5Y8BDFdMm9BJR_MNI4isf8p8n4D5pHA"
         },
         "scripts": {
           "exec": [
@@ -1338,10 +1340,16 @@
             "environment.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
           ],
           "scriptingEngine": "javascript"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
         }
       },
       "delay": 0,
-      "type": "MOCK_CALLBACK"
+      "type": "FIXED_CALLBACK"
     }
   },
   {
@@ -1935,88 +1943,19 @@
     }
   },
   {
-    "ruleId": 21,
-    "priority": 1,
-    "description": "get /fxParties/{Type}/{ID}",
-    "apiVersion": {
-      "minorVersion": 0,
-      "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
-    },
-    "conditions": {
-      "all": [
-        {
-          "fact": "operationPath",
-          "operator": "equal",
-          "value": "/fxParties/{Type}/{ID}"
-        },
-        {
-          "fact": "method",
-          "operator": "equal",
-          "value": "get"
-        }
-      ]
-    },
-    "event": {
-      "method": "put",
-      "path": "/fxParties/{Type}/{ID}",
-      "params": {
-        "scripts": {
-          "scriptingEngine": "postman"
-        }
-      },
-      "type": "MOCK_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
-  },
-  {
-    "ruleId": 22,
-    "priority": 1,
-    "description": "get /fxParties/{Type}/{ID}/{SubId}",
-    "apiVersion": {
-      "minorVersion": 0,
-      "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
-    },
-    "conditions": {
-      "all": [
-        {
-          "fact": "operationPath",
-          "operator": "equal",
-          "value": "/fxParties/{Type}/{ID}/{SubId}"
-        },
-        {
-          "fact": "method",
-          "operator": "equal",
-          "value": "get"
-        }
-      ]
-    },
-    "event": {
-      "method": "put",
-      "path": "/fxParties/{Type}/{ID}/{SubId}",
-      "params": {
-        "scripts": {
-          "scriptingEngine": "postman"
-        }
-      },
-      "type": "MOCK_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
-  },
-  {
-    "ruleId": 23,
+    "ruleId": 50,
     "priority": 1,
     "description": "post /fxQuotes",
     "apiVersion": {
       "minorVersion": 0,
       "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
     },
     "conditions": {
       "all": [
@@ -2037,121 +1976,53 @@
       "path": "/fxQuotes/{ID}",
       "params": {
         "scripts": {
-          "scriptingEngine": "postman"
-        }
-      },
-      "type": "MOCK_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
-  },
-  {
-    "ruleId": 24,
-    "priority": 1,
-    "description": "get /fxQuotes/{ID}",
-    "apiVersion": {
-      "minorVersion": 0,
-      "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
-    },
-    "conditions": {
-      "all": [
-        {
-          "fact": "operationPath",
-          "operator": "equal",
-          "value": "/fxQuotes/{ID}"
+          "exec": [
+            "const fxQuoteBody = JSON.parse(request.body)",
+            "environment.sourceAmountValue = fxQuoteBody.conversionTerms.sourceAmount.amount || 500",
+            "environment.targetAmountValue = fxQuoteBody.conversionTerms.targetAmount.amount || 500"
+          ],
+          "scriptingEngine": "javascript"
         },
-        {
-          "fact": "method",
-          "operator": "equal",
-          "value": "get"
-        }
-      ]
-    },
-    "event": {
-      "method": "put",
-      "path": "/fxQuotes/{ID}",
-      "params": {
-        "scripts": {
-          "scriptingEngine": "postman"
-        }
-      },
-      "type": "MOCK_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
-  },
-  {
-    "ruleId": 25,
-    "priority": 1,
-    "description": "post /fxTransfers",
-    "apiVersion": {
-      "minorVersion": 0,
-      "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
-    },
-    "conditions": {
-      "all": [
-        {
-          "fact": "operationPath",
-          "operator": "equal",
-          "value": "/fxTransfers"
+        "body": {
+          "condition": "f5sqb7tBTWPd5Y8BDFdMm9BJR_MNI4isf8p8n4D5pHA",
+          "conversionTerms": {
+            "conversionId": "{$request.body.conversionTerms.conversionId}",
+            "determiningTransferId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+            "initiatingFsp": "PayerFSP",
+            "counterPartyFsp": "{$request.body.conversionTerms.counterPartyFsp}",
+            "amountType": "SEND",
+            "sourceAmount": {
+              "currency": "{$request.body.conversionTerms.sourceAmount.currency}",
+              "amount": "{$environment.sourceAmountValue}"
+            },
+            "targetAmount": {
+              "currency": "{$request.body.conversionTerms.targetAmount.currency}",
+              "amount": "{$environment.targetAmountValue}"
+            },
+            "charges": [
+              {
+                "chargeType": "string",
+                "sourceAmount": {
+                  "currency": "{$request.body.conversionTerms.sourceAmount.currency}",
+                  "amount": "33"
+                },
+                "targetAmount": {
+                  "currency": "{$request.body.conversionTerms.targetAmount.currency}",
+                  "amount": "6000"
+                }
+              }
+            ],
+            "expiration": "2023-12-25T14:17:09.663+01:00"
+          }
         },
-        {
-          "fact": "method",
-          "operator": "equal",
-          "value": "post"
-        }
-      ]
-    },
-    "event": {
-      "method": "put",
-      "path": "/fxTransfers/{ID}",
-      "params": {
-        "scripts": {
-          "scriptingEngine": "postman"
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
         }
       },
-      "type": "MOCK_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
-  },
-  {
-    "ruleId": 26,
-    "priority": 1,
-    "description": "get /fxTransfers/{ID}",
-    "apiVersion": {
-      "minorVersion": 0,
-      "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
-    },
-    "conditions": {
-      "all": [
-        {
-          "fact": "operationPath",
-          "operator": "equal",
-          "value": "/fxTransfers/{ID}"
-        },
-        {
-          "fact": "method",
-          "operator": "equal",
-          "value": "get"
-        }
-      ]
-    },
-    "event": {
-      "method": "put",
-      "path": "/fxTransfers/{ID}",
-      "params": {
-        "scripts": {
-          "scriptingEngine": "postman"
-        }
-      },
-      "type": "MOCK_CALLBACK"
+      "type": "FIXED_CALLBACK"
     },
     "type": "callback",
     "version": 1
