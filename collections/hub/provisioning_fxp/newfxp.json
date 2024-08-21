@@ -1,0 +1,272 @@
+{
+  "options": {},
+  "name": "switch_onboarding_participant_fxp",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Accounts",
+      "meta": {
+        "info": "Accounts"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Add participant"
+          },
+          "description": "Add participant FX Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.DFSP_NAME}",
+            "currency": "{$inputs.fxpCurrency}"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Add initial position and limits"
+          },
+          "description": "Add initial position and limits for FX Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.DFSP_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.DFSP_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.fxpCurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 1000000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Funds In",
+      "meta": {
+        "info": "Funds In"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Get Status Request before deposit"
+          },
+          "description": "Get Status Request before deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.DFSP_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.DFSP_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('fxpCurrency')) {",
+                "    pm.environment.set(\"fxpCurrency1SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"fxpCurrency1SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Deposit Funds in Settlement Account"
+          },
+          "description": "Deposit Funds in Settlement Account FX Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.DFSP_NAME}/accounts/{$environment.fxpCurrency1SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.DFSP_NAME}",
+            "id": "{$environment.fxpCurrency1SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.fxpCurrency1fundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.fxpCurrency1fundsInPrepareAmount}",
+              "currency": "{$inputs.fxpCurrency}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('fxpCurrency1fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('fxpCurrency1fundsInPrepareAmount', 5000000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Get Status Request after deposit"
+          },
+          "description": "Get Status Request after deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.DFSP_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.DFSP_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.fxpCurrency1SettlementAccountBalanceAfterFundsIn).to.equal(+environment.fxpCurrency1SettlementAccountBalanceBeforeFundsIn - +environment.fxpCurrency1fundsInPrepareAmount)"
+                ]
+              }
+            ]
+          },
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('fxpCurrency')) {",
+                "    pm.environment.set(\"fxpCurrency1SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        }
+     ]
+    }
+  ]
+}
