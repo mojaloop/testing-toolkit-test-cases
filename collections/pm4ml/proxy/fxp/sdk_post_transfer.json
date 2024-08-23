@@ -10,7 +10,7 @@
       },
       "requests": [
         {
-          "id": 2,
+          "id": 1,
           "description": "Send transfer",
           "apiVersion": {
             "minorVersion": 1,
@@ -71,7 +71,7 @@
           }
         },
         {
-          "id": 3,
+          "id": 2,
           "description": "Accept Party",
           "apiVersion": {
             "minorVersion": 1,
@@ -80,13 +80,51 @@
             "asynchronous": false
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.2.response.body.transferId}",
+          "path": "/transfers/{$prev.1.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.2.response.body.transferId}"
+            "transferId": "{$prev.1.response.body.transferId}"
           },
           "body": {
             "acceptParty": true
+          },
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Current state should be WAITING_FOR_CONVERSION_ACCEPTANCE",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('WAITING_FOR_CONVERSION_ACCEPTANCE')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "description": "Accept FX Conversion Quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": false
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "body": {
+            "acceptConversion": true
           },
           "disabled": false,
           "tests": {
@@ -109,7 +147,7 @@
           }
         },
         {
-          "id": 5,
+          "id": 4,
           "description": "Accept Quote",
           "apiVersion": {
             "minorVersion": 1,
@@ -118,10 +156,10 @@
             "asynchronous": false
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.2.response.body.transferId}",
+          "path": "/transfers/{$prev.1.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.2.response.body.transferId}"
+            "transferId": "{$prev.1.response.body.transferId}"
           },
           "body": {
             "acceptQuote": true
