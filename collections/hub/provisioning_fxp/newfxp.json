@@ -1,5 +1,6 @@
 {
-  "name": "multi",
+  "options": {},
+  "name": "switch_onboarding_participant_fxp",
   "test_cases": [
     {
       "id": 1,
@@ -11,9 +12,9 @@
         {
           "id": 1,
           "meta": {
-            "info": "Add {$inputs.HUB_NAME} Account-HUB_MULTILATERAL_SETTLEMENT Second Currency"
+            "info": "Add {$inputs.HUB_NAME} Account-HUB_MULTILATERAL_SETTLEMENT FXP Currency"
           },
-          "description": "Add {$inputs.HUB_NAME} Account-HUB_MULTILATERAL_SETTLEMENT Second Currency",
+          "description": "Add {$inputs.HUB_NAME} Account-HUB_MULTILATERAL_SETTLEMENT FXP Currency",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -27,7 +28,7 @@
           },
           "body": {
             "type": "HUB_MULTILATERAL_SETTLEMENT",
-            "currency": "{$inputs.currency}"
+            "currency": "{$inputs.fxpCurrency}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -53,9 +54,9 @@
         {
           "id": 2,
           "meta": {
-            "info": "Add {$inputs.HUB_NAME} Account-HUB_RECONCILIATION for the DFSP currency"
+            "info": "Add {$inputs.HUB_NAME} Account-HUB_RECONCILIATION for the FXP currency"
           },
-          "description": "Add {$inputs.HUB_NAME} Account-HUB_RECONCILIATION for the DFSP currency",
+          "description": "Add {$inputs.HUB_NAME} Account-HUB_RECONCILIATION for the FXP currency",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -69,7 +70,7 @@
           },
           "body": {
             "type": "HUB_RECONCILIATION",
-            "currency": "{$inputs.currency}"
+            "currency": "{$inputs.fxpCurrency}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -96,17 +97,17 @@
     },
     {
       "id": 2,
-      "name": "Setup DFSP accounts and limits",
+      "name": "Setup FXP Accounts",
       "meta": {
-        "info": "DFSP account"
+        "info": "FXP Accounts"
       },
       "requests": [
         {
           "id": 1,
           "meta": {
-            "info": "Add DFSP"
+            "info": "Add FXP participant"
           },
-          "description": "Add DFSP",
+          "description": "Add FXP participant currency",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -117,12 +118,10 @@
           "method": "post",
           "body": {
             "name": "{$inputs.DFSP_NAME}",
-            "currency": "{$inputs.currency}",
-            "isProxy": "{$inputs.isProxy}"
+            "currency": "{$inputs.fxpCurrency}"
           },
           "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.hub_operator}"
+            "Content-Type": "application/json"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -144,9 +143,9 @@
         {
           "id": 2,
           "meta": {
-            "info": "Add initial position and limits - DFSP"
+            "info": "Add initial position and limits"
           },
-          "description": "Add initial position and limits - DFSP",
+          "description": "Add initial position and limits for FX Currency",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -159,16 +158,15 @@
             "name": "{$inputs.DFSP_NAME}"
           },
           "body": {
-            "currency": "{$inputs.currency}",
+            "currency": "{$inputs.fxpCurrency}",
             "limit": {
               "type": "NET_DEBIT_CAP",
-              "value": 10000
+              "value": 1000000
             },
             "initialPosition": 0
           },
           "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.hub_operator}"
+            "Content-Type": "application/json"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -186,13 +184,22 @@
               }
             ]
           }
-        },
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Funds In",
+      "meta": {
+        "info": "Funds In"
+      },
+      "requests": [
         {
-          "id": 3,
+          "id": 1,
           "meta": {
-            "info": "DFSP Get Status Request before deposit"
+            "info": "Get Status Request before deposit"
           },
-          "description": "DFSP Get Status Request before deposit",
+          "description": "Get Status Request before deposit",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -226,9 +233,9 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"dfspSettlementAccountId\", jsonData[i].id)",
-                "    pm.environment.set(\"dfspSettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('fxpCurrency')) {",
+                "    pm.environment.set(\"fxpCurrency1SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"fxpCurrency1SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
@@ -236,31 +243,31 @@
           }
         },
         {
-          "id": 4,
+          "id": 2,
           "meta": {
-            "info": "Deposit Funds in Settlement Account - DFSP"
+            "info": "Deposit Funds in Settlement Account"
           },
-          "description": "Deposit Funds in Settlement Account - DFSP",
+          "description": "Deposit Funds in Settlement Account FX Currency",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.DFSP_NAME}/accounts/{$environment.dfspSettlementAccountId}",
+          "path": "/participants/{$inputs.DFSP_NAME}/accounts/{$environment.fxpCurrency1SettlementAccountId}",
           "method": "post",
           "params": {
             "name": "{$inputs.DFSP_NAME}",
-            "id": "{$environment.dfspSettlementAccountId}"
+            "id": "{$environment.fxpCurrency1SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.dfspfundsInPrepareTransferId}",
+            "transferId": "{$environment.fxpCurrency1fundsInPrepareTransferId}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.dfspfundsInPrepareAmount}",
-              "currency": "{$inputs.currency}"
+              "amount": "{$environment.fxpCurrency1fundsInPrepareAmount}",
+              "currency": "{$inputs.fxpCurrency}"
             },
             "extensionList": {
               "extension": [
@@ -291,18 +298,18 @@
             "preRequest": {
               "exec": [
                 "var uuid = require('uuid');",
-                "pm.environment.set('dfspfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('dfspfundsInPrepareAmount', 5000);"
+                "pm.environment.set('fxpCurrency1fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('fxpCurrency1fundsInPrepareAmount', 5000000);"
               ]
             }
           }
         },
         {
-          "id": 5,
+          "id": 3,
           "meta": {
-            "info": "DFSP Get Status Request after deposit"
+            "info": "Get Status Request after deposit"
           },
-          "description": "DFSP Get Status Request after deposit",
+          "description": "Get Status Request after deposit",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -330,46 +337,43 @@
               },
               {
                 "id": 2,
-                "description": "DFSP Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.dfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.dfspSettlementAccountBalanceBeforeFundsIn - +environment.dfspfundsInPrepareAmount)"
+                  "expect(+environment.fxpCurrency1SettlementAccountBalanceAfterFundsIn).to.equal(+environment.fxpCurrency1SettlementAccountBalanceBeforeFundsIn - +environment.fxpCurrency1fundsInPrepareAmount)"
                 ]
               }
             ]
           },
-          "delay": "1000",
+          "delay": "500",
           "scripts": {
             "postRequest": {
               "exec": [
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"dfspSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('fxpCurrency')) {",
+                "    pm.environment.set(\"fxpCurrency1SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
             }
           }
         }
-      ],
-      "fileInfo": {
-        "path": "hub/provisioning_dfsp/newdfsp.json"
-      }
+     ]
     },
     {
-      "id": 3,
+      "id": 4,
       "name": "Setup Callback Endpoints",
       "meta": {
-        "info": "DFSP callbacks"
+        "info": "FXP callbacks"
       },
       "requests": [
         {
           "id": 1,
           "meta": {
-            "info": "Add DFSP callback - AUTHORIZATIONS"
+            "info": "Add FXP callback - AUTHORIZATIONS"
           },
-          "description": "Add DFSP callback - AUTHORIZATIONS",
+          "description": "Add FXP callback - AUTHORIZATIONS",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -405,9 +409,9 @@
         {
           "id": 2,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT PUT"
+            "info": "Add FXP callback - PARTICIPANT PUT"
           },
-          "description": "Add DFSP callback - PARTICIPANT PUT",
+          "description": "Add FXP callback - PARTICIPANT PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -443,9 +447,9 @@
         {
           "id": 3,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT PUT Error"
+            "info": "Add FXP callback - PARTICIPANT PUT Error"
           },
-          "description": "Add DFSP callback - PARTICIPANT PUT Error",
+          "description": "Add FXP callback - PARTICIPANT PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -481,9 +485,9 @@
         {
           "id": 4,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT PUT Batch"
+            "info": "Add FXP callback - PARTICIPANT PUT Batch"
           },
-          "description": "Add DFSP callback - PARTICIPANT PUT Batch",
+          "description": "Add FXP callback - PARTICIPANT PUT Batch",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -519,9 +523,9 @@
         {
           "id": 5,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT PUT Batch Error"
+            "info": "Add FXP callback - PARTICIPANT PUT Batch Error"
           },
-          "description": "Add DFSP callback - PARTICIPANT PUT Batch Error",
+          "description": "Add FXP callback - PARTICIPANT PUT Batch Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -557,9 +561,9 @@
         {
           "id": 6,
           "meta": {
-            "info": "Add DFSP callback - PARTIES GET"
+            "info": "Add FXP callback - PARTIES GET"
           },
-          "description": "Add DFSP callback - PARTIES GET",
+          "description": "Add FXP callback - PARTIES GET",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -595,9 +599,9 @@
         {
           "id": 7,
           "meta": {
-            "info": "Add DFSP callback - PARTIES PUT"
+            "info": "Add FXP callback - PARTIES PUT"
           },
-          "description": "Add DFSP callback - PARTIES PUT",
+          "description": "Add FXP callback - PARTIES PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -633,9 +637,9 @@
         {
           "id": 8,
           "meta": {
-            "info": "Add DFSP callback - PARTIES PUT Error"
+            "info": "Add FXP callback - PARTIES PUT Error"
           },
-          "description": "Add DFSP callback - PARTIES PUT Error",
+          "description": "Add FXP callback - PARTIES PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -671,9 +675,9 @@
         {
           "id": 9,
           "meta": {
-            "info": "Add DFSP callback - QUOTES"
+            "info": "Add FXP callback - QUOTES"
           },
-          "description": "Add DFSP callback - QUOTES",
+          "description": "Add FXP callback - QUOTES",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -708,9 +712,9 @@
         {
           "id": 10,
           "meta": {
-            "info": "Add DFSP callback - TXN REQUEST"
+            "info": "Add FXP callback - TXN REQUEST"
           },
-          "description": "Add DFSP callback - TXN REQUEST",
+          "description": "Add FXP callback - TXN REQUEST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -745,9 +749,9 @@
         {
           "id": 11,
           "meta": {
-            "info": "Add DFSP callback - TRANSFERS POST"
+            "info": "Add FXP callback - TRANSFERS POST"
           },
-          "description": "Add DFSP callback - TRANSFERS POST",
+          "description": "Add FXP callback - TRANSFERS POST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -782,9 +786,9 @@
         {
           "id": 12,
           "meta": {
-            "info": "Add DFSP callback - TRANSFERS PUT"
+            "info": "Add FXP callback - TRANSFERS PUT"
           },
-          "description": "Add DFSP callback - TRANSFERS PUT",
+          "description": "Add FXP callback - TRANSFERS PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -819,9 +823,9 @@
         {
           "id": 13,
           "meta": {
-            "info": "Add DFSP callback - TRANSFERS ERROR"
+            "info": "Add FXP callback - TRANSFERS ERROR"
           },
-          "description": "Add DFSP callback - TRANSFERS ERROR",
+          "description": "Add FXP callback - TRANSFERS ERROR",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -856,9 +860,9 @@
         {
           "id": 14,
           "meta": {
-            "info": "Add DFSP callback - BULK-TRANSFER POST"
+            "info": "Add FXP callback - BULK-TRANSFER POST"
           },
-          "description": "Add DFSP callback - BULK-TRANSFER POST",
+          "description": "Add FXP callback - BULK-TRANSFER POST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -893,9 +897,9 @@
         {
           "id": 15,
           "meta": {
-            "info": "Add DFSP callback - BULK-TRANSFER PUT"
+            "info": "Add FXP callback - BULK-TRANSFER PUT"
           },
-          "description": "Add DFSP callback - BULK-TRANSFER PUT",
+          "description": "Add FXP callback - BULK-TRANSFER PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -930,9 +934,9 @@
         {
           "id": 16,
           "meta": {
-            "info": "Add DFSP callback - BULK-TRANSFER ERROR"
+            "info": "Add FXP callback - BULK-TRANSFER ERROR"
           },
-          "description": "Add DFSP callback - BULK-TRANSFER ERROR",
+          "description": "Add FXP callback - BULK-TRANSFER ERROR",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -967,9 +971,9 @@
         {
           "id": 17,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT SUB-ID PUT"
+            "info": "Add FXP callback - PARTICIPANT SUB-ID PUT"
           },
-          "description": "Add DFSP callback - PARTICIPANT SUB-ID PUT",
+          "description": "Add FXP callback - PARTICIPANT SUB-ID PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1004,9 +1008,9 @@
         {
           "id": 18,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT SUB-ID PUT Error"
+            "info": "Add FXP callback - PARTICIPANT SUB-ID PUT Error"
           },
-          "description": "Add DFSP callback - PARTICIPANT SUB-ID PUT Error",
+          "description": "Add FXP callback - PARTICIPANT SUB-ID PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1041,9 +1045,9 @@
         {
           "id": 19,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT SUB-ID DELETE"
+            "info": "Add FXP callback - PARTICIPANT SUB-ID DELETE"
           },
-          "description": "Add DFSP callback - PARTICIPANT SUB-ID DELETE",
+          "description": "Add FXP callback - PARTICIPANT SUB-ID DELETE",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1078,9 +1082,9 @@
         {
           "id": 20,
           "meta": {
-            "info": "Add DFSP callback - PARTIES SUB-ID GET"
+            "info": "Add FXP callback - PARTIES SUB-ID GET"
           },
-          "description": "Add DFSP callback - PARTIES SUB-ID GET",
+          "description": "Add FXP callback - PARTIES SUB-ID GET",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1115,9 +1119,9 @@
         {
           "id": 21,
           "meta": {
-            "info": "Add DFSP callback - PARTIES SUB-ID PUT"
+            "info": "Add FXP callback - PARTIES SUB-ID PUT"
           },
-          "description": "Add DFSP callback - PARTIES SUB-ID PUT",
+          "description": "Add FXP callback - PARTIES SUB-ID PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1152,9 +1156,9 @@
         {
           "id": 22,
           "meta": {
-            "info": "Add DFSP callback - PARTIES SUB-ID ERROR PUT"
+            "info": "Add FXP callback - PARTIES SUB-ID ERROR PUT"
           },
-          "description": "Add DFSP callback - PARTIES SUB-ID ERROR PUT",
+          "description": "Add FXP callback - PARTIES SUB-ID ERROR PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1334,16 +1338,13 @@
             ]
           }
         }
-      ],
-      "fileInfo": {
-        "path": "hub/provisioning_dfsp/newdfsp.json"
-      }
+      ]
     },
     {
-      "id": 4,
+      "id": 5,
       "name": "Setup Notification Emails",
       "meta": {
-        "info": "DFSP notification_emails"
+        "info": "FXP notification_emails"
       },
       "requests": [
         {
@@ -1460,10 +1461,7 @@
             ]
           }
         }
-      ],
-      "fileInfo": {
-        "path": "hub/provisioning_dfsp/newdfsp.json"
-      }
+      ]
     }
   ]
 }
