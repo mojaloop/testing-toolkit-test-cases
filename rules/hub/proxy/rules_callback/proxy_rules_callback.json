@@ -2,7 +2,7 @@
   {
     "ruleId": 50,
     "priority": 1,
-    "description": "get /parties/{Type}/{ID} - Testing for Payee side Proxy with TTK",
+    "description": "get /parties/{Type}/{ID} - Testing Payer Scheme with Payee side Proxy as TTK - Happy Path",
     "apiVersion": {
       "minorVersion": 0,
       "majorVersion": 2,
@@ -44,7 +44,7 @@
         "headers": {
           "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
           "Date": "Tue, 23 Jul 2024 02:05:53 GMT",
-          "FSPIOP-Source": "ttkpayee",
+          "FSPIOP-Source": "nonexistentpayee",
           "FSPIOP-Destination": "testingtoolkitdfsp",
           "fspiop-proxy": "proxyttk"
         },
@@ -53,16 +53,141 @@
             "partyIdInfo": {
               "partyIdType": "MSISDN",
               "partyIdentifier": "788912",
-              "fspId": "ttkpayee"
+              "fspId": "nonexistentpayee"
             },
             "name": "veniam consectetur officia si",
             "personalInfo": {
               "complexName": {
-                "lastName": "Jones",
-                "firstName": "David",
-                "middleName": "P"
+                "lastName": "Proxy_Payee_Last",
+                "firstName": "Proxy_Payee_First"
               },
-              "dateOfBirth": "1933-07-02"
+              "dateOfBirth": "2000-10-10"
+            },
+            "merchantClassificationCode": "873"
+          }
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 52,
+    "priority": 1,
+    "description": "get /parties/{Type}/{ID} - Testing Payer Scheme with Payee side Proxy as TTK - Happy Path - Party not found",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "987654",
+          "path": "ID"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "3102",
+            "errorDescription": "Party Not Found"
+          }
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 51,
+    "priority": 1,
+    "description": "get /parties/{Type}/{ID} - Testing Payee side scheme with Payer side proxy as TTK and Payee DFSP as proxy",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "5678912",
+          "path": "ID"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+          "Date": "",
+          "FSPIOP-Source": "payeefspproxyttk",
+          "FSPIOP-Destination": "nonexistentpayerfsp"
+        },
+        "body": {
+          "party": {
+            "partyIdInfo": {
+              "partyIdType": "MSISDN",
+              "partyIdentifier": "5678912",
+              "fspId": "payeefspproxyttk"
+            },
+            "name": "veniam consectetur officia si",
+            "personalInfo": {
+              "complexName": {
+                "lastName": "Proxy_Payee_Last",
+                "firstName": "Proxy_Payee_First"
+              },
+              "dateOfBirth": "2000-10-10"
             },
             "merchantClassificationCode": "873"
           }
@@ -76,7 +201,7 @@
   {
     "ruleId": 1,
     "priority": 1,
-    "description": "get /parties/{Type}/{ID}",
+    "description": "get /parties/{Type}/{ID} - Default",
     "apiVersion": {
       "minorVersion": 0,
       "majorVersion": 1,
@@ -111,7 +236,123 @@
             }
           }
         },
-        "scripts": {}
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 53,
+    "priority": 1,
+    "description": "post /quotes - Default",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/quotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/quotes/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "const quoteBody = JSON.parse(request.body)",
+            "environment.quoteTransferAmount = quoteBody.amount.amount",
+            "environment.quotePayeeFspFee = 0.2",
+            "environment.quotePayeeFspCommission = 0.3",
+            "environment.quotePayeeReceiveAmount = quoteBody.amount.amount",
+            "if (quoteBody.amountType === 'RECEIVE') {",
+            "  environment.quoteTransferAmount = (+quoteBody.amount.amount) + environment.quotePayeeFspFee + environment.quotePayeeFspCommission",
+            "}",
+            "environment.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "body": {
+          "transferAmount": {
+            "currency": "{$request.body.amount.currency}",
+            "amount": "{$environment.quoteTransferAmount}"
+          },
+          "payeeReceiveAmount": {
+            "currency": "{$request.body.amount.currency}",
+            "amount": "{$environment.quotePayeeReceiveAmount}"
+          },
+          "payeeFspFee": {
+            "currency": "{$request.body.amount.currency}",
+            "amount": "{$environment.quotePayeeFspFee}"
+          },
+          "payeeFspCommission": {
+            "currency": "{$request.body.amount.currency}",
+            "amount": "{$environment.quotePayeeFspCommission}"
+          },
+          "expiration": "{$environment.quoteExpiration}"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 54,
+    "priority": 1,
+    "description": "post /transfers - Default",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
       },
       "type": "MOCK_CALLBACK"
     },
