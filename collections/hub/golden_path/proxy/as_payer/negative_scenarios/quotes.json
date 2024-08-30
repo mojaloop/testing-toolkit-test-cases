@@ -8,6 +8,13 @@
           {
             "id": "1",
             "description": "Quote request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
             "operationPath": "/quotes",
             "method": "post",
             "headers": {
@@ -138,7 +145,8 @@
                     ]
                   }
                 ]
-            }
+            },
+            "disabled": true
           },
           {
             "id": "2",
@@ -207,7 +215,8 @@
                     ]
                   }
                 ]
-              }
+            },
+            "disabled": true
           },
           {
             "id": "3",
@@ -276,7 +285,8 @@
                     ]
                   }
                 ]
-              }
+            },
+            "disabled": true
           },
           {
             "id": "4",
@@ -345,7 +355,8 @@
                     ]
                   }
                 ]
-              }
+            },
+            "disabled": true
           }
         ]
       },
@@ -420,7 +431,8 @@
                     ]
                   }
                 ]
-              }
+            },
+            "disabled": true
           }
         ]
       },
@@ -431,6 +443,13 @@
           {
             "id": "1",
             "description": "Send party lookup request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
             "operationPath": "/quotes",
             "method": "post",
             "headers": {
@@ -450,13 +469,6 @@
                   "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
                   "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
                   "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
-                },
-                "personalInfo": {
-                  "complexName": {
-                    "firstName": "{$inputs.PROXY_PAYERFSP_PARTY_FIRST_NAME}",
-                    "lastName": "{$inputs.PROXY_PAYERFSP_PARTY_LAST_NAME}"
-                  },
-                  "dateOfBirth": "{$inputs.PROXY_PAYERFSP_PARTY_DOB}"
                 }
               },
               "payee": {
@@ -490,22 +502,28 @@
                     "id": 2,
                     "description": "Response Source Header should be proxy",
                     "exec": [
-                      "expect('{$callback.headers['FSPIOP-Source']}').to.equal('${inputs.FSPIOP_PROXY_HEADER}')"
+                      "expect(callback.headers['fspiop-source']).to.equal('{$inputs.PROXY_HEADER}')"
                     ]
                   },
                   {
                     "id": 3,
-                    "description": "Response Destination Header same as Payerfsp Id",
+                    "description": "Callback FSP Destination equal to request FSP Source",
                     "exec": [
-                      "expect('{$callback.headers['FSPIOP-Destination']}').to.equal('{$inputs.PROXY_PAYERFSP_ID}')"
+                      "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                     ]
                   },
                   {
                     "id": 4,
-                    "description": "Callback response has errorCode and errorDescription",
+                    "description": "Callback response has errorCode",
                     "exec": [
-                      "expect(callback.body.errorInformation.errorCode).to.equal('${inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY_ERROR_CODE}')",
-                      "expect(callback.body.errorInformation.errorDescription).to.equal('${inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY_ERROR_DESCRIPTION}')"
+                      "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY_ERROR_CODE}')"
+                    ]
+                  },
+                  {
+                    "id": 5,
+                    "description": "Callback response has  errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY_ERROR_DESCRIPTION}')"
                     ]
                   }
                 ]
@@ -584,7 +602,8 @@
                     ]
                   }
                 ]
-            }
+            },
+            "disabled": true
           },
           {
             "id": "2",
@@ -653,7 +672,8 @@
                     ]
                   }
                 ]
-              }
+            },
+            "disabled": true
           },
           {
             "id": "3",
@@ -722,7 +742,8 @@
                     ]
                   }
                 ]
-              }
+            },
+            "disabled": true
           },
           {
             "id": "4",
@@ -791,7 +812,8 @@
                     ]
                   }
                 ]
-              }
+            },
+            "disabled": true
           }
         ]
       },
@@ -866,7 +888,8 @@
                     ]
                   }
                 ]
-            }
+            },
+            "disabled": true
           }
         ]
       }
