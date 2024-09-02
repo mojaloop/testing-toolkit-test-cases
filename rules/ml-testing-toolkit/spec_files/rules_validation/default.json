@@ -1,0 +1,182 @@
+[
+    {
+      "ruleId": 1,
+      "priority": 1,
+      "description": "get /parties/{Type}/{ID} - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in Proxy",
+      "apiVersion": {
+        "minorVersion": 0,
+        "majorVersion": 2,
+        "type": "fspiop",
+        "asynchronous": true,
+        "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+        "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+        "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+        "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+        "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+      },
+      "conditions": {
+        "all": [
+          {
+            "fact": "pathParams",
+            "operator": "equal",
+            "value": "3100",
+            "path": "ID"
+          },
+          {
+            "fact": "operationPath",
+            "operator": "equal",
+            "value": "/parties/{Type}/{ID}"
+          },
+          {
+            "fact": "method",
+            "operator": "equal",
+            "value": "get"
+          }
+        ]
+      },
+      "event": {
+        "method": "put",
+        "path": "/parties/{Type}/{ID}/error",
+        "params": {
+          "scripts": {
+            "scriptingEngine": "postman"
+          },
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "FSPIOP-Source": "proxyttk",
+            "Date": "Tue, 23 Jul 2024 02:05:53 GMT",
+            "FSPIOP-Destination": "testingtoolkitdfsp"
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": "3100",
+              "errorDescription": "Generic Error in Proxy"
+            }
+          }
+        },
+        "type": "FIXED_ERROR_CALLBACK"
+      },
+      "type": "validation",
+      "version": 1
+    },
+    {
+      "ruleId": 2,
+      "priority": 1,
+      "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in Proxy",
+      "apiVersion": {
+        "minorVersion": 0,
+        "majorVersion": 2,
+        "type": "fspiop",
+        "asynchronous": true,
+        "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+        "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+        "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+        "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+        "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+      },
+      "conditions": {
+        "all": [
+          {
+            "fact": "body",
+            "operator": "equal",
+            "value": "3100",
+            "path": "payee.partyIdInfo.partyIdentifier"
+          },
+          {
+            "fact": "operationPath",
+            "operator": "equal",
+            "value": "/quotes"
+          },
+          {
+            "fact": "method",
+            "operator": "equal",
+            "value": "post"
+          }
+        ]
+      },
+      "event": {
+        "method": "put",
+        "path": "/quotes/{ID}/error",
+        "params": {
+          "scripts": {
+            "scriptingEngine": "postman"
+          },
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "Tue, 23 Jul 2024 02:05:53 GMT",
+            "FSPIOP-Source": "proxyttk",
+            "FSPIOP-Destination": "testingtoolkitdfsp"
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": "3100",
+              "errorDescription": "Generic Error in Proxy"
+            }
+          }
+        },
+        "type": "FIXED_ERROR_CALLBACK"
+      },
+      "type": "validation",
+      "version": 1
+    },
+    {
+      "ruleId": 3,
+      "priority": 1,
+      "description": "post /transfers - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in Proxy",
+      "apiVersion": {
+        "minorVersion": 0,
+        "majorVersion": 2,
+        "type": "fspiop",
+        "asynchronous": true,
+        "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+        "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+        "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+        "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+        "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+      },
+      "conditions": {
+        "all": [
+          {
+            "fact": "body",
+            "operator": "numericEqual",
+            "value": "3100",
+            "path": "amount.amount"
+          },
+          {
+            "fact": "operationPath",
+            "operator": "equal",
+            "value": "/transfers"
+          },
+          {
+            "fact": "method",
+            "operator": "equal",
+            "value": "post"
+          }
+        ]
+      },
+      "event": {
+        "method": "put",
+        "path": "/transfers/{ID}/error",
+        "params": {
+          "scripts": {
+            "scriptingEngine": "postman"
+          },
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Date": "Tue, 23 Jul 2024 02:05:53 GMT",
+            "FSPIOP-Source": "proxyttk",
+            "FSPIOP-Destination": "testingtoolkitdfsp"
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": "3100",
+              "errorDescription": "Generic Error in Proxy"
+            }
+          }
+        },
+        "type": "FIXED_ERROR_CALLBACK"
+      },
+      "type": "validation",
+      "version": 1
+    }
+  ]
