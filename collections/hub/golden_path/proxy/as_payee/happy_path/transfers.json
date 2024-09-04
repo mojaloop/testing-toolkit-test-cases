@@ -26,7 +26,8 @@
               "Date": "{$function.generic.curDate}",
               "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
               "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
-              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}",
+              "FSPIOP-Proxy": "testingtoolkitdfsp"
             },
             "body": {
               "transferId": "{$function.generic.generateUUID}",
@@ -52,8 +53,6 @@
                 }
               ]
             },
-            "path": "/quotes",
-            
             "scripts": {
               "preRequest": {
                 "exec": [
@@ -73,9 +72,9 @@
           }
         ],
         "fileInfo": {
-          "path": "hub/golden_path/quoting_service/quoting_service.json",
+          "path": "hub/golden_path/proxy/as_payee/happy_path",
           "labels": [
-            "quotes"
+            "transfers"
           ]
         }
       },
