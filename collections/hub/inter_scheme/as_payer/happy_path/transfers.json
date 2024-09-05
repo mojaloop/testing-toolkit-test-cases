@@ -8,6 +8,166 @@
         {
           "id": 1,
           "meta": {
+            "info": "This request allows us to send a request for Quote (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
+          },
+          "description": "Send quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "transactionRequestId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
+                "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
+                "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}",
+                "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.PROXY_AMOUNT}",
+              "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            }
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback FSP Source equal to request FSP Destination",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$request.headers['FSPIOP-Destination']}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback body should contain transferAmount",
+                "exec": [
+                  "expect(callback.body).to.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback transferAmount (amount & currency)to match the request",
+                "exec": [
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be quotes",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Request amountType to be RECEIVE",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('RECEIVE')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              }
+            ]
+          },
+          "path": "/quotes",
+          
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
             "info": "This request allows us to send a request for Transfer (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
           },
           "description": "Send transfer",
@@ -29,7 +189,7 @@
             "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
           },
           "body": {
-            "transferId": "{$function.generic.generateUUID}",
+            "transferId": "{$prev.1.request.body.transactionId}",
             "payerFsp": "{$inputs.PROXY_PAYERFSP_ID}",
             "payeeFsp": "{$inputs.PROXY_PAYEEFSP_ID}",
             "amount": {
