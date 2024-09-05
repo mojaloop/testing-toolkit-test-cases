@@ -25,7 +25,6 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
-            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
           },
           "body": {
@@ -185,7 +184,6 @@
             "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
-            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
             "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
           },
           "body": {
@@ -193,7 +191,7 @@
             "payerFsp": "{$inputs.PROXY_PAYERFSP_ID}",
             "payeeFsp": "{$inputs.PROXY_PAYEEFSP_ID}",
             "amount": {
-              "amount": "{$inputs.PROXY_AMOUNT}",
+              "amount": "{$prev.1.callback.body.transferAmount.amount}",
               "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
             },
             "expiration": "{$prev.1.callback.body.expiration}",
@@ -212,7 +210,7 @@
               }
             ]
           },
-          "path": "/quotes",
+          "path": "/transfers",
           "scripts": {
             "preRequest": {
               "exec": [
