@@ -4,9 +4,9 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "FX Transfer",
+      "name": "Settlement FX Transfer tests",
       "fileInfo": {
-        "path": "collections/tests/fx/fx_tests.json",
+        "path": "hub/golden_path/fx/feature_tests/settlement/settlement_tests.json",
         "labels": [
           "fx"
         ]
@@ -61,7 +61,7 @@
         },
         {
           "id": 2,
-          "description": "Get party info",
+          "description": "Get party info Copy",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 2,
@@ -83,10 +83,10 @@
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "headers": {
-            "Content-Type": "{$inputs.contentTypeFxParties}",
+            "Content-Type": "{$inputs.contentType}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
-            "Accept": "{$inputs.acceptFxParties}"
+            "Accept": "{$inputs.accept}"
           },
           "disabled": false,
           "tests": {
@@ -444,89 +444,6 @@
         },
         {
           "id": 6,
-          "description": "Get Accounts for Payer BEFORE fxTransfer",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin",
-            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.fromFspId}/accounts",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.fromFspId}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "scriptingEngine": "javascript",
-          "disabled": false,
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.FXP_SOURCE_CURRENCY).forEach(curAccount => {",
-                "",
-                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.payerPositionBalanceBeforeFxTransfer= curAccount.value",
-                "  }",
-                "})",
-                "",
-                "console.log(`Payer Position Balance before FxTransfer=${environment.payerPositionBalanceBeforeFxTransfer}`);",
-                "",
-                ""
-              ]
-            }
-          }
-        },
-        {
-          "id": 7,
-          "description": "Get Accounts for Payee BEFORE fxTransfer",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin",
-            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.FXP_PAYEE_DFSP_ID}/accounts",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.FXP_PAYEE_DFSP_ID}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "scriptingEngine": "javascript",
-          "tests": {
-            "assertions": []
-          },
-          "disabled": false,
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.FXP_TARGET_CURRENCY).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.payeePositionBalanceBeforeFxTransfer= curAccount.value",
-                "  }",
-                "})",
-                "",
-                "console.log(`Payee Position Balance before FxTransfer=${environment.payeePositionBalanceBeforeFxTransfer}`);",
-                ""
-              ]
-            }
-          }
-        },
-        {
-          "id": 8,
           "description": "Get Accounts for FXP BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -575,7 +492,7 @@
           }
         },
         {
-          "id": 9,
+          "id": 7,
           "description": "POST /fxTransfers",
           "apiVersion": {
             "minorVersion": 0,
@@ -632,6 +549,48 @@
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback conversionState to be RESERVED",
+                "exec": [
+                  "expect(callback.body.conversionState).to.equal('RESERVED')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback content-type to be fxTransfers",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.fxTransfers+json')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback body should contain fulfilment",
+                "exec": [
+                  "expect(callback.body).to.have.property('fulfilment')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request FSP source the same as quote callback FSP destination",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.4.callback.headers.fspiop-destination}')"
+                ]
               }
             ]
           },
@@ -644,139 +603,7 @@
           }
         },
         {
-          "id": 10,
-          "description": "Get Accounts for Payer AFTER fx transfer",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin",
-            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.fromFspId}/accounts",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.fromFspId}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "scriptingEngine": "javascript",
-          "disabled": false,
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.FXP_SOURCE_CURRENCY).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.payerPositionBalanceAfterTransfer= curAccount.value",
-                "  }",
-                "})",
-                "",
-                "console.log(`Payer Position Balance after Transfer=${environment.payerPositionBalanceAfterTransfer}`);"
-              ]
-            }
-          },
-          "tests" :{
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Payer position should not be changed",
-                "exec": [
-                  "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
-                ]
-              }
-            ]
-          }           
-        },
-        {
-          "id": 11,
-          "description": "Get Accounts for FXP AFTER fx transfer",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin",
-            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/accounts",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.FXP_TESTFXP1_ID}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "scriptingEngine": "javascript",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Payer position should be changed",
-                "exec": [
-                  "expect(environment.payerPositionBalanceAfterFxTransfer-environment.payerPositionBalanceBeforeFxTransfer).to.equal(+environment.FXP_SOURCE_AMOUNT)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Payee position should be changed",
-                "exec": [
-                  "expect(environment.payeePositionBalanceAfterTransfer-environment.payeePositionBalanceBeforeFxTransfer).to.equal(-environment.FXP_TARGET_AMOUNT)"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "FXP Source currency position should be changed",
-                "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionBalanceAfterTransfer-environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer).to.equal(-environment.FXP_SOURCE_AMOUNT)"
-                ]
-              },
-              {
-                "id": 4,
-                "description": "FXP Target currency position should be changed",
-                "exec": [
-                  "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer-environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer).to.equal(+environment.FXP_TARGET_AMOUNT)"
-                ]
-              }
-            ]
-          },
-          "disabled": false,
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "var res = response.body;",
-                "",
-                "res.filter(account => account.currency === environment.FXP_SOURCE_CURRENCY).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.fxpSourceCurrencyPositionBalanceAfterTransfer= curAccount.value",
-                "  }",
-                "})",
-                "",
-                "res.filter(account => account.currency === environment.FXP_TARGET_CURRENCY).forEach(curAccount => {",
-                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.fxpTargetCurrencyPositionBalanceAfterTransfer= curAccount.value",
-                "  }",
-                "})",
-                "",
-                "// console.log(`FXP Source Currency Position Balance after Transfer=${environment.fxpSourceCurrencyPositionBalanceAfterTransfer}`);",
-                "",
-                "// console.log(`FXP Target Currency Position Balance after Transfer=${environment.fxpTargetCurrencyPositionBalanceAfterTransfer}`);",
-                "",
-                "console.log(`Payer Position ${environment.FXP_SOURCE_CURRENCY} : ${environment.payerPositionBalanceBeforeFxTransfer} -> ${environment.payerPositionBalanceAfterTransfer} (${environment.payerPositionBalanceAfterTransfer - environment.payerPositionBalanceBeforeFxTransfer})`);",
-                "console.log(`Payee Position ${environment.FXP_TARGET_CURRENCY} : ${environment.payeePositionBalanceBeforeFxTransfer} -> ${environment.payeePositionBalanceAfterTransfer} (${environment.payeePositionBalanceAfterTransfer - environment.payeePositionBalanceBeforeFxTransfer})`);",
-                "console.log(`FXP Source Currency ${environment.FXP_SOURCE_CURRENCY} : ${environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer} -> ${environment.fxpSourceCurrencyPositionBalanceAfterTransfer} (${environment.fxpSourceCurrencyPositionBalanceAfterTransfer - environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer})`);",
-                "console.log(`FXP Target Currency ${environment.FXP_TARGET_CURRENCY} : ${environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer} -> ${environment.fxpTargetCurrencyPositionBalanceAfterTransfer} (${environment.fxpTargetCurrencyPositionBalanceAfterTransfer - environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer})`);"
-              ]
-            }
-          }
-        },
-        {
-          "id": 12,
+          "id": 8,
           "description": "POST /transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -875,8 +702,8 @@
           }
         },
         {
-          "id": 13,
-          "description": "Get Accounts for FXP AFTER transfer",
+          "id": 9,
+          "description": "Get Accounts for FXP AFTER Transfer",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -896,36 +723,7 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
           "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Payer position should be changed",
-                "exec": [
-                  "expect(environment.payerPositionBalanceAfterFxTransfer-environment.payerPositionBalanceBeforeFxTransfer).to.equal(+environment.FXP_SOURCE_AMOUNT)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Payee position should be changed",
-                "exec": [
-                  "expect(environment.payeePositionBalanceAfterTransfer-environment.payeePositionBalanceBeforeFxTransfer).to.equal(-environment.FXP_TARGET_AMOUNT)"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "FXP Source currency position should be changed",
-                "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionBalanceAfterTransfer-environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer).to.equal(-environment.FXP_SOURCE_AMOUNT)"
-                ]
-              },
-              {
-                "id": 4,
-                "description": "FXP Target currency position should be changed",
-                "exec": [
-                  "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer-environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer).to.equal(+environment.FXP_TARGET_AMOUNT)"
-                ]
-              }
-            ]
+            "assertions": []
           },
           "disabled": false,
           "scripts": {
@@ -945,21 +743,602 @@
                 "  }",
                 "})",
                 "",
-                "// console.log(`FXP Source Currency Position Balance after Transfer=${environment.fxpSourceCurrencyPositionBalanceAfterTransfer}`);",
+                "console.log(`FXP Source Currency Position Balance after Transfer=${environment.fxpSourceCurrencyPositionBalanceAfterTransfer}`);",
                 "",
-                "// console.log(`FXP Target Currency Position Balance after Transfer=${environment.fxpTargetCurrencyPositionBalanceAfterTransfer}`);",
+                "console.log(`FXP Target Currency Position Balance after Transfer=${environment.fxpTargetCurrencyPositionBalanceAfterTransfer}`);"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Create Settlement on the current open window",
+      "meta": {
+        "info": "Get current open window and close it"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Get Existing Open Window"
+          },
+          "description": "Get Existing Open Window",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows",
+          "path": "/settlementWindows",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "queryParams": {
+            "state": "OPEN"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "State should be OPEN",
+                "exec": [
+                  "expect(environment.openWindowstate).to.equal(\"OPEN\")"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "//console.log(jsonData.state);",
                 "",
-                "console.log(`Payer Position ${environment.FXP_SOURCE_CURRENCY} : ${environment.payerPositionBalanceBeforeFxTransfer} -> ${environment.payerPositionBalanceAfterTransfer} (${environment.payerPositionBalanceAfterTransfer - environment.payerPositionBalanceBeforeFxTransfer})`);",
-                "console.log(`Payee Position ${environment.FXP_TARGET_CURRENCY} : ${environment.payeePositionBalanceBeforeFxTransfer} -> ${environment.payeePositionBalanceAfterTransfer} (${environment.payeePositionBalanceAfterTransfer - environment.payeePositionBalanceBeforeFxTransfer})`);",
-                "console.log(`FXP Source Currency ${environment.FXP_SOURCE_CURRENCY} : ${environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer} -> ${environment.fxpSourceCurrencyPositionBalanceAfterTransfer} (${environment.fxpSourceCurrencyPositionBalanceAfterTransfer - environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer})`);",
-                "console.log(`FXP Target Currency ${environment.FXP_TARGET_CURRENCY} : ${environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer} -> ${environment.fxpTargetCurrencyPositionBalanceAfterTransfer} (${environment.fxpTargetCurrencyPositionBalanceAfterTransfer - environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer})`);"
+                "environment.openWindowID=jsonData[0].settlementWindowId;",
+                "environment.openWindowstate=jsonData[0].state;",
+                "",
+                "console.log(environment.openWindowID);"
               ]
             }
           }
         },
         {
-          "id": 14,
-          "description": "Get Accounts for Payee AFTER transfer",
+          "id": 2,
+          "meta": {
+            "info": "Close existent window"
+          },
+          "description": "Close existent window",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows/{id}",
+          "path": "/settlementWindows/{$environment.openWindowID}",
+          "method": "post",
+          "params": {
+            "id": "{$environment.openWindowID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "body": {
+            "state": "CLOSED",
+            "reason": "string"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200 or 400",
+                "exec": [
+                  "if(response.status === 400){",
+                  "  expect(response.status).to.equal(400)",
+                  "}",
+                  "else{",
+                  "  expect(response.status).to.equal(200)",
+                  "}",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "id": 2,
+                "description": "New window State should be OPEN",
+                "exec": [
+                  "",
+                  " if (response.status === 400) {",
+                  "   ",
+                  "expect(response.body.errorInformation.errorCode).to.eql('3100');",
+                  "expect(response.body.errorInformation.errorDescription).to.eql('Generic validation error - Window ' + environment.openWindowID + ' is empty');",
+                  "}else{",
+                  "  ",
+                  "  ",
+                  "  expect(environment.openWindowstate).to.equal(\"OPEN\");",
+                  "}",
+                  "",
+                  "",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "var rcode = Number(response.status);",
+                "//console.log(rcode);",
+                "",
+                "//if (rcode == 200){",
+                "environment.closedWindowID= Number(environment.openWindowID);",
+                "environment.openWindowstate=jsonData.state;",
+                "",
+                "console.log(environment.openWindowstate);",
+                "console.log(environment.closedWindowID);",
+                "//}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Create Settlement for Closed Window"
+          },
+          "description": "Create Settlement for Closed Window",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements",
+          "path": "/settlements",
+          "method": "post",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Settlement State should be PENDING_SETTLEMENT",
+                "exec": [
+                  "expect(environment.winstate).to.equal(\"PENDING_SETTLEMENT\")"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Number of associated windows should be 1",
+                "exec": [
+                  "expect(response.body.settlementWindows.length).to.equal(1)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Associated Settlement Window ID is the correct one",
+                "exec": [
+                  "expect(response.body.settlementWindows[0].id).to.equal(environment.closedWindowID)"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Associated Settlement Window state should be PENDING_SETTLEMENT",
+                "exec": [
+                  "expect(response.body.settlementWindows[0].state).to.equal(\"PENDING_SETTLEMENT\")"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "body": {
+            "settlementModel": "DEFERREDNET{$inputs.currency}",
+            "reason": "TESTING",
+            "settlementWindows": [
+              {
+                "id": "{$environment.closedWindowID}"
+              }
+            ]
+          },
+          "delay": "3000",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "environment.settlementId = jsonData.id;",
+                "environment.winstate = jsonData.state;",
+                "",
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "//environment.closedWindowID = 6;",
+                "environment.closedWindowID = Number(environment.closedWindowID);",
+                "",
+                "/*requestVariables.closedWindowID = Number(environment.closedWindowID);",
+                "*/"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/fx/feature_tests/settlement/settlement_tests.json",
+        "labels": [
+          "fx"
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "name": "Prepare-settlement",
+      "meta": {
+        "info": "Prepare-settlement"
+      },
+      "requests": [
+        {
+          "id": 4,
+          "meta": {
+            "info": "Prepare Settlement"
+          },
+          "description": "Prepare Settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.settlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.settlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/fx/feature_tests/settlement/settlement_tests.json",
+        "labels": [
+          "fx"
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "name": "reserve-settlement",
+      "meta": {
+        "info": "reserve-settlement"
+      },
+      "requests": [
+        {
+          "id": 4,
+          "meta": {
+            "info": "reserve Settlement"
+          },
+          "description": "reserve Settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.settlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.settlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "//if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "//}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "check state for participants after prepare"
+          },
+          "description": "check state for participants after prepare",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.settlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.settlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check status PS_TRANSFERS_RESERVED",
+                "exec": [
+                  "expect(response.body.state).to.eql(\"PS_TRANSFERS_RESERVED\");"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check status for window is PENDING SETTLEMENT",
+                "exec": [
+                  " expect(response.body.settlementWindows[0].state).to.eql(\"PENDING_SETTLEMENT\");"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Account state is PS_TRANSFERS_RESERVEDfor all accounts",
+                "exec": [
+                  "expect(environment.controlvar).to.equal(true)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "//Boolean isok = false;\r",
+                "var res = response.body;\r",
+                "var isok = true;\r",
+                "\r",
+                "try{\r",
+                "res.participants.map(function (participant) {\r",
+                "    participant.accounts.filter(account => account.netSettlementAmount.currency === environment.currency).every(curAccount => {\r",
+                "             if(isok === true){      \r",
+                "         if(curAccount.state === \"PS_TRANSFERS_RESERVED\"){\r",
+                "                          isok= true;\r",
+                "                        \r",
+                "                        \r",
+                "                           \r",
+                "                        }else{\r",
+                "                           isok= false;\r",
+                "                          // console.log(isok);\r",
+                "                         \r",
+                "                        }\r",
+                "             } \r",
+                "                    })\r",
+                "})\r",
+                "\r",
+                "}catch(exception){\r",
+                "  console.log(exception);\r",
+                "}\r",
+                "\r",
+                "environment.controlvar = isok;"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/fx/feature_tests/settlement/settlement_tests.json",
+        "labels": [
+          "fx"
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "name": "commit-settlement",
+      "meta": {
+        "info": "commit-settlement"
+      },
+      "requests": [
+        {
+          "id": 4,
+          "meta": {
+            "info": "commit Settlement"
+          },
+          "description": "commit Settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.settlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.settlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "//if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "//}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/fx/feature_tests/settlement/settlement_tests.json",
+        "labels": [
+          "fx"
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "name": "settle-settlement",
+      "meta": {
+        "info": "settle-settlement"
+      },
+      "requests": [
+        {
+          "id": 4,
+          "meta": {
+            "info": "settle Settlement"
+          },
+          "description": "settle Settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.settlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.settlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status is 200",
+                "exec": [
+                  "//if(environment.WINDOWISEMPTY === false){",
+                  "expect(response.status).to.equal(200)",
+                  "//}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 15,
+          "description": "Get Accounts for FXP AFTER Settlement",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -971,23 +1350,15 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.FXP_PAYEE_DFSP_ID}/accounts",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.FXP_PAYEE_DFSP_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
-          "tests" :{
-            "assertions": [
-              {
-                "id": 1,
-                "description": "FXP position should not be changed",
-                "exec": [
-                  "expect(environment.fxpPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
-                ]
-              }
-            ]
+          "tests": {
+            "assertions": []
           },
           "disabled": false,
           "scripts": {
@@ -995,20 +1366,32 @@
               "exec": [
                 "var res = response.body;",
                 "",
-                "res.filter(account => account.currency === environment.FXP_TARGET_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FXP_SOURCE_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.payeePositionBalanceAfterTransfer= curAccount.value",
+                "    environment.fxpSourceCurrencyPositionBalanceAfterSettlement= curAccount.value",
                 "  }",
                 "})",
                 "",
-                "console.log(`Payee Position Balance after Transfer=${environment.payeePositionBalanceAfterTransfer}`);",
+                "res.filter(account => account.currency === environment.FXP_TARGET_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.fxpTargetCurrencyPositionBalanceAfterSettlement= curAccount.value",
+                "  }",
+                "})",
                 "",
-                ""
+                "console.log(`FXP Source Currency Position Balance after Settlement=${environment.fxpSourceCurrencyPositionBalanceAfterSettlement}`);",
+                "",
+                "console.log(`FXP Target Currency Position Balance after Settlement=${environment.fxpTargetCurrencyPositionBalanceAfterSettlement}`);"
               ]
             }
           }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/fx/feature_tests/settlement/settlement_tests.json",
+        "labels": [
+          "fx"
+        ]
+      }
     }
   ]
 }

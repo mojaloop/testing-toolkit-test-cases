@@ -3,17 +3,17 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "Setup DFSP accounts and limits",
+      "name": "ttksim1 account",
       "meta": {
-        "info": "DFSP account"
+        "info": "ttksim1 account"
       },
       "requests": [
         {
           "id": 1,
           "meta": {
-            "info": "Add DFSP"
+            "info": "Add ttksim1"
           },
-          "description": "Add DFSP",
+          "description": "Add ttksim1",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -23,9 +23,8 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "{$inputs.DFSP_NAME}",
-            "currency": "{$inputs.currency}",
-            "isProxy": "{$inputs.isProxy}"
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "currency": "{$inputs.currency}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -51,25 +50,25 @@
         {
           "id": 2,
           "meta": {
-            "info": "Add initial position and limits - DFSP"
+            "info": "Add initial position and limits - ttksim1"
           },
-          "description": "Add initial position and limits - DFSP",
+          "description": "Add initial position and limits - ttksim1",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.DFSP_NAME}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "body": {
             "currency": "{$inputs.currency}",
             "limit": {
               "type": "NET_DEBIT_CAP",
-              "value": 10000
+              "value": 500000
             },
             "initialPosition": 0
           },
@@ -97,19 +96,19 @@
         {
           "id": 3,
           "meta": {
-            "info": "DFSP Get Status Request before deposit"
+            "info": "ttksim1 Get Status Request before deposit"
           },
-          "description": "DFSP Get Status Request before deposit",
+          "description": "ttksim1 Get Status Request before deposit",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.DFSP_NAME}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -134,8 +133,8 @@
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"dfspSettlementAccountId\", jsonData[i].id)",
-                "    pm.environment.set(\"dfspSettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "    pm.environment.set(\"ttksim1SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"ttksim1SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
@@ -145,28 +144,28 @@
         {
           "id": 4,
           "meta": {
-            "info": "Deposit Funds in Settlement Account - DFSP"
+            "info": "Deposit Funds in Settlement Account - ttksim1"
           },
-          "description": "Deposit Funds in Settlement Account - DFSP",
+          "description": "Deposit Funds in Settlement Account - ttksim1",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.DFSP_NAME}/accounts/{$environment.dfspSettlementAccountId}",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts/{$environment.ttksim1SettlementAccountId}",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}",
-            "id": "{$environment.dfspSettlementAccountId}"
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "id": "{$environment.ttksim1SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.dfspfundsInPrepareTransferId}",
+            "transferId": "{$environment.ttksim1fundsInPrepareTransferId}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.dfspfundsInPrepareAmount}",
+              "amount": "{$environment.ttksim1fundsInPrepareAmount}",
               "currency": "{$inputs.currency}"
             },
             "extensionList": {
@@ -198,8 +197,8 @@
             "preRequest": {
               "exec": [
                 "var uuid = require('uuid');",
-                "pm.environment.set('dfspfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('dfspfundsInPrepareAmount', 5000);"
+                "pm.environment.set('ttksim1fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('ttksim1fundsInPrepareAmount', 500000);"
               ]
             }
           }
@@ -207,19 +206,19 @@
         {
           "id": 5,
           "meta": {
-            "info": "DFSP Get Status Request after deposit"
+            "info": "ttksim1 Get Status Request after deposit"
           },
-          "description": "DFSP Get Status Request after deposit",
+          "description": "ttksim1 Get Status Request after deposit",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.DFSP_NAME}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -237,14 +236,14 @@
               },
               {
                 "id": 2,
-                "description": "DFSP Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "description": "ttksim1 Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.dfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.dfspSettlementAccountBalanceBeforeFundsIn - +environment.dfspfundsInPrepareAmount)"
+                  "expect(+environment.ttksim1SettlementAccountBalanceAfterFundsIn).to.equal(+environment.ttksim1SettlementAccountBalanceBeforeFundsIn - +environment.ttksim1fundsInPrepareAmount)"
                 ]
               }
             ]
           },
-          "delay": "1000",
+          "delay": "500",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -252,7 +251,342 @@
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"dfspSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "    pm.environment.set(\"ttksim1SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Add ttksim1 with different currency for default settlement case"
+          },
+          "description": "Add ttksim1 with different currency for default settlement case",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "Add initial position and limits with different currency - ttksim1"
+          },
+          "description": "Add initial position and limits with different currency - ttksim1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.currency2}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 500000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 8,
+          "description": "Add ttksim1 with different currency for default settlement case CGS",
+          "meta": {
+            "info": "Add ttksim1 with different currency for default settlement case"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "currency": "{$inputs.cgscurrency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 9,
+          "description": "Add initial position and limits with different currency - ttksim1 CGS",
+          "meta": {
+            "info": "Add initial position and limits with different currency - ttksim1"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 500000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 10,
+          "description": "Get Status Request before deposit for currency2",
+          "meta": {
+            "info": "Get Status Request before deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "    pm.environment.set(\"ttksim1Currency2SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"ttksim1Currency2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 11,
+          "description": "Deposit Funds in Settlement Account currency2",
+          "meta": {
+            "info": "Deposit Funds in Settlement Account"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts/{$environment.ttksim1Currency2SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}",
+            "id": "{$environment.ttksim1Currency2SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.ttksim1fundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.ttksim1fundsInPrepareAmountCurrency2}",
+              "currency": "{$inputs.currency2}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('ttksim1fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('ttksim1fundsInPrepareAmountCurrency2', 500000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 12,
+          "description": "Get Status Request after deposit for currency2",
+          "meta": {
+            "info": "Get Status Request after deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.ttksim1Currency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.ttksim1Currency2SettlementAccountBalanceBeforeFundsIn - +environment.ttksim1fundsInPrepareAmountCurrency2)"
+                ]
+              }
+            ]
+          },
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "    pm.environment.set(\"ttksim1Currency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
@@ -261,32 +595,32 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/provisioning_dfsp/newdfsp.json"
+        "path": "hub/provisioning/for_sdk_bulk/ttksim1.json"
       }
     },
     {
       "id": 2,
-      "name": "Setup Callback Endpoints",
+      "name": "ttksim1 callbacks",
       "meta": {
-        "info": "DFSP callbacks"
+        "info": "ttksim1 callbacks"
       },
       "requests": [
         {
           "id": 1,
           "meta": {
-            "info": "Add DFSP callback - AUTHORIZATIONS"
+            "info": "Add ttksim1 callback - AUTHORIZATIONS"
           },
-          "description": "Add DFSP callback - AUTHORIZATIONS",
+          "description": "Add ttksim1 callback - AUTHORIZATIONS",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -295,7 +629,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_AUTHORIZATIONS",
-            "value": "{$inputs.DFSP_CALLBACK_URL}"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}"
           },
           "tests": {
             "assertions": [
@@ -312,19 +646,19 @@
         {
           "id": 2,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT PUT"
+            "info": "Add ttksim1 callback - PARTICIPANT PUT"
           },
-          "description": "Add DFSP callback - PARTICIPANT PUT",
+          "description": "Add ttksim1 callback - PARTICIPANT PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -333,7 +667,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -350,19 +684,19 @@
         {
           "id": 3,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT PUT Error"
+            "info": "Add ttksim1 callback - PARTICIPANT PUT Error"
           },
-          "description": "Add DFSP callback - PARTICIPANT PUT Error",
+          "description": "Add ttksim1 callback - PARTICIPANT PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -371,7 +705,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
@@ -388,19 +722,19 @@
         {
           "id": 4,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT PUT Batch"
+            "info": "Add ttksim1 callback - PARTICIPANT PUT Batch"
           },
-          "description": "Add DFSP callback - PARTICIPANT PUT Batch",
+          "description": "Add ttksim1 callback - PARTICIPANT PUT Batch",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -409,7 +743,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{requestId}}"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{requestId}}"
           },
           "tests": {
             "assertions": [
@@ -426,19 +760,19 @@
         {
           "id": 5,
           "meta": {
-            "info": "Add DFSP callback - PARTICIPANT PUT Batch Error"
+            "info": "Add ttksim1 callback - PARTICIPANT PUT Batch Error"
           },
-          "description": "Add DFSP callback - PARTICIPANT PUT Batch Error",
+          "description": "Add ttksim1 callback - PARTICIPANT PUT Batch Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -447,7 +781,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{requestId}}/error"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{requestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -464,19 +798,19 @@
         {
           "id": 6,
           "meta": {
-            "info": "Add DFSP callback - PARTIES GET"
+            "info": "Add ttksim1 callback - PARTIES GET"
           },
-          "description": "Add DFSP callback - PARTIES GET",
+          "description": "Add ttksim1 callback - PARTIES GET",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -485,7 +819,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -502,19 +836,19 @@
         {
           "id": 7,
           "meta": {
-            "info": "Add DFSP callback - PARTIES PUT"
+            "info": "Add ttksim1 callback - PARTIES PUT"
           },
-          "description": "Add DFSP callback - PARTIES PUT",
+          "description": "Add ttksim1 callback - PARTIES PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -523,7 +857,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -540,19 +874,19 @@
         {
           "id": 8,
           "meta": {
-            "info": "Add DFSP callback - PARTIES PUT Error"
+            "info": "Add ttksim1 callback - PARTIES PUT Error"
           },
-          "description": "Add DFSP callback - PARTIES PUT Error",
+          "description": "Add ttksim1 callback - PARTIES PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -561,7 +895,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
@@ -578,19 +912,19 @@
         {
           "id": 9,
           "meta": {
-            "info": "Add DFSP callback - QUOTES"
+            "info": "Add ttksim1 callback - QUOTES"
           },
-          "description": "Add DFSP callback - QUOTES",
+          "description": "Add ttksim1 callback - QUOTES",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -598,7 +932,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_QUOTES",
-            "value": "{$inputs.DFSP_CALLBACK_URL}"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}"
           },
           "tests": {
             "assertions": [
@@ -615,19 +949,19 @@
         {
           "id": 10,
           "meta": {
-            "info": "Add DFSP callback - TXN REQUEST"
+            "info": "Add ttksim1 callback - TXN REQUEST"
           },
-          "description": "Add DFSP callback - TXN REQUEST",
+          "description": "Add ttksim1 callback - TXN REQUEST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -635,7 +969,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE",
-            "value": "{$inputs.DFSP_CALLBACK_URL}"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}"
           },
           "tests": {
             "assertions": [
@@ -652,19 +986,19 @@
         {
           "id": 11,
           "meta": {
-            "info": "Add DFSP callback - TRANSFERS POST"
+            "info": "Add ttksim1 callback - TRANSFERS POST"
           },
-          "description": "Add DFSP callback - TRANSFERS POST",
+          "description": "Add ttksim1 callback - TRANSFERS POST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -672,7 +1006,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/transfers"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/transfers"
           },
           "tests": {
             "assertions": [
@@ -689,19 +1023,19 @@
         {
           "id": 12,
           "meta": {
-            "info": "Add DFSP callback - TRANSFERS PUT"
+            "info": "Add ttksim1 callback - TRANSFERS PUT"
           },
-          "description": "Add DFSP callback - TRANSFERS PUT",
+          "description": "Add ttksim1 callback - TRANSFERS PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -709,7 +1043,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/transfers/{{transferId}}"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/transfers/{{transferId}}"
           },
           "tests": {
             "assertions": [
@@ -726,19 +1060,19 @@
         {
           "id": 13,
           "meta": {
-            "info": "Add DFSP callback - TRANSFERS ERROR"
+            "info": "Add ttksim1 callback - TRANSFERS ERROR"
           },
-          "description": "Add DFSP callback - TRANSFERS ERROR",
+          "description": "Add ttksim1 callback - TRANSFERS ERROR",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -746,7 +1080,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/transfers/{{transferId}}/error"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/transfers/{{transferId}}/error"
           },
           "tests": {
             "assertions": [
@@ -763,19 +1097,19 @@
         {
           "id": 14,
           "meta": {
-            "info": "Add DFSP callback - BULK-TRANSFER POST"
+            "info": "Add ttksim1 callback - BULK-TRANSFER POST"
           },
-          "description": "Add DFSP callback - BULK-TRANSFER POST",
+          "description": "Add ttksim1 callback - BULK-TRANSFER POST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -783,7 +1117,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/bulkTransfers"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/bulkTransfers"
           },
           "tests": {
             "assertions": [
@@ -800,19 +1134,19 @@
         {
           "id": 15,
           "meta": {
-            "info": "Add DFSP callback - BULK-TRANSFER PUT"
+            "info": "Add ttksim1 callback - BULK-TRANSFER PUT"
           },
-          "description": "Add DFSP callback - BULK-TRANSFER PUT",
+          "description": "Add ttksim1 callback - BULK-TRANSFER PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -820,7 +1154,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/bulkTransfers/{{id}}"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/bulkTransfers/{{id}}"
           },
           "tests": {
             "assertions": [
@@ -837,19 +1171,19 @@
         {
           "id": 16,
           "meta": {
-            "info": "Add DFSP callback - BULK-TRANSFER ERROR"
+            "info": "Add ttksim1 callback - BULK-TRANSFER ERROR"
           },
-          "description": "Add DFSP callback - BULK-TRANSFER ERROR",
+          "description": "Add ttksim1 callback - BULK-TRANSFER ERROR",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -857,155 +1191,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/bulkTransfers/{{id}}/error"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 201",
-                "exec": [
-                  "expect(response.status).to.equal(201)"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 17,
-          "meta": {
-            "info": "Add DFSP callback - PARTICIPANT SUB-ID PUT"
-          },
-          "description": "Add DFSP callback - PARTICIPANT SUB-ID PUT",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.DFSP_NAME}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          "body": {
-            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 201",
-                "exec": [
-                  "expect(response.status).to.equal(201)"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 18,
-          "meta": {
-            "info": "Add DFSP callback - PARTICIPANT SUB-ID PUT Error"
-          },
-          "description": "Add DFSP callback - PARTICIPANT SUB-ID PUT Error",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.DFSP_NAME}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          "body": {
-            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 201",
-                "exec": [
-                  "expect(response.status).to.equal(201)"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 19,
-          "meta": {
-            "info": "Add DFSP callback - PARTICIPANT SUB-ID DELETE"
-          },
-          "description": "Add DFSP callback - PARTICIPANT SUB-ID DELETE",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.DFSP_NAME}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          "body": {
-            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 201",
-                "exec": [
-                  "expect(response.status).to.equal(201)"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 20,
-          "meta": {
-            "info": "Add DFSP callback - PARTIES SUB-ID GET"
-          },
-          "description": "Add DFSP callback - PARTIES SUB-ID GET",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.DFSP_NAME}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          "body": {
-            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/bulkTransfers/{{id}}/error"
           },
           "tests": {
             "assertions": [
@@ -1022,27 +1208,27 @@
         {
           "id": 21,
           "meta": {
-            "info": "Add DFSP callback - PARTIES SUB-ID PUT"
+            "info": "Add callback - PARTICIPANT SUB-ID PUT"
           },
-          "description": "Add DFSP callback - PARTIES SUB-ID PUT",
+          "description": "Add callback - PARTICIPANT SUB-ID PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -1059,27 +1245,27 @@
         {
           "id": 22,
           "meta": {
-            "info": "Add DFSP callback - PARTIES SUB-ID ERROR PUT"
+            "info": "Add callback - PARTICIPANT SUB-ID PUT Error"
           },
-          "description": "Add DFSP callback - PARTIES SUB-ID ERROR PUT",
+          "description": "Add callback - PARTICIPANT SUB-ID PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
           },
           "tests": {
             "assertions": [
@@ -1095,28 +1281,28 @@
         },
         {
           "id": 23,
-          "description": "Add callback - FX TRANSFERS POST",
           "meta": {
-            "info": "Add callback - FX TRANSFERS POST"
+            "info": "Add callback - PARTICIPANT SUB-ID DELETE"
           },
+          "description": "Add callback - PARTICIPANT SUB-ID DELETE",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_POST",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/fxTransfers"
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -1132,28 +1318,28 @@
         },
         {
           "id": 24,
-          "description": "Add callback - FX TRANSFERS PUT",
           "meta": {
-            "info": "Add callback - FX TRANSFERS PUT"
+            "info": "Add callback - PARTIES SUB-ID GET"
           },
+          "description": "Add callback - PARTIES SUB-ID GET",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/fxTransfers/{{commitRequestId}}"
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -1169,28 +1355,28 @@
         },
         {
           "id": 25,
-          "description": "Add callback - FX TRANSFERS ERROR",
           "meta": {
-            "info": "Add callback - FX TRANSFERS ERROR"
+            "info": "Add callback - PARTIES SUB-ID PUT"
           },
+          "description": "Add callback - PARTIES SUB-ID PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/fxTransfers/{{commitRequestId}}/error"
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -1206,28 +1392,65 @@
         },
         {
           "id": 26,
-          "description": "Add callback - FXQUOTES PUT",
           "meta": {
-            "info": "Add callback - FXQUOTES PUT"
+            "info": "Add callback - PARTIES SUB-ID ERROR PUT"
           },
+          "description": "Add callback - PARTIES SUB-ID ERROR PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
-            "value": "{$inputs.DFSP_CALLBACK_URL}"
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 27,
+          "meta": {
+            "info": "Add ttksim1 callback - FSPIOP_CALLBACK_URL_BULK_QUOTES"
+          },
+          "description": "Add ttksim1 callback - FSPIOP_CALLBACK_URL_BULK_QUOTES",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.TTKSIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_QUOTES",
+            "value": "{$inputs.TTKSIM1_CALLBACK_URL}"
           },
           "tests": {
             "assertions": [
@@ -1243,14 +1466,14 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/provisioning_dfsp/newdfsp.json"
+        "path": "hub/provisioning/for_sdk_bulk/ttksim1.json"
       }
     },
     {
       "id": 3,
-      "name": "Setup Notification Emails",
+      "name": "ttksim1 notification_emails",
       "meta": {
-        "info": "DFSP notification_emails"
+        "info": "ttksim1 notification_emails"
       },
       "requests": [
         {
@@ -1265,19 +1488,19 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.DFSP_NAME}"
+            "FSPIOP-Source": "{$inputs.TTKSIM1_NAME}"
           },
           "body": {
             "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
-            "value": "{$inputs.dfspEmail}"
+            "value": "{$inputs.ttksim1Email}"
           },
           "tests": {
             "assertions": [
@@ -1303,10 +1526,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1315,7 +1538,7 @@
           },
           "body": {
             "type": "NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
-            "value": "{$inputs.dfspEmail}"
+            "value": "{$inputs.ttksim1Email}"
           },
           "tests": {
             "assertions": [
@@ -1341,19 +1564,19 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.TTKSIM1_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.TTKSIM1_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.DFSP_NAME}"
+            "FSPIOP-Source": "{$inputs.TTKSIM1_NAME}"
           },
           "body": {
             "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
-            "value": "{$inputs.dfspEmail}"
+            "value": "{$inputs.ttksim1Email}"
           },
           "tests": {
             "assertions": [
@@ -1369,7 +1592,62 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/provisioning_dfsp/newdfsp.json"
+        "path": "hub/provisioning/for_sdk_bulk/ttksim1.json"
+      }
+    },
+    {
+      "id": 4,
+      "name": "ttksim1 oracle_registration",
+      "meta": {
+        "info": "ttksim1 oracle_registration"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Add TTKSIM1_MSISDN in MSISDN Oracle"
+          },
+          "description": "Add TTKSIM1_MSISDN in MSISDN Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/MSISDN/{$inputs.TTKSIM1_MSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.TTKSIM1_MSISDN}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.TTKSIM1_NAME}"
+          },
+          "body": {
+            "fspId": "{$inputs.TTKSIM1_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_sdk_bulk/ttksim1.json"
       }
     }
   ]
