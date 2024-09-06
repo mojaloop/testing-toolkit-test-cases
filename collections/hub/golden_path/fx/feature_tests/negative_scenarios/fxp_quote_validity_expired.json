@@ -39,7 +39,7 @@
           "headers": {
             "Content-Type": "{$inputs.contentTypeServicesFxp}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
             "Accept": "{$inputs.acceptServicesFxp}"
           },
           "tests": {
@@ -97,15 +97,15 @@
             "conversionRequestId": "{$function.generic.generateUUID}",
             "conversionTerms": {
               "conversionId": "{$function.generic.generateUUID}",
-              "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
-              "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+              "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+              "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
               "amountType": "SEND",
               "sourceAmount": {
-                "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-                "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+                "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+                "amount": "{$inputs.FX_SOURCE_AMOUNT}"
               },
               "targetAmount": {
-                "currency": "{$inputs.FXP_TARGET_CURRENCY}"
+                "currency": "{$inputs.FX_TARGET_CURRENCY}"
               },
               "expiration": "{$inputs.FXP_EXPIRATION}",
               "extensionList": {
@@ -122,8 +122,8 @@
             "Accept": "{$inputs.acceptFxQuotes}",
             "Content-Type": "{$inputs.contentTypeFxQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
-            "FSPIOP-Destination": "{$inputs.FXP_TESTFXP1_ID}"
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "disabled": false,
@@ -225,7 +225,7 @@
             "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
             "FSPIOP-Destination": "{$inputs.FXP_PAYEE_DFSP_ID}"
           },
           "body": {
@@ -256,7 +256,7 @@
             "amountType": "SEND",
             "amount": {
               "amount": "{$inputs.amount}",
-              "currency": "{$inputs.FXP_TARGET_CURRENCY}"
+              "currency": "{$inputs.FX_TARGET_CURRENCY}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -389,7 +389,7 @@
           "headers": {
             "Content-Type": "{$inputs.contentTypeServicesFxp}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
             "Accept": "{$inputs.acceptServicesFxp}"
           },
           "tests": {
@@ -447,15 +447,15 @@
             "conversionRequestId": "{$function.generic.generateUUID}",
             "conversionTerms": {
               "conversionId": "{$function.generic.generateUUID}",
-              "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
-              "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+              "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+              "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
               "amountType": "SEND",
               "sourceAmount": {
-                "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-                "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+                "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+                "amount": "{$inputs.FX_SOURCE_AMOUNT}"
               },
               "targetAmount": {
-                "currency": "{$inputs.FXP_TARGET_CURRENCY}"
+                "currency": "{$inputs.FX_TARGET_CURRENCY}"
               },
               "expiration": "{$inputs.FXP_EXPIRATION}"
             }
@@ -464,8 +464,8 @@
             "Accept": "{$inputs.acceptFxQuotes}",
             "Content-Type": "{$inputs.contentTypeFxQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
-            "FSPIOP-Destination": "{$inputs.FXP_TESTFXP1_ID}"
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "disabled": false,
@@ -560,7 +560,7 @@
             "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
             "FSPIOP-Destination": "{$inputs.FXP_PAYEE_DFSP_ID}"
           },
           "body": {
@@ -591,7 +591,7 @@
             "amountType": "SEND",
             "amount": {
               "amount": "{$inputs.amount}",
-              "currency": "{$inputs.FXP_TARGET_CURRENCY}"
+              "currency": "{$inputs.FX_TARGET_CURRENCY}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -699,20 +699,20 @@
             "Accept": "{$inputs.acceptFxTransfers}",
             "Content-Type": "{$inputs.contentTypeFxTransfers}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}"
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}"
           },
           "body": {
             "commitRequestId": "{$prev.4.callback.body.conversionTerms.conversionId}",
             "determiningTransferId": "{$function.generic.generateUUID}",
-            "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
-            "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+            "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+            "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
             "amountType": "SEND",
             "sourceAmount": {
-              "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-              "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+              "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+              "amount": "{$inputs.FX_SOURCE_AMOUNT}"
             },
             "targetAmount": {
-              "currency": "{$inputs.FXP_TARGET_CURRENCY}",
+              "currency": "{$inputs.FX_TARGET_CURRENCY}",
               "amount": "{$inputs.FXP_TARGET_AMOUNT}"
             },
             "condition": "{$prev.4.callback.body.condition}",
@@ -821,7 +821,7 @@
           "headers": {
             "Content-Type": "{$inputs.contentTypeServicesFxp}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
             "Accept": "{$inputs.acceptServicesFxp}"
           },
           "tests": {
@@ -879,15 +879,15 @@
             "conversionRequestId": "{$function.generic.generateUUID}",
             "conversionTerms": {
               "conversionId": "{$function.generic.generateUUID}",
-              "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
-              "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+              "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+              "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
               "amountType": "SEND",
               "sourceAmount": {
-                "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-                "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+                "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+                "amount": "{$inputs.FX_SOURCE_AMOUNT}"
               },
               "targetAmount": {
-                "currency": "{$inputs.FXP_TARGET_CURRENCY}"
+                "currency": "{$inputs.FX_TARGET_CURRENCY}"
               },
               "expiration": "{$inputs.FXP_EXPIRATION}"
             }
@@ -896,8 +896,8 @@
             "Accept": "{$inputs.acceptFxQuotes}",
             "Content-Type": "{$inputs.contentTypeFxQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
-            "FSPIOP-Destination": "{$inputs.FXP_TESTFXP1_ID}"
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "disabled": false,
@@ -992,7 +992,7 @@
             "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
             "FSPIOP-Destination": "{$inputs.FXP_PAYEE_DFSP_ID}"
           },
           "body": {
@@ -1023,7 +1023,7 @@
             "amountType": "SEND",
             "amount": {
               "amount": "{$inputs.amount}",
-              "currency": "{$inputs.FXP_TARGET_CURRENCY}"
+              "currency": "{$inputs.FX_TARGET_CURRENCY}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -1131,20 +1131,20 @@
             "Accept": "{$inputs.acceptFxTransfers}",
             "Content-Type": "{$inputs.contentTypeFxTransfers}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}"
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}"
           },
           "body": {
             "commitRequestId": "{$prev.4.callback.body.conversionTerms.conversionId}",
             "determiningTransferId": "{$function.generic.generateUUID}",
-            "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
-            "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+            "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+            "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
             "amountType": "SEND",
             "sourceAmount": {
-              "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-              "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+              "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+              "amount": "{$inputs.FX_SOURCE_AMOUNT}"
             },
             "targetAmount": {
-              "currency": "{$inputs.FXP_TARGET_CURRENCY}",
+              "currency": "{$inputs.FX_TARGET_CURRENCY}",
               "amount": "{$inputs.FXP_TARGET_AMOUNT}"
             },
             "condition": "{$prev.4.callback.body.condition}",
@@ -1241,9 +1241,9 @@
           "body": {
             "transferId": "{$prev.6.request.body.determiningTransferId}",
             "payeeFsp": "{$inputs.FXP_PAYEE_DFSP_ID}",
-            "payerFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
-              "currency": "{$inputs.FXP_TARGET_CURRENCY}",
+              "currency": "{$inputs.FX_TARGET_CURRENCY}",
               "amount": "{$inputs.amount}"
             },
             "ilpPacket": "{$prev.5.callback.body.ilpPacket}",
@@ -1262,7 +1262,7 @@
             "Accept": "{$inputs.acceptTransfers}",
             "Content-Type": "{$inputs.contentTypeTransfers}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}"
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}"
           },
           "disabled": false,
           "scriptingEngine": "javascript",
@@ -1348,9 +1348,9 @@
           "body": {
             "transferId": "{$prev.6.request.body.determiningTransferId}",
             "payeeFsp": "{$inputs.FXP_PAYEE_DFSP_ID}",
-            "payerFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
-              "currency": "{$inputs.FXP_TARGET_CURRENCY}",
+              "currency": "{$inputs.FX_TARGET_CURRENCY}",
               "amount": "{$inputs.amount}"
             },
             "ilpPacket": "{$prev.5.callback.body.ilpPacket}",
