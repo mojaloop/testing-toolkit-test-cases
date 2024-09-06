@@ -216,5 +216,51 @@
       "delay": 0,
       "type": "FIXED_RESPONSE"
     }
+  },
+  {
+    "ruleId": 6,
+    "priority": 1,
+    "description": "post /transfers - custom",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 2,
+      "type": "transfers",
+      "asynchronous": false
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": null,
+      "path": null,
+      "params": {
+        "body": {
+          "completedTimestamp": "{$environment.completedTimestamp}",
+          "homeTransactionId": "123",
+          "transferState": "COMMITTED"
+        },
+        "statusCode": "200",
+        "scripts": {
+          "exec": [
+            "environment.completedTimestamp = new Date().toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        }
+      },
+      "type": "FIXED_RESPONSE"
+    },
+    "type": "response",
+    "version": 1
   }
 ]
