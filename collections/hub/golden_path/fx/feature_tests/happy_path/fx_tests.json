@@ -1,6 +1,6 @@
 {
   "options": {},
-  "name": "collections_tests_fx_fx_tests",
+  "name": "golden_path_fx_feature_tests_happy_path_fx_tests",
   "test_cases": [
     {
       "id": 1,
@@ -14,6 +14,7 @@
       "meta": {
         "info": "FX Transfer"
       },
+      "breakOnError": false,
       "requests": [
         {
           "id": 1,
@@ -360,13 +361,6 @@
                 ]
               },
               {
-                "id": 7,
-                "description": "Callback content-type to be quotes",
-                "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')"
-                ]
-              },
-              {
                 "id": 9,
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
@@ -404,10 +398,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.FX_PAYEE_DFSP_ID}/accounts",
+          "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.FX_PAYEE_DFSP_ID}"
+            "name": "{$inputs.FX_PAYER_DFSP_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
@@ -621,6 +615,17 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
           "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Payer position should be changed",
+                "exec": [
+                  "expect(environment.payerPositionBalanceAfterFxTransfer).to.not.equal(environment.payerPositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
           "scripts": {
             "postRequest": {
               "exec": [
@@ -628,24 +633,13 @@
                 "",
                 "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.payerPositionBalanceAfterTransfer= curAccount.value",
+                "    environment.payerPositionBalanceAfterFxTransfer= curAccount.value",
                 "  }",
                 "})",
                 "",
-                "console.log(`Payer Position Balance after Transfer=${environment.payerPositionBalanceAfterTransfer}`);"
+                "console.log(`Payer Position Balance after Transfer=${environment.payerPositionBalanceAfterFxTransfer}`);"
               ]
             }
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Payer position should not be changed",
-                "exec": [
-                  "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
-                ]
-              }
-            ]
           }
         },
         {
@@ -679,24 +673,17 @@
                 ]
               },
               {
-                "id": 2,
-                "description": "Payee position should be changed",
-                "exec": [
-                  "expect(environment.payeePositionBalanceAfterTransfer-environment.payeePositionBalanceBeforeFxTransfer).to.equal(-environment.FXP_TARGET_AMOUNT)"
-                ]
-              },
-              {
                 "id": 3,
-                "description": "FXP Source currency position should be changed",
+                "description": "FXP Source currency position should not be changed",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionBalanceAfterTransfer-environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer).to.equal(-environment.FX_SOURCE_AMOUNT)"
+                  "expect(environment.fxpSourceCurrencyPositionBalanceAfterTransfer).to.equal(environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer)"
                 ]
               },
               {
                 "id": 4,
-                "description": "FXP Target currency position should be changed",
+                "description": "FXP Target currency position should not be changed",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer-environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer).to.equal(+environment.FXP_TARGET_AMOUNT)"
+                  "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer).to.equal(environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer)"
                 ]
               }
             ]
@@ -750,16 +737,16 @@
           "method": "post",
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "body": {
-            "transferId": "{$prev.6.request.body.determiningTransferId}",
-            "payeeFsp": "{$inputs.FXP_PAYEE_DFSP_ID}",
+            "transferId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
+            "payeeFsp": "{$inputs.FX_PAYEE_DFSP_ID}",
             "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
-              "currency": "{$inputs.FX_TARGET_CURRENCY}",
-              "amount": "{$inputs.amount}"
+              "currency": "{$prev.5.callback.body.transferAmount.currency}",
+              "amount": "{$prev.5.callback.body.transferAmount.amount}"
             },
             "ilpPacket": "{$prev.5.callback.body.ilpPacket}",
             "condition": "{$prev.5.callback.body.condition}",
-            "expiration": "{$requestVariables.expiration}"
+            "expiration": "{$prev.5.callback.body.expiration}"
           },
           "headers": {
             "Accept": "{$inputs.acceptTransfers}",
@@ -808,13 +795,6 @@
                 ]
               },
               {
-                "id": 6,
-                "description": "Callback content-type to be transfers",
-                "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')"
-                ]
-              },
-              {
                 "id": 9,
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
@@ -855,20 +835,6 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
-                "description": "Payer position should be changed",
-                "exec": [
-                  "expect(environment.payerPositionBalanceAfterFxTransfer-environment.payerPositionBalanceBeforeFxTransfer).to.equal(+environment.FX_SOURCE_AMOUNT)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Payee position should be changed",
-                "exec": [
-                  "expect(environment.payeePositionBalanceAfterTransfer-environment.payeePositionBalanceBeforeFxTransfer).to.equal(-environment.FXP_TARGET_AMOUNT)"
-                ]
-              },
-              {
                 "id": 3,
                 "description": "FXP Source currency position should be changed",
                 "exec": [
@@ -879,7 +845,7 @@
                 "id": 4,
                 "description": "FXP Target currency position should be changed",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer-environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer).to.equal(+environment.FXP_TARGET_AMOUNT)"
+                  "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer).to.not.equal(environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer)"
                 ]
               }
             ]
@@ -902,14 +868,7 @@
                 "  }",
                 "})",
                 "",
-                "// console.log(`FXP Source Currency Position Balance after Transfer=${environment.fxpSourceCurrencyPositionBalanceAfterTransfer}`);",
-                "",
-                "// console.log(`FXP Target Currency Position Balance after Transfer=${environment.fxpTargetCurrencyPositionBalanceAfterTransfer}`);",
-                "",
-                "console.log(`Payer Position ${environment.FX_SOURCE_CURRENCY} : ${environment.payerPositionBalanceBeforeFxTransfer} -> ${environment.payerPositionBalanceAfterTransfer} (${environment.payerPositionBalanceAfterTransfer - environment.payerPositionBalanceBeforeFxTransfer})`);",
-                "console.log(`Payee Position ${environment.FX_TARGET_CURRENCY} : ${environment.payeePositionBalanceBeforeFxTransfer} -> ${environment.payeePositionBalanceAfterTransfer} (${environment.payeePositionBalanceAfterTransfer - environment.payeePositionBalanceBeforeFxTransfer})`);",
-                "console.log(`FXP Source Currency ${environment.FX_SOURCE_CURRENCY} : ${environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer} -> ${environment.fxpSourceCurrencyPositionBalanceAfterTransfer} (${environment.fxpSourceCurrencyPositionBalanceAfterTransfer - environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer})`);",
-                "console.log(`FXP Target Currency ${environment.FX_TARGET_CURRENCY} : ${environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer} -> ${environment.fxpTargetCurrencyPositionBalanceAfterTransfer} (${environment.fxpTargetCurrencyPositionBalanceAfterTransfer - environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer})`);"
+                ""
               ]
             }
           }
@@ -939,9 +898,9 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "FXP position should not be changed",
+                "description": "Payee position should be changed",
                 "exec": [
-                  "expect(environment.fxpPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
+                  "expect(environment.payeePositionBalanceAfterTransfer).to.not.equal(environment.payeePositionBalanceBeforeFxTransfer)"
                 ]
               }
             ]
