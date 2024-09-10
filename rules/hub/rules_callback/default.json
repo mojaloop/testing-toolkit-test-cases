@@ -1232,6 +1232,75 @@
     "version": 1
   },
   {
+    "ruleId": 21,
+    "priority": 1,
+    "description": "get /parties/{Type}/{ID} for ttkfxpayer",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "ttkfxpayer",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.parties+json;version=2.0",
+          "FSPIOP-Source": "ttkfxpayee",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
+        },
+        "body": {
+          "party": {
+            "partyIdInfo": {
+              "fspId": "ttkfxpayee"
+            },
+            "merchantClassificationCode": null,
+            "name": "Justin Pierre",
+            "personalInfo": {
+              "complexName": {
+                "firstName": "Justin",
+                "middleName": "Pierre",
+                "lastName": "Trudeau"
+              },
+              "dateOfBirth": "1971-12-25",
+              "kycInformation": "ENCRYPTED KYC INFORMATION"
+            },
+            "supportedCurrencies": [
+              "XTS"
+            ]
+          }
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
     "ruleId": 50,
     "priority": 1,
     "description": "get /parties/{Type}/{ID} - Testing Payer Scheme with Payee side Proxy as TTK - Happy Path",
@@ -1426,6 +1495,53 @@
         }
       },
       "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 22,
+    "priority": 1,
+    "description": "get /parties/{Type}/{ID} - Default",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 1,
+      "type": "fspiop",
+      "asynchronous": true
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.parties+json;version=1.0"
+        },
+        "body": {
+          "party": {
+            "partyIdInfo": {
+              "partySubIdOrType": null
+            }
+          }
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
     },
     "type": "callback",
     "version": 1

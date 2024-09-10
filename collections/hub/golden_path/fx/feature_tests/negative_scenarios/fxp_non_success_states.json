@@ -6,7 +6,7 @@
       "id": 1,
       "name": "Check ABORTED state in PUT /fxTransfers/{ID}",
       "fileInfo": {
-        "path": "hub/golden_path/fx/feature_tests/negative_scenarios/fxp_non_success_states.json",
+        "path": "golden_path/fx/feature_tests/negative_scenarios/fxp_non_success_states.json",
         "labels": [
           "fx"
         ]
@@ -41,7 +41,7 @@
           "headers": {
             "Content-Type": "{$inputs.contentType}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
             "Accept": "{$inputs.accept}"
           },
           "disabled": false,
@@ -107,15 +107,15 @@
             "conversionRequestId": "{$function.generic.generateUUID}",
             "conversionTerms": {
               "conversionId": "{$function.generic.generateUUID}",
-              "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
-              "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+              "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+              "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
               "amountType": "SEND",
               "sourceAmount": {
-                "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-                "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+                "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+                "amount": "{$inputs.FX_SOURCE_AMOUNT}"
               },
               "targetAmount": {
-                "currency": "{$inputs.FXP_TARGET_CURRENCY}"
+                "currency": "{$inputs.FX_TARGET_CURRENCY}"
               },
               "expiration": "{$inputs.FXP_EXPIRATION}"
             }
@@ -124,8 +124,8 @@
             "Accept": "{$inputs.acceptFxQuotes}",
             "Content-Type": "{$inputs.contentTypeFxQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
-            "FSPIOP-Destination": "{$inputs.FXP_TESTFXP1_ID}"
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "disabled": false,
@@ -220,7 +220,7 @@
             "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
             "FSPIOP-Destination": "{$inputs.FXP_PAYEE_DFSP_ID}"
           },
           "body": {
@@ -250,8 +250,8 @@
             },
             "amountType": "SEND",
             "amount": {
-              "amount": "{$inputs.FXP_SOURCE_AMOUNT}",
-              "currency": "{$inputs.FXP_SOURCE_CURRENCY}"
+              "amount": "{$inputs.FX_SOURCE_AMOUNT}",
+              "currency": "{$inputs.FX_SOURCE_CURRENCY}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -364,7 +364,7 @@
               "exec": [
                 "var res = response.body;",
                 "",
-                "res.filter(account => account.currency === environment.FXP_SOURCE_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
                 "",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "    environment.payerPositionBalanceBeforeFxTransfer= curAccount.value",
@@ -408,7 +408,7 @@
               "exec": [
                 "var res = response.body;",
                 "",
-                "res.filter(account => account.currency === environment.FXP_TARGET_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "    environment.payeePositionBalanceBeforeFxTransfer= curAccount.value",
                 "  }",
@@ -434,10 +434,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/accounts",
+          "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.FXP_TESTFXP1_ID}"
+            "name": "{$inputs.FX_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
@@ -450,13 +450,13 @@
               "exec": [
                 "var res = response.body;",
                 "",
-                "res.filter(account => account.currency === environment.FXP_SOURCE_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "    environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer= curAccount.value",
                 "  }",
                 "})",
                 "",
-                "res.filter(account => account.currency === environment.FXP_TARGET_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "    environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer= curAccount.value",
                 "  }",
@@ -491,20 +491,20 @@
             "Accept": "{$inputs.acceptFxTransfers}",
             "Content-Type": "{$inputs.contentTypeFxTransfers}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}"
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}"
           },
           "body": {
             "commitRequestId": "{$prev.2.request.body.conversionTerms.conversionId}",
             "determiningTransferId": "{$function.generic.generateUUID}",
-            "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
-            "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+            "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+            "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
             "amountType": "SEND",
             "sourceAmount": {
-              "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
+              "currency": "{$inputs.FX_SOURCE_CURRENCY}",
               "amount": "1002"
             },
             "targetAmount": {
-              "currency": "{$inputs.FXP_TARGET_CURRENCY}",
+              "currency": "{$inputs.FX_TARGET_CURRENCY}",
               "amount": "{$inputs.FXP_TARGET_AMOUNT}"
             },
             "condition": "{$prev.3.callback.body.condition}",
@@ -618,7 +618,7 @@
               "exec": [
                 "var res = response.body;",
                 "",
-                "res.filter(account => account.currency === environment.FXP_SOURCE_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "    environment.payerPositionBalanceAfterFxTransfer= curAccount.value",
                 "  }",
@@ -669,7 +669,7 @@
               "exec": [
                 "var res = response.body;",
                 "",
-                "res.filter(account => account.currency === environment.FXP_TARGET_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "    environment.payeePositionBalanceAfterFxTransfer= curAccount.value",
                 "  }",
@@ -696,10 +696,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/accounts",
+          "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.FXP_TESTFXP1_ID}"
+            "name": "{$inputs.FX_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
@@ -727,13 +727,13 @@
               "exec": [
                 "var res = response.body;",
                 "",
-                "res.filter(account => account.currency === environment.FXP_SOURCE_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "    environment.fxpSourceCurrencyPositionBalanceAfterFxTransfer= curAccount.value",
                 "  }",
                 "})",
                 "",
-                "res.filter(account => account.currency === environment.FXP_TARGET_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "    environment.fxpTargetCurrencyPositionBalanceAfterFxTransfer= curAccount.value",
                 "  }",

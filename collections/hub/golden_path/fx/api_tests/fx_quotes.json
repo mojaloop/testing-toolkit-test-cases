@@ -6,7 +6,7 @@
       "id": 1,
       "name": "FX Quote - 400",
       "fileInfo": {
-        "path": "hub/golden_path/fx/api_tests/fx_quotes.json",
+        "path": "golden_path/fx/api_tests/fx_quotes.json",
         "labels": [
           "fx"
         ]
@@ -36,15 +36,15 @@
             "conversionRequestId": "{$function.generic.generateUUID}",
             "conversionTerms": {
               "conversionId": "{$function.generic.generateUUID}",
-              "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
-              "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+              "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+              "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
               "amountType": "SENDING",
               "sourceAmount": {
-                "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-                "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+                "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+                "amount": "{$inputs.FX_SOURCE_AMOUNT}"
               },
               "targetAmount": {
-                "currency": "{$inputs.FXP_TARGET_CURRENCY}"
+                "currency": "{$inputs.FX_TARGET_CURRENCY}"
               },
               "expiration": "{$inputs.FXP_EXPIRATION}"
             }
@@ -53,8 +53,8 @@
             "Accept": "{$inputs.acceptFxQuotes}",
             "Content-Type": "{$inputs.contentTypeFxQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
-            "FSPIOP-Destination": "{$inputs.FXP_TESTFXP1_ID}"
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "disabled": false,
