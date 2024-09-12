@@ -319,7 +319,7 @@
         {
           "fact": "pathParams",
           "operator": "equal",
-          "value": "5001",
+          "value": "5101",
           "path": "ID"
         },
         {
@@ -343,7 +343,7 @@
         },
         "body": {
           "errorInformation": {
-            "errorCode": "5001",
+            "errorCode": "5101",
             "errorDescription": "Generic error in Payee DFSP"
           }
         },
@@ -422,7 +422,7 @@
   {
     "ruleId": 8,
     "priority": 1,
-    "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in Payee dfsp scheme",
+    "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 200X Error in Payee dfsp scheme",
     "apiVersion": {
       "minorVersion": 0,
       "majorVersion": 2,
@@ -439,7 +439,7 @@
         {
           "fact": "body",
           "operator": "equal",
-          "value": "3100",
+          "value": "2001",
           "path": "payee.partyIdInfo.partyIdentifier"
         },
         {
@@ -469,8 +469,8 @@
         },
         "body": {
           "errorInformation": {
-            "errorCode": "3100",
-            "errorDescription": "Generic Error in Proxy"
+            "errorCode": "2001",
+            "errorDescription": "Generic 200X error in Payeefsp Scheme"
           }
         }
       },
@@ -481,6 +481,246 @@
   },
   {
     "ruleId": 9,
+    "priority": 1,
+    "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 300X Error in Payee dfsp scheme",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "3001",
+          "path": "payee.partyIdInfo.partyIdentifier"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/quotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/quotes/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+          "Date": "Tue, 23 Jul 2024 02:05:53 GMT",
+          "FSPIOP-Source": "proxyttk",
+          "FSPIOP-Destination": "testingtoolkitdfsp"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "3001",
+            "errorDescription": "Generic 300X error in Payeefsp Scheme"
+          }
+        }
+      },
+      "type": "FIXED_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  },
+  {
+    "ruleId": 10,
+    "priority": 1,
+    "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 200X Error in Payee dfsp scheme",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "4001",
+          "path": "payee.partyIdInfo.partyIdentifier"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/quotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/quotes/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+          "Date": "Tue, 23 Jul 2024 02:05:53 GMT",
+          "FSPIOP-Source": "proxyttk",
+          "FSPIOP-Destination": "testingtoolkitdfsp"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "4001",
+            "errorDescription": "Generic 400X error in Payeefsp Scheme"
+          }
+        }
+      },
+      "type": "FIXED_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  },
+  {
+    "ruleId": 11,
+    "priority": 1,
+    "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 200X Error in Payee dfsp scheme",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "5001",
+          "path": "payee.partyIdInfo.partyIdentifier"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/quotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/quotes/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+          "Date": "Tue, 23 Jul 2024 02:05:53 GMT",
+          "FSPIOP-Source": "proxyttk",
+          "FSPIOP-Destination": "testingtoolkitdfsp"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "5001",
+            "errorDescription": "Generic 500X error in Payeefsp Scheme"
+          }
+        }
+      },
+      "type": "FIXED_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  },
+  {
+    "ruleId": 12,
+    "priority": 1,
+    "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 200X Error in Payee dfsp scheme",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "2001",
+          "path": "payee.partyIdInfo.partyIdentifier"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/quotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/quotes/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+          "Date": "Tue, 23 Jul 2024 02:05:53 GMT",
+          "FSPIOP-Source": "proxyttk",
+          "FSPIOP-Destination": "testingtoolkitdfsp"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "2001",
+            "errorDescription": "Generic 200X error in Payeefsp Scheme"
+          }
+        }
+      },
+      "type": "FIXED_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  },
+  {
+    "ruleId": 13,
     "priority": 1,
     "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in payee dfsp",
     "apiVersion": {
@@ -540,7 +780,7 @@
     "version": 1
   },
   {
-    "ruleId": 10,
+    "ruleId": 14,
     "priority": 1,
     "description": "post /transfers - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in Proxy",
     "apiVersion": {
@@ -600,7 +840,7 @@
     "version": 1
   },
   {
-    "ruleId": 11,
+    "ruleId": 15,
     "priority": 1,
     "description": "post /transfers - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in payee dfsp scheme",
     "apiVersion": {
@@ -660,7 +900,7 @@
     "version": 1
   },
   {
-    "ruleId": 12,
+    "ruleId": 16,
     "priority": 1,
     "description": "post /transfers - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in payee dfsp",
     "apiVersion": {
