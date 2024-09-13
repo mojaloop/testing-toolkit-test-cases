@@ -4,15 +4,15 @@
   "test_cases": [
     {
       "id": 3,
-      "name": "Check that positions for FXP, Payer and Payee are not changed after payee sends invalid fulfillment",
+      "name": "Check that positions for FXP, Payer and Payee are not changed after FXTransfer fails with invalid fulfillment",
       "fileInfo": {
-        "path": "hub/golden_path/fx/feature_tests/negative_scenarios/fxp_payee_invalid_fulfillment.json",
+        "path": "hub/golden_path/fx/feature_tests/negative_scenarios/fxp_fxp_invalid_fulfillment.json",
         "labels": [
           "fx"
         ]
       },
       "meta": {
-        "info": "POST /transfers returns PUT /transfers/{ID} with invalid fulfillment"
+        "info": "POST /fxTransfers returns PUT /fxTransfers/{ID} with invalid fulfillment"
       },
       "requests": [
         {
@@ -149,7 +149,7 @@
         },
         {
           "id": 9,
-          "description": "POST /fxTransfers",
+          "description": "POST /fxTransfers that receives invalid fulfilment",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 2,
@@ -179,7 +179,7 @@
             "amountType": "SEND",
             "sourceAmount": {
               "currency": "{$inputs.FX_SOURCE_CURRENCY}",
-              "amount": "{$inputs.FX_SOURCE_AMOUNT}"
+              "amount": "15"
             },
             "targetAmount": {
               "currency": "{$inputs.FX_TARGET_CURRENCY}",
@@ -235,7 +235,7 @@
         },
         {
           "id": 10,
-          "description": "POST /transfer  that receives invalid fulfilment",
+          "description": "POST /transfer",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 2,
@@ -257,7 +257,7 @@
             "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
               "currency": "{$inputs.FX_TARGET_CURRENCY}",
-              "amount": "15"
+              "amount": "{$inputs.FX_TARGET_AMOUNT}"
             },
             "ilpPacket": "{$inputs.ilpPacket}",
             "condition": "{$inputs.validCondition}",
