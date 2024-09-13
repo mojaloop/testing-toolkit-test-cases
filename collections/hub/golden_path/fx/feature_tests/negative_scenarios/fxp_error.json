@@ -300,6 +300,17 @@
                 "console.log(`Payer Position Balance after Transfer=${environment.payerPositionBalanceAfterFxTransfer}`);"
               ]
             }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Payer position should not be changed",
+                "exec": [
+                  "expect(environment.payerPositionBalanceAfterFxTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
           }
         }
       ]
@@ -559,7 +570,7 @@
             "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
               "currency": "{$inputs.FX_TARGET_CURRENCY}",
-              "amount": "{$inputs.FX_TARGET_AMOUNT}"
+              "amount": "{$inputs.FX_SOURCE_AMOUNT_ERROR_GENERIC}"
             },
             "ilpPacket": "{$inputs.ilpPacket}",
             "condition": "{$inputs.validCondition}",
