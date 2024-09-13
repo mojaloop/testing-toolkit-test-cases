@@ -1675,6 +1675,108 @@
     "version": 1
   },
   {
+    "ruleId": 57,
+    "priority": 1,
+    "description": "Post /transfers No callback",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "16",
+          "path": "amount.amount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "NO_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 56,
+    "priority": 1,
+    "description": "Post /transfers matching fulfilment",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "GRzLaTP7DJ9t4P-a_BA0WA9wzzlsugf00-Tn6kESAfM",
+          "path": "condition"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "body": {
+          "fulfilment": "UNlJ98hZTY_dsw0cAqw4i_UN3v4utt7CZFB4yfLbVFA",
+          "completedTimestamp": "{$function.generic.curDateISO}",
+          "transferState": "COMMITTED",
+          "extensionList": null
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
     "ruleId": 3,
     "priority": 1,
     "description": "post /transfers - Default",
