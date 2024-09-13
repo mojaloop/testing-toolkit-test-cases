@@ -6,7 +6,10 @@
       "id": 1,
       "name": "Happy Path FX E2E",
       "fileInfo": {
-        "path": "fx/feature_tests/happy_path/fx_tests.json"
+        "path": "hub/golden_path/fx/feature_tests/happy_path/fx_tests.json",
+        "labels": [
+          "fx"
+        ]
       },
       "meta": {
         "info": "FX Transfer"
@@ -716,6 +719,87 @@
           }
         },
         {
+          "id": 15,
+          "description": "Get FxTransfers",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/fxTransfers/{ID}",
+          "path": "/fxTransfers/{$prev.9.request.body.commitRequestId}",
+          "method": "get",
+          "params": {
+            "ID": "{$prev.9.request.body.commitRequestId}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptFxTransfers}",
+            "Content-Type": "{$inputs.contentTypeFxTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback conversionState to be RESERVED",
+                "exec": [
+                  "expect(callback.body.conversionState).to.equal('RESERVED')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback content-type to be fxTransfers",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.fxTransfers+json')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback body should contain fulfilment",
+                "exec": [
+                  "expect(callback.body).to.have.property('fulfilment')"
+                ]
+              }
+            ]
+          }
+        },
+        {
           "id": 12,
           "description": "POST /transfer",
           "apiVersion": {
@@ -922,8 +1006,8 @@
           }
         },
         {
-          "id": 15,
-          "description": "Get FxTransfers",
+          "id": 16,
+          "description": "Get FxTransfers after final transfer",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 2,
@@ -982,7 +1066,7 @@
                 "id": 5,
                 "description": "Callback conversionState to be RESERVED",
                 "exec": [
-                  "expect(callback.body.conversionState).to.equal('RESERVED')"
+                  "expect(callback.body.conversionState).to.equal('COMMITTED')"
                 ]
               },
               {
@@ -997,13 +1081,6 @@
                 "description": "Callback body should contain fulfilment",
                 "exec": [
                   "expect(callback.body).to.have.property('fulfilment')"
-                ]
-              },
-              {
-                "id": 9,
-                "description": "Request FSP source the same as quote callback FSP destination",
-                "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.4.callback.headers.fspiop-destination}')"
                 ]
               }
             ]

@@ -1,12 +1,15 @@
 {
   "options": {},
-  "name": "hub_golden_path_fx_feature_tests_happy_path_fx_tests",
+  "name": "hub_golden_path_fx_feature_tests_duplicate_handling_duplicate_fx_transfers",
   "test_cases": [
     {
       "id": 1,
       "name": "Happy Path FX E2E",
       "fileInfo": {
-        "path": "fx/feature_tests/duplicate_handling/duplicate_fx_transfers.json"
+        "path": "hub/golden_path/fx/feature_tests/duplicate_handling/duplicate_fx_transfers.json",
+        "labels": [
+          "fx"
+        ]
       },
       "meta": {
         "info": "FX Transfer"
@@ -379,15 +382,15 @@
               }
             ]
           },
+          "params": {
+            "name": ""
+          },
           "scripts": {
             "preRequest": {
               "exec": [
                 "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
               ]
             }
-          },
-          "params": {
-            "name": ""
           }
         },
         {
@@ -524,15 +527,15 @@
               }
             ]
           },
+          "params": {
+            "name": ""
+          },
           "scripts": {
             "preRequest": {
               "exec": [
                 "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
               ]
             }
-          },
-          "params": {
-            "name": ""
           }
         },
         {
@@ -561,20 +564,20 @@
             "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "body": {
-            "commitRequestId": "{$prev.4.callback.body.conversionTerms.conversionId}",
-            "determiningTransferId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
-            "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
-            "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
-            "amountType": "SEND",
+            "commitRequestId": "{$prev.9.request.body.commitRequestId}",
+            "determiningTransferId": "{$prev.9.request.body.determiningTransferId}",
+            "initiatingFsp": "{$prev.9.request.body.initiatingFsp}",
+            "counterPartyFsp": "{$prev.9.request.body.counterPartyFsp}",
+            "amountType": "{$prev.9.request.body.amountType}",
             "sourceAmount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.sourceAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.sourceAmount.currency}"
+              "amount": "{$prev.9.request.body.sourceAmount.amount}",
+              "currency": "{$prev.9.request.body.sourceAmount.currency}"
             },
             "targetAmount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.targetAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.targetAmount.currency}"
+              "amount": "{$prev.9.request.body.targetAmount.amount}",
+              "currency": "{$prev.9.request.body.targetAmount.currency}"
             },
-            "condition": "{$prev.4.callback.body.condition}",
+            "condition": "{$prev.9.request.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "scriptingEngine": "javascript",
@@ -611,15 +614,102 @@
               }
             ]
           },
+          "params": {
+            "name": ""
+          },
           "scripts": {
             "preRequest": {
               "exec": [
                 "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
               ]
             }
+          }
+        },
+        {
+          "id": 14,
+          "description": "Duplicate POST /fxTransfers with sam payload",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/fxTransfers",
+          "path": "/fxTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptFxTransfers}",
+            "Content-Type": "{$inputs.contentTypeFxTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
+          },
+          "body": {
+            "commitRequestId": "{$prev.9.request.body.commitRequestId}",
+            "determiningTransferId": "{$prev.9.request.body.determiningTransferId}",
+            "initiatingFsp": "{$prev.9.request.body.initiatingFsp}",
+            "counterPartyFsp": "{$prev.9.request.body.counterPartyFsp}",
+            "amountType": "{$prev.9.request.body.amountType}",
+            "sourceAmount": {
+              "amount": "{$prev.9.request.body.sourceAmount.amount}",
+              "currency": "{$prev.9.request.body.sourceAmount.currency}"
+            },
+            "targetAmount": {
+              "amount": "{$prev.9.request.body.targetAmount.amount}",
+              "currency": "{$prev.9.request.body.targetAmount.currency}"
+            },
+            "condition": "{$prev.9.request.body.condition}",
+            "expiration": "{$prev.9.request.body.expiration}"
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback length not zero",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Should get fulfilment same",
+                "exec": [
+                  "expect(callback.body.fulfilment).to.equal('{$prev.9.callback.body.fulfilment}')"
+                ]
+              }
+            ]
           },
           "params": {
             "name": ""
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+              ]
+            }
           }
         }
       ]
