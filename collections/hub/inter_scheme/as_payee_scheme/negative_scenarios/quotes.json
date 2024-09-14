@@ -3,88 +3,6 @@
     "test_cases": [
       {
         "id": "1",
-        "name": "Test Case for scenario when there is an error in proxy",
-        "requests": [
-          {
-            "id": "1",
-            "description": "Negative test case for error code 3100",
-            "apiVersion": {
-              "minorVersion": 1,
-              "majorVersion": 1,
-              "type": "fspiop",
-              "asynchronous": true
-            },
-            "operationPath": "/quotes",
-            "method": "post",
-            "headers": {
-              "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-              "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
-              "Date": "{$function.generic.curDate}",
-              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
-              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
-              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
-            },
-            "body": {
-              "quoteId": "{$function.generic.generateUUID}",
-              "transactionId": "{$function.generic.generateUUID}",
-              "transactionRequestId": "{$function.generic.generateUUID}",
-              "payer": {
-                "partyIdInfo": {
-                  "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
-                  "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
-                  "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
-                },
-                "personalInfo": {
-                  "complexName": {
-                    "firstName": "{$inputs.PROXY_PAYERFSP_PARTY_FIRST_NAME}",
-                    "lastName": "{$inputs.PROXY_PAYERFSP_PARTY_LAST_NAME}"
-                  },
-                  "dateOfBirth": "{$inputs.PROXY_PAYERFSP_PARTY_DOB}"
-                }
-              },
-              "payee": {
-                "partyIdInfo": {
-                  "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
-                  "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PROXY}",
-                  "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
-                }
-              },
-              "amountType": "RECEIVE",
-              "amount": {
-                "amount": "{$inputs.PROXY_AMOUNT}",
-                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
-              },
-              "transactionType": {
-                "scenario": "TRANSFER",
-                "initiator": "PAYER",
-                "initiatorType": "CONSUMER"
-              }
-            },
-            "tests": {
-                "assertions": [
-                  {
-                    "id": 1,
-                    "description": "Response status to be 202",
-                    "exec": [
-                      "expect(response.status).to.equal(202)"
-                    ]
-                  },
-                  {
-                    "id": 2,
-                    "description": "Callback response has errorCode and errorDescription",
-                    "exec": [
-                      "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_DFSP_ERROR_CODE_5XXX}')",
-                      "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_DFSP_ERROR_DESCRIPTION_5XXX}')"
-                    ]
-                  }
-                ]
-            },
-            "disabled": true
-          }
-        ]
-      },
-      {
-        "id": "2",
         "name": "Test Case for scenario when there is an error in payee dfsp",
         "requests": [
           {
@@ -120,8 +38,7 @@
                   "complexName": {
                     "firstName": "{$inputs.PROXY_PAYERFSP_PARTY_FIRST_NAME}",
                     "lastName": "{$inputs.PROXY_PAYERFSP_PARTY_LAST_NAME}"
-                  },
-                  "dateOfBirth": "{$inputs.PROXY_PAYERFSP_PARTY_DOB}"
+                  }
                 }
               },
               "payee": {
