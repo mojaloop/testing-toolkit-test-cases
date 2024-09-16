@@ -14,6 +14,7 @@
               "type": "fspiop",
               "asynchronous": true
             },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
             "operationPath": "/quotes",
             "method": "post",
             "headers": {
@@ -22,7 +23,8 @@
               "Date": "{$function.generic.curDate}",
               "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
               "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
-              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}",
+              "FSPIOP-Proxy": "{$inputs.PROXY_HEADER}"
             },
             "body": {
               "quoteId": "{$function.generic.generateUUID}",
@@ -77,8 +79,7 @@
                     ]
                   }
                 ]
-            },
-            "disabled": true
+            }
           }
         ]
       }
