@@ -1,6 +1,6 @@
 {
   "options": {},
-  "name": "fxp_error",
+  "name": "hub_golden_path_fx_feature_tests_negative_scenarios_fxp_error",
   "test_cases": [
     {
       "id": 1,
@@ -242,17 +242,20 @@
                 "id": 5,
                 "description": "Callback body should contain errorInformation code",
                 "exec": [
-                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                  "expect(callback.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
                 "id": 6,
                 "description": "Callback body should contain errorInformation description",
                 "exec": [
-                  "expect(response.body.errorInformation).to.have.property('errorDescription')"
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
                 ]
               }
             ]
+          },
+          "params": {
+            "name": ""
           },
           "scripts": {
             "preRequest": {
@@ -260,9 +263,6 @@
                 "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
               ]
             }
-          },
-          "params": {
-            "name": ""
           }
         },
         {
@@ -286,6 +286,17 @@
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Payer position should not be changed",
+                "exec": [
+                  "expect(environment.payerPositionBalanceAfterFxTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
           "scripts": {
             "postRequest": {
               "exec": [
@@ -300,17 +311,6 @@
                 "console.log(`Payer Position Balance after Transfer=${environment.payerPositionBalanceAfterFxTransfer}`);"
               ]
             }
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Payer position should not be changed",
-                "exec": [
-                  "expect(environment.payerPositionBalanceAfterFxTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
-                ]
-              }
-            ]
           }
         }
       ]
@@ -535,15 +535,15 @@
               }
             ]
           },
+          "params": {
+            "name": ""
+          },
           "scripts": {
             "preRequest": {
               "exec": [
                 "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
               ]
             }
-          },
-          "params": {
-            "name": ""
           }
         },
         {
@@ -660,6 +660,17 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
           "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Payer position should not be changed",
+                "exec": [
+                  "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
           "scripts": {
             "postRequest": {
               "exec": [
@@ -674,17 +685,6 @@
                 "console.log(`Payer Position Balance after Transfer=${environment.payerPositionBalanceAfterTransfer}`);"
               ]
             }
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Payer position should not be changed",
-                "exec": [
-                  "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
-                ]
-              }
-            ]
           }
         },
         {
