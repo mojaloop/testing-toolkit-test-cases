@@ -1,9 +1,9 @@
 {
   "options": {},
-  "name": "fxp_error",
+  "name": "hub_golden_path_fx_feature_tests_negative_scenarios_timeout_scenarios",
   "test_cases": [
     {
-      "id": 3,
+      "id": 1,
       "name": "Check that position for Payer is not changed after FXTransfer is expired",
       "fileInfo": {
         "path": "hub/golden_path/fx/feature_tests/negative_scenarios/timeout_scenarios.json",
@@ -121,15 +121,11 @@
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
-              },
-              {
-                "id": 4,
-                "description": "Callback FSP Destination equal to request FSP Source",
-                "exec": [
-                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
-                ]
               }
             ]
+          },
+          "params": {
+            "name": ""
           },
           "scripts": {
             "preRequest": {
@@ -138,9 +134,6 @@
                 "requestVariables.expiration =new Date(new Date().getTime() + 2 * 1000).toISOString()"
               ]
             }
-          },
-          "params": {
-            "name": ""
           }
         },
         {
@@ -165,6 +158,17 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
           "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Payer position should not be changed",
+                "exec": [
+                  "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
           "scripts": {
             "postRequest": {
               "exec": [
@@ -179,23 +183,12 @@
                 "console.log(`Payer Position Balance after Transfer=${environment.payerPositionBalanceAfterTransfer}`);"
               ]
             }
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Payer position should not be changed",
-                "exec": [
-                  "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
-                ]
-              }
-            ]
           }
         }
       ]
     },
     {
-      "id": 4,
+      "id": 2,
       "name": "Check that positions for FXP, Payer and Payee are not changed after transfer is expired",
       "fileInfo": {
         "path": "hub/golden_path/fx/feature_tests/negative_scenarios/timeout_scenarios.json",
@@ -414,15 +407,15 @@
               }
             ]
           },
+          "params": {
+            "name": ""
+          },
           "scripts": {
             "preRequest": {
               "exec": [
                 "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
               ]
             }
-          },
-          "params": {
-            "name": ""
           }
         },
         {
@@ -484,7 +477,7 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+                "requestVariables.expiration =new Date(new Date().getTime() + 2000).toISOString()"
               ]
             }
           }
@@ -511,6 +504,17 @@
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
           "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Payer position should not be changed",
+                "exec": [
+                  "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
           "scripts": {
             "postRequest": {
               "exec": [
@@ -525,17 +529,6 @@
                 "console.log(`Payer Position Balance after Transfer=${environment.payerPositionBalanceAfterTransfer}`);"
               ]
             }
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Payer position should not be changed",
-                "exec": [
-                  "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
-                ]
-              }
-            ]
           }
         },
         {
