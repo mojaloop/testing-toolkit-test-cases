@@ -1,0 +1,764 @@
+{
+  "name": "Party Lookup Negative Scenarios",
+  "test_cases": [
+    {
+      "id": "1",
+      "name": "Test Case for Bad Request - 400",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response error code to be 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Test Case for error in Payer Scheme",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Negative test case for error code 2xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYER_SCHEME_2XXX}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYER_SCHEME_ERROR_CODE_2XXX}')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYER_SCHEME_ERROR_DESCRIPTION_2XXX}')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": "2",
+          "description": "Negative test case for error code 3xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYER_SCHEME_3XXX}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYER_SCHEME_ERROR_CODE_3XXX}')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYER_SCHEME_ERROR_DESCRIPTION_3XXX}')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": "3",
+          "description": "Negative test case for error code 4xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYER_SCHEME_4XXX}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYER_SCHEME_ERROR_CODE_4XXX}')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYER_SCHEME_ERROR_DESCRIPTION_4XXX}')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": "4",
+          "description": "Negative test case for error code 5xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYER_SCHEME_5XXX}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYER_SCHEME_ERROR_CODE_5XXX}')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYER_SCHEME_ERROR_DESCRIPTION_5XXX}')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Test Case for scenario where the receiving dfsp is not in payer proxy cache",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_NOT_IN_PAYER_PROXY_CACHE}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('${inputs.PROXY_PAYEEFSP_PARTY_ID_NOT_IN_PAYER_PROXY_CACHE_ERROR_CODE}')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('${inputs.PROXY_PAYEEFSP_PARTY_ID_NOT_IN_PAYER_PROXY_CACHE_ERROR_DESCRIPTION}')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Test Case for scenario when there is an error in proxy",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response Source Header should be proxy",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.PROXY_HEADER}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response Destination Header same as Payerfsp Id",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.PROXY_PAYERFSP_ID}')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback response has errorCode",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY_ERROR_CODE}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback response has  errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY_ERROR_DESCRIPTION}')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Test Case for scenario when there is an error in payee scheme",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Negative test case for error code 2xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_2XXX}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_SCHEME_ERROR_CODE_2XXX}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_SCHEME_ERROR_DESCRIPTION_2XXX}')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "await custom.sleep(maxRetryWait)"
+              ]
+            }
+          }
+        },
+        {
+          "id": "2",
+          "description": "Negative test case for error code 3xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_3XXX}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_SCHEME_ERROR_CODE_3XXX}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_SCHEME_ERROR_DESCRIPTION_3XXX}')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "await custom.sleep(maxRetryWait)"
+              ]
+            }
+          }
+        },
+        {
+          "id": "3",
+          "description": "Negative test case for error code 4xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_4XXX}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_SCHEME_ERROR_CODE_4XXX}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_SCHEME_ERROR_DESCRIPTION_4XXX}')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "await custom.sleep(maxRetryWait)"
+              ]
+            }
+          }
+        },
+        {
+          "id": "4",
+          "description": "Negative test case for error code 5xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_5XXX}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_SCHEME_ERROR_CODE_5XXX}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_SCHEME_ERROR_DESCRIPTION_5XXX}')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "await custom.sleep(maxRetryWait)"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Test Case for scenario when there is an error in payee dfsp",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Negative test case for error code 5xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_DFSP}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_DFSP_ERROR_CODE_5XXX}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback response has errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_DFSP_ERROR_DESCRIPTION_5XXX}')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Party Lookup for scenario when there is an eror in Oracle",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_ORACLE_ERROR}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_ORACLE_ERROR_ERROR_CODE}')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_ORACLE_ERROR_ERROR_DESCRIPTION}')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Party Lookup for Payer Cache no longer valid",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_CACHE_NOT_VALID}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_CACHE_NOT_VALID_ERROR_CODE}')",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_CACHE_NOT_VALID_ERROR_DESCRIPTION}')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": "2",
+          "description": "Send Oracle lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_CACHE_NOT_VALID}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Date": "{$function.generic.curDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Oracle should not have mapping for the party ID",
+                "exec": [
+                  "expect(response.fspId).to.equal('')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    }
+  ]
+}

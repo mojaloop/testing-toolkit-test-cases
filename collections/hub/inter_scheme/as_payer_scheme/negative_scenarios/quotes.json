@@ -1,0 +1,642 @@
+{
+    "name": "Quotes Negative Scenarios",
+    "test_cases": [
+      {
+        "id": "1",
+        "name": "Test Case for Bad Request - 400",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Quote request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
+            "operationPath": "/quotes",
+            "method": "post",
+            "headers": {
+              "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+            },
+            "body": {
+              "transactionId": "{$function.generic.generateUUID}",
+              "transactionRequestId": "{$function.generic.generateUUID}",
+              "payer": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
+                  "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
+                },
+                "personalInfo": {
+                  "complexName": {
+                    "firstName": "{$inputs.PROXY_PAYERFSP_PARTY_FIRST_NAME}",
+                    "lastName": "{$inputs.PROXY_PAYERFSP_PARTY_LAST_NAME}"
+                  },
+                  "dateOfBirth": "{$inputs.PROXY_PAYERFSP_PARTY_DOB}"
+                }
+              },
+              "payee": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID}",
+                  "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
+                }
+              },
+              "amountType": "RECEIVE",
+              "amount": {
+                "amount": "{$inputs.PROXY_AMOUNT}",
+                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+              },
+              "transactionType": {
+                "scenario": "TRANSFER",
+                "initiator": "PAYER",
+                "initiatorType": "CONSUMER"
+              }
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 400",
+                    "exec": [
+                      "expect(response.status).to.equal(400)"
+                    ]
+                  }
+                ]
+              }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "Test Case for scenario where the receiving dfsp is not in payer proxy cache",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Send party lookup request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "operationPath": "/quotes",
+            "method": "post",
+            "headers": {
+              "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+            },
+            "body": {
+              "quoteId": "{$function.generic.generateUUID}",
+              "transactionId": "{$function.generic.generateUUID}",
+              "transactionRequestId": "{$function.generic.generateUUID}",
+              "payer": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
+                  "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
+                },
+                "personalInfo": {
+                  "complexName": {
+                    "firstName": "{$inputs.PROXY_PAYERFSP_PARTY_FIRST_NAME}",
+                    "lastName": "{$inputs.PROXY_PAYERFSP_PARTY_LAST_NAME}"
+                  },
+                  "dateOfBirth": "{$inputs.PROXY_PAYERFSP_PARTY_DOB}"
+                }
+              },
+              "payee": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_NOT_IN_PAYER_PROXY_CACHE}",
+                  "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
+                }
+              },
+              "amountType": "RECEIVE",
+              "amount": {
+                "amount": "{$inputs.PROXY_AMOUNT}",
+                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+              },
+              "transactionType": {
+                "scenario": "TRANSFER",
+                "initiator": "PAYER",
+                "initiatorType": "CONSUMER"
+              }
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('${inputs.PROXY_PAYEEFSP_PARTY_ID_NOT_IN_PAYER_PROXY_CACHE_ERROR_CODE}')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('${inputs.PROXY_PAYEEFSP_PARTY_ID_NOT_IN_PAYER_PROXY_CACHE_ERROR_DESCRIPTION}')"
+                    ]
+                  }
+                ]
+            },
+            "disabled": true
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "name": "Test Case for scenario when there is an error in proxy",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Send party lookup request",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
+            "operationPath": "/quotes",
+            "method": "post",
+            "headers": {
+              "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+            },
+            "body": {
+              "quoteId": "{$function.generic.generateUUID}",
+              "transactionId": "{$function.generic.generateUUID}",
+              "transactionRequestId": "{$function.generic.generateUUID}",
+              "payer": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
+                  "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
+                }
+              },
+              "payee": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY}",
+                  "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
+                }
+              },
+              "amountType": "RECEIVE",
+              "amount": {
+                "amount": "{$inputs.PROXY_AMOUNT}",
+                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+              },
+              "transactionType": {
+                "scenario": "TRANSFER",
+                "initiator": "PAYER",
+                "initiatorType": "CONSUMER"
+              }
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Response Source Header should be proxy",
+                    "exec": [
+                      "expect(callback.headers['fspiop-source']).to.equal('{$inputs.PROXY_HEADER}')"
+                    ]
+                  },
+                  {
+                    "id": 3,
+                    "description": "Callback FSP Destination equal to request FSP Source",
+                    "exec": [
+                      "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                    ]
+                  },
+                  {
+                    "id": 4,
+                    "description": "Callback response has errorCode",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY_ERROR_CODE}')"
+                    ]
+                  },
+                  {
+                    "id": 5,
+                    "description": "Callback response has  errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY_ERROR_DESCRIPTION}')"
+                    ]
+                  }
+                ]
+              }
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "name": "Test Case for scenario when there is an error in payee scheme",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Negative test case for error code 2xxx",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
+            "operationPath": "/quotes",
+            "method": "post",
+            "headers": {
+              "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+            },
+            "body": {
+              "quoteId": "{$function.generic.generateUUID}",
+              "transactionId": "{$function.generic.generateUUID}",
+              "transactionRequestId": "{$function.generic.generateUUID}",
+              "payer": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
+                  "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
+                },
+                "personalInfo": {
+                  "complexName": {
+                    "firstName": "{$inputs.PROXY_PAYERFSP_PARTY_FIRST_NAME}",
+                    "lastName": "{$inputs.PROXY_PAYERFSP_PARTY_LAST_NAME}"
+                  }
+                }
+              },
+              "payee": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_2XXX}",
+                  "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
+                }
+              },
+              "amountType": "RECEIVE",
+              "amount": {
+                "amount": "{$inputs.PROXY_AMOUNT}",
+                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+              },
+              "transactionType": {
+                "scenario": "TRANSFER",
+                "initiator": "PAYER",
+                "initiatorType": "CONSUMER"
+              }
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_SCHEME_ERROR_CODE_2XXX}')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_SCHEME_ERROR_DESCRIPTION_2XXX}')"
+                    ]
+                  }
+                ]
+            }
+          },
+          {
+            "id": "2",
+            "description": "Negative test case for error code 3xxx",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
+            "operationPath": "/quotes",
+            "method": "post",
+            "headers": {
+              "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+            },
+            "body": {
+              "quoteId": "{$function.generic.generateUUID}",
+              "transactionId": "{$function.generic.generateUUID}",
+              "transactionRequestId": "{$function.generic.generateUUID}",
+              "payer": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
+                  "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
+                },
+                "personalInfo": {
+                  "complexName": {
+                    "firstName": "{$inputs.PROXY_PAYERFSP_PARTY_FIRST_NAME}",
+                    "lastName": "{$inputs.PROXY_PAYERFSP_PARTY_LAST_NAME}"
+                  }
+                }
+              },
+              "payee": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_3XXX}",
+                  "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
+                }
+              },
+              "amountType": "RECEIVE",
+              "amount": {
+                "amount": "{$inputs.PROXY_AMOUNT}",
+                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+              },
+              "transactionType": {
+                "scenario": "TRANSFER",
+                "initiator": "PAYER",
+                "initiatorType": "CONSUMER"
+              }
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_SCHEME_ERROR_CODE_3XXX}')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_SCHEME_ERROR_DESCRIPTION_3XXX}')"
+                    ]
+                  }
+                ]
+            }
+          },
+          {
+            "id": "3",
+            "description": "Negative test case for error code 4xxx",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
+            "operationPath": "/quotes",
+            "method": "post",
+            "headers": {
+              "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+            },
+            "body": {
+              "quoteId": "{$function.generic.generateUUID}",
+              "transactionId": "{$function.generic.generateUUID}",
+              "transactionRequestId": "{$function.generic.generateUUID}",
+              "payer": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
+                  "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
+                },
+                "personalInfo": {
+                  "complexName": {
+                    "firstName": "{$inputs.PROXY_PAYERFSP_PARTY_FIRST_NAME}",
+                    "lastName": "{$inputs.PROXY_PAYERFSP_PARTY_LAST_NAME}"
+                  }
+                }
+              },
+              "payee": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_4XXX}",
+                  "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
+                }
+              },
+              "amountType": "RECEIVE",
+              "amount": {
+                "amount": "{$inputs.PROXY_AMOUNT}",
+                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+              },
+              "transactionType": {
+                "scenario": "TRANSFER",
+                "initiator": "PAYER",
+                "initiatorType": "CONSUMER"
+              }
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_SCHEME_ERROR_CODE_4XXX}')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_SCHEME_ERROR_DESCRIPTION_4XXX}')"
+                    ]
+                  }
+                ]
+            }
+          },
+          {
+            "id": "4",
+            "description": "Negative test case for error code 5xxx",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
+            "operationPath": "/quotes",
+            "method": "post",
+            "headers": {
+              "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+            },
+            "body": {
+              "quoteId": "{$function.generic.generateUUID}",
+              "transactionId": "{$function.generic.generateUUID}",
+              "transactionRequestId": "{$function.generic.generateUUID}",
+              "payer": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
+                  "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
+                },
+                "personalInfo": {
+                  "complexName": {
+                    "firstName": "{$inputs.PROXY_PAYERFSP_PARTY_FIRST_NAME}",
+                    "lastName": "{$inputs.PROXY_PAYERFSP_PARTY_LAST_NAME}"
+                  }
+                }
+              },
+              "payee": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_5XXX}",
+                  "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
+                }
+              },
+              "amountType": "RECEIVE",
+              "amount": {
+                "amount": "{$inputs.PROXY_AMOUNT}",
+                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+              },
+              "transactionType": {
+                "scenario": "TRANSFER",
+                "initiator": "PAYER",
+                "initiatorType": "CONSUMER"
+              }
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_SCHEME_ERROR_CODE_5XXX}')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_SCHEME_ERROR_DESCRIPTION_5XXX}')"
+                    ]
+                  }
+                ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "name": "Test Case for scenario when there is an error in payee dfsp",
+        "requests": [
+          {
+            "id": "1",
+            "description": "Negative test case for error code 5xxx",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
+            "operationPath": "/quotes",
+            "method": "post",
+            "headers": {
+              "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}"
+            },
+            "body": {
+              "quoteId": "{$function.generic.generateUUID}",
+              "transactionId": "{$function.generic.generateUUID}",
+              "transactionRequestId": "{$function.generic.generateUUID}",
+              "payer": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
+                  "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
+                },
+                "personalInfo": {
+                  "complexName": {
+                    "firstName": "{$inputs.PROXY_PAYERFSP_PARTY_FIRST_NAME}",
+                    "lastName": "{$inputs.PROXY_PAYERFSP_PARTY_LAST_NAME}"
+                  }
+                }
+              },
+              "payee": {
+                "partyIdInfo": {
+                  "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                  "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_DFSP}",
+                  "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
+                }
+              },
+              "amountType": "RECEIVE",
+              "amount": {
+                "amount": "{$inputs.PROXY_AMOUNT}",
+                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+              },
+              "transactionType": {
+                "scenario": "TRANSFER",
+                "initiator": "PAYER",
+                "initiatorType": "CONSUMER"
+              }
+            },
+            "tests": {
+                "assertions": [
+                  {
+                    "id": 1,
+                    "description": "Response status to be 202",
+                    "exec": [
+                      "expect(response.status).to.equal(202)"
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "description": "Callback response has errorCode and errorDescription",
+                    "exec": [
+                      "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_DFSP_ERROR_CODE_5XXX}')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_DFSP_ERROR_DESCRIPTION_5XXX}')"
+                    ]
+                  }
+                ]
+            }
+          }
+        ]
+      }
+    ]
+  }

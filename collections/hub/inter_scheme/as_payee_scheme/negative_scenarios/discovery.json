@@ -1,0 +1,60 @@
+{
+  "name": "Party Lookup Negative Scenarios",
+  "test_cases": [
+    {
+      "id": "1",
+      "name": "Test Case for scenario when there is an error in payee dfsp",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Negative test case for error code 5xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_DFSP}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.parties+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+            "FSPIOP-Proxy": "{$inputs.PROXY_HEADER}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Callback response has errorCode",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_DFSP_ERROR_CODE_5XXX}')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback response has errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_DFSP_ERROR_DESCRIPTION_5XXX}')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
