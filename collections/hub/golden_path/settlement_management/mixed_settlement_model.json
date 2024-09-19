@@ -3282,7 +3282,7 @@
                 "",
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
-                "  // await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'testfsp2callbacksq')",
+                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'testfsp2callbacksq')",
                 "}"
               ]
             },
@@ -3290,10 +3290,10 @@
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
-                "  const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 2000",
-                "  await custom.sleep(customSleep)",
-                "  // environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
-                "  environment.testfsp2callbacks = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.quoteId}')).data;",
+                "  environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
+                "  // const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 2000",
+                "  // await custom.sleep(customSleep)",
+                "  // environment.testfsp2callbacks = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.quoteId}')).data;",
                 "  console.log(environment.testfsp2callbacks);",
                 "}",
                 ""
@@ -3410,7 +3410,7 @@
               "exec": [
                 "// if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
-                "  // await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'testfsp2callbackst')",
+                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'testfsp2callbackst')",
                 "// }"
               ]
             },
@@ -3418,10 +3418,10 @@
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
-                "  // environment.testfsp2callbackst = await websocket.getMessage('testfsp2callbackst', environment.WS_ASSERTION_TIMEOUT)",
-                "  const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 1500",
-                "  await custom.sleep(customSleep)",
-                "  environment.testfsp2callbackst = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.transferId}')).data",
+                "  environment.testfsp2callbackst = await websocket.getMessage('testfsp2callbackst', environment.WS_ASSERTION_TIMEOUT)",
+                "  // const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 1500",
+                "  // await custom.sleep(customSleep)",
+                "  // environment.testfsp2callbackst = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.transferId}')).data",
                 "  console.log(environment.testfsp2callbackst)",
                 "}"
               ]
