@@ -37,7 +37,7 @@
                 "amount": "{$inputs.PROXY_PAYEE_DFSP_ERROR_AMOUNT_5XXX}",
                 "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
               },
-              "expiration": "{$inputs.expiration}",
+              "expiration": "{$environment.transferExpiration}",
               "ilpPacket": "{$inputs.ilpPacket}",
               "condition": "{$inputs.condition}"
             },
@@ -50,24 +50,105 @@
                   "exec": [
                     "expect(response.status).to.equal(202)"
                   ]
+                },
+                {
+                  "id": 2,
+                  "description": "Check error code",
+                  "exec": [
+                    "expect(callback.body.errorInformation.errorCode).to.equal('5201')"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "description": "Check error description",
+                  "exec": [
+                    "expect(callback.body.errorInformation.errorDescription).to.equal('Timeout in Payee DFSP')"
+                  ]
                 }
               ]
             },
-            "path": "/quotes",
-            
             "scripts": {
               "preRequest": {
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                  "}"
+                  "environment.transferExpiration = new Date(new Date().getTime() + 10000).toISOString();"
                 ]
+              }
+            },
+            "path": "/transfers"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Proxy Transfers Service when payee dfsp responds after timeout in payee scheme",
+        "requests": [
+          {
+            "id": 1,
+            "meta": {
+              "info": "Test Case for scenario when there is an error in payee dfsp"
+            },
+            "description": "Send transfer",
+            "apiVersion": {
+              "minorVersion": 1,
+              "majorVersion": 1,
+              "type": "fspiop",
+              "asynchronous": true
+            },
+            "url": "{$inputs.HOST_TRANSFERS_SERVICE}",
+            "operationPath": "/transfers",
+            "method": "post",
+            "headers": {
+              "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+              "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+              "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}",
+              "FSPIOP-Proxy": "{$inputs.PROXY_HEADER}"
+            },
+            "body": {
+              "transferId": "{$function.generic.generateUUID}",
+              "payerFsp": "{$inputs.PROXY_PAYERFSP_ID}",
+              "payeeFsp": "{$inputs.PROXY_PAYEEFSP_ID}",
+              "amount": {
+                "amount": "{$inputs.PROXY_PAYEE_DFSP_ERROR_AMOUNT_PAYEE_SCHEME_TIMEOUT}",
+                "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
               },
-              "postRequest": {
+              "expiration": "{$environment.transferExpiration}",
+              "ilpPacket": "{$inputs.ilpPacket}",
+              "condition": "{$inputs.condition}"
+            },
+            "scriptingEngine": "javascript",
+            "tests": {
+              "assertions": [
+                {
+                  "id": 1,
+                  "description": "Response status to be 202",
+                  "exec": [
+                    "expect(response.status).to.equal(202)"
+                  ]
+                },
+                {
+                  "id": 2,
+                  "description": "Check error code",
+                  "exec": [
+                    "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_DFSP_ERROR_CODE_PAYEE_SCHEME_TIMEOUT}')"
+                  ]
+                },
+                {
+                  "id": 3,
+                  "description": "Check error description",
+                  "exec": [
+                    "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PROXY_PAYEE_DFSP_ERROR_DESCRIPTION_PAYEE_SCHEME_TIMEOUT}')"
+                  ]
+                }
+              ]
+            },
+            "path": "/transfers",
+            "scripts": {
+              "preRequest": {
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                  "}"
+                  "environment.transferExpiration = new Date(new Date().getTime() + 2000).toISOString();"
                 ]
               }
             }
