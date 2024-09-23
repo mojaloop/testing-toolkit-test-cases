@@ -21,9 +21,9 @@
               "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
               "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
               "Date": "{$function.generic.curDate}",
-              "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_ID}",
+              "FSPIOP-Source": "{$inputs.PROXY_PAYEE_TEST_PAYERFSP_ID}",
               "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
-              "FSPIOP-Destination": "{$inputs.PROXY_PAYEEFSP_ID}",
+              "FSPIOP-Destination": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}",
               "FSPIOP-Proxy": "{$inputs.PROXY_HEADER}"
             },
             "body": {
@@ -34,7 +34,7 @@
                 "partyIdInfo": {
                   "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
                   "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
-                  "fspId": "{$inputs.PROXY_PAYERFSP_ID}"
+                  "fspId": "{$inputs.PROXY_PAYEE_TEST_PAYERFSP_ID}"
                 },
                 "personalInfo": {
                   "complexName": {
@@ -46,8 +46,8 @@
               "payee": {
                 "partyIdInfo": {
                   "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
-                  "partyIdentifier": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_DFSP}",
-                  "fspId": "{$inputs.PROXY_PAYEEFSP_ID}"
+                  "partyIdentifier": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID_ERROR}",
+                  "fspId": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}"
                 }
               },
               "amountType": "RECEIVE",
@@ -74,8 +74,8 @@
                     "id": 2,
                     "description": "Callback response has errorCode and errorDescription",
                     "exec": [
-                      "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_DFSP_ERROR_CODE_5XXX}')",
-                      "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_DFSP_ERROR_DESCRIPTION_5XXX}')"
+                      "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_TEST_PAYEE_DFSP_ERROR_CODE_5XXX}')",
+                      "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PROXY_PAYEE_DFSP_ERROR_DESCRIPTION_5XXX}')"
                     ]
                   }
                 ]

@@ -1,11 +1,15 @@
 {
-  "name": "multi",
+  "options": {},
+  "name": "hub_golden_path_bug fixes_other-bug-fixes",
   "test_cases": [
     {
       "id": 1,
       "name": "Check Settlements Error #956",
       "meta": {
         "info": "Check Settlements Error #956"
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/bug fixes/other-bug-fixes.json"
       },
       "requests": [
         {
@@ -56,83 +60,6 @@
           "headers": {
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
-          }
-        },
-        {
-          "id": 7,
-          "meta": {
-            "info": "Check FSPIOP Headers from Switch #883"
-          },
-          "description": "Check FSPIOP Headers from Switch #883",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "fspiop",
-            "asynchronous": true
-          },
-          "operationPath": "/parties/{Type}/{ID}",
-          "path": "/parties/MSISDN/{$environment.msisdnid}",
-          "method": "get",
-          "params": {
-            "Type": "MSISDN",
-            "ID": "{$environment.msisdnid}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "ignoreCallbacks": true,
-          "headers": {
-            "Accept": "{$inputs.acceptParties}",
-            "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
-            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
-            "Content-Type": "{$inputs.contentTypeParties}"
-          },
-          "scriptingEngine": "javascript",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response code status 202",
-                "exec": [
-                  "expect(response.status).to.equal(202)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Expected error code is 3204",
-                "exec": [
-                  "expect(environment.payercallbackx.data.errorInformation.errorCode).to.equal('3204');"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "Expected error description - party not Found",
-                "exec": [
-                  "expect(environment.payercallbackx.data.errorInformation.errorDescription).to.equal('Party not found');"
-                ]
-              }
-            ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "environment.msisdnid = 1999999;",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.msisdnid, 'payercallback')",
-                "}  ",
-                "  console.log(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.msisdnid);"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "",
-                "  ",
-                "  environment.payercallbackx = await websocket.getMessage('payercallback', environment.WS_ASSERTION_TIMEOUT)",
-                "}",
-                "console.log(environment.payercallbackx);"
-              ]
-            }
           }
         },
         {
@@ -200,6 +127,10 @@
               }
             ]
           },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
           "scripts": {
             "preRequest": {
               "exec": [
@@ -224,10 +155,7 @@
             }
           }
         }
-      ],
-      "fileInfo": {
-        "path": "hub/golden_path/bug fixes/other-bug-fixes.json"
-      }
+      ]
     }
   ]
 }
