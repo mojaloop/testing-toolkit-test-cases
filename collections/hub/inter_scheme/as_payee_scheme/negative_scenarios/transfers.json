@@ -37,7 +37,7 @@
                 "amount": "{$inputs.PAYEE_DFSP_ERROR_AMOUNT_5XXX}",
                 "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
               },
-              "expiration": "{$inputs.expiration}",
+              "expiration": "{$environment.transferExpiration}",
               "ilpPacket": "{$inputs.ilpPacket}",
               "condition": "{$inputs.condition}"
             },
@@ -67,24 +67,14 @@
                 }
               ]
             },
-            "path": "/transfers",
-            
             "scripts": {
               "preRequest": {
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                  "}"
-                ]
-              },
-              "postRequest": {
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                  "}"
+                  "environment.transferExpiration = new Date(new Date().getTime() + 10000).toISOString();"
                 ]
               }
-            }
+            },
+            "path": "/transfers"
           }
         ]
       },
@@ -121,7 +111,7 @@
               "payerFsp": "{$inputs.PROXY_PAYERFSP_ID}",
               "payeeFsp": "{$inputs.PROXY_PAYEEFSP_ID}",
               "amount": {
-                "amount": "{$inputs.PAYEE_DFSP_ERROR_AMOUNT_5XXX}",
+                "amount": "{$inputs.PAYEE_DFSP_ERROR_AMOUNT_PAYEE_SCHEME_TIMEOUT}",
                 "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
               },
               "expiration": "{$environment.transferExpiration}",
@@ -142,20 +132,19 @@
                   "id": 2,
                   "description": "Check error code",
                   "exec": [
-                    "expect(callback.body.errorInformation.errorCode).to.equal('5201')"
+                    "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PAYEE_DFSP_ERROR_CODE_PAYEE_SCHEME_TIMEOUT}')"
                   ]
                 },
                 {
                   "id": 3,
                   "description": "Check error description",
                   "exec": [
-                    "expect(callback.body.errorInformation.errorDescription).to.equal('Timeout in Payee DFSP')"
+                    "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PAYEE_DFSP_ERROR_DESCRIPTION_PAYEE_SCHEME_TIMEOUT}')"
                   ]
                 }
               ]
             },
             "path": "/transfers",
-            
             "scripts": {
               "preRequest": {
                 "exec": [
