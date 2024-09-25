@@ -209,9 +209,9 @@
           "path": "/fxQuotes",
           "method": "post",
           "body": {
-            "conversionRequestId": "{$function.generic.generateUUID}",
+            "conversionRequestId": "{$function.generic.generateID}",
             "conversionTerms": {
-              "conversionId": "{$function.generic.generateUUID}",
+              "conversionId": "{$function.generic.generateID}",
               "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
               "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
               "amountType": "SEND",
@@ -329,9 +329,9 @@
             "FSPIOP-Destination": "{$inputs.FXP_PAYEE_DFSP_ID}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
-            "transactionRequestId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -517,7 +517,7 @@
           },
           "body": {
             "commitRequestId": "{$prev.4.callback.body.conversionTerms.conversionId}",
-            "determiningTransferId": "{$function.generic.generateUUID}",
+            "determiningTransferId": "{$function.generic.generateID}",
             "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
             "amountType": "SEND",
