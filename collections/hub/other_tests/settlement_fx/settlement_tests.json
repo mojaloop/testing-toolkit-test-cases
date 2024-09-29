@@ -1077,11 +1077,11 @@
             "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.FX_PAYEE_DFSP_ID}/accounts",
+          "operationPath": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
+          "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.FX_PAYEE_DFSP_ID}"
+            "name": "{$inputs.FX_PAYER_DFSP_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
@@ -1089,9 +1089,16 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Payee position should be changed",
+                "description": "Payeer position account balance should not be changed",
                 "exec": [
-                  "expect(environment.payeePositionBalanceAfterTransfer).to.not.equal(environment.payeePositionBalanceBeforeFxTransfer)"
+                  "expect(environment.fxPayerPositionAccountBalanceAfterTransfer).to.equal(environment.fxPayerPositionAccountBalanceAfterFxTransfer)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payeer settlement account balance should not be changed",
+                "exec": [
+                  "expect(environment.fxPayerSettlementAccountBalanceAfterTransfer).to.equal(environment.fxPayerSettlementAccountBalanceAfterFxTransfer)"
                 ]
               }
             ]
@@ -1104,11 +1111,14 @@
                 "",
                 "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.payeePositionBalanceAfterTransfer= curAccount.value",
+                "    environment.fxPayerPositionAccountBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "    environment.fxPayerSettlementAccountBalanceAfterTransfer= curAccount.value",
                 "  }",
                 "})",
                 "",
-                "console.log(`Payee Position Balance after Transfer=${environment.payeePositionBalanceAfterTransfer}`);",
+                "console.log(`Payer Position Balance after Transfer=${environment.fxPayerPositionAccountBalanceAfterTransfer}`);",
                 "",
                 ""
               ]
@@ -1199,7 +1209,7 @@
         },
         {
           "id": 17,
-          "description": "Get Accounts for Payee after transfer",
+          "description": "Check balances for Payee after transfer",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1222,9 +1232,16 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Payee position should be changed",
+                "description": "Payee position account balance should increase by the target amount of the transfer",
                 "exec": [
-                  "expect(environment.payeePositionBalanceAfterTransfer).to.not.equal(environment.payeePositionBalanceBeforeFxTransfer)"
+                  "expect(environment.fxPayeePositionAccountBalanceAfterTransfer).to.equal(environment.fxPayeePositionAccountBalanceAfterFxTransfer+environment.FX_TARGET_AMOUNT)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Payee settlement account balance should not change",
+                "exec": [
+                  "expect(environment.fxPayeeSettlementAccountBalanceAfterTransfer).to.equal(environment.fxPayeeSettlementAccountBalanceAfterFxTransfer)"
                 ]
               }
             ]
@@ -1237,11 +1254,14 @@
                 "",
                 "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.payeePositionBalanceAfterTransfer= curAccount.value",
+                "    environment.fxPayeePositionAccountBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "    environment.fxPayeeSettlementAccountBalanceAfterTransfer= curAccount.value",
                 "  }",
                 "})",
                 "",
-                "console.log(`Payee Position Balance after Transfer=${environment.payeePositionBalanceAfterTransfer}`);",
+                "console.log(`Payee Position Balance after Transfer=${environment.fxPayeePositionAccountBalanceAfterTransfer}`);",
                 "",
                 ""
               ]
@@ -1581,6 +1601,193 @@
                 "",
                 "/*requestVariables.closedWindowID = Number(environment.closedWindowID);",
                 "*/",
+                "",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 15,
+          "description": "Check balances for Payer AFTER transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_PAYER_DFSP_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Payeer position should not be changed",
+                "exec": [
+                  "expect(environment.payerPositionBalanceAfterTransfer).to.not.equal(environment.payerPositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.fxPayerPositionAccountBalanceAfterCreateSettlement= curAccount.value",
+                "  }",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "    environment.fxPayerPositionAccountBalanceAfterCreateSettlement= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`Payer Position Balance after Transfer=${environment.payeePositionBalanceAfterTransfer}`);",
+                "",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 16,
+          "description": "Check balances for FXP after transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
+          "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "FXP Source currency position account value should increase by the source amount of the transfer",
+                "exec": [
+                  "expect(environment.fxpSourceCurrencyPositionAccountBalanceAfterTransfer-environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer).to.equal(-environment.FX_SOURCE_AMOUNT)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "FXP Source currency settlement account value should not change",
+                "exec": [
+                  "expect(environment.fxpSourceCurrencySettlementAccountBalanceAfterTransfer).to.equal(environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer)"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "FXP Target currency position account value should increase by the target amount of the transfer",
+                "exec": [
+                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer-environment.fxpTargetCurrencyPositionAccountBalanceAfterFxTransfer).to.equal(-environment.FX_TARGET_AMOUNT)"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "FXP Target currency settlement account value should not change",
+                "exec": [
+                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer).to.equal(environment.fxpTargetCurrencySettlementAccountBalanceAfterFxTransfer)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.fxpSourceCurrencyPositionAccountBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "    environment.fxpSourceCurrencySettlementAccountBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.fxpTargetCurrencyPositionAccountBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "    environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 17,
+          "description": "Get Accounts for Payee after transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_PAYEE_DFSP_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_PAYEE_DFSP_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Payee position should be changed",
+                "exec": [
+                  "expect(environment.payeePositionBalanceAfterTransfer).to.not.equal(environment.payeePositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.payeePositionBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`Payee Position Balance after Transfer=${environment.payeePositionBalanceAfterTransfer}`);",
                 "",
                 ""
               ]
