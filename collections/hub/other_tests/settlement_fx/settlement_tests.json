@@ -1,6 +1,7 @@
 {
   "options": {},
   "name": "settlement_tests",
+  "saveReport": true,
   "test_cases": [
     {
       "id": 1,
@@ -56,39 +57,37 @@
                 "var res = response.body;",
                 "",
                 "",
-                "   res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
-                "    ",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.fxpSourceCurrencyPositionAccountBalanceBeforeFxTransfer= curAccount.value;",
+                "    environment.fxpSourceCurrencyPositionAccountBalanceBeforeTransfer= curAccount.value;",
+                "  }",
                 "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "  environment.fxpSourceCurrencySettlementAccountBalanceBeforeFxTransfer= curAccount.value",
-                "  environment.fxpSourceCurrencySettlementAccountBalanceBeforeTransfer= curAccount.value",
-                "        }",
-                "        ",
-                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "  environment.fxpSourceCurrencyPositionAccountBalanceBeforeFxTransfer= curAccount.value",
-                "  environment.fxpSourceCurrencyPositionAccountBalanceBeforeTransfer= curAccount.value",
-                "        }     ",
-                "",
-                "   res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
-                "    ",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "  environment.fxpTargetCurrencySettlementAccountBalanceBeforeTransfer= curAccount.value",
-                "  environment.fxpTargetCurrencySettlementAccountBalanceBeforeFxTransfer= curAccount.value",
-                "        }",
-                "        ",
-                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "  environment.fxpTargetCurrencyPositionAccountBalanceBeforeFxTransfer= curAccount.value",
-                "  environment.fxpTargetCurrencyPositionAccountBalanceBeforeTransfer= curAccount.value",
-                "        }     ",
-                "",
-                "",
-                "})",
+                "    environment.fxpSourceCurrencySettlementAccountBalanceBeforeFxTransfer= curAccount.value;",
+                "    environment.fxpSourceCurrencySettlementAccountBalanceBeforeTransfer= curAccount.value;",
+                "  }",
                 "})",
                 "",
-                "                      ",
-                "console.log(environment.fxpSourceCurrencySettlementAccountBalanceBeforeTransfer);",
-                "console.log(environment.fxpSourceCurrencyPositionAccountBalanceBeforeTransfer);",
-                "console.log(environment.fxpTargetCurrencySettlementAccountBalanceBeforeTransfer);",
-                "console.log(environment.fxpTargetCurrencyPositionAccountBalanceBeforeTransfer);"
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.fxpTargetCurrencyPositionAccountBalanceBeforeFxTransfer= curAccount.value",
+                "    environment.fxpTargetCurrencyPositionAccountBalanceBeforeTransfer= curAccount.value",
+                "  }",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "    environment.fxpTargetCurrencySettlementAccountBalanceBeforeTransfer= curAccount.value",
+                "    environment.fxpTargetCurrencySettlementAccountBalanceBeforeFxTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "",
+                "console.log(`environment.fxpSourceCurrencySettlementAccountBalanceBeforeFxTransfer: ${environment.fxpSourceCurrencySettlementAccountBalanceBeforeFxTransfer}`);",
+                "console.log(`environment.fxpSourceCurrencyPositionAccountBalanceBeforeFxTransfer: ${environment.fxpSourceCurrencyPositionAccountBalanceBeforeFxTransfer}`);",
+                "console.log(`environment.fxpTargetCurrencySettlementAccountBalanceBeforeFxTransfer: ${environment.fxpTargetCurrencySettlementAccountBalanceBeforeFxTransfer}`);",
+                "console.log(`environment.fxpTargetCurrencyPositionAccountBalanceBeforeFxTransfer: ${environment.fxpTargetCurrencyPositionAccountBalanceBeforeFxTransfer}`);",
+                "console.log(`environment.fxpSourceCurrencySettlementAccountBalanceBeforeTransfer: ${environment.fxpSourceCurrencySettlementAccountBalanceBeforeTransfer}`);",
+                "console.log(`environment.fxpSourceCurrencyPositionAccountBalanceBeforeTransfer: ${environment.fxpSourceCurrencyPositionAccountBalanceBeforeTransfer}`);",
+                "console.log(`environment.fxpTargetCurrencySettlementAccountBalanceBeforeTransfer: ${environment.fxpTargetCurrencySettlementAccountBalanceBeforeTransfer}`);",
+                "console.log(`environment.fxpTargetCurrencyPositionAccountBalanceBeforeTransfer: ${environment.fxpTargetCurrencyPositionAccountBalanceBeforeTransfer}`);"
               ]
             }
           }
@@ -153,7 +152,7 @@
                 "})",
                 "//})",
                 "",
-                "                      ",
+                "",
                 "console.log(environment.fxPayerSettlementAccountBalanceBeforeTransfer);",
                 "console.log(environment.fxPayerPositionAccountBalanceBeforeTransfer);"
               ]
@@ -475,6 +474,16 @@
                 ]
               }
             ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.callback.body;",
+                "",
+                "console.log('targetAmount:',res.conversionTerms.targetAmount.amount);",
+                "environment.FX_TARGET_AMOUNT= res.conversionTerms.targetAmount.amount;"
+              ]
+            }
           }
         },
         {
@@ -698,7 +707,7 @@
             "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
-          "operationPath": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
+          "operationPath": "/participants/{name}/accounts",
           "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
           "method": "get",
           "params": {
@@ -713,14 +722,14 @@
                 "id": 1,
                 "description": "Payer position account value should be changed by the amount of the transfer",
                 "exec": [
-                  "expect(environment.fxPayerPositionAccountBalanceAfterFxTransfer).to.equal(environment.fxPayerPositionAccountBalanceBeforeFxTransfer+environment.FX_SOURCE_AMOUNT)"
+                  "expect(Number(environment.fxPayerPositionAccountBalanceAfterFxTransfer)).to.equal(Number(environment.fxPayerPositionAccountBalanceBeforeFxTransfer)+Number(environment.FX_SOURCE_AMOUNT))"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payer settlement account value should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerSettlementAccountBalanceAfterFxTransfer).to.equal(environment.fxPayerSettlementAccountBalanceBeforeFxTransfer)"
+                  "expect(Number(environment.fxPayerSettlementAccountBalanceAfterFxTransfer)).to.equal(Number(environment.fxPayerSettlementAccountBalanceBeforeFxTransfer))"
                 ]
               }
             ]
@@ -739,7 +748,8 @@
                 "  }",
                 "})",
                 "",
-                "console.log(`Payer Position Balance after Transfer=${environment.fxPayerPositionAccountBalanceAfterFxTransfer}`);"
+                "console.log(`Payer Position Balance after FX Transfer=${environment.fxPayerPositionAccountBalanceAfterFxTransfer}`);",
+                "console.log(`Payer Settlement Balance after FX Transfer=${environment.fxPayerSettlementAccountBalanceAfterFxTransfer}`);"
               ]
             }
           }
@@ -771,28 +781,28 @@
                 "id": 1,
                 "description": "FXP Source currency position account value should not be changed",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionAccountBalanceAfterFxTransfer).to.equal(environment.fxpSourceCurrencyPositionAccountBalanceBeforeFxTransfer)"
+                  "expect(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterFxTransfer)).to.equal(Number(environment.fxpSourceCurrencyPositionAccountBalanceBeforeFxTransfer))"
                 ]
               },
               {
                 "id": 2,
                 "description": "FXP Source currency settlement account value should not be changed",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer).to.equal(environment.fxpSourceCurrencySettlementAccountBalanceBeforeFxTransfer)"
+                  "expect(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer)).to.equal(Number(environment.fxpSourceCurrencySettlementAccountBalanceBeforeFxTransfer))"
                 ]
               },
               {
                 "id": 3,
                 "description": "FXP Target currency position account value should not be changed",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencyPositionAccountBalanceAfterFxTransfer).to.equal(environment.fxpTargetCurrencyPositionAccountBalanceBeforeFxTransfer)"
+                  "expect(Number(environment.fxpTargetCurrencyPositionAccountBalanceAfterFxTransfer)).to.equal(Number(environment.fxpTargetCurrencyPositionAccountBalanceBeforeFxTransfer))"
                 ]
               },
               {
                 "id": 4,
                 "description": "FXP Target currency settlement account value should not be changed",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterFxTransfer).to.equal(environment.fxpTargetCurrencySettlementAccountBalanceBeforeFxTransfer)"
+                  "expect(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterFxTransfer)).to.equal(Number(environment.fxpTargetCurrencySettlementAccountBalanceBeforeFxTransfer))"
                 ]
               }
             ]
@@ -814,19 +824,22 @@
                 "",
                 "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.fxpTargetCurrencySettlementAccountBalanceAfterFxTransfer= curAccount.value",
+                "    environment.fxpTargetCurrencyPositionAccountBalanceAfterFxTransfer= curAccount.value",
                 "  }",
                 "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
                 "    environment.fxpTargetCurrencySettlementAccountBalanceAfterFxTransfer = curAccount.value",
                 "  }",
                 "})",
                 "",
-                "// console.log(`FXP Source Currency Position Balance after Transfer=${environment.fxpSourceCurrencyPositionBalanceAfterTransfer}`);",
                 "",
-                "// console.log(`FXP Target Currency Position Balance after Transfer=${environment.fxpTargetCurrencyPositionBalanceAfterTransfer}`);",
-                "",
-                "console.log(`FXP Source Currency ${environment.FX_SOURCE_CURRENCY} : ${environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer} -> ${environment.fxpSourceCurrencyPositionBalanceAfterTransfer} (${environment.fxpSourceCurrencyPositionBalanceAfterTransfer - environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer})`);",
-                "console.log(`FXP Target Currency ${environment.FX_TARGET_CURRENCY} : ${environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer} -> ${environment.fxpTargetCurrencyPositionBalanceAfterTransfer} (${environment.fxpTargetCurrencyPositionBalanceAfterTransfer - environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer})`);"
+                "console.log(`environment.fxpSourceCurrencySettlementAccountBalanceBeforeFxTransfer: ${environment.fxpSourceCurrencySettlementAccountBalanceBeforeFxTransfer}`);",
+                "console.log(`environment.fxpSourceCurrencyPositionAccountBalanceBeforeFxTransfer: ${environment.fxpSourceCurrencyPositionAccountBalanceBeforeFxTransfer}`);",
+                "console.log(`environment.fxpTargetCurrencySettlementAccountBalanceBeforeFxTransfer: ${environment.fxpTargetCurrencySettlementAccountBalanceBeforeFxTransfer}`);",
+                "console.log(`environment.fxpTargetCurrencyPositionAccountBalanceBeforeFxTransfer: ${environment.fxpTargetCurrencyPositionAccountBalanceBeforeFxTransfer}`);",
+                "console.log(`FXP Source Currency Position Balance after FX Transfer=${environment.fxpSourceCurrencyPositionAccountBalanceAfterFxTransfer}`);",
+                "console.log(`FXP Source Currency Settlement Balance after FX Transfer=${environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer}`);",
+                "console.log(`FXP Target Currency Position Balance after FX Transfer=${environment.fxpTargetCurrencyPositionAccountBalanceAfterFxTransfer}`);",
+                "console.log(`FXP Target Currency Settlement Balance after FX Transfer=${environment.fxpTargetCurrencySettlementAccountBalanceAfterFxTransfer}`);"
               ]
             }
           }
@@ -844,7 +857,7 @@
             "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
-          "operationPath": "/participants/{$inputs.FX_PAYEE_DFSP_ID}/accounts",
+          "operationPath": "/participants/{name}/accounts",
           "path": "/participants/{$inputs.FX_PAYEE_DFSP_ID}/accounts",
           "method": "get",
           "params": {
@@ -876,7 +889,7 @@
               "exec": [
                 "var res = response.body;",
                 "",
-                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "    environment.fxPayeePositionAccountBalanceAfterFxTransfer = curAccount.value",
                 "  }",
@@ -1077,7 +1090,7 @@
             "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
-          "operationPath": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
+          "operationPath": "/participants/{name}/accounts",
           "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
           "method": "get",
           "params": {
@@ -1091,14 +1104,14 @@
                 "id": 1,
                 "description": "Payeer position account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerPositionAccountBalanceAfterTransfer).to.equal(environment.fxPayerPositionAccountBalanceAfterFxTransfer)"
+                  "expect(Number(environment.fxPayerPositionAccountBalanceAfterTransfer)).to.equal(Number(environment.fxPayerPositionAccountBalanceAfterFxTransfer))"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payeer settlement account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerSettlementAccountBalanceAfterTransfer).to.equal(environment.fxPayerSettlementAccountBalanceAfterFxTransfer)"
+                  "expect(Number(environment.fxPayerSettlementAccountBalanceAfterTransfer)).to.equal(Number(environment.fxPayerSettlementAccountBalanceAfterFxTransfer))"
                 ]
               }
             ]
@@ -1109,7 +1122,7 @@
               "exec": [
                 "var res = response.body;",
                 "",
-                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
                 "    environment.fxPayerPositionAccountBalanceAfterTransfer= curAccount.value",
                 "  }",
@@ -1138,7 +1151,7 @@
             "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
-          "operationPath": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
+          "operationPath": "/participants/{name}/accounts",
           "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
@@ -1150,30 +1163,30 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "FXP Source currency position account value should increase by the source amount of the transfer",
+                "description": "FXP Source currency position account value should decrease by the source amount of the transfer",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionAccountBalanceAfterTransfer-environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer).to.equal(-environment.FX_SOURCE_AMOUNT)"
+                  "expect(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterTransfer)).to.equal(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterFxTransfer)-Number(environment.FX_SOURCE_AMOUNT))"
                 ]
               },
               {
                 "id": 2,
                 "description": "FXP Source currency settlement account value should not change",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencySettlementAccountBalanceAfterTransfer).to.equal(environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer)"
+                  "expect(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterTransfer)).to.equal(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer))"
                 ]
               },
               {
                 "id": 3,
                 "description": "FXP Target currency position account value should increase by the target amount of the transfer",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer-environment.fxpTargetCurrencyPositionAccountBalanceAfterFxTransfer).to.equal(-environment.FX_TARGET_AMOUNT)"
+                  "expect(Number(environment.fxpTargetCurrencyPositionAccountBalanceAfterTransfer)).to.equal(Number(environment.fxpTargetCurrencyPositionAccountBalanceAfterFxTransfer)+Number(environment.FX_TARGET_AMOUNT))"
                 ]
               },
               {
                 "id": 4,
                 "description": "FXP Target currency settlement account value should not change",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer).to.equal(environment.fxpTargetCurrencySettlementAccountBalanceAfterFxTransfer)"
+                  "expect(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer)).to.equal(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterFxTransfer))"
                 ]
               }
             ]
@@ -1232,16 +1245,16 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Payee position account balance should increase by the target amount of the transfer",
+                "description": "Payee position account balance should decrease by the target amount of the transfer",
                 "exec": [
-                  "expect(environment.fxPayeePositionAccountBalanceAfterTransfer).to.equal(environment.fxPayeePositionAccountBalanceAfterFxTransfer+environment.FX_TARGET_AMOUNT)"
+                  "expect(Number(environment.fxPayeePositionAccountBalanceAfterTransfer)).to.equal(Number(environment.fxPayeePositionAccountBalanceAfterFxTransfer)-Number(environment.FX_TARGET_AMOUNT))"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payee settlement account balance should not change",
                 "exec": [
-                  "expect(environment.fxPayeeSettlementAccountBalanceAfterTransfer).to.equal(environment.fxPayeeSettlementAccountBalanceAfterFxTransfer)"
+                  "expect(Number(environment.fxPayeeSettlementAccountBalanceAfterTransfer)).to.equal(Number(environment.fxPayeeSettlementAccountBalanceAfterFxTransfer))"
                 ]
               }
             ]
@@ -1682,7 +1695,7 @@
             "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
-          "operationPath": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
+          "operationPath": "/participants/{name}/accounts",
           "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
@@ -2011,7 +2024,7 @@
             "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
-          "operationPath": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
+          "operationPath": "/participants/{name}/accounts",
           "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
@@ -2340,7 +2353,7 @@
             "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
-          "operationPath": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
+          "operationPath": "/participants/{name}/accounts",
           "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
@@ -2664,7 +2677,7 @@
             "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
-          "operationPath": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
+          "operationPath": "/participants/{name}/accounts",
           "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
@@ -2982,7 +2995,7 @@
             "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
-          "operationPath": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
+          "operationPath": "/participants/{name}/accounts",
           "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
