@@ -1,7 +1,6 @@
 {
   "options": {},
   "name": "settlement_tests",
-  "saveReport": true,
   "test_cases": [
     {
       "id": 1,
@@ -475,10 +474,11 @@
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "postRequest": {
               "exec": [
-                "var res = response.callback.body;",
+                "var res = callback.body;",
                 "",
                 "console.log('targetAmount:',res.conversionTerms.targetAmount.amount);",
                 "environment.FX_TARGET_AMOUNT= res.conversionTerms.targetAmount.amount;"
@@ -1647,14 +1647,14 @@
                 "id": 1,
                 "description": "Payeer position account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerPositionAccountBalanceAfterCreateSettlement).to.not.equal(environment.payerPositionBalanceAfterTransfer)"
+                  "expect(Number(environment.fxPayerPositionAccountBalanceAfterCreateSettlement)).to.equal(Number(environment.fxPayerPositionAccountBalanceAfterTransfer))"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payeer settlement account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerSettlementAccountBalanceAfterCreateSettlement).to.not.equal(environment.fxPayerSettlementAccountBalanceAfterTransfer)"
+                  "expect(Number(environment.fxPayerSettlementAccountBalanceAfterCreateSettlement)).to.equal(Number(environment.fxPayerSettlementAccountBalanceAfterTransfer))"
                 ]
               }
             ]
@@ -1709,28 +1709,28 @@
                 "id": 1,
                 "description": "FXP Source currency position account value should increase by the source amount of the transfer",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionAccountBalanceAfterTransfer-environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer).to.equal(-environment.FX_SOURCE_AMOUNT)"
+                  "expect(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterTransfer)).to.equal(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterTransfer))"
                 ]
               },
               {
                 "id": 2,
                 "description": "FXP Source currency settlement account value should not change",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencySettlementAccountBalanceAfterTransfer).to.equal(environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer)"
+                  "expect(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterCreateSettlement)).to.equal(environment.fxpSourceCurrencySettlementAccountBalanceAfterTransfer)"
                 ]
               },
               {
                 "id": 3,
-                "description": "FXP Target currency position account value should increase by the target amount of the transfer",
+                "description": "FXP Target currency position account value should not change",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer-environment.fxpTargetCurrencyPositionAccountBalanceAfterFxTransfer).to.equal(-environment.FX_TARGET_AMOUNT)"
+                  "expect(environment.fxpTargetCurrencyPositionAccountBalanceAfterCreateSettlement).to.equal(environment.fxpTargetCurrencyPositionAccountBalanceAfterTransfer)"
                 ]
               },
               {
                 "id": 4,
                 "description": "FXP Target currency settlement account value should not change",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer).to.equal(environment.fxpTargetCurrencySettlementAccountBalanceAfterFxTransfer)"
+                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterCreateSettlement).to.equal(environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer)"
                 ]
               }
             ]
@@ -1795,16 +1795,16 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Payee position account balance should be changed",
+                "description": "Payee position account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayeePositionAccountBalanceAfterCreateSettlement).to.not.equal(environment.fxPayeePositionAccountBalanceAfterTransfer)"
+                  "expect(Number(environment.fxPayeePositionAccountBalanceAfterCreateSettlement)).to.equal(Number(environment.fxPayeePositionAccountBalanceAfterTransfer))"
                 ]
               },
               {
                 "id": 2,
-                "description": "Payee settlement account balance should be changed",
+                "description": "Payee settlement account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayeeSettlementAccountBalanceAfterCreateSettlement).to.not.equal(environment.fxPayeeSettlementAccountBalanceAfterTransfer)"
+                  "expect(Number(environment.fxPayeeSettlementAccountBalanceAfterCreateSettlement)).to.equal(Number(environment.fxPayeeSettlementAccountBalanceAfterTransfer))"
                 ]
               }
             ]
@@ -1976,14 +1976,14 @@
                 "id": 1,
                 "description": "Payer position account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerPositionAccountBalanceAfterPrepareSettlement).to.not.equal(environment.fxPayerPositionAccountBalanceAfterCreateSettlement)"
+                  "expect(Number(environment.fxPayerPositionAccountBalanceAfterPrepareSettlement)).to.equal(Number(environment.fxPayerPositionAccountBalanceAfterCreateSettlement))"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payer settlement account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerSettlementAccountBalanceAfterPrepareSettlement).to.not.equal(environment.fxPayerSettlementAccountBalanceAfterCreateSettlement)"
+                  "expect(Number(environment.fxPayerSettlementAccountBalanceAfterPrepareSettlement)).to.equal(Number(environment.fxPayerSettlementAccountBalanceAfterCreateSettlement))"
                 ]
               }
             ]
@@ -2036,30 +2036,30 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "FXP Source currency position account value should increase by the source amount of the transfer",
+                "description": "FXP Source currency position balance should not change",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionAccountBalanceAfterPrepareSettlement).to.equal(environment.fxpSourceCurrencyPositionAccountBalanceAfterCreateSettlement)"
+                  "expect(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterPrepareSettlement)).to.equal(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterCreateSettlement))"
                 ]
               },
               {
                 "id": 2,
-                "description": "FXP Source currency settlement account value should not change",
+                "description": "FXP Source currency settlement account balance should not change",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencySettlementAccountBalanceAfterPrepareSettlement).to.equal(environment.fxpSourceCurrencySettlementAccountBalanceAfterCreateSettlement)"
+                  "expect(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterPrepareSettlement)).to.equal(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterCreateSettlement))"
                 ]
               },
               {
                 "id": 3,
-                "description": "FXP Target currency position account value should increase by the target amount of the transfer",
+                "description": "FXP Target currency position account balance should not change",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencyPositionAccountBalanceAfterPrepareSettlement).to.equal(environment.fxpTargetCurrencyPositionAccountBalanceAfterCreateSettlement)"
+                  "expect(Number(environment.fxpTargetCurrencyPositionAccountBalanceAfterPrepareSettlement)).to.equal(Number(environment.fxpTargetCurrencyPositionAccountBalanceAfterCreateSettlement))"
                 ]
               },
               {
                 "id": 4,
-                "description": "FXP Target currency settlement account value should not change",
+                "description": "FXP Target currency settlement account balance should not change",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterPrepareSettlement).to.equal(environment.fxpTargetCurrencySettlementAccountBalanceAfterCreateSettlement)"
+                  "expect(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterPrepareSettlement)).to.equal(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterCreateSettlement))"
                 ]
               }
             ]
@@ -2123,16 +2123,16 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Payee position should be changed",
+                "description": "Payee position account balance should not change",
                 "exec": [
-                  "expect(environment.fxPayeePositionAccountBalanceAfterPrepareSettlement).to.equal(environment.fxPayeePositionAccountBalanceAfterCreateSettlement)"
+                  "expect(Number(environment.fxPayeePositionAccountBalanceAfterPrepareSettlement)).to.equal(Number(environment.fxPayeePositionAccountBalanceAfterCreateSettlement))"
                 ]
               },
               {
                 "id": 2,
-                "description": "Payee position should be changed",
+                "description": "Payee settlement account balance should not change",
                 "exec": [
-                  "expect(environment.fxPayeeSettlementAccountBalanceAfterPrepareSettlement).to.equal(environment.fxPayeeSettlementAccountBalanceAfterCreateSettlement)"
+                  "expect(Number(environment.fxPayeeSettlementAccountBalanceAfterPrepareSettlement)).to.equal(Number(environment.fxPayeeSettlementAccountBalanceAfterCreateSettlement))"
                 ]
               }
             ]
@@ -2305,14 +2305,14 @@
                 "id": 1,
                 "description": "Payer position account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerPositionAccountBalanceAfterReserveSettlement).to.not.equal(environment.fxPayerPositionAccountBalanceAfterPrepareSettlement)"
+                  "expect(Number(environment.fxPayerPositionAccountBalanceAfterReserveSettlement)).to.equal(Number(environment.fxPayerPositionAccountBalanceAfterPrepareSettlement))"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payer settlement account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerSettlementAccountBalanceAfterReserveSettlement).to.not.equal(environment.fxPayerSettlementAccountBalanceAfterPrepareSettlement)"
+                  "expect(Number(environment.fxPayerSettlementAccountBalanceAfterReserveSettlement)).to.equal(Number(environment.fxPayerSettlementAccountBalanceAfterPrepareSettlement))"
                 ]
               }
             ]
@@ -2365,30 +2365,30 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "FXP Source currency position account value should increase by the source amount of the transfer",
+                "description": "FXP Source currency position account balance should reset to value before transfer",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionAccountBalanceAfterTransfer-environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer).to.equal(-environment.FX_SOURCE_AMOUNT)"
+                  "expect(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterReserveSettlement)).to.equal(Number(environment.fxpSourceCurrencyPositionAccountBalanceBeforeTransfer))"
                 ]
               },
               {
                 "id": 2,
                 "description": "FXP Source currency settlement account value should not change",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencySettlementAccountBalanceAfterTransfer).to.equal(environment.fxpSourceCurrencySettlementAccountBalanceAfterFxTransfer)"
+                  "expect(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterReserveSettlement)).to.equal(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterPrepareSettlement))"
                 ]
               },
               {
                 "id": 3,
-                "description": "FXP Target currency position account value should increase by the target amount of the transfer",
+                "description": "FXP Target currency position account balance should not change",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer-environment.fxpTargetCurrencyPositionAccountBalanceAfterFxTransfer).to.equal(-environment.FX_TARGET_AMOUNT)"
+                  "expect(Number(environment.fxpTargetCurrencyPositionAccountBalanceAfterReserveSettlement)).to.equal(Number(environment.fxpTargetCurrencyPositionAccountBalanceAfterPrepareSettlement))"
                 ]
               },
               {
                 "id": 4,
-                "description": "FXP Target currency settlement account value should not change",
+                "description": "FXP Target currency settlement account balance should not change",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterTransfer).to.equal(environment.fxpTargetCurrencySettlementAccountBalanceAfterFxTransfer)"
+                  "expect(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterReserveSettlement)).to.equal(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterPrepareSettlement))"
                 ]
               }
             ]
@@ -2447,14 +2447,14 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Payee position should be changed",
+                "description": "Payee position account balance should reset to valaue before transfer",
                 "exec": [
-                  "expect(environment.fxPayeePositionAccountBalanceAfterReserveSettlement).to.equal(environment.fxPayeePositionAccountBalanceAfterPrepareSettlement)"
+                  "expect(environment.fxPayeePositionAccountBalanceAfterReserveSettlement).to.equal(environment.fxPayeePositionAccountBalanceBeforeTransfer)"
                 ]
               },
               {
                 "id": 2,
-                "description": "Payee position should be changed",
+                "description": "Payee settlement account balance should not change",
                 "exec": [
                   "expect(environment.fxPayeeSettlementAccountBalanceAfterReserveSettlement).to.equal(environment.fxPayeeSettlementAccountBalanceAfterPrepareSettlement)"
                 ]
@@ -2627,16 +2627,16 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Payer position account balance should not be changed",
+                "description": "Payer position account balance should reset to value before transfer",
                 "exec": [
-                  "expect(environment.fxPayerPositionAccountBalanceAfterCommitSettlement).to.not.equal(environment.fxPayerPositionAccountBalanceAfterReserveSettlement)"
+                  "expect(Number(environment.fxPayerPositionAccountBalanceAfterCommitSettlement)).to.equal(Number(environment.fxPayerPositionAccountBalanceBeforeTransfer))"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payer settlement account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerSettlementAccountBalanceAfterCommitSettlement).to.not.equal(environment.fxPayerSettlementAccountBalanceAfterReserveSettlement)"
+                  "expect(Number(environment.fxPayerSettlementAccountBalanceAfterCommitSettlement)).to.equal(Number(environment.fxPayerSettlementAccountBalanceAfterReserveSettlement))"
                 ]
               }
             ]
@@ -2689,30 +2689,30 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "FXP Source currency position account value should increase by the source amount of the transfer",
+                "description": "FXP Source currency position account balance should not change",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionAccountBalanceAfterCommitSettlement).to.equal(-environment.fxpSourceCurrencyPositionAccountBalanceAfterReserveSettlement)"
+                  "expect(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterCommitSettlement)).to.equal(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterReserveSettlement))"
                 ]
               },
               {
                 "id": 2,
                 "description": "FXP Source currency settlement account value should not change",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencySettlementAccountBalanceAfterCommitSettlement).to.equal(environment.fxpSourceCurrencySettlementAccountBalanceAfterReserveSettlement)"
+                  "expect(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterCommitSettlement)).to.equal(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterReserveSettlement))"
                 ]
               },
               {
                 "id": 3,
-                "description": "FXP Target currency position account value should increase by the target amount of the transfer",
+                "description": "FXP Target currency position account value should be reset to value before transfer",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencyPositionAccountBalanceAfterCommitSettlement).to.equal(environment.fxpTargetCurrencyPositionAccountBalanceAfterReserveSettlement)"
+                  "expect(Number(environment.fxpTargetCurrencyPositionAccountBalanceAfterCommitSettlement)).to.equal(Number(environment.fxpTargetCurrencyPositionAccountBalanceBeforeTransfer))"
                 ]
               },
               {
                 "id": 4,
                 "description": "FXP Target currency settlement account value should not change",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterCommitSettlement).to.equal(environment.fxpTargetCurrencySettlementAccountBalanceAfterReserveSettlement)"
+                  "expect(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterCommitSettlement)).to.equal(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterReserveSettlement))"
                 ]
               }
             ]
@@ -2771,16 +2771,16 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Payee position should be changed",
+                "description": "Payee position account balance should not change",
                 "exec": [
-                  "expect(environment.fxPayeePositionAccountBalanceAfterCommitSettlement).to.equal(environment.fxPayeePositionAccountBalanceAfterReserveSettlement)"
+                  "expect(Number(environment.fxPayeePositionAccountBalanceAfterCommitSettlement)).to.equal(Number(environment.fxPayeePositionAccountBalanceAfterReserveSettlement))"
                 ]
               },
               {
                 "id": 2,
-                "description": "Payee position should be changed",
+                "description": "Payee settlement account balance should not change",
                 "exec": [
-                  "expect(environment.fxPayeeSettlementAccountBalanceAfterCommitSettlement).to.equal(environment.fxPayeeSettlementAccountBalanceAfterReserveSettlement)"
+                  "expect(Number(environment.fxPayeeSettlementAccountBalanceAfterCommitSettlement)).to.equal(Number(environment.fxPayeeSettlementAccountBalanceAfterReserveSettlement))"
                 ]
               }
             ]
@@ -2947,14 +2947,14 @@
                 "id": 1,
                 "description": "Payer position account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerPositionAccountBalanceAfterSettleSettlement).to.not.equal(environment.fxPayerPositionAccountBalanceAfterCommitSettlement)"
+                  "expect(Number(environment.fxPayerPositionAccountBalanceAfterSettleSettlement)).to.equal(Number(environment.fxPayerPositionAccountBalanceAfterCommitSettlement))"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payer settlement account balance should not be changed",
                 "exec": [
-                  "expect(environment.fxPayerSettlementAccountBalanceAfterSettleSettlement).to.not.equal(environment.fxPayerSettlementAccountBalanceAfterCommitSettlement)"
+                  "expect(Number(environment.fxPayerSettlementAccountBalanceAfterSettleSettlement)).to.equal(Number(environment.fxPayerSettlementAccountBalanceAfterCommitSettlement))"
                 ]
               }
             ]
@@ -3007,30 +3007,30 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "FXP Source currency position account value should increase by the source amount of the transfer",
+                "description": "FXP Source currency position account balance should not change",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionAccountBalanceAfterSettleSettlement).to.equal(environment.fxpSourceCurrencyPositionAccountBalanceAfterCommitSettlement)"
+                  "expect(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterSettleSettlement)).to.equal(Number(environment.fxpSourceCurrencyPositionAccountBalanceAfterCommitSettlement))"
                 ]
               },
               {
                 "id": 2,
-                "description": "FXP Source currency settlement account value should not change",
+                "description": "FXP Source currency settlement account balance should not change",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencySettlementAccountBalanceAfterSettleSettlement).to.equal(environment.fxpSourceCurrencySettlementAccountBalanceAfterCommitSettlement)"
+                  "expect(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterSettleSettlement)).to.equal(Number(environment.fxpSourceCurrencySettlementAccountBalanceAfterCommitSettlement))"
                 ]
               },
               {
                 "id": 3,
-                "description": "FXP Target currency position account value should increase by the target amount of the transfer",
+                "description": "FXP Target currency position account balance should not change",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencyPositionAccountBalanceAfterSettleSettlement).to.equal(environment.fxpTargetCurrencyPositionAccountBalanceAfterCommitSettlement)"
+                  "expect(Number(environment.fxpTargetCurrencyPositionAccountBalanceAfterSettleSettlement)).to.equal(Number(environment.fxpTargetCurrencyPositionAccountBalanceAfterCommitSettlement))"
                 ]
               },
               {
                 "id": 4,
-                "description": "FXP Target currency settlement account value should not change",
+                "description": "FXP Target currency settlement account balance should not change",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencySettlementAccountBalanceAfterSettleSettlement).to.equal(environment.fxpTargetCurrencySettlementAccountBalanceAfterCommitSettlement)"
+                  "expect(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterSettleSettlement)).to.equal(Number(environment.fxpTargetCurrencySettlementAccountBalanceAfterCommitSettlement))"
                 ]
               }
             ]
@@ -3089,16 +3089,16 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Payee position should be changed",
+                "description": "Payee position account balance should not change",
                 "exec": [
-                  "expect(environment.fxPayeePositionAccountBalanceAfterCommitSettlement).to.equal(environment.fxPayeePositionAccountBalanceAfterReserveSettlement)"
+                  "expect(Number(environment.fxPayeePositionAccountBalanceAfterSettleSettlement)).to.equal(Number(environment.fxPayeePositionAccountBalanceAfterCommitSettlement))"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payee position should be changed",
                 "exec": [
-                  "expect(environment.fxPayeeSettlementAccountBalanceAfterCommitSettlement).to.equal(environment.fxPayeeSettlementAccountBalanceAfterReserveSettlement)"
+                  "expect(Number(environment.fxPayeeSettlementAccountBalanceAfterSettleSettlement)).to.equal(Number(environment.fxPayeeSettlementAccountBalanceAfterCommitSettlement))"
                 ]
               }
             ]
@@ -3111,265 +3111,17 @@
                 "",
                 "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
                 "  if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "    environment.fxPayeePositionAccountBalanceAfterCommitSettlement= curAccount.value",
+                "    environment.fxPayeePositionAccountBalanceAfterSettleSettlement= curAccount.value",
                 "  }",
                 "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "    environment.fxPayeeSettlementAccountBalanceAfterCommitSettlement= curAccount.value",
+                "    environment.fxPayeeSettlementAccountBalanceAfterSettleSettlement= curAccount.value",
                 "  }",
                 "})",
                 "",
-                "console.log(`Payee Position Balance after prepare settlement=${environment.fxPayeePositionAccountBalanceAfterCommitSettlement}`);",
-                "console.log(`Payee Position Balance after prepare settlement=${environment.fxPayeeSettlementAccountBalanceAfterCommitSettlement}`);",
+                "console.log(`Payee Position Balance after prepare settlement=${environment.fxPayeePositionAccountBalanceAfterSettleSettlement}`);",
+                "console.log(`Payee Position Balance after prepare settlement=${environment.fxPayeeSettlementAccountBalanceAfterSettleSettlement}`);",
                 "",
                 ""
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "name": "Store settlement and position balances after",
-      "meta": {
-        "info": "Store settlement and position balances after"
-      },
-      "fileInfo": {
-        "path": "settlement_tests.json"
-      },
-      "requests": [
-        {
-          "id": 1,
-          "meta": {
-            "info": "get balances for fxp"
-          },
-          "description": "get balances for fxp",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.FX_TESTFXP1_ID}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response code is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Fxp source position should be reverted",
-                "exec": [
-                  "expect(environment.fxpSourcePositionAccountBalanceAfterTransfer).to.equal(environment.fxpSourceCurrencyPositionAccountBalanceBeforeTransfer)"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "Fxp target position should be reverted",
-                "exec": [
-                  "expect(environment.fxpTargetPositionAccountBalanceAfterTransfer).to.equal(environment.fxpTargetCurrencyPositionAccountBalanceBeforeTransfer)"
-                ]
-              }
-            ]
-          },
-          "headers": {
-            "FSPIOP-Source": "{$inputs.fromFspId}"
-          },
-          "scriptingEngine": "javascript",
-          "delay": "4000",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                ""
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "var res = response.body;",
-                "",
-                "",
-                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
-                "    ",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "  environment.fxpSourceSettleAccountBalanceAfterTransfer= curAccount.value",
-                "        }",
-                "        ",
-                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "  environment.fxpSourcePositionAccountBalanceAfterTransfer= curAccount.value",
-                "        }     ",
-                "})",
-                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
-                "    ",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "  environment.fxpTargetSettleAccountBalanceAfterTransfer= curAccount.value",
-                "        }",
-                "        ",
-                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "  environment.fxpTargetPositionAccountBalanceAfterTransfer= curAccount.value",
-                "        }     ",
-                "",
-                "",
-                "})",
-                "//})",
-                "",
-                "                      ",
-                "console.log(environment.fxpSourceSettleAccountBalanceAfterTransfer);",
-                "console.log(environment.fxpSourcePositionAccountBalanceAfterTransfer);",
-                "console.log(environment.fxpTargetSettleAccountBalanceAfterTransfer);",
-                "console.log(environment.fxpTargetPositionAccountBalanceAfterTransfer);"
-              ]
-            }
-          }
-        },
-        {
-          "id": 3,
-          "meta": {
-            "info": "get balances for fxpayer"
-          },
-          "description": "get balances for fxpayer",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.FX_PAYER_DFSP_ID}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response code is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "payer position should be reverted",
-                "exec": [
-                  "expect(environment.fxPayerPositionAccountBalanceAfterTransfer).to.equal(environment.fxPayerPositionAccountBalanceBeforeTransfer)"
-                ]
-              }
-            ]
-          },
-          "headers": {
-            "FSPIOP-Source": "{$inputs.fromFspId}"
-          },
-          "scriptingEngine": "javascript",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                ""
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "var res = response.body;",
-                "",
-                "",
-                "   res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
-                "    ",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "  environment.fxPayerSettleAccountBalanceAfterTransfer= curAccount.value",
-                "        }",
-                "        ",
-                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "  environment.fxPayerPositionAccountBalanceAfterTransfer= curAccount.value",
-                "        }     ",
-                "",
-                "",
-                "})",
-                "//})",
-                "",
-                "                      ",
-                "console.log(environment.fxPayerSettleAccountBalanceAfterTransfer);",
-                "console.log(environment.fxPayerPositionAccountBalanceAfterTransfer);"
-              ]
-            }
-          }
-        },
-        {
-          "id": 4,
-          "meta": {
-            "info": "get balances for fxpayee"
-          },
-          "description": "get balances for fxpayee",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.FX_PAYEE_DFSP_ID}/accounts",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.FX_PAYEE_DFSP_ID}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response code is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "payee position should be reverted",
-                "exec": [
-                  "expect(environment.fxPayeePositionAccountBalanceAfterTransfer).to.equal(environment.fxPayeePositionAccountBalanceBeforeTransfer)"
-                ]
-              }
-            ]
-          },
-          "headers": {
-            "FSPIOP-Source": "{$inputs.fromFspId}"
-          },
-          "scriptingEngine": "javascript",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                ""
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "var res = response.body;",
-                "",
-                "",
-                "   res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
-                "    ",
-                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
-                "  environment.fxPayeeSettleAccountBalanceAfterTransfer= curAccount.value",
-                "        }",
-                "        ",
-                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
-                "  environment.fxPayeePositionAccountBalanceAfterTransfer= curAccount.value",
-                "        }     ",
-                "",
-                "",
-                "})",
-                "//})",
-                "",
-                "                      ",
-                "console.log(environment.fxPayeeSettleAccountBalanceAfterTransfer);",
-                "console.log(environment.fxPayeePositionAccountBalanceAfterTransfer);"
               ]
             }
           }
