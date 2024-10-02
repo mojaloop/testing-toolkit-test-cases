@@ -1,6 +1,7 @@
 {
   "options": {},
   "name": "settlement_tests",
+  "saveReport": true,
   "test_cases": [
     {
       "id": 1,
@@ -1585,6 +1586,13 @@
                   "expect(response.body.settlementWindows[0].state).to.equal(\"PENDING_SETTLEMENT\")",
                   "}"
                 ]
+              },
+              {
+                "id": 6,
+                "description": "Total Position across all accounts in the Settlement should be 0",
+                "exec": [
+                  "expect(environment.totalPositionAcrossAccounts).to.equal(0)"
+                ]
               }
             ]
           },
@@ -1604,7 +1612,18 @@
                 "  console.log(\"Window is empty\");",
                 "}else{",
                 "  environment.WINDOWISEMPTY = false;",
-                "}"
+                "}",
+                "",
+                "var totalPositionAcrossAccounts = 0;",
+                "jsonData.participants.forEach(participant => {",
+                "  participant.accounts.forEach( account => {",
+                "    totalPositionAcrossAccounts += Number(account.netSettlementAmount.amount)",
+                "    console.log('totalPositionAcrossAccounts: ',totalPositionAcrossAccounts)",
+                "  })",
+                "})",
+                "",
+                "environment.totalPositionAcrossAccounts = totalPositionAcrossAccounts",
+                ""
               ]
             },
             "preRequest": {
