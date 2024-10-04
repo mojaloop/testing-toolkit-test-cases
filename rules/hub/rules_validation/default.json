@@ -1080,6 +1080,66 @@
     "version": 1
   },
   {
+    "ruleId": 22,
+    "priority": 1,
+    "description": "post /transfers - Test Case for FX Settlements - Payee ABORT when amount is 5255",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "5255",
+          "path": "amount.amount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "5201",
+            "errorDescription": "Payee FSP ABORT"
+          }
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+          "Date": "Tue, 23 Jul 2024 02:05:53 GMT",
+          "FSPIOP-Source": "ttkfxpayee",
+          "FSPIOP-Destination": "ttkfxpayer"
+        }
+      },
+      "type": "FIXED_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  },
+  {
     "ruleId": 19,
     "priority": 1,
     "description": "FxQuotes generic error",
