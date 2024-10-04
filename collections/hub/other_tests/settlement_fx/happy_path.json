@@ -1,6 +1,6 @@
 {
   "options": {},
-  "name": "settlement_tests",
+  "name": "happy_path",
   "saveReport": true,
   "test_cases": [
     {
@@ -10,7 +10,7 @@
         "info": "Store settlement and position balances before fx transfer and normal transfer"
       },
       "fileInfo": {
-        "path": "settlement_tests.json"
+        "path": "happy_path.json"
       },
       "requests": [
         {
@@ -232,7 +232,7 @@
       "id": 2,
       "name": "Happy Path FX E2E",
       "fileInfo": {
-        "path": "settlement_tests.json"
+        "path": "happy_path.json"
       },
       "meta": {
         "info": "FX Transfer"
@@ -1372,7 +1372,7 @@
         "info": "Create Settlement and check balances at different stages"
       },
       "fileInfo": {
-        "path": "settlement_tests.json"
+        "path": "happy_path.json"
       },
       "requests": [
         {
@@ -1589,9 +1589,16 @@
               },
               {
                 "id": 6,
-                "description": "Total Position across all accounts in the Settlement should be 0",
+                "description": "Total source currency net settlement amount in the Settlement should be 0",
                 "exec": [
-                  "expect(environment.totalPositionAcrossAccounts).to.equal(0)"
+                  "expect(environment.totalSourceCurrencyNetSettlementAmount).to.equal(0)"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Total target currency net settlement amount in the Settlement should be 0",
+                "exec": [
+                  "expect(environment.totalTargetCurrencyNetSettlementAmount).to.equal(0)"
                 ]
               }
             ]
@@ -1614,15 +1621,23 @@
                 "  environment.WINDOWISEMPTY = false;",
                 "}",
                 "",
-                "var totalPositionAcrossAccounts = 0;",
+                "var totalSourceCurrencyNetSettlementAmount = 0;",
+                "var totalTargetCurrencyNetSettlementAmount = 0;",
                 "jsonData.participants.forEach(participant => {",
                 "  participant.accounts.forEach( account => {",
-                "    totalPositionAcrossAccounts += Number(account.netSettlementAmount.amount)",
-                "    console.log('totalPositionAcrossAccounts: ',totalPositionAcrossAccounts)",
+                "    if(account.netSettlementAmount.currency == environment.FX_SOURCE_CURRENCY) {",
+                "      totalSourceCurrencyNetSettlementAmount += Number(account.netSettlementAmount.amount)",
+                "    console.log('totalSourceCurrencyNetSettlementAmount: ',totalSourceCurrencyNetSettlementAmount)",
+                "    } else if(account.netSettlementAmount.currency == environment.FX_TARGET_CURRENCY) {",
+                "      totalTargetCurrencyNetSettlementAmount += Number(account.netSettlementAmount.amount)",
+                "    console.log('totalTargetCurrencyNetSettlementAmount: ',totalTargetCurrencyNetSettlementAmount)",
+                "    }",
                 "  })",
                 "})",
                 "",
-                "environment.totalPositionAcrossAccounts = totalPositionAcrossAccounts",
+                "",
+                "environment.totalSourceCurrencyNetSettlementAmount = totalSourceCurrencyNetSettlementAmount",
+                "environment.totalTargetCurrencyNetSettlementAmount = totalTargetCurrencyNetSettlementAmount",
                 ""
               ]
             },
