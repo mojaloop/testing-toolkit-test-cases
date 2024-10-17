@@ -22,8 +22,8 @@
               "ID": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID}"
             },
             "headers": {
-              "Accept": "application/vnd.interoperability.parties+json;version=1.0",
-              "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+              "Accept": "{$inputs.acceptParties}",
+              "Content-Type": "{$inputs.contentTypeParties}",
               "Date": "{$function.generic.curDate}",
               "FSPIOP-Source": "nonexistentpayerfsp",
               "FSPIOP-Proxy": "{$inputs.PROXY1_NAME}",
@@ -56,7 +56,7 @@
                     "id": 4,
                     "description": "Callback content-type to be parties",
                     "exec": [
-                      "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                      "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                     ]
                   },
                   {
