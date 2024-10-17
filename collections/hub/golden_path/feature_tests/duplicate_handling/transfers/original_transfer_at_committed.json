@@ -95,8 +95,8 @@
             "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -292,7 +292,7 @@
               },
               {
                 "id": 17,
-                "description": "Callback Header - content-type is application/vnd.interoperability.quotes+json;version=1.0",
+                "description": "Callback Header - content-type is correct",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
                   ""
@@ -610,7 +610,7 @@
               },
               {
                 "id": 17,
-                "description": "Callback Header - content-type is application/vnd.interoperability.quotes+json;version=1.0",
+                "description": "Callback Header - content-type is correct",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
                   ""
@@ -752,9 +752,9 @@
               },
               {
                 "id": 17,
-                "description": "Callback Header - content-type is application/vnd.interoperability.quotes+json;version=1.0",
+                "description": "Callback Header - content-type is correct",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=1')",
+                  "expect(callback.headers['content-type']).to.have.string('{$inputs.expectedTransfersVersion}')",
                   ""
                 ]
               },
