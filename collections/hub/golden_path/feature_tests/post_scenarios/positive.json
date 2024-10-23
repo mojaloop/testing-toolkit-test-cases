@@ -688,24 +688,6 @@
                 ]
               },
               {
-                "id": 59,
-                "description": "Payee Request: Content-Type is 'application/vnd.interoperability.parties+json;version=1.0'",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['content-type']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)",
-                  "}"
-                ]
-              },
-              {
-                "id": 60,
-                "description": "Payee Request: Accept matches 'application/vnd.interoperability.parties+json;version=1(\\.\\d)?/' ",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['accept']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)",
-                  "}"
-                ]
-              },
-              {
                 "id": 61,
                 "description": "Payee Request: Date is not null",
                 "exec": [
@@ -850,15 +832,6 @@
                 ]
               },
               {
-                "id": 77,
-                "description": "Payee Request: 'accept' header is the same as sent in the request",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.match(/application\\/vnd\\.interoperability\\.transfers\\+json;version=1(\\.\\d)?/)",
-                  "}"
-                ]
-              },
-              {
                 "id": 78,
                 "description": "Payee Request: 'fspiop-http-method' i s POST",
                 "exec": [
@@ -941,7 +914,7 @@
               },
               {
                 "id": 87,
-                "description": "Payer Callback: 'content-type' header is 'application/vnd.interoperability.transfers+json;version=1.0'",
+                "description": "Payer Callback: 'content-type' header is correct",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                   " expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",

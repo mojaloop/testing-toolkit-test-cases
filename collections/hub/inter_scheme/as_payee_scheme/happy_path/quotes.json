@@ -1,0 +1,409 @@
+{
+  "name": "Quotes Happy Path",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Proxy Quoting Service",
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "This request allows us to send a request for Quote (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
+          },
+          "description": "Send quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "nonexistentpayerfsp",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.PROXY_PAYERFSP_PARTY_ID_TYPE}",
+                "partyIdentifier": "{$inputs.PROXY_PAYERFSP_PARTY_ID}",
+                "fspId": "nonexistentpayerfsp"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+                "partyIdentifier": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID}",
+                "fspId": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.PROXY_AMOUNT}",
+              "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            }
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback FSP Source equal to request FSP Destination",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$request.headers['FSPIOP-Destination']}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback body should contain transferAmount",
+                "exec": [
+                  "expect(callback.body).to.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback transferAmount to match the request",
+                "exec": [
+                  "expect(callback.body.payeeReceiveAmount.amount).to.equal('{$request.body.amount.amount}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback currency to match the request",
+                "exec": [
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback content-type to be quotes",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request amountType to be RECEIVE",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('RECEIVE')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": 12,
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              }
+            ]
+          },
+          "path": "/quotes",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/quoting_service/quoting_service.json",
+        "labels": [
+          "quotes"
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "name": "Party Lookup for other proxy in Scheme if not cached",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_OTHER_PROXY_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_OTHER_PROXY_PARTY_ID}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_OTHER_PROXY_ID}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response Proxy Header should not be set",
+                "exec": [
+                  "expect(callback.headers['fspiop-proxy']).to.equal('')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response Source Header same as TODO",
+                "exec": [
+                  "expect('{$callback.headers['FSPIOP-Source']}').to.equal('TODO')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response Destination Header same as Payerfsp Id",
+                "exec": [
+                  "expect('{$callback.headers['FSPIOP-Destination']}').to.equal('{$inputs.PROXY_PAYEE_TEST_PAYERFSP_ID}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "an error callback is expected",
+                "exec": [
+                  "expect(callback.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYERFSP_OTHER_PROXY_ERROR_CODE}')",
+                  "expect(callback.errorInformation.errorDescription).to.equal('{$inputs.PROXY_PAYERFSP_OTHER_PROXY_ERROR_DESCRIPTION}')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": "2",
+          "description": "Send Oracle lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "payerfsp",
+            "FSPIOP-Destination": "payeefsp"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Oracle should not have payeeDFSP set",
+                "exec": [
+                  "expect(response.fspId).to.equal('')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Party Lookup for Proxy in Scheme if it is cached",
+      "requests": [
+        {
+          "id": "1",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_OTHER_PROXY_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_OTHER_PROXY_PARTY_ID}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYERFSP_OTHER_PROXY_ID}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response Proxy Header should not be set",
+                "exec": [
+                  "expect(callback.headers['fspiop-proxy']).to.equal('')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response Source Header same as TODO",
+                "exec": [
+                  "expect('{$callback.headers['FSPIOP-Source']}').to.equal('TODO')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response Destination Header same as Payerfsp Id",
+                "exec": [
+                  "expect('{$callback.headers['FSPIOP-Destination']}').to.equal('{$inputs.PROXY_PAYEE_TEST_PAYERFSP_ID}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID}')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_FIRST_NAME}')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_LAST_NAME}')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": "2",
+          "description": "Send Oracle lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "payerfsp",
+            "FSPIOP-Destination": "payeefsp"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Oracle should not have payeeDFSP set",
+                "exec": [
+                  "expect(response.fspId).to.equal('')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    }
+  ]
+}

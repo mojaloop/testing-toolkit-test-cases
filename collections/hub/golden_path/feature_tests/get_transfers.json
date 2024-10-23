@@ -211,9 +211,9 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.quoteId = \"{$function.generic.generateUUID}\"",
+                "requestVariables.quoteId = \"{$function.generic.generateID}\"",
                 "",
-                "requestVariables.transactionId = \"{$function.generic.generateUUID}\"",
+                "requestVariables.transactionId = \"{$function.generic.generateID}\"",
                 "",
                 "if(environment.ENABLE_JWS_SIGNING) {",
                 "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
@@ -442,7 +442,7 @@
               },
               {
                 "id": 21,
-                "description": "Payer FSP: 'content-type' should be 'application/vnd.interoperability.transfers+json;version=1.0'",
+                "description": "Payer FSP: 'content-type' should be correct",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}');"
                 ]
@@ -989,7 +989,7 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.transferId = '{$function.generic.generateUUID}'"
+                "requestVariables.transferId = '{$function.generic.generateID}'"
               ]
             },
             "postRequest": {
