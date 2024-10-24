@@ -516,7 +516,7 @@
               "Agt": {
                 "FinInstnId": {
                   "Othr": {
-                    "Id": "{$config.FSPID}"
+                    "Id": "ttkpayeefsp"
                   }
                 }
               },
@@ -842,7 +842,7 @@
         },
         "headers": {
           "Content-Type": "application/vnd.interoperability.iso20022.transfers+json;version=2.0",
-          "FSPIOP-Source": "{$config.FSPID}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
           "Date": "{$request.headers.date}",
           "FSPIOP-Destination": "{$request.headers.fspiop-source}"
         },
@@ -1231,7 +1231,7 @@
         },
         "headers": {
           "Content-Type": "application/vnd.interoperability.iso20022.fxTransfers+json;version=2.0",
-          "FSPIOP-Source": "{$config.FSPID}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
           "Date": "{$request.headers.date}",
           "FSPIOP-Destination": "{$request.headers.fspiop-source}"
         },
@@ -1246,7 +1246,7 @@
             "OrgnlEndToEndId": "12345",
             "OrgnlTxId": "12345",
             "OrgnlUETR": "123e4567-e89b-12d3-a456-426614174000",
-            "TxSts": "COMM",
+            "TxSts": "RESV",
             "StsRsnInf": {
               "Rsn": {
                 "Prtry": "ACPT"
