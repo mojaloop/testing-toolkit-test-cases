@@ -2,6 +2,225 @@
   {
     "ruleId": 1,
     "priority": 1,
+    "description": "ISO20022 FxQuotes generic error",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "Accept"
+        },
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "13",
+          "path": "CdtTrfTxInf.UndrlygCstmrCdtTrf.InstdAmt.ActiveOrHistoricCurrencyAndAmount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxQuotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxQuotes/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
+        },
+        "body": {
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$function.generic.curDateISO}"
+          },
+          "TxInfAndSts": {
+            "StsRsnInf": {
+              "Rsn": {
+                "Cd": "2000"
+              }
+            }
+          }
+        }
+      },
+      "type": "FIXED_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  },
+  {
+    "ruleId": 2,
+    "priority": 1,
+    "description": "ISO20022 fxTransfers generic error",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "Accept"
+        },
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "13",
+          "path": "CdtTrfTxInf.UndrlygCstmrCdtTrf.InstdAmt.ActiveOrHistoricCurrencyAndAmount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxTransfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxTransfers/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
+        },
+        "body": {
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$function.generic.curDateISO}"
+          },
+          "TxInfAndSts": {
+            "StsRsnInf": {
+              "Rsn": {
+                "Cd": "2000"
+              }
+            }
+          }
+        }
+      },
+      "type": "FIXED_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  },
+  {
+    "ruleId": 3,
+    "priority": 1,
+    "description": "ISO20022 transfers generic error",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "Accept"
+        },
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "13",
+          "path": "CdtTrfTxInf.IntrBkSttlmAmt.ActiveCurrencyAndAmount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
+        },
+        "body": {
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$function.generic.curDateISO}"
+          },
+          "TxInfAndSts": {
+            "StsRsnInf": {
+              "Rsn": {
+                "Cd": "2000"
+              }
+            }
+          }
+        }
+      },
+      "type": "FIXED_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  },
+  {
+    "ruleId": 501,
+    "priority": 1,
     "description": "get /parties/{Type}/{ID} - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in Proxy",
     "apiVersion": {
       "minorVersion": 0,
@@ -60,7 +279,7 @@
     "version": 1
   },
   {
-    "ruleId": 2,
+    "ruleId": 502,
     "priority": 1,
     "description": "get /parties/{Type}/{ID} - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 200X Error in Payee Scheme",
     "apiVersion": {
@@ -120,7 +339,7 @@
     "version": 1
   },
   {
-    "ruleId": 3,
+    "ruleId": 503,
     "priority": 1,
     "description": "get /parties/{Type}/{ID} - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 300X Error in Payee Scheme",
     "apiVersion": {
@@ -180,7 +399,7 @@
     "version": 1
   },
   {
-    "ruleId": 4,
+    "ruleId": 504,
     "priority": 1,
     "description": "get /parties/{Type}/{ID} - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 400X Error in Payee Scheme",
     "apiVersion": {
@@ -240,7 +459,7 @@
     "version": 1
   },
   {
-    "ruleId": 5,
+    "ruleId": 505,
     "priority": 1,
     "description": "get /parties/{Type}/{ID} - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 500X Error in Payee Scheme",
     "apiVersion": {
@@ -300,7 +519,7 @@
     "version": 1
   },
   {
-    "ruleId": 6,
+    "ruleId": 506,
     "priority": 1,
     "description": "get /parties/{Type}/{ID} - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Error in Payee DFSP",
     "apiVersion": {
@@ -360,7 +579,7 @@
     "version": 1
   },
   {
-    "ruleId": 7,
+    "ruleId": 507,
     "priority": 1,
     "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in Proxy",
     "apiVersion": {
@@ -420,7 +639,7 @@
     "version": 1
   },
   {
-    "ruleId": 8,
+    "ruleId": 508,
     "priority": 1,
     "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 200X Error in Payee dfsp scheme",
     "apiVersion": {
@@ -480,7 +699,7 @@
     "version": 1
   },
   {
-    "ruleId": 9,
+    "ruleId": 509,
     "priority": 1,
     "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 300X Error in Payee dfsp scheme",
     "apiVersion": {
@@ -540,7 +759,7 @@
     "version": 1
   },
   {
-    "ruleId": 10,
+    "ruleId": 510,
     "priority": 1,
     "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 400X Error in Payee dfsp scheme",
     "apiVersion": {
@@ -600,7 +819,7 @@
     "version": 1
   },
   {
-    "ruleId": 11,
+    "ruleId": 511,
     "priority": 1,
     "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - 500X Error in Payee dfsp scheme",
     "apiVersion": {
@@ -660,7 +879,7 @@
     "version": 1
   },
   {
-    "ruleId": 12,
+    "ruleId": 512,
     "priority": 1,
     "description": "post /quotes - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in payee dfsp",
     "apiVersion": {
@@ -720,7 +939,7 @@
     "version": 1
   },
   {
-    "ruleId": 13,
+    "ruleId": 513,
     "priority": 1,
     "description": "post /transfers - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in Proxy",
     "apiVersion": {
@@ -780,7 +999,7 @@
     "version": 1
   },
   {
-    "ruleId": 14,
+    "ruleId": 514,
     "priority": 1,
     "description": "post /transfers - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in payee dfsp scheme",
     "apiVersion": {
@@ -840,7 +1059,7 @@
     "version": 1
   },
   {
-    "ruleId": 15,
+    "ruleId": 515,
     "priority": 1,
     "description": "post /transfers - Testing Payer Scheme with Payee side Proxy as TTK - Negative Scenarios - Generic Error in payee dfsp",
     "apiVersion": {
@@ -900,7 +1119,7 @@
     "version": 1
   },
   {
-    "ruleId": 16,
+    "ruleId": 516,
     "priority": 1,
     "description": "get /parties/{Type}/{ID} - Testing Payee Scheme with Payer side Proxy as TTK - Negative Scenarios - Error in Payee DFSP",
     "apiVersion": {
@@ -960,7 +1179,7 @@
     "version": 1
   },
   {
-    "ruleId": 17,
+    "ruleId": 517,
     "priority": 1,
     "description": "post /quotes - Testing Payee Scheme with Payer side Proxy as TTK - Negative Scenarios - Generic Error in payee dfsp",
     "apiVersion": {
@@ -1020,7 +1239,7 @@
     "version": 1
   },
   {
-    "ruleId": 18,
+    "ruleId": 518,
     "priority": 1,
     "description": "post /transfers - Testing Payee Scheme with Payer side Proxy as TTK - Negative Scenarios - Generic Error in payee dfsp",
     "apiVersion": {
@@ -1080,7 +1299,7 @@
     "version": 1
   },
   {
-    "ruleId": 19,
+    "ruleId": 519,
     "priority": 1,
     "description": "FxQuotes generic error",
     "apiVersion": {
@@ -1140,7 +1359,7 @@
     "version": 1
   },
   {
-    "ruleId": 20,
+    "ruleId": 520,
     "priority": 1,
     "description": "fxTransfers generic error",
     "apiVersion": {
@@ -1200,7 +1419,7 @@
     "version": 1
   },
   {
-    "ruleId": 21,
+    "ruleId": 521,
     "priority": 1,
     "description": "transfers generic error",
     "apiVersion": {
