@@ -3,15 +3,23 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "p2p_money_transfer - p2p_happy_path with subID",
+      "name": "p2p_money_transfer - p2p_happy_path TTK only",
       "meta": {
-        "info": "p2p_money_transfer - p2p_happy_path with subID"
+        "info": "This is a happy path to test an end to end transfers. It includes party lookup, quote and transfer phases."
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path_ttk.json",
+        "labels": [
+          "prod-tests",
+          "p2p",
+          "min-func-tests"
+        ]
       },
       "requests": [
         {
           "id": 1,
           "meta": {
-            "info": "Add Participant to ALS"
+            "info": "This request allows us to add a new participant to Account Lookup Service."
           },
           "description": "Add Participant to ALS",
           "apiVersion": {
@@ -20,81 +28,45 @@
             "type": "fspiop",
             "asynchronous": true
           },
-          "operationPath": "/participants/{Type}/{ID}/{SubId}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.ttkpayeefspIdentifier1}",
           "method": "post",
           "params": {
             "Type": "{$inputs.toIdType}",
-            "ID": "{$inputs.toIdValue}",
-            "SubId": "{$inputs.toSubIdValue}"
+            "ID": "{$inputs.ttkpayeefspIdentifier1}"
           },
           "headers": {
-            "FSPIOP-Source": "{$inputs.toFspId}",
+            "FSPIOP-Source": "{$inputs.ttkpayeefspName}",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
             "Accept": "{$inputs.acceptParticipants}",
             "Content-Type": "{$inputs.contentTypeParticipants}",
-            "Date": "{$function.generic.curDate}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "fspId": "{$inputs.toFspId}",
+            "fspId": "{$inputs.ttkpayeefspName}",
             "currency": "{$inputs.currency}"
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "ignoreCallbacks": true,
+          "ignoreCallbacks": false,
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.toIdValue}', 'payeeRequest')",
-                "}"
+                ""
               ]
             },
             "postRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
+                ""
               ]
             }
-          }
-        },
-        {
-          "id": 2,
-          "meta": {
-            "info": "Add Party to Simulator"
           },
-          "description": "Add Party to Simulator",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 0,
-            "type": "mojaloop_simulator",
-            "asynchronous": false,
-            "additionalApi": true
-          },
-          "operationPath": "/repository/parties",
-          "path": "/repository/parties",
-          "method": "post",
-          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
-          "headers": {
-            "FSPIOP-Source": "{$inputs.toFspId}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
-          },
-          "body": {
-            "displayName": "Test PayeeFSP",
-            "firstName": "Test",
-            "middleName": "Test",
-            "lastName": "Test",
-            "dateOfBirth": "1984-01-01",
-            "idType": "{$inputs.toIdType}",
-            "idValue": "{$inputs.toIdValue}",
-            "idSubValue": "{$inputs.toSubIdValue}"
-          }
+          "disabled": false
         },
         {
           "id": 3,
           "meta": {
-            "info": "Get party information"
+            "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
           },
           "description": "Get party information",
           "apiVersion": {
@@ -103,7 +75,7 @@
             "type": "fspiop",
             "asynchronous": true
           },
-          "operationPath": "/parties/{Type}/{ID}/{SubId}",
+          "operationPath": "/parties/{Type}/{ID}",
           "method": "get",
           "headers": {
             "Accept": "{$inputs.acceptParties}",
@@ -114,8 +86,7 @@
           },
           "params": {
             "Type": "{$inputs.toIdType}",
-            "ID": "{$inputs.toIdValue}",
-            "SubId": "{$inputs.toSubIdValue}"
+            "ID": "{$inputs.ttkpayeefspIdentifier1}"
           },
           "tests": {
             "assertions": [
@@ -167,67 +138,30 @@
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                 ]
-              },
-              {
-                "id": 8,
-                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
-                "exec": [
-                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
-                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')",
-                  "expect(callback.body.party.partyIdInfo.partySubIdOrType).to.equal('{$inputs.toSubIdValue}')"
-                ]
-              },
-              {
-                "id": 9,
-                "description": "Payee FSPIOP-Source",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
-                  "}"
-                ]
-              },
-              {
-                "id": 10,
-                "description": "Payee Content-Type",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
-                  "}"
-                ]
-              },
-              {
-                "id": 11,
-                "description": "Callback FSPIOP-URI should contain ID and SubID",
-                "exec": [
-                  "expect(callback.headers['fspiop-uri']).to.equal('/parties/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}')"
-                ]
               }
             ]
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.ttkpayeefspIdentifier1}",
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
-                "}"
+                ""
               ]
             },
             "postRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
+                ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 4,
           "meta": {
-            "info": "Send quote"
+            "info": "This request allows us to send a request for Quote (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
           },
           "description": "Send quote",
           "apiVersion": {
@@ -243,12 +177,13 @@
             "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "FSPIOP-Destination": "{$inputs.toFspId}",
-            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$prev.3.callback.body.party.partyIdInfo.fspId}"
           },
           "body": {
             "quoteId": "{$function.generic.generateID}",
             "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -267,7 +202,6 @@
               "partyIdInfo": {
                 "partyIdType": "{$prev.3.callback.body.party.partyIdInfo.partyIdType}",
                 "partyIdentifier": "{$prev.3.callback.body.party.partyIdInfo.partyIdentifier}",
-                "partySubIdOrType": "{$prev.3.callback.body.party.partyIdInfo.partySubIdOrType}",
                 "fspId": "{$prev.3.callback.body.party.partyIdInfo.fspId}"
               }
             },
@@ -363,42 +297,6 @@
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
                 ]
-              },
-              {
-                "id": 12,
-                "description": "Payee FSPIOP-Source",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
-                  "}"
-                ]
-              },
-              {
-                "id": 13,
-                "description": "Payee Content-Type",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
-                  "}"
-                ]
-              },
-              {
-                "id": 14,
-                "description": "Payee Body QuoteId",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.data['quoteId']).to.equal('{$request.body.quoteId}')",
-                  "}"
-                ]
-              },
-              {
-                "id": 15,
-                "description": "Payee Body TransactionId",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.data['transactionId']).to.equal('{$request.body.transactionId}')",
-                  "}"
-                ]
               }
             ]
           },
@@ -411,24 +309,21 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
-                "}"
+                ""
               ]
             },
             "postRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
+                ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 5,
           "meta": {
-            "info": "Send transfer"
+            "info": "This request allows us to send a Transfer (payerfsp to payeefsp), resulting in an ILP transfer exchanged between two account holders on either side of a common ledger."
           },
           "description": "Send transfer",
           "apiVersion": {
@@ -524,42 +419,6 @@
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.4.callback.headers.fspiop-destination}')"
                 ]
-              },
-              {
-                "id": 10,
-                "description": "Payee FSPIOP-Source",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
-                  "}"
-                ]
-              },
-              {
-                "id": 11,
-                "description": "Payee Content-Type",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
-                  "}"
-                ]
-              },
-              {
-                "id": 12,
-                "description": "Payee Body TransferId",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.data['transferId']).to.equal('{$request.body.transferId}')",
-                  "}"
-                ]
-              },
-              {
-                "id": 13,
-                "description": "Payee Body Amount",
-                "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.data.amount.amount).to.equal('{$request.body.amount.amount}')",
-                  "}"
-                ]
               }
             ]
           },
@@ -567,28 +426,18 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.transferId}', 'payeeRequest')",
-                "}"
+                ""
               ]
             },
             "postRequest": {
               "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
+                ""
               ]
             }
-          }
+          },
+          "disabled": false
         }
-      ],
-      "fileInfo": {
-        "path": "hub/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path_subid.json",
-        "labels": [
-          "prod-tests",
-          "p2p"
-        ]
-      }
+      ]
     }
   ]
 }
