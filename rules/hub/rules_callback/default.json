@@ -2,6 +2,239 @@
   {
     "ruleId": 1,
     "priority": 1,
+    "description": "ISO20022 Proxy get /parties/{Type}/{ID} Payer Scheme with Payee side Proxy as TTK - Happy Path",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "123456",
+          "path": "ID"
+        },
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "Accept"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.iso20022.parties+json;version=2.0",
+          "FSPIOP-Source": "nonexistentpayeefsp",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Destination": "testingtoolkitdfsp",
+          "fspiop-proxy": "proxyttk"
+        },
+        "body": {
+          "Assgnmt": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$environment.CreDtTm}",
+            "Assgnr": {
+              "Agt": {
+                "FinInstnId": {
+                  "Othr": {
+                    "Id": "{$request.headers.fspiop-source}"
+                  }
+                }
+              }
+            },
+            "Assgne": {
+              "Agt": {
+                "FinInstnId": {
+                  "Othr": {
+                    "Id": "ttkpayeefsp"
+                  }
+                }
+              }
+            }
+          },
+          "Rpt": {
+            "OrgnlId": "{$request.params.Type}/{$request.params.ID}",
+            "Vrfctn": true,
+            "UpdtdPtyAndAcctId": {
+              "Agt": {
+                "FinInstnId": {
+                  "Othr": {
+                    "Id": "ttkpayeefsp"
+                  }
+                }
+              },
+              "Acct": {
+                "Ccy": "XTS"
+              },
+              "Pty": {
+                "Nm": "Test Party",
+                "Id": {
+                  "PrvtId": {
+                    "Othr": {
+                      "Id": "{$request.params.ID}",
+                      "SchmeNm": {
+                        "Prtry": "{$request.params.Type}"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "scripts": {
+          "exec": [
+            "environment.CreDtTm = new Date().toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 2,
+    "priority": 1,
+    "description": "ISO20022 Proxy get /parties/{Type}/{ID} Payee side scheme with Payer side proxy as TTK and Payee DFSP as proxy",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "7891234",
+          "path": "ID"
+        },
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "Accept"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.iso20022.parties+json;version=2.0",
+          "FSPIOP-Source": "ttkpayeefsp",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Destination": "nonexistentpayerfsp"
+        },
+        "body": {
+          "Assgnmt": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$environment.CreDtTm}",
+            "Assgnr": {
+              "Agt": {
+                "FinInstnId": {
+                  "Othr": {
+                    "Id": "{$request.headers.fspiop-source}"
+                  }
+                }
+              }
+            },
+            "Assgne": {
+              "Agt": {
+                "FinInstnId": {
+                  "Othr": {
+                    "Id": "payeefspproxyttk"
+                  }
+                }
+              }
+            }
+          },
+          "Rpt": {
+            "OrgnlId": "{$request.params.Type}/{$request.params.ID}",
+            "Vrfctn": true,
+            "UpdtdPtyAndAcctId": {
+              "Agt": {
+                "FinInstnId": {
+                  "Othr": {
+                    "Id": "payeefspproxyttk"
+                  }
+                }
+              },
+              "Acct": {
+                "Ccy": "XTS"
+              },
+              "Pty": {
+                "Nm": "Test Party",
+                "Id": {
+                  "PrvtId": {
+                    "Othr": {
+                      "Id": "{$request.params.ID}",
+                      "SchmeNm": {
+                        "Prtry": "{$request.params.Type}"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "scripts": {
+          "exec": [
+            "environment.CreDtTm = new Date().toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 51,
+    "priority": 1,
     "description": "ISO20022 get /parties/{Type}/{ID}/{SubId}",
     "apiVersion": {
       "minorVersion": 0,
@@ -103,7 +336,7 @@
     "version": 1
   },
   {
-    "ruleId": 2,
+    "ruleId": 52,
     "priority": 1,
     "description": "ISO20022 get /parties/{Type}/{ID}/{SubId}  for BUSINESS/ALIAS/DEVICE Types",
     "apiVersion": {
@@ -212,7 +445,7 @@
     "version": 1
   },
   {
-    "ruleId": 3,
+    "ruleId": 53,
     "priority": 1,
     "description": "ISO20022 get /parties/{Type}/{ID} for BUSINESS/ALIAS/DEVICE Types",
     "apiVersion": {
@@ -327,7 +560,7 @@
     "version": 1
   },
   {
-    "ruleId": 4,
+    "ruleId": 54,
     "priority": 1,
     "description": "ISO20022 get /parties/{Type}/{ID} ACCOUNT_ID",
     "apiVersion": {
@@ -442,7 +675,7 @@
     "version": 1
   },
   {
-    "ruleId": 5,
+    "ruleId": 55,
     "priority": 1,
     "description": "ISO20022 get /parties/{Type}/{ID}",
     "apiVersion": {
@@ -554,7 +787,7 @@
   {
     "type": "callback",
     "version": 1,
-    "ruleId": 6,
+    "ruleId": 56,
     "priority": 1,
     "description": "ISO20022 get /quotes/{ID}",
     "apiVersion": {
@@ -597,7 +830,7 @@
     }
   },
   {
-    "ruleId": 7,
+    "ruleId": 57,
     "priority": 1,
     "description": "ISO20022 post /quotes",
     "apiVersion": {
@@ -750,7 +983,7 @@
   },
   {
     "type": "callback",
-    "ruleId": 8,
+    "ruleId": 58,
     "priority": 1,
     "description": "ISO20022 get /transfers/{ID}",
     "apiVersion": {
@@ -794,7 +1027,7 @@
     "version": 1
   },
   {
-    "ruleId": 9,
+    "ruleId": 59,
     "priority": 1,
     "description": "ISO20022 post /transfers",
     "apiVersion": {
@@ -884,7 +1117,7 @@
     "version": 1
   },
   {
-    "ruleId": 10,
+    "ruleId": 60,
     "priority": 1,
     "description": "ISO20022 get /fxQuotes/{ID}",
     "apiVersion": {
@@ -937,7 +1170,7 @@
     "version": 1
   },
   {
-    "ruleId": 11,
+    "ruleId": 61,
     "priority": 1,
     "description": "ISO20022 post /fxQuotes",
     "apiVersion": {
@@ -1162,7 +1395,7 @@
     "version": 1
   },
   {
-    "ruleId": 12,
+    "ruleId": 62,
     "priority": 1,
     "description": "ISO20022 get /fxTransfers/{ID}",
     "apiVersion": {
@@ -1215,7 +1448,7 @@
     "version": 1
   },
   {
-    "ruleId": 13,
+    "ruleId": 63,
     "priority": 1,
     "description": "ISO20022 post /fxTransfers",
     "apiVersion": {

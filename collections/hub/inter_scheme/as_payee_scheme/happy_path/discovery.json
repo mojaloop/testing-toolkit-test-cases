@@ -6,7 +6,54 @@
       "name": "Party Lookup for ProxyAB if not cached",
       "requests": [
         {
-          "id": "1",
+          "id": 1,
+          "meta": {
+            "info": "This request allows us to add a new participant to Account Lookup Service."
+          },
+          "description": "Add Participant to ALS",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}/{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID}"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "fspId": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}",
+            "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "2",
           "description": "Send party lookup request",
           "apiVersion": {
             "minorVersion": 1,
@@ -71,20 +118,6 @@
                 "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
                 "exec": [
                   "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID}')"
-                ]
-              },
-              {
-                "id": 7,
-                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
-                "exec": [
-                  "expect(callback.body.party.personalInfo.complexName.firstName).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_FIRST_NAME}')"
-                ]
-              },
-              {
-                "id": 8,
-                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
-                "exec": [
-                  "expect(callback.body.party.personalInfo.complexName.lastName).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_LAST_NAME}')"
                 ]
               }
             ]
