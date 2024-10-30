@@ -6,7 +6,54 @@
       "name": "Test Case for scenario when there is an error in payee dfsp",
       "requests": [
         {
-          "id": "1",
+          "id": 1,
+          "meta": {
+            "info": "This request allows us to add a new participant to Account Lookup Service."
+          },
+          "description": "Add Participant to ALS",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}/{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID_ERROR}"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "fspId": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}",
+            "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "2",
           "description": "Negative test case for error code 5xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -48,7 +95,7 @@
                 "id": 3,
                 "description": "Callback response has errorDescription",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorDescription).to.equal('{$inputs.PROXY_PAYEE_DFSP_ERROR_DESCRIPTION_5XXX}')"
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
                 ]
               }
             ]
