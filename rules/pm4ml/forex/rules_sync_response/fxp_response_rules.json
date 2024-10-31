@@ -151,7 +151,7 @@
             "amountType": "SEND",
             "conversionId": "{$request.body.conversionTerms.conversionId}",
             "counterPartyFsp": "{$request.body.conversionTerms.counterPartyFsp}",
-            "determiningTransferId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+            "determiningTransferId": "{$request.body.conversionTerms.determiningTransferId}",
             "expiration": "{$request.body.conversionTerms.expiration}",
             "initiatingFsp": "{$request.body.conversionTerms.initiatingFsp}",
             "sourceAmount": {
@@ -355,8 +355,8 @@
             "    conversionRate = (baseConvRate / invertConvRate1)",
             "}",
             "",
-            "const sourceAmount = fxQuoteBody.conversionTerms.sourceAmount.amount",
-            "const targetAmount = fxQuoteBody.conversionTerms.targetAmount.amount",
+            "const sourceAmount = +fxQuoteBody.conversionTerms.sourceAmount.amount",
+            "const targetAmount = +fxQuoteBody.conversionTerms.targetAmount.amount",
             "",
             "let newSourceAmount = sourceAmount",
             "let newTargetAmount = targetAmount",
@@ -702,7 +702,11 @@
           "quoteId": "{$request.body.quoteId}",
           "transactionId": "{$request.body.transactionId}",
           "transferAmount": "{$request.body.amount}",
-          "transferAmountCurrency": "{$request.body.currency}"
+          "transferAmountCurrency": "{$request.body.currency}",
+          "payeeFspFeeAmount": "0",
+          "payeeFspFeeAmountCurrency": "{$request.body.currency}",
+          "payeeReceiveAmount": "{$request.body.amount}",
+          "payeeReceiveAmountCurrency": "{$request.body.currency}"
         },
         "statusCode": "200",
         "scripts": {
