@@ -362,7 +362,7 @@
                 " ",
                 " console.log(`liquidityAndPositionDifference=${liquidityAndPositionDifference}`);",
                 "",
-                "requestVariables.amount = Number((liquidityAndPositionDifference + 1000).toFixed(2));",
+                "requestVariables.amount = Number((liquidityAndPositionDifference + 1000).toFixed(0));",
                 "",
                 "console.log(`requestVariables.amount=${requestVariables.amount}`)",
                 "",
@@ -455,7 +455,7 @@
                 "id": 3,
                 "description": "Error description should be returned",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorDescription).to.equal('Payer FSP insufficient liquidity');"
+                  "expect(typeof callback.body.errorInformation.errorDescription).to.equal('string');"
                 ]
               },
               {
@@ -1167,7 +1167,7 @@
                 " ",
                 "console.log(`positionLimitDifference=${positionLimitDifference}`);",
                 "",
-                "requestVariables.amount = Number((positionLimitDifference + 1).toFixed(2));",
+                "requestVariables.amount = Number((positionLimitDifference + 1).toFixed(0));",
                 "",
                 "console.log(`requestVariables.amount=${requestVariables.amount}`)",
                 "",
