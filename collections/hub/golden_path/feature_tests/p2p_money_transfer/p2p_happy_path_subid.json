@@ -174,7 +174,9 @@
                 "exec": [
                   "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
                   "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')",
-                  "expect(callback.body.party.partyIdInfo.partySubIdOrType).to.equal('{$inputs.toSubIdValue}')"
+                  "if (environment.API_TYPE==='fspiop') {",
+                  "  expect(callback.body.party.partyIdInfo.partySubIdOrType).to.equal('{$inputs.toSubIdValue}')",
+                  "}"
                 ]
               },
               {
