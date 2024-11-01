@@ -36,8 +36,8 @@
             "FSPIOP-Destination": "ttkpayeefsp"
           },
           "body": {
-            "quoteId": "{$environment.quiteId}",
-            "transactionId": "{$environment.transfer_ID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -159,9 +159,6 @@
             },
             "preRequest": {
               "exec": [
-                "const uuid = require('uuid')",
-                "pm.environment.set('transfer_ID', uuid.v4())",
-                "pm.environment.set('quiteId', uuid.v4())",
                 "pm.environment.set('patchAmount', '101')"
               ]
             }
@@ -369,8 +366,8 @@
             "FSPIOP-Destination": "ttkpayeefsp"
           },
           "body": {
-            "quoteId": "{$environment.quiteId}",
-            "transactionId": "{$environment.transfer_ID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -492,9 +489,6 @@
             },
             "preRequest": {
               "exec": [
-                "const uuid = require('uuid')",
-                "pm.environment.set('transfer_ID', uuid.v4())",
-                "pm.environment.set('quiteId', uuid.v4())",
                 "pm.environment.set('patchAmount', '103')",
                 ""
               ]
