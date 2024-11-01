@@ -1534,6 +1534,71 @@
     "version": 1
   },
   {
+    "ruleId": 199,
+    "priority": 1,
+    "description": "get /parties/{Type}/{ID} for ttkpayeefsp",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "5671234",
+          "path": "ID"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.parties+json;version=2.0",
+          "FSPIOP-Source": "ttkpayeefsp",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
+        },
+        "body": {
+          "party": {
+            "partyIdInfo": {
+              "fspId": "ttkpayeefsp"
+            },
+            "merchantClassificationCode": null,
+            "name": "Justin Pierre",
+            "personalInfo": {
+              "complexName": {
+                "firstName": "Justin",
+                "middleName": "Pierre",
+                "lastName": "Trudeau"
+              },
+              "dateOfBirth": "1971-12-25"
+            }
+          }
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
     "ruleId": 200,
     "priority": 1,
     "description": "post /participants/{Type}/{ID} - No callback",
