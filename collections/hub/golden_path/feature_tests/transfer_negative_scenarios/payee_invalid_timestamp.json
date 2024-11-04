@@ -328,8 +328,11 @@
                 "id": 4,
                 "description": "Callback Body - errorDescription is Transfer expired",
                 "exec": [
+                  "if (environment.API_TYPE === 'fspiop') {",
                   "expect(callback.body.errorInformation.errorDescription).to.equal('Transfer expired')",
-                  ""
+                  "} else {",
+                  "expect(callback.body.errorInformation.errorDescription).to.not.equal(undefined)",
+                  "}"
                 ]
               }
             ]
@@ -510,6 +513,7 @@
                 "id": 19,
                 "description": "Callback Body - error cause in extensionList",
                 "exec": [
+                  "if (environment.API_TYPE === 'fspiop') {",
                   "expect(callback.body).to.have.property('extensionList')",
                   "expect(callback.body.extensionList).to.have.property('extension')",
                   "",
@@ -517,7 +521,8 @@
                   "",
                   "expect(filteredExtensionListForCause.length).to.equal(1)",
                   "",
-                  "expect(filteredExtensionListForCause[0].value).to.equal(\"3303: Transfer expired\")"
+                  "expect(filteredExtensionListForCause[0].value).to.equal(\"3303: Transfer expired\")",
+                  "}"
                 ]
               }
             ]

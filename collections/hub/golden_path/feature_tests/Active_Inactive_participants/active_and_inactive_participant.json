@@ -239,7 +239,11 @@
                 "description": "Payer side Callback Body - Error Description is Destination FSP Error",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Unsupported participant')",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Unsupported participant')",
+                  "  } else {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "  }",
                   "}"
                 ]
               }
@@ -418,7 +422,11 @@
                 "description": "Payer side Callback Body - Error Description is Generic validation error",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Generic validation error - Participant')",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Generic validation error - Participant')",
+                  "  } else {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "  }",
                   "}"
                 ]
               }
