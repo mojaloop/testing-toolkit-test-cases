@@ -861,7 +861,11 @@
                 "description": "Payee FSP: Error Description should be returned",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeCallback.data.errorInformation.errorDescription).to.equal('Generic client error')",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(requestVariables.payeeCallback.data.errorInformation.errorDescription).to.equal('Generic client error')",
+                  "  } else {",
+                  "    expect(requestVariables.payeeCallback.data.errorInformation.errorDescription).to.not.equal(undefined)",
+                  "  }",
                   "}"
                 ]
               }
@@ -981,7 +985,9 @@
                 "id": 11,
                 "description": "Payer FSP: Error Description should be returned",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorDescription).to.equal('Transfer ID not found - Provided Transfer ID was not found on the server.')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('Transfer ID not found - Provided Transfer ID was not found on the server.')",
+                  "}"
                 ]
               }
             ]

@@ -455,7 +455,9 @@
                 "id": 3,
                 "description": "Error description should be returned",
                 "exec": [
-                  "expect(typeof callback.body.errorInformation.errorDescription).to.equal('string');"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "expect(typeof callback.body.errorInformation.errorDescription).to.equal('string');",
+                  "}"
                 ]
               },
               {

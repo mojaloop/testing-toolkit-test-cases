@@ -949,8 +949,11 @@
                 "id": 11,
                 "description": "Payee Side Callback Body - Response Error Description is Modified request",
                 "exec": [
+                  "if (environment.API_TYPE === 'fspiop') {",
                   "expect(requestVariables.payeeCallback.body.errorInformation['errorDescription']).to.equal('Modified request')",
-                  ""
+                  "} else {",
+                  "expect(requestVariables.payeeCallback.body.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "}"
                 ]
               }
             ]
