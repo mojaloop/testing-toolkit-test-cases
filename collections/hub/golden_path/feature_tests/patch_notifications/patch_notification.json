@@ -296,15 +296,23 @@
                 "id": 15,
                 "description": "Payee Notification transferState to be COMMITTED",
                 "exec": [
-                  "",
-                  "expect(environment.payeeCallbackNotification.body.transferState).to.equal('COMMITTED')"
+                  "if (environment.API_TYPE === 'iso20022') {",
+                  "  expect(environment.payeeCallbackNotification.body.TxInfAndSts.TxSts).to.equal('COMM')",
+                  "} else {",
+                  "  expect(environment.payeeCallbackNotification.body.transferState).to.equal('COMMITTED')",
+                  "}"
                 ]
               },
               {
                 "id": 16,
                 "description": "Payee Patch Notification Callback content-type to be transfers",
                 "exec": [
-                  "expect(environment.payeeCallbackNotification.headers['content-type']).to.equal('{$inputs.contentTypeTransfers}')"
+                  "if (environment.API_TYPE === 'iso20022') {",
+                  "  const expectedIsoContentType = environment.contentTypeTransfers.replace('application/vnd.interoperability', 'application/vnd.interoperability.iso20022')",
+                  "  expect(environment.payeeCallbackNotification.headers['content-type']).to.equal(expectedIsoContentType)",
+                  "} else {",
+                  "  expect(environment.payeeCallbackNotification.headers['content-type']).to.equal('{$inputs.contentTypeTransfers}')",
+                  "}"
                 ]
               }
             ]
