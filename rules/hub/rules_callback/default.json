@@ -912,6 +912,414 @@
     "version": 1
   },
   {
+    "ruleId": 256,
+    "priority": 1,
+    "description": "post /transfers - ISO20022 PUT Notifications Failure Test-case due to invalid FSPIOP-Destination",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "104",
+          "path": "CdtTrfTxInf.IntrBkSttlmAmt.ActiveCurrencyAndAmount"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "testingtoolkitdfsp",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "ttkpayeefsp",
+          "path": "FSPIOP-Destination"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "environment.CreDtTm = new Date().toISOString()",
+            "environment.AccptncDtTm = new Date().toISOString()",
+            "environment.PmtInstrXpryDtTm = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "body": {
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$environment.CreDtTm}"
+          },
+          "TxInfAndSts": {
+            "StsId": "{$function.generic.generateULID}",
+            "OrgnlInstrId": "{$request.body.CdtTrfTxInf.PmtId.InstrId}",
+            "OrgnlEndToEndId": "{$request.body.CdtTrfTxInf.PmtId.EndToEndId}",
+            "OrgnlTxId": "{$request.body.CdtTrfTxInf.PmtId.TxId}",
+            "OrgnlUETR": "123e4567-e89b-12d3-a456-426614174000",
+            "TxSts": "COMM",
+            "StsRsnInf": {
+              "Rsn": {
+                "Prtry": "COMM"
+              },
+              "AddtlInf": "ADDITIONAL"
+            },
+            "AccptncDtTm": "{$environment.AccptncDtTm}",
+            "PrcgDt": {
+              "Dt": "{$environment.AccptncDtTm}"
+            },
+            "AcctSvcrRef": "ACCTSVCRREF",
+            "ClrSysRef": "CLRSYSREF",
+            "ExctnConf": "",
+            "SplmtryData": {
+              "PlcAndNm": "PLACE",
+              "Envlp": {}
+            }
+          }
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.iso20022.transfers+json;version=2.0",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "doesnotexistfsp"
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 255,
+    "priority": 1,
+    "description": "post /transfers - ISO20022 PATCH Notifications Failure Test-case due to invalid fulfilment",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "103",
+          "path": "CdtTrfTxInf.IntrBkSttlmAmt.ActiveCurrencyAndAmount"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "testingtoolkitdfsp",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "ttkpayeefsp",
+          "path": "FSPIOP-Destination"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "environment.CreDtTm = new Date().toISOString()",
+            "environment.AccptncDtTm = new Date().toISOString()",
+            "environment.PmtInstrXpryDtTm = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "body": {
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$environment.CreDtTm}"
+          },
+          "TxInfAndSts": {
+            "StsId": "{$function.generic.generateULID}",
+            "OrgnlInstrId": "{$request.body.CdtTrfTxInf.PmtId.InstrId}",
+            "OrgnlEndToEndId": "{$request.body.CdtTrfTxInf.PmtId.EndToEndId}",
+            "OrgnlTxId": "{$request.body.CdtTrfTxInf.PmtId.TxId}",
+            "OrgnlUETR": "123e4567-e89b-12d3-a456-426614174000",
+            "TxSts": "RESV",
+            "StsRsnInf": {
+              "Rsn": {
+                "Prtry": "RESV"
+              },
+              "AddtlInf": "ADDITIONAL"
+            },
+            "AccptncDtTm": "{$environment.AccptncDtTm}",
+            "PrcgDt": {
+              "Dt": "{$environment.AccptncDtTm}"
+            },
+            "AcctSvcrRef": "ACCTSVCRREF",
+            "ClrSysRef": "CLRSYSREF",
+            "ExctnConf": "WLctttbu2HvTsa1XWvUocQozySqeu9Ahl2JW9Bsu8",
+            "SplmtryData": {
+              "PlcAndNm": "PLACE",
+              "Envlp": {}
+            }
+          }
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.iso20022.transfers+json;version=2.0",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 254,
+    "priority": 1,
+    "description": "post /transfers - ISO20022 ttkpayeefsp PATCH Notifications Failure Test-case due to invalid FSPIOP-Destination",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "102",
+          "path": "CdtTrfTxInf.IntrBkSttlmAmt.ActiveCurrencyAndAmount"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "testingtoolkitdfsp",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "ttkpayeefsp",
+          "path": "FSPIOP-Destination"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "environment.CreDtTm = new Date().toISOString()",
+            "environment.AccptncDtTm = new Date().toISOString()",
+            "environment.PmtInstrXpryDtTm = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "body": {
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$environment.CreDtTm}"
+          },
+          "TxInfAndSts": {
+            "StsId": "{$function.generic.generateULID}",
+            "OrgnlInstrId": "{$request.body.CdtTrfTxInf.PmtId.InstrId}",
+            "OrgnlEndToEndId": "{$request.body.CdtTrfTxInf.PmtId.EndToEndId}",
+            "OrgnlTxId": "{$request.body.CdtTrfTxInf.PmtId.TxId}",
+            "OrgnlUETR": "123e4567-e89b-12d3-a456-426614174000",
+            "TxSts": "RESV",
+            "StsRsnInf": {
+              "Rsn": {
+                "Prtry": "RESV"
+              },
+              "AddtlInf": "ADDITIONAL"
+            },
+            "AccptncDtTm": "{$environment.AccptncDtTm}",
+            "PrcgDt": {
+              "Dt": "{$environment.AccptncDtTm}"
+            },
+            "AcctSvcrRef": "ACCTSVCRREF",
+            "ClrSysRef": "CLRSYSREF",
+            "ExctnConf": "",
+            "SplmtryData": {
+              "PlcAndNm": "PLACE",
+              "Envlp": {}
+            }
+          }
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.iso20022.transfers+json;version=2.0",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "doesnotexistfsp"
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 253,
+    "priority": 1,
+    "description": "post /transfers - ISO20022 p2p_money_transfer_patch_notifications - payee receives PATCH Notification with COMMITTED after sending callback with RESERVED",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "101",
+          "path": "CdtTrfTxInf.IntrBkSttlmAmt.ActiveCurrencyAndAmount"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "testingtoolkitdfsp",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "ttkpayeefsp",
+          "path": "FSPIOP-Destination"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "environment.CreDtTm = new Date().toISOString()",
+            "environment.AccptncDtTm = new Date().toISOString()",
+            "environment.PmtInstrXpryDtTm = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "body": {
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$environment.CreDtTm}"
+          },
+          "TxInfAndSts": {
+            "StsId": "{$function.generic.generateULID}",
+            "OrgnlInstrId": "{$request.body.CdtTrfTxInf.PmtId.InstrId}",
+            "OrgnlEndToEndId": "{$request.body.CdtTrfTxInf.PmtId.EndToEndId}",
+            "OrgnlTxId": "{$request.body.CdtTrfTxInf.PmtId.TxId}",
+            "OrgnlUETR": "123e4567-e89b-12d3-a456-426614174000",
+            "TxSts": "RESV",
+            "StsRsnInf": {
+              "Rsn": {
+                "Prtry": "RESV"
+              },
+              "AddtlInf": "ADDITIONAL"
+            },
+            "AccptncDtTm": "{$environment.AccptncDtTm}",
+            "PrcgDt": {
+              "Dt": "{$environment.AccptncDtTm}"
+            },
+            "AcctSvcrRef": "ACCTSVCRREF",
+            "ClrSysRef": "CLRSYSREF",
+            "ExctnConf": "",
+            "SplmtryData": {
+              "PlcAndNm": "PLACE",
+              "Envlp": {}
+            }
+          }
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.iso20022.transfers+json;version=2.0",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
     "ruleId": 1,
     "priority": 1,
     "description": "ISO20022 Proxy get /parties/{Type}/{ID} Payer Scheme with Payee side Proxy as TTK - Happy Path",
