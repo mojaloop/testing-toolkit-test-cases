@@ -162,7 +162,7 @@
             "currency": "{$inputs.currency}",
             "limit": {
               "type": "NET_DEBIT_CAP",
-              "value": 10000000000
+              "value": "{$inputs.NET_DEBIT_CAP}"
             },
             "initialPosition": 0
           },
@@ -259,7 +259,7 @@
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.dfspfundsInPrepareAmount}",
+              "amount": "{$inputs.fundsIn}",
               "currency": "{$inputs.currency}"
             },
             "extensionList": {
@@ -291,8 +291,7 @@
             "preRequest": {
               "exec": [
                 "var uuid = require('uuid');",
-                "pm.environment.set('dfspfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('dfspfundsInPrepareAmount', 5000000000);"
+                "pm.environment.set('dfspfundsInPrepareTransferId', uuid.v4())"
               ]
             }
           }
@@ -332,7 +331,7 @@
                 "id": 2,
                 "description": "DFSP Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.dfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.dfspSettlementAccountBalanceBeforeFundsIn - +environment.dfspfundsInPrepareAmount)"
+                  "expect(+environment.dfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.dfspSettlementAccountBalanceBeforeFundsIn - {$inputs.fundsIn})"
                 ]
               }
             ]
