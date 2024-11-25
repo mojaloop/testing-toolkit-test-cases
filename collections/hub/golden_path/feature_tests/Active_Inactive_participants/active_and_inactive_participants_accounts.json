@@ -107,8 +107,8 @@
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
@@ -442,19 +442,19 @@
               },
               {
                 "id": 12,
-                "description": "Payer side Callback Body - errorCode is 3100",
+                "description": "Payer side Callback Body - errorCode is 3200",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorCode']).to.equal('3100')",
+                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorCode']).to.equal('3200')",
                   "}"
                 ]
               },
               {
                 "id": 13,
-                "description": "Payer side Callback Body - Error Description is Generic validation error",
+                "description": "Payer side Callback Body - Error Description is Generic ID not found",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Generic validation error - Participant')",
+                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Generic ID not found - Payer proxy or payee proxy not found')",
                   "}"
                 ]
               }
@@ -524,8 +524,8 @@
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
