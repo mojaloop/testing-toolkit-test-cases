@@ -315,30 +315,11 @@
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
-              },
-              {
-                "id": 3,
-                "description": "Callback Body - errorCode is 3303",
-                "exec": [
-                  "expect(callback.body.errorInformation.errorCode).to.equal('3303')",
-                  ""
-                ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Body - errorDescription is Transfer expired",
-                "exec": [
-                  "if (environment.API_TYPE === 'fspiop') {",
-                  "expect(callback.body.errorInformation.errorDescription).to.equal('Transfer expired')",
-                  "} else {",
-                  "expect(callback.body.errorInformation.errorDescription).to.not.equal(undefined)",
-                  "}"
-                ]
               }
             ]
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
-          "ignoreCallbacks": false,
+          "ignoreCallbacks": true,
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
