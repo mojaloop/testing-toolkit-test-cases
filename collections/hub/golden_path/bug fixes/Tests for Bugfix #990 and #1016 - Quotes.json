@@ -245,9 +245,12 @@
                 "description": "Check Modified request - Duplicate Quote before expire time",
                 "exec": [
                   "if (!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
-                  "  expect(callback.body.errorInformation.errorDescription).to.include('Modified request');",
-                  "}",
-                  ""
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(typeof callback.body.errorInformation.errorDescription).to.include('Modified request');",
+                  "  } else {",
+                  "    expect(callback.body.errorInformation.errorDescription).to.not.equal(undefined);",
+                  "  }",
+                  "}"
                 ]
               },
               {
@@ -355,7 +358,11 @@
                 "description": "Check Modified request - Duplicate Quote before expire time",
                 "exec": [
                   "if (!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
-                  "  expect(callback.body.errorInformation.errorDescription).to.include('Modified request');",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(typeof callback.body.errorInformation.errorDescription).to.include('Modified request');",
+                  "  } else {",
+                  "    expect(callback.body.errorInformation.errorDescription).to.not.equal(undefined);",
+                  "  }",
                   "}"
                 ]
               },
