@@ -1463,6 +1463,64 @@
       "fileInfo": {
         "path": "hub/provisioning/new_participants/new_dfsp.json"
       }
+    },
+    {
+      "id": 5,
+      "type": "Oracle Onboarding",
+      "name": "Oracle Onboarding",
+      "fileInfo": {
+        "path": "hub/provisioning/new_participants/new_dfsp.json"
+      },
+      "meta": {
+        "info": "Oracle Onboarding"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Register MSISDN Oracle"
+          },
+          "description": "Register MSISDN Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "body": {
+            "oracleIdType": "MSISDN",
+            "endpoint": {
+              "value": "{$inputs.HOST_ORACLE_MSISDN}",
+              "endpointType": "URL"
+            },
+            "currency": "{$inputs.currency}",
+            "isDefault": true
+          },
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_ADMIN}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 or errorCode 2001 already exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.body.errorInformation.errorCode).to.equal(\"2001\")",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }
