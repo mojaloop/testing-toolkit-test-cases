@@ -1,11 +1,18 @@
 {
-  "name": "multi",
+  "options": {},
+  "name": "hub_golden_path_bug fixes_other-bug-fixes",
   "test_cases": [
     {
       "id": 1,
       "name": "Check Settlements Error #956",
       "meta": {
         "info": "Check Settlements Error #956"
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/bug fixes/other-bug-fixes.json",
+        "labels": [
+          "prod-tests"
+        ]
       },
       "requests": [
         {
@@ -59,83 +66,6 @@
           }
         },
         {
-          "id": 7,
-          "meta": {
-            "info": "Check FSPIOP Headers from Switch #883"
-          },
-          "description": "Check FSPIOP Headers from Switch #883",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "fspiop",
-            "asynchronous": true
-          },
-          "operationPath": "/parties/{Type}/{ID}",
-          "path": "/parties/MSISDN/{$environment.msisdnid}",
-          "method": "get",
-          "params": {
-            "Type": "MSISDN",
-            "ID": "{$environment.msisdnid}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "ignoreCallbacks": true,
-          "headers": {
-            "Accept": "{$inputs.acceptParties}",
-            "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
-            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
-            "Content-Type": "{$inputs.contentTypeParties}"
-          },
-          "scriptingEngine": "javascript",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response code status 202",
-                "exec": [
-                  "expect(response.status).to.equal(202)"
-                ]
-              },
-              {
-                "id": 2,
-                "description": "Expected error code is 3204",
-                "exec": [
-                  "expect(environment.payercallbackx.data.errorInformation.errorCode).to.equal('3204');"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "Expected error description - party not Found",
-                "exec": [
-                  "expect(environment.payercallbackx.data.errorInformation.errorDescription).to.equal('Party not found');"
-                ]
-              }
-            ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "environment.msisdnid = 1999999;",
-                "",
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.msisdnid, 'payercallback')",
-                "}  ",
-                "  console.log(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.msisdnid);"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "",
-                "  ",
-                "  environment.payercallbackx = await websocket.getMessage('payercallback', environment.WS_ASSERTION_TIMEOUT)",
-                "}",
-                "console.log(environment.payercallbackx);"
-              ]
-            }
-          }
-        },
-        {
           "id": 8,
           "meta": {
             "info": "Check FSPIOP Headers from ML-API-Adapter #1032"
@@ -163,7 +93,7 @@
             "FSPIOP-HTTP-Method": "POST"
           },
           "body": {
-            "transferId": "{$function.generic.generateUUID}",
+            "transferId": "{$function.generic.generateID}",
             "payerFsp": "{$inputs.SIMPAYER_NAME}",
             "payeeFsp": "payeefspNOTFOUND",
             "amount": {
@@ -193,12 +123,16 @@
               },
               {
                 "id": 3,
-                "description": "Error code is 3100",
+                "description": "Error code is 3200",
                 "exec": [
-                  "expect(environment.payercallbackx.data.errorInformation.errorCode).to.equal('3100');"
+                  "expect(environment.payercallbackx.data.errorInformation.errorCode).to.equal('3200');"
                 ]
               }
             ]
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
           },
           "scripts": {
             "preRequest": {
@@ -224,10 +158,7 @@
             }
           }
         }
-      ],
-      "fileInfo": {
-        "path": "hub/golden_path/bug fixes/other-bug-fixes.json"
-      }
+      ]
     }
   ]
 }

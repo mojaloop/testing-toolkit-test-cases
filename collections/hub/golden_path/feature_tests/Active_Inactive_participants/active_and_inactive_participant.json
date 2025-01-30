@@ -70,8 +70,8 @@
             "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
@@ -203,7 +203,7 @@
                 "description": "Payer side Callback Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -239,7 +239,11 @@
                 "description": "Payer side Callback Body - Error Description is Destination FSP Error",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Unsupported participant')",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Unsupported participant')",
+                  "  } else {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "  }",
                   "}"
                 ]
               }
@@ -382,7 +386,7 @@
                 "description": "Payer side Callback Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -418,7 +422,11 @@
                 "description": "Payer side Callback Body - Error Description is Generic validation error",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Generic validation error - Participant')",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Generic validation error - Participant')",
+                  "  } else {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "  }",
                   "}"
                 ]
               }
@@ -489,8 +497,8 @@
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
@@ -620,7 +628,7 @@
                 "description": "Payee side Request Header - accept is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['Accept'])",
+                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['accept'])",
                   "}"
                 ]
               },
@@ -629,7 +637,7 @@
                 "description": "Payee side Request Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -869,7 +877,7 @@
                 "description": "Payee side Request Header - accept is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['Accept'])",
+                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['accept'])",
                   "}"
                 ]
               },
@@ -878,7 +886,7 @@
                 "description": "Payee side Request Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -978,7 +986,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/Active_Inactive_participants/active_and_inactive_participant.json"
+        "path": "hub/golden_path/feature_tests/Active_Inactive_participants/active_and_inactive_participant.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

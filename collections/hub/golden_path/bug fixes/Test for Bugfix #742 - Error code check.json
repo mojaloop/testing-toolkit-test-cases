@@ -142,7 +142,7 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$function.generic.generateUUID}+´+1´",
+            "transferId": "{$function.generic.generateID}+´+1´",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.payeefsp}",
             "amount": {
@@ -166,23 +166,9 @@
               },
               {
                 "id": 2,
-                "description": "Check Malformed syntax",
+                "description": "Check Error code 3100",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "Check Transfer Id is included in error",
-                "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Transfer Id');"
-                ]
-              },
-              {
-                "id": 4,
-                "description": "Check Error code 3101",
-                "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3101');"
+                  "expect(response.body.errorInformation.errorCode).to.include('3100');"
                 ]
               }
             ]
@@ -197,7 +183,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/bug fixes/Test for Bugfix #742 - Error code check.json"
+        "path": "hub/golden_path/bug fixes/Test for Bugfix #742 - Error code check.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

@@ -10,6 +10,7 @@
       "fileInfo": {
         "path": "hub/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path_with_balance_checks.json",
         "labels": [
+          "prod-tests",
           "p2p"
         ]
       },
@@ -83,7 +84,8 @@
           "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
           "headers": {
             "FSPIOP-Source": "{$inputs.toFspId}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Content-Type": "application/json"
           },
           "body": {
             "displayName": "Test PayeeFSP",
@@ -345,9 +347,9 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
-            "transactionRequestId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -476,7 +478,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -637,7 +639,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },

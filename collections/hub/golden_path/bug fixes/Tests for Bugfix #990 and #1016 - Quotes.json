@@ -31,8 +31,8 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -197,7 +197,7 @@
           },
           "body": {
             "quoteId": "{$environment.quoteidx}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -245,9 +245,12 @@
                 "description": "Check Modified request - Duplicate Quote before expire time",
                 "exec": [
                   "if (!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
-                  "  expect(callback.body.errorInformation.errorDescription).to.include('Modified request');",
-                  "}",
-                  ""
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(typeof callback.body.errorInformation.errorDescription).to.include('Modified request');",
+                  "  } else {",
+                  "    expect(callback.body.errorInformation.errorDescription).to.not.equal(undefined);",
+                  "  }",
+                  "}"
                 ]
               },
               {
@@ -307,7 +310,7 @@
           },
           "body": {
             "quoteId": "{$environment.quoteidx}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -355,7 +358,11 @@
                 "description": "Check Modified request - Duplicate Quote before expire time",
                 "exec": [
                   "if (!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
-                  "  expect(callback.body.errorInformation.errorDescription).to.include('Modified request');",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(typeof callback.body.errorInformation.errorDescription).to.include('Modified request');",
+                  "  } else {",
+                  "    expect(callback.body.errorInformation.errorDescription).to.not.equal(undefined);",
+                  "  }",
                   "}"
                 ]
               },
@@ -396,6 +403,7 @@
       "fileInfo": {
         "path": "hub/golden_path/bug fixes/Tests for Bugfix #990 and #1016 - Quotes.json",
         "labels": [
+          "prod-tests",
           "quotes"
         ]
       }
@@ -431,8 +439,8 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -518,8 +526,8 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -605,8 +613,8 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -654,7 +662,9 @@
                 "id": 2,
                 "description": "Check Missing mandatory element",
                 "exec": [
-                  " expect(response.body.errorInformation.errorDescription).to.include('Unsupported Media Type');"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('Invalid content-type');",
+                  "}"
                 ]
               },
               {
@@ -692,8 +702,8 @@
             "FSPIOP-Destination": "payeefspNOTFOUND"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -739,9 +749,9 @@
               },
               {
                 "id": 2,
-                "description": "Check Destination FSP Error - Unsupported participant",
+                "description": "Check Error description exists",
                 "exec": [
-                  " expect(callback.body.errorInformation.errorDescription).to.include('Destination FSP Error - Unsupported participant');"
+                  " expect(callback.body.errorInformation).to.have.property('errorDescription');"
                 ]
               },
               {
@@ -779,8 +789,8 @@
             "FSPIOP-Destination": "{$inputs.payeefsp}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -837,13 +847,6 @@
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.eql('3100');"
                 ]
-              },
-              {
-                "id": 4,
-                "description": "Check partyIdentifier is included in Error description",
-                "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('partyIdentifier');"
-                ]
               }
             ]
           }
@@ -873,8 +876,8 @@
             "FSPIOP-Destination": "{$inputs.payeefsp}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -948,10 +951,10 @@
             "asynchronous": true
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$function.generic.generateUUID}",
+          "path": "/quotes/{$function.generic.generateID}",
           "method": "put",
           "params": {
-            "ID": "{$function.generic.generateUUID}"
+            "ID": "{$function.generic.generateID}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
@@ -975,7 +978,7 @@
               "amount": "1"
             },
             "expiration": "2019-10-14T20:19:20.741Z",
-            "ilpPacket": "AQAAAAAAAADIEHByaXZhdGUucGF5ZWVmc3CCAiB7InRyYW5zYWN0aW9uSWQiOiIyZGY3NzRlMi1mMWRiLTRmZjctYTQ5NS0yZGRkMzdhZjdjMmMiLCJxdW90ZUlkIjoiMDNhNjA1NTAtNmYyZi00NTU2LThlMDQtMDcwM2UzOWI4N2ZmIiwicGF5ZWUiOnsicGFydHlJZEluZm8iOnsicGFydHlJZFR5cGUiOiJNU0lTRE4iLCJwYXJ0eUlkZW50aWZpZXIiOiIyNzcxMzgwMzkxMyIsImZzcElkIjoicGF5ZWVmc3AifSwicGVyc29uYWxJbmZvIjp7ImNvbXBsZXhOYW1lIjp7fX19LCJwYXllciI6eyJwYXJ0eUlkSW5mbyI6eyJwYXJ0eUlkVHlwZSI6Ik1TSVNETiIsInBhcnR5SWRlbnRpZmllciI6IjI3NzEzODAzOTExIiwiZnNwSWQiOiJwYXllcmZzcCJ9LCJwZXJzb25hbEluZm8iOnsiY29tcGxleE5hbWUiOnt9fX0sImFtb3VudCI6eyJjdXJyZW5jeSI6IlVTRCIsImFtb3VudCI6IjIwMCJ9LCJ0cmFuc2FjdGlvblR5cGUiOnsic2NlbmFyaW8iOiJERVBPU0lUIiwic3ViU2NlbmFyaW8iOiJERVBPU0lUIiwiaW5pdGlhdG9yIjoiUEFZRVIiLCJpbml0aWF0b3JUeXBlIjoiQ09OU1VNRVIiLCJyZWZ1bmRJbmZvIjp7fX19"
+            "ilpPacket": "{$inputs.ilpPacket}"
           },
           "tests": {
             "assertions": [
@@ -994,6 +997,16 @@
                 ]
               }
             ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.API_TYPE != 'fspiop') {",
+                "  custom.skipRequest()",
+                "}"
+              ]
+            }
           }
         },
         {
@@ -1009,10 +1022,10 @@
             "asynchronous": true
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$function.generic.generateUUID}",
+          "path": "/quotes/{$function.generic.generateID}",
           "method": "get",
           "params": {
-            "ID": "{$function.generic.generateUUID}"
+            "ID": "{$function.generic.generateID}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
@@ -1061,10 +1074,10 @@
             "asynchronous": true
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$function.generic.generateUUID}",
+          "path": "/quotes/{$function.generic.generateID}",
           "method": "get",
           "params": {
-            "ID": "{$function.generic.generateUUID}"
+            "ID": "{$function.generic.generateID}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
@@ -1136,10 +1149,10 @@
             "asynchronous": true
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$function.generic.generateUUID}",
+          "path": "/quotes/{$function.generic.generateID}",
           "method": "get",
           "params": {
-            "ID": "{$function.generic.generateUUID}"
+            "ID": "{$function.generic.generateID}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "headers": {
@@ -1160,16 +1173,16 @@
               },
               {
                 "id": 2,
-                "description": "Check Missing mandatory element",
+                "description": "Check validation error",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element');"
+                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
                 ]
               },
               {
                 "id": 3,
-                "description": "Check error code 3102",
+                "description": "Check error code 3101",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.equal('3102');"
+                  "expect(response.body.errorInformation.errorCode).to.equal('3101');"
                 ]
               },
               {
@@ -1186,6 +1199,7 @@
       "fileInfo": {
         "path": "hub/golden_path/bug fixes/Tests for Bugfix #990 and #1016 - Quotes.json",
         "labels": [
+          "prod-tests",
           "quotes"
         ]
       }

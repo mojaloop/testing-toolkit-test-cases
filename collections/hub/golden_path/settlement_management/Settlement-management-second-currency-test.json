@@ -5,7 +5,8 @@
       "id": 1,
       "name": "Pre-settlement account activation per participant for $currency2",
       "meta": {
-        "info": "Pre-settlement account activation per participant for $currency2"
+        "info": "Pre-settlement account activation per participant for $currency2",
+        "executionOrder": 4010
       },
       "requests": [
         {
@@ -404,6 +405,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -412,7 +414,8 @@
       "id": 2,
       "name": "Create Settlement on the current open window",
       "meta": {
-        "info": "Create Settlement on the current open window"
+        "info": "Create Settlement on the current open window",
+        "executionOrder": 4020
       },
       "requests": [
         {
@@ -1175,6 +1178,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -1183,7 +1187,8 @@
       "id": 3,
       "name": "Store settlement and position balances before",
       "meta": {
-        "info": "Store settlement and position balances before"
+        "info": "Store settlement and position balances before",
+        "executionOrder": 4030
       },
       "requests": [
         {
@@ -1510,6 +1515,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -1518,7 +1524,8 @@
       "id": 4,
       "name": "Send transfer from SIM1 to SIM2 in $currency2",
       "meta": {
-        "info": "Send transfer from SIM1 to SIM2 in $currency2"
+        "info": "Send transfer from SIM1 to SIM2 in $currency2",
+        "executionOrder": 4044
       },
       "requests": [
         {
@@ -1544,8 +1551,8 @@
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -1822,6 +1829,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -1830,7 +1838,8 @@
       "id": 5,
       "name": "Send transfer from SIM1 to PAYEEFSP in $currency2",
       "meta": {
-        "info": "Send transfer from SIM1 to PAYEEFSP in $currency2"
+        "info": "Send transfer from SIM1 to PAYEEFSP in $currency2",
+        "executionOrder": 4044
       },
       "requests": [
         {
@@ -1856,8 +1865,8 @@
             "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -2130,6 +2139,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -2138,7 +2148,8 @@
       "id": 6,
       "name": "Send transfer from PAYERFSP to SIM1 in $currency2",
       "meta": {
-        "info": "Send transfer from PAYERFSP to SIM1 in $currency2"
+        "info": "Send transfer from PAYERFSP to SIM1 in $currency2",
+        "executionOrder": 4044
       },
       "requests": [
         {
@@ -2164,8 +2175,8 @@
             "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -2438,6 +2449,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -2446,7 +2458,8 @@
       "id": 7,
       "name": "Send transfer from SIM2 to PAYERFSP in $currency2",
       "meta": {
-        "info": "Send transfer from SIM2 to PAYERFSP in $currency2"
+        "info": "Send transfer from SIM2 to PAYERFSP in $currency2",
+        "executionOrder": 4044
       },
       "requests": [
         {
@@ -2472,8 +2485,8 @@
             "Authorization": "{$inputs.TESTFSP2_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -2601,19 +2614,19 @@
             "preRequest": {
               "exec": [
                 "// NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
-                "// if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "//   await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'testfsp2callbacksq')",
-                "// }"
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'testfsp2callbacksq')",
+                "}"
               ]
             },
             "postRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
-                "  // environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
-                "  const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 1500",
-                "  await custom.sleep(customSleep)",
-                "  environment.testfsp2callbacks = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.quoteId}')).data",
+                "  environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
+                "  // const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 1500",
+                "  // await custom.sleep(customSleep)",
+                "  // environment.testfsp2callbacks = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.quoteId}')).data",
                 "}",
                 "",
                 "console.log(environment.testfsp2callbacks);",
@@ -2755,6 +2768,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -2763,7 +2777,8 @@
       "id": 8,
       "name": "Send transfer from PAYEEFSP to SIM2 in $currency2",
       "meta": {
-        "info": "Send transfer from PAYEEFSP to SIM2 in $currency2"
+        "info": "Send transfer from PAYEEFSP to SIM2 in $currency2",
+        "executionOrder": 4044
       },
       "requests": [
         {
@@ -2789,8 +2804,8 @@
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -2934,7 +2949,8 @@
                 "console.log(environment.transactionid);*/"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -3057,12 +3073,14 @@
                 "console.log(environment.payeefspcallbackst);"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -3071,7 +3089,8 @@
       "id": 9,
       "name": "Send transfer from PAYEEFSP to PAYERFSP in $currency2",
       "meta": {
-        "info": "Send transfer from PAYEEFSP to PAYERFSP in $currency2"
+        "info": "Send transfer from PAYEEFSP to PAYERFSP in $currency2",
+        "executionOrder": 4044
       },
       "requests": [
         {
@@ -3097,8 +3116,8 @@
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -3242,7 +3261,8 @@
                 "console.log(environment.transactionid);*/"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -3365,12 +3385,14 @@
                 "console.log(environment.payeefspcallbackst);"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -3379,7 +3401,8 @@
       "id": 10,
       "name": "Create Settlement on the current open window",
       "meta": {
-        "info": "Create Settlement on the current open window"
+        "info": "Create Settlement on the current open window",
+        "executionOrder": 4100
       },
       "requests": [
         {
@@ -3436,7 +3459,8 @@
                 "console.log(environment.openWindowID);"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -3519,7 +3543,8 @@
                 "//}"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -3610,12 +3635,14 @@
                 "*/"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -3624,7 +3651,8 @@
       "id": 11,
       "name": "Store Settlement&Position Account Balances After Transfers",
       "meta": {
-        "info": "Store Settlement&Position Account Balances After Transfers"
+        "info": "Store Settlement&Position Account Balances After Transfers",
+        "executionOrder": 4110
       },
       "requests": [
         {
@@ -3679,7 +3707,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -3733,7 +3762,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -3787,7 +3817,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 4,
@@ -3841,12 +3872,14 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -3855,7 +3888,8 @@
       "id": 12,
       "name": "Prepare-settlement",
       "meta": {
-        "info": "Prepare-settlement"
+        "info": "Prepare-settlement",
+        "executionOrder": 4120
       },
       "requests": [
         {
@@ -3957,7 +3991,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 5,
@@ -4046,12 +4081,14 @@
                 "environment.controlvar = isok;"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -4060,7 +4097,8 @@
       "id": 13,
       "name": "Store Settlement&Position Account Balances After Prepare",
       "meta": {
-        "info": "Store Settlement&Position Account Balances After Prepare"
+        "info": "Store Settlement&Position Account Balances After Prepare",
+        "executionOrder": 4130
       },
       "requests": [
         {
@@ -4129,7 +4167,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -4197,7 +4236,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -4265,7 +4305,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 4,
@@ -4333,12 +4374,14 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -4347,7 +4390,8 @@
       "id": 14,
       "name": "reserve-settlement",
       "meta": {
-        "info": "reserve-settlement"
+        "info": "reserve-settlement",
+        "executionOrder": 4140
       },
       "requests": [
         {
@@ -4449,7 +4493,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 5,
@@ -4538,12 +4583,14 @@
                 "environment.controlvar = isok;"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -4552,7 +4599,8 @@
       "id": 15,
       "name": "Store Settlement&Position Account Balances After Reserve",
       "meta": {
-        "info": "Store Settlement&Position Account Balances After Reserve"
+        "info": "Store Settlement&Position Account Balances After Reserve",
+        "executionOrder": 4150
       },
       "requests": [
         {
@@ -4621,7 +4669,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -4689,7 +4738,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -4757,7 +4807,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 4,
@@ -4825,12 +4876,14 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -4839,7 +4892,8 @@
       "id": 16,
       "name": "commit-settlement",
       "meta": {
-        "info": "commit-settlement"
+        "info": "commit-settlement",
+        "executionOrder": 4160
       },
       "requests": [
         {
@@ -4941,7 +4995,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 5,
@@ -5030,12 +5085,14 @@
                 "environment.controlvar = isok;"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -5044,7 +5101,8 @@
       "id": 17,
       "name": "Store Settlement&Position Account Balances After commit",
       "meta": {
-        "info": "Store Settlement&Position Account Balances After commit"
+        "info": "Store Settlement&Position Account Balances After commit",
+        "executionOrder": 4170
       },
       "requests": [
         {
@@ -5113,7 +5171,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -5181,7 +5240,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -5249,7 +5309,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 4,
@@ -5317,7 +5378,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 5,
@@ -5389,12 +5451,14 @@
                 "environment.hubMultilateralAccountBalanceAfterCommit = hubMultilateralAccountBalanceAfterCommit;"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -5403,7 +5467,8 @@
       "id": 18,
       "name": "settle-settlement",
       "meta": {
-        "info": "settle-settlement"
+        "info": "settle-settlement",
+        "executionOrder": 4180
       },
       "requests": [
         {
@@ -5505,7 +5570,8 @@
                 ""
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 5,
@@ -5594,12 +5660,14 @@
                 "environment.controlvar = isok;"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -5608,7 +5676,8 @@
       "id": 19,
       "name": "Store Settlement&Position Account Balances After Settle",
       "meta": {
-        "info": "Store Settlement&Position Account Balances After Settle"
+        "info": "Store Settlement&Position Account Balances After Settle",
+        "executionOrder": 4190
       },
       "requests": [
         {
@@ -5677,7 +5746,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 2,
@@ -5745,7 +5815,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 3,
@@ -5813,7 +5884,8 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         },
         {
           "id": 4,
@@ -5881,12 +5953,14 @@
                 "})"
               ]
             }
-          }
+          },
+          "disabled": false
         }
       ],
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-second-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }

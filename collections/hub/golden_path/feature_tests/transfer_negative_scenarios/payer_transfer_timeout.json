@@ -123,11 +123,11 @@
             "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "body": {
-            "transferId": "{$function.generic.generateUUID}",
+            "transferId": "{$function.generic.generateID}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "amount": {
-              "amount": "105.11",
+              "amount": "105",
               "currency": "{$inputs.currency}"
             },
             "expiration": "{$requestVariables.transferExpiration}",
@@ -228,9 +228,9 @@
             },
             "postRequest": {
               "exec": [
-                "requestVariables.payerCallback = await inboundEvent.getMessage('payerCallback')",
+                "requestVariables.payerCallback = await inboundEvent.getMessage('payerCallback', 15000)",
                 "console.log(requestVariables.payerCallback)",
-                "requestVariables.payeeCallback = await inboundEvent.getMessage('payeeCallback')",
+                "requestVariables.payeeCallback = await inboundEvent.getMessage('payeeCallback', 15000)",
                 "console.log(requestVariables.payeeCallback)"
               ]
             }
@@ -352,7 +352,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payer_transfer_timeout.json"
+        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payer_transfer_timeout.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

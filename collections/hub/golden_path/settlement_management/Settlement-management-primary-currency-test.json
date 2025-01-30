@@ -5,7 +5,8 @@
       "id": 1,
       "name": "Pre-settlement account activation per participant for $currency",
       "meta": {
-        "info": "Pre-settlement account activation per participant for $currency"
+        "info": "Pre-settlement account activation per participant for $currency",
+        "executionOrder": 3010
       },
       "requests": [
         {
@@ -404,6 +405,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -412,7 +414,8 @@
       "id": 2,
       "name": "Create Settlement on the current open window",
       "meta": {
-        "info": "Create Settlement on the current open window"
+        "info": "Create Settlement on the current open window",
+        "executionOrder": 3020
       },
       "requests": [
         {
@@ -1175,6 +1178,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -1183,7 +1187,8 @@
       "id": 3,
       "name": "Store settlement and position balances before",
       "meta": {
-        "info": "Store settlement and position balances before"
+        "info": "Store settlement and position balances before",
+        "executionOrder": 3030
       },
       "requests": [
         {
@@ -1510,6 +1515,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -1518,7 +1524,8 @@
       "id": 4,
       "name": "Send transfer in $currency from SIM1 to SIM2",
       "meta": {
-        "info": "Send transfer in $currency from SIM1 to SIM2"
+        "info": "Send transfer in $currency from SIM1 to SIM2",
+        "executionOrder": 3044
       },
       "requests": [
         {
@@ -1544,8 +1551,8 @@
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -1822,6 +1829,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -1830,7 +1838,8 @@
       "id": 5,
       "name": "Send transfer in $currency from SIM1 to PAYEEFSP",
       "meta": {
-        "info": "Send transfer in $currency from SIM1 to PAYEEFSP"
+        "info": "Send transfer in $currency from SIM1 to PAYEEFSP",
+        "executionOrder": 3044
       },
       "requests": [
         {
@@ -1856,8 +1865,8 @@
             "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -2130,6 +2139,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -2138,7 +2148,8 @@
       "id": 6,
       "name": "Send transfer in $currency from PAYERFSP to SIM1",
       "meta": {
-        "info": "Send transfer in $currency from PAYERFSP to SIM1"
+        "info": "Send transfer in $currency from PAYERFSP to SIM1",
+        "executionOrder": 3044
       },
       "requests": [
         {
@@ -2164,8 +2175,8 @@
             "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -2438,6 +2449,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -2446,7 +2458,8 @@
       "id": 7,
       "name": "Send transfer in $currency from SIM2 to PAYERFSP",
       "meta": {
-        "info": "Send transfer in $currency from SIM2 to PAYERFSP"
+        "info": "Send transfer in $currency from SIM2 to PAYERFSP",
+        "executionOrder": 3044
       },
       "requests": [
         {
@@ -2472,8 +2485,8 @@
             "Authorization": "{$inputs.TESTFSP2_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -2603,19 +2616,19 @@
                 "console.log(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}');",
                 "",
                 "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
-                " // if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  // await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'testfsp2callbacksq')",
-                " // }"
+                "  if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'testfsp2callbacksq')",
+                "  }"
               ]
             },
             "postRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
-                "  // environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
-                "  const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 2000",
-                "  await custom.sleep(customSleep)",
-                "  environment.testfsp2callbacks = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.quoteId}')).data",
+                "  environment.testfsp2callbacks = await websocket.getMessage('testfsp2callbacksq', environment.WS_ASSERTION_TIMEOUT)",
+                "  // const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 2000",
+                "  // await custom.sleep(customSleep)",
+                "  // environment.testfsp2callbacks = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.quoteId}')).data",
                 "}",
                 "",
                 "console.log(environment.testfsp2callbacks);",
@@ -2733,20 +2746,22 @@
             "preRequest": {
               "exec": [
                 "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
-                "  // if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  //  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'testfsp2callbackst')",
-                "  // }"
+                "  if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "    await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'testfsp2callbackst')",
+                "  }"
               ]
             },
             "postRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                 "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
-                "  // environment.testfsp2callbackst = await websocket.getMessage('testfsp2callbackst', environment.WS_ASSERTION_TIMEOUT)",
-                "  const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 2000",
-                "  await custom.sleep(customSleep)",
-                "  environment.testfsp2callbackst = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.transferId}')).data",
-                "}"
+                "  environment.testfsp2callbackst = await websocket.getMessage('testfsp2callbackst', environment.WS_ASSERTION_TIMEOUT)",
+                "  // const customSleep = Number.parseFloat(environment.SLEEP_MAX_WAIT_IN_MS) || 2000",
+                "  // await custom.sleep(customSleep)",
+                "  // environment.testfsp2callbackst = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/callbacks/{$request.body.transferId}')).data",
+                "  console.log(environment.testfsp2callbackst)",
+                "}",
+                ""
               ]
             }
           }
@@ -2755,6 +2770,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -2763,7 +2779,8 @@
       "id": 8,
       "name": "Send transfer in $currency from PAYEEFSP to SIM2",
       "meta": {
-        "info": "Send transfer in $currency from PAYEEFSP to SIM2"
+        "info": "Send transfer in $currency from PAYEEFSP to SIM2",
+        "executionOrder": 3044
       },
       "requests": [
         {
@@ -2789,8 +2806,8 @@
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -3063,6 +3080,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -3071,7 +3089,8 @@
       "id": 9,
       "name": "Send transfer in $currency from PAYEEFSP to PAYERFSP",
       "meta": {
-        "info": "Send transfer in $currency from PAYEEFSP to PAYERFSP"
+        "info": "Send transfer in $currency from PAYEEFSP to PAYERFSP",
+        "executionOrder": 3044
       },
       "requests": [
         {
@@ -3097,8 +3116,8 @@
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -3371,6 +3390,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -3379,7 +3399,8 @@
       "id": 10,
       "name": "Create Settlement on the current open window",
       "meta": {
-        "info": "Create Settlement on the current open window"
+        "info": "Create Settlement on the current open window",
+        "executionOrder": 3100
       },
       "requests": [
         {
@@ -3616,6 +3637,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -3624,7 +3646,8 @@
       "id": 11,
       "name": "Store Settlement&Position Account Balances After Transfers",
       "meta": {
-        "info": "Store Settlement&Position Account Balances After Transfers"
+        "info": "Store Settlement&Position Account Balances After Transfers",
+        "executionOrder": 3110
       },
       "requests": [
         {
@@ -3847,6 +3870,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -3855,7 +3879,8 @@
       "id": 12,
       "name": "Prepare-settlement",
       "meta": {
-        "info": "Prepare-settlement"
+        "info": "Prepare-settlement",
+        "executionOrder": 3120
       },
       "requests": [
         {
@@ -4052,6 +4077,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -4060,7 +4086,8 @@
       "id": 13,
       "name": "Store Settlement&Position Account Balances After Prepare",
       "meta": {
-        "info": "Store Settlement&Position Account Balances After Prepare"
+        "info": "Store Settlement&Position Account Balances After Prepare",
+        "executionOrder": 3130
       },
       "requests": [
         {
@@ -4339,6 +4366,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -4347,7 +4375,8 @@
       "id": 14,
       "name": "reserve-settlement",
       "meta": {
-        "info": "reserve-settlement"
+        "info": "reserve-settlement",
+        "executionOrder": 3140
       },
       "requests": [
         {
@@ -4544,6 +4573,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -4552,7 +4582,8 @@
       "id": 15,
       "name": "Store Settlement&Position Account Balances After Reserve",
       "meta": {
-        "info": "Store Settlement&Position Account Balances After Reserve"
+        "info": "Store Settlement&Position Account Balances After Reserve",
+        "executionOrder": 3150
       },
       "requests": [
         {
@@ -4831,6 +4862,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -4839,7 +4871,8 @@
       "id": 16,
       "name": "commit-settlement",
       "meta": {
-        "info": "commit-settlement"
+        "info": "commit-settlement",
+        "executionOrder": 3160
       },
       "requests": [
         {
@@ -5036,6 +5069,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -5044,7 +5078,8 @@
       "id": 17,
       "name": "Store Settlement&Position Account Balances After commit",
       "meta": {
-        "info": "Store Settlement&Position Account Balances After commit"
+        "info": "Store Settlement&Position Account Balances After commit",
+        "executionOrder": 3170
       },
       "requests": [
         {
@@ -5395,6 +5430,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -5403,7 +5439,8 @@
       "id": 18,
       "name": "settle-settlement",
       "meta": {
-        "info": "settle-settlement"
+        "info": "settle-settlement",
+        "executionOrder": 3180
       },
       "requests": [
         {
@@ -5600,6 +5637,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }
@@ -5608,7 +5646,8 @@
       "id": 19,
       "name": "Store Settlement&Position Account Balances After Settle",
       "meta": {
-        "info": "Store Settlement&Position Account Balances After Settle"
+        "info": "Store Settlement&Position Account Balances After Settle",
+        "executionOrder": 3190
       },
       "requests": [
         {
@@ -5887,6 +5926,7 @@
       "fileInfo": {
         "path": "hub/golden_path/settlement_management/Settlement-management-primary-currency-test.json",
         "labels": [
+          "prod-tests",
           "settlements"
         ]
       }

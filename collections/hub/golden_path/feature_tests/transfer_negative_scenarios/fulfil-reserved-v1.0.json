@@ -9,7 +9,10 @@
         "info": "Fulfil Reserved 1.0"
       },
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/fulfil-reserved-v1.0.json"
+        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/fulfil-reserved-v1.0.json",
+        "labels": [
+          "prod-tests"
+        ]
       },
       "requests": [
         {
@@ -37,8 +40,8 @@
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -546,15 +549,13 @@
                 "description": "Callback Body - error cause in extensionList",
                 "exec": [
                   "",
-                  "expect(requestVariables.transferCallback.body).to.have.property('extensionList')",
-                  "expect(requestVariables.transferCallback.body.extensionList).to.have.property('extension')",
-                  "",
-                  "const filteredExtensionListForCause = requestVariables.transferCallback.body.extensionList.extension.filter(ext => ext.key === \"cause\")",
-                  "",
-                  "expect(filteredExtensionListForCause.length).to.equal(1)",
-                  "",
-                  "expect(filteredExtensionListForCause[0].value).to.equal(\"3303: Transfer expired\")",
-                  "",
+                  "if (environment.API_TYPE === 'fspiop') {",
+                  "  expect(requestVariables.transferCallback.body).to.have.property('extensionList')",
+                  "  expect(requestVariables.transferCallback.body.extensionList).to.have.property('extension')",
+                  "  const filteredExtensionListForCause = requestVariables.transferCallback.body.extensionList.extension.filter(ext => ext.key === \"cause\")",
+                  "  expect(filteredExtensionListForCause.length).to.equal(1)",
+                  "  expect(filteredExtensionListForCause[0].value).to.equal(\"3303: Transfer expired\")",
+                  "}",
                   ""
                 ]
               }
@@ -584,14 +585,14 @@
                 "  let _callback = callback",
                 "",
                 "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    requestVariables.transferResponse = _response",
+                "    requestVariables.transferCallback = _callback",
                 "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
                 "    ",
                 "    const isOk = _callback?.body?.transferState === expectedTransferState;",
                 "    ",
                 "    if (isOk) {",
                 "      console.log(`Everything is OK, let's continue`)",
-                "      requestVariables.transferResponse = _response",
-                "      requestVariables.transferCallback = _callback",
                 "      break;",
                 "    } else {",
                 "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",

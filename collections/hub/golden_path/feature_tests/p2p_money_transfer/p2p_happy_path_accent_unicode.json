@@ -77,7 +77,8 @@
           "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
           "headers": {
             "FSPIOP-Source": "{$inputs.toAccentIdFspId}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Content-Type": "application/json"
           },
           "body": {
             "displayName": "Seán François Nuñez",
@@ -236,8 +237,8 @@
             "FSPIOP-Destination": "{$inputs.toAccentIdFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -374,7 +375,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -535,7 +536,7 @@
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -581,6 +582,7 @@
       "fileInfo": {
         "path": "hub/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path_accent_unicode.json",
         "labels": [
+          "prod-tests",
           "p2p"
         ]
       }

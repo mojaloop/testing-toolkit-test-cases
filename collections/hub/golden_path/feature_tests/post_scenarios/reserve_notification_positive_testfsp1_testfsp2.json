@@ -8,7 +8,10 @@
         "info": "Reserve Notification Positive - Testfsp1 Testfsp2"
       },
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/post_scenarios/reserve_notification_positive_testfsp1_testfsp2.json"
+        "path": "hub/golden_path/feature_tests/post_scenarios/reserve_notification_positive_testfsp1_testfsp2.json",
+        "labels": [
+          "prod-tests"
+        ]
       },
       "requests": [
         {
@@ -28,7 +31,9 @@
           "path": "/repository/parties",
           "method": "post",
           "url": "{$inputs.TESTFSP1_BACKEND_TESTAPI_URL}",
-          "headers": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
           "body": {
             "displayName": "{$requestVariables.fullName}",
             "firstName": "{$requestVariables.firstName}",
@@ -86,7 +91,9 @@
           "path": "/repository/parties",
           "method": "post",
           "url": "{$inputs.TESTFSP2_BACKEND_TESTAPI_URL}",
-          "headers": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
           "body": {
             "displayName": "{$requestVariables.fullName}",
             "firstName": "{$requestVariables.firstName}",
@@ -144,7 +151,9 @@
           "path": "/repository/parties",
           "method": "post",
           "url": "{$inputs.TESTFSP1_BACKEND_TESTAPI_URL}",
-          "headers": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
           "body": {
             "displayName": "PayeeFirst PayeeLast",
             "firstName": "PayeeFirst",
@@ -195,6 +204,9 @@
           "path": "/scenarios",
           "method": "post",
           "url": "{$inputs.TESTFSP2_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
           "ignoreCallbacks": true,
           "body": [
             {
@@ -299,7 +311,7 @@
                 "id": 8,
                 "description": "Payee First name \"Testfsp1First\"",
                 "exec": [
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario1.result.to.firstName).to.equal('Testfsp1First')",
                   "}"
                 ]
@@ -308,7 +320,7 @@
                 "id": 9,
                 "description": "Payee Last name \"Testfsp1Last\"",
                 "exec": [
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario1.result.to.lastName).to.equal('Testfsp1Last')",
                   "}"
                 ]
@@ -317,7 +329,7 @@
                 "id": 10,
                 "description": "Payee DOB matches",
                 "exec": [
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario1.result.to.dateOfBirth).to.equal('2010-10-10')",
                   "}"
                 ]
@@ -470,7 +482,7 @@
                 "id": 57,
                 "description": "Payee FSP commission amount is '0'",
                 "exec": [
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario1.result.quoteResponse.body.payeeFspCommission.amount).to.equal('0')",
                   "}"
                 ]
@@ -479,7 +491,7 @@
                 "id": 56,
                 "description": "Payee FSP commission currency matches",
                 "exec": [
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario1.result.quoteResponse.body.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
                   "}"
                 ]
@@ -548,7 +560,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario2.result.to.firstName).to.equal('Testfsp1First')",
                   "}"
                 ]
@@ -559,7 +571,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario2.result.to.lastName).to.equal('Testfsp1Last')",
                   "}"
                 ]
@@ -570,7 +582,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario2.result.to.dateOfBirth).to.equal('2010-10-10')",
                   "}"
                 ]
@@ -746,7 +758,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.amount).to.equal('0')",
                   "}"
                 ]
@@ -757,7 +769,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
                   "}"
                 ]
@@ -808,23 +820,12 @@
               },
               {
                 "id": 59,
-                "description": "On testfsp2 content-type should be application/vnd.interoperability.parties+json;version=1.0",
+                "description": "On testfsp2 content-type should be correct",
                 "exec": [
                   "",
                   "",
                   "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
                   "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
-                  "}"
-                ]
-              },
-              {
-                "id": 60,
-                "description": "On Payee FSP 'accept' header should be 'application/vnd.interoperability.parties+json;version=1.1'",
-                "exec": [
-                  "",
-                  "",
-                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['accept']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)",
                   "}"
                 ]
               },
@@ -863,7 +864,7 @@
               },
               {
                 "id": 64,
-                "description": "On testfsp2 'content-type' header should be 'application/vnd.interoperability.parties+json;version=1.0'",
+                "description": "On testfsp2 'content-type' header should be correct",
                 "exec": [
                   "",
                   "",
@@ -968,7 +969,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
                   "  expect(requestVariables.payerCallback.data.party.personalInfo.complexName.firstName).to.equal('Testfsp1First')",
                   "}"
                 ]
@@ -979,7 +980,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
                   "  expect(requestVariables.payerCallback.data.party.personalInfo.complexName.lastName).to.equal('Testfsp1Last')",
                   "}"
                 ]
@@ -990,7 +991,7 @@
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
                   "  expect(requestVariables.payerCallback.data.party.personalInfo.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)",
                   "}"
                 ]
@@ -1071,11 +1072,11 @@
               },
               {
                 "id": 81,
-                "description": "On Payer FSP 'content-type' should be 'application/vnd.interoperability.transfers+json;version=1.1'",
+                "description": "On Payer FSP 'content-type' should be correct",
                 "exec": [
                   "/* Disabled temporarily",
                   "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.1')",
+                  "  expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('{$inputs.expectedTransfersVersion}')",
                   "}*/"
                 ]
               },

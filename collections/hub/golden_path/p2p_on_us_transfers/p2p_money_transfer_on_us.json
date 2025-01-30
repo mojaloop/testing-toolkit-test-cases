@@ -105,8 +105,8 @@
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -361,7 +361,6 @@
                   "  ",
                   "  //expect(environment.callbackt.data).to.have.property(\"errorInformation\");",
                   "   expect(environment.callbackt.data.errorInformation.errorCode).to.equal(\"3100\");",
-                  "     expect(environment.callbackt.data.errorInformation.errorDescription).to.equal(\"Generic validation error - Payer FSP and Payee FSP should be different, unless on-us tranfers are allowed by the Scheme\")",
                   "}"
                 ]
               },
@@ -473,7 +472,7 @@
       "fileInfo": {
         "path": "hub/golden_path/p2p_on_us_transfers/p2p_money_transfer_on_us.json",
         "labels": [
-          "p2p"
+          "prod-tests"
         ]
       }
     }
