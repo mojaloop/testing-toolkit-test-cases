@@ -252,7 +252,7 @@
           "headers": {
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
-            "Date": "{$environment.transactionRequestDatex}",
+            "Date": "{$function.generic.curDate}",
             "Accept": "{$inputs.acceptTransactionRequests}",
             "FSPIOP-HTTP-Method": "GET",
             "FSPIOP-URI": "/transactionRequests",
@@ -311,7 +311,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/transaction_request_service/rejected State.json"
+        "path": "hub/golden_path/transaction_request_service/rejected State.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

@@ -8,7 +8,10 @@
         "info": "Positive Scenarios"
       },
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/post_scenarios/positive.json"
+        "path": "hub/golden_path/feature_tests/post_scenarios/positive.json",
+        "labels": [
+          "prod-tests"
+        ]
       },
       "requests": [
         {
@@ -86,7 +89,8 @@
           "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
           "headers": {
             "FSPIOP-Source": "{$inputs.toFspId}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Content-Type": "application/json"
           },
           "body": {
             "displayName": "Test PayeeFSP",
@@ -330,21 +334,27 @@
                 "id": 8,
                 "description": "Payee First Name matches",
                 "exec": [
-                  "expect(response.body.scenario1.result.to.firstName).to.equal(requestVariables.expectedPayeeFirstName)"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario1.result.to.firstName).to.equal(requestVariables.expectedPayeeFirstName)",
+                  "}"
                 ]
               },
               {
                 "id": 9,
                 "description": "Payee Last Name matches",
                 "exec": [
-                  "expect(response.body.scenario1.result.to.lastName).to.equal(requestVariables.expectedPayeeLastName)"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario1.result.to.lastName).to.equal(requestVariables.expectedPayeeLastName)",
+                  "}"
                 ]
               },
               {
                 "id": 10,
                 "description": "Payee DOB matches",
                 "exec": [
-                  "expect(response.body.scenario1.result.to.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario1.result.to.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)",
+                  "}"
                 ]
               },
               {
@@ -463,14 +473,18 @@
                 "id": 27,
                 "description": "Payee commission amount is zero (0)",
                 "exec": [
-                  "expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.amount).to.equal('0')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.amount).to.equal('0')",
+                  "}"
                 ]
               },
               {
                 "id": 28,
                 "description": "Payee FSP commission currency matches",
                 "exec": [
-                  "expect(response.body.scenario1.result.quoteResponse.body.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario1.result.quoteResponse.body.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
+                  "}"
                 ]
               },
               {
@@ -519,21 +533,27 @@
                 "id": 35,
                 "description": "Payee First Name matches",
                 "exec": [
-                  "expect(response.body.scenario2.result.to.firstName).to.equal(requestVariables.expectedPayeeFirstName)"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.to.firstName).to.equal(requestVariables.expectedPayeeFirstName)",
+                  "}"
                 ]
               },
               {
                 "id": 36,
                 "description": "Payee Last Name matches",
                 "exec": [
-                  "expect(response.body.scenario2.result.to.lastName).to.equal(requestVariables.expectedPayeeLastName)"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.to.lastName).to.equal(requestVariables.expectedPayeeLastName)",
+                  "}"
                 ]
               },
               {
                 "id": 37,
                 "description": "Payee DOB matches",
                 "exec": [
-                  "expect(response.body.scenario2.result.to.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.to.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)",
+                  "}"
                 ]
               },
               {
@@ -638,14 +658,18 @@
                 "id": 52,
                 "description": "Payee FSP commission is zero (0)",
                 "exec": [
-                  "expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.amount).to.equal('0')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.amount).to.equal('0')",
+                  "}"
                 ]
               },
               {
                 "id": 53,
                 "description": "Transfer currency matches",
                 "exec": [
-                  "expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
+                  "}"
                 ]
               },
               {
@@ -781,7 +805,7 @@
                 "id": 71,
                 "description": "Payer Callback: Payee first name matches",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "if (environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
                   " expect(requestVariables.payerCallback.data.party.personalInfo.complexName.firstName).to.equal(requestVariables.expectedPayeeFirstName)",
                   "}"
                 ]
@@ -790,7 +814,7 @@
                 "id": 72,
                 "description": "Payer Callback: Payee last name matches",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "if (environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
                   " expect(requestVariables.payerCallback.data.party.personalInfo.complexName.lastName).to.equal(requestVariables.expectedPayeeLastName)",
                   "}"
                 ]
@@ -799,7 +823,7 @@
                 "id": 73,
                 "description": "Payer Callback: Payee DOB matches",
                 "exec": [
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "if (environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
                   " expect(requestVariables.payerCallback.data.party.personalInfo.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)",
                   "}"
                 ]

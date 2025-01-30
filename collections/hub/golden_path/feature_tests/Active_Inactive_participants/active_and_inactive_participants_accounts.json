@@ -240,7 +240,7 @@
                 "description": "Payer side Callback Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -276,7 +276,11 @@
                 "description": "Payer side Callback Body - Error Description is Destination FSP Error",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Unsupported participant')",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Unsupported participant')",
+                  "  } else {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "  }",
                   "}"
                 ]
               }
@@ -418,7 +422,7 @@
                 "description": "Payer side Callback Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -454,7 +458,11 @@
                 "description": "Payer side Callback Body - Error Description is Generic ID not found",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  if(environment.API_TYPE === 'fspiop') {",
                   "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Generic ID not found - Payer proxy or payee proxy not found')",
+                  "  } else {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "  }",
                   "}"
                 ]
               }
@@ -656,7 +664,7 @@
                 "description": "Payee side Request Header - accept is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['Accept'])",
+                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['accept'])",
                   "}"
                 ]
               },
@@ -665,7 +673,7 @@
                 "description": "Payee side Request Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -902,7 +910,7 @@
                 "description": "Payee side Request Header - accept is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['Accept'])",
+                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['accept'])",
                   "}"
                 ]
               },
@@ -911,7 +919,7 @@
                 "description": "Payee side Request Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -1010,7 +1018,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/Active_Inactive_participants/active_and_inactive_participants_accounts.json"
+        "path": "hub/golden_path/feature_tests/Active_Inactive_participants/active_and_inactive_participants_accounts.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

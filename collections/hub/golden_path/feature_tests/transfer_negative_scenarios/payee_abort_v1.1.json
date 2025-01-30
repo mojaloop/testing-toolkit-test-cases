@@ -546,13 +546,13 @@
                 "  let _response = response",
                 "",
                 "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    response = _response ",
                 "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
                 "    ",
                 "    const isOk = +response.body?.[0]?.value === expectedBalance;",
                 "    ",
                 "    if (isOk) {",
                 "      console.log(`Everything is OK, let's continue`)",
-                "      response = _response",
                 "      break;",
                 "    } else {",
                 "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
@@ -647,7 +647,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payee_abort_v1.1.json"
+        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payee_abort_v1.1.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

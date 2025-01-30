@@ -91,6 +91,51 @@
               }
             ]
           }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Register MSISDN Oracle"
+          },
+          "description": "Register MSISDN Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "body": {
+            "oracleIdType": "MSISDN",
+            "endpoint": {
+              "value": "{$inputs.HOST_ORACLE_MSISDN}",
+              "endpointType": "URL"
+            },
+            "currency": "{$inputs.currency}",
+            "isDefault": true
+          },
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_ADMIN}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 or errorCode 2001 already exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.body.errorInformation.errorCode).to.equal(\"2001\")",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
         }
       ]
     },
@@ -162,7 +207,7 @@
             "currency": "{$inputs.currency}",
             "limit": {
               "type": "NET_DEBIT_CAP",
-              "value": 10000
+              "value": "{$inputs.NET_DEBIT_CAP}"
             },
             "initialPosition": 0
           },
@@ -259,7 +304,7 @@
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.dfspfundsInPrepareAmount}",
+              "amount": "{$inputs.fundsIn}",
               "currency": "{$inputs.currency}"
             },
             "extensionList": {
@@ -291,8 +336,7 @@
             "preRequest": {
               "exec": [
                 "var uuid = require('uuid');",
-                "pm.environment.set('dfspfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('dfspfundsInPrepareAmount', 5000);"
+                "pm.environment.set('dfspfundsInPrepareTransferId', uuid.v4())"
               ]
             }
           }
@@ -332,7 +376,7 @@
                 "id": 2,
                 "description": "DFSP Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.dfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.dfspSettlementAccountBalanceBeforeFundsIn - +environment.dfspfundsInPrepareAmount)"
+                  "expect(+environment.dfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.dfspSettlementAccountBalanceBeforeFundsIn - {$inputs.fundsIn})"
                 ]
               }
             ]

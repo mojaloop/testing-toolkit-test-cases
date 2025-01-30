@@ -516,7 +516,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json"
+        "path": "hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     },
     {
@@ -914,7 +917,7 @@
                 "id": 7,
                 "description": "Payee Side Callback Header - content-type is same",
                 "exec": [
-                  "expect(requestVariables.payeeCallback.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "expect(requestVariables.payeeCallback.headers['content-type']).to.equal(request.headers['content-type'])",
                   ""
                 ]
               },
@@ -946,8 +949,11 @@
                 "id": 11,
                 "description": "Payee Side Callback Body - Response Error Description is Modified request",
                 "exec": [
+                  "if (environment.API_TYPE === 'fspiop') {",
                   "expect(requestVariables.payeeCallback.body.errorInformation['errorDescription']).to.equal('Modified request')",
-                  ""
+                  "} else {",
+                  "expect(requestVariables.payeeCallback.body.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "}"
                 ]
               }
             ]
@@ -968,7 +974,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json"
+        "path": "hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

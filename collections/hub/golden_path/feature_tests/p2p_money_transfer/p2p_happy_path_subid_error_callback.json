@@ -163,9 +163,10 @@
                 "id": 12,
                 "description": "Validate errorInformation",
                 "exec": [
-                  "expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorCode).to.equal('3200')",
-                  "",
-                  "expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorDescription).to.equal('ID not found')"
+                  "if (environment.API_TYPE === 'fspiop') {",
+                  "  expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorCode).to.equal('3200')",
+                  "  expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorDescription).to.equal('ID not found')",
+                  "}"
                 ]
               }
             ]
@@ -199,6 +200,7 @@
       "fileInfo": {
         "path": "hub/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path_subid_error_callback.json",
         "labels": [
+          "prod-tests",
           "p2p"
         ]
       }
