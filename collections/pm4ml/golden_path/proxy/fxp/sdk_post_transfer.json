@@ -277,92 +277,30 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Status is 200",
+                "description": "Status is 500",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "expect(response.status).to.equal(500)"
                 ]
               },
               {
                 "id": 2,
-                "description": "Current state should be WAITING_FOR_CONVERSION_ACCEPTANCE",
+                "description": "Last Status Code should be 500",
                 "exec": [
-                  "expect(response.body.currentState).to.equal('WAITING_FOR_CONVERSION_ACCEPTANCE')"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 3,
-          "description": "Accept FX Conversion Quote",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 2,
-            "type": "mojaloop_connector_outbound",
-            "asynchronous": false
-          },
-          "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.response.body.transferId}",
-          "method": "put",
-          "params": {
-            "transferId": "{$prev.1.response.body.transferId}"
-          },
-          "body": {
-            "acceptConversion": true
-          },
-          "disabled": false,
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "expect(response.body.transferState.lastError.httpStatusCode).to.equal(500)"
                 ]
               },
               {
-                "id": 2,
-                "description": "Current state should be WAITING_FOR_QUOTE_ACCEPTANCE",
+                "id": 3,
+                "description": "Error Code should be 4200",
                 "exec": [
-                  "expect(response.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 4,
-          "description": "Accept Quote",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 2,
-            "type": "mojaloop_connector_outbound",
-            "asynchronous": false
-          },
-          "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.response.body.transferId}",
-          "method": "put",
-          "params": {
-            "transferId": "{$prev.1.response.body.transferId}"
-          },
-          "body": {
-            "acceptQuote": true
-          },
-          "disabled": false,
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
+                  "expect(response.body.transferState.lastError.mojaloopError.errorInformation.errorCode).to.equal('4200')"
                 ]
               },
               {
-                "id": 2,
-                "description": "NDC Limit error should be returned",
+                "id": 4,
+                "description": "Error description should be Payer Limit Error",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.equal('NDC Limit Error')"
+                  "expect(response.body.transferState.lastError.mojaloopError.errorInformation.errorDescription).to.equal('Payer Limit Error')"
                 ]
               }
             ]
