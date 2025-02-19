@@ -4,99 +4,6 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "Setup Hub accounts",
-      "meta": {
-        "info": "Hub account"
-      },
-      "requests": [
-        {
-          "id": 1,
-          "meta": {
-            "info": "Add {$inputs.HUB_NAME} Account-HUB_MULTILATERAL_SETTLEMENT FXP Currency"
-          },
-          "description": "Add {$inputs.HUB_NAME} Account-HUB_MULTILATERAL_SETTLEMENT FXP Currency",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.HUB_NAME}/accounts",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.HUB_NAME}"
-          },
-          "body": {
-            "type": "HUB_MULTILATERAL_SETTLEMENT",
-            "currency": "{$inputs.fxpCurrency}"
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "hub_operator"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "status to be 201 if not exists or 400 if exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.status).to.equal(400)",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 2,
-          "meta": {
-            "info": "Add {$inputs.HUB_NAME} Account-HUB_RECONCILIATION for the FXP currency"
-          },
-          "description": "Add {$inputs.HUB_NAME} Account-HUB_RECONCILIATION for the FXP currency",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.HUB_NAME}/accounts",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.HUB_NAME}"
-          },
-          "body": {
-            "type": "HUB_RECONCILIATION",
-            "currency": "{$inputs.fxpCurrency}"
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "hub_operator"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "status to be 201 if not exists or 400 if exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.status).to.equal(400)",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": 2,
       "name": "Setup FXP Accounts",
       "meta": {
         "info": "FXP Accounts"
@@ -188,7 +95,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": 2,
       "name": "Funds In",
       "meta": {
         "info": "Funds In"
@@ -362,7 +269,7 @@
       ]
     },
     {
-      "id": 4,
+      "id": 3,
       "name": "Setup Callback Endpoints",
       "meta": {
         "info": "FXP callbacks"
@@ -1341,7 +1248,7 @@
       ]
     },
     {
-      "id": 5,
+      "id": 4,
       "name": "Setup Notification Emails",
       "meta": {
         "info": "FXP notification_emails"
