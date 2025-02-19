@@ -1,0 +1,52 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Merchant ALIAS Account Lookup",
+      "meta": {
+        "info": "Lookup Merchant ALIAS Account from Oracle"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Lookup Merchant ALIAS Account from Oracle"
+          },
+          "description": "Lookup Merchant ALIAS Account from Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/participants/ALIAS/{$environment.MERCHANT_ALIAS_VALUE}",
+          "path": "/participants/ALIAS/{$environment.MERCHANT_ALIAS_VALUE}",
+          "method": "get",
+          "url": "{$inputs.MERCHANT_ORACLE_ENDPOINT_BASE_URL}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response body to have a merchant object",
+                "exec": [
+                  "expect(response.body).to.be.an('object');",
+                  "expect(response.body).to.have.property('partyList');",
+                  "expect(response.body.partyList).to.be.an('array');",
+                  "expect(response.body.partyList).to.have.length.above(0);",
+                  "expect(response.body.partyList[0].fspId).to.equal('greenbankfsp');"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
