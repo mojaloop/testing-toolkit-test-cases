@@ -107,6 +107,9 @@ collections/golden_path
 
 This collection contains all positive and negative scenarios to test against your DFSP implementation.
 
+### Merchant Provisioning
+See [Merchant Provisioning](./collections/hub/provisioning_merchant/README.md)
+
 ## Scripts
 
 ### Compare two TTK environment files:
