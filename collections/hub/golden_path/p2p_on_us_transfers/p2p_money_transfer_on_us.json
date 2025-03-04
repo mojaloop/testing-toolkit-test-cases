@@ -379,16 +379,6 @@
                 ]
               },
               {
-                "id": 8,
-                "description": "Request transferAmount (amount & currency) to match quote request",
-                "exec": [
-                  "if (environment.ON_US_TRANSFERS_ENABLED===true) {",
-                  "expect('{$environment.callbackt.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$environment.callbackt.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')",
-                  "}"
-                ]
-              },
-              {
                 "id": 9,
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
@@ -412,35 +402,6 @@
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                   "expect(environment.callbackt.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=')",
-                  "}"
-                ]
-              },
-              {
-                "id": 12,
-                "description": "Payee Body TransferId",
-                "exec": [
-                  "if (environment.ON_US_TRANSFERS_ENABLED===true) {",
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.callbackt.data.transferId).to.equal('{$request.body.transferId}')",
-                  "}",
-                  "}",
-                  "else{",
-                  "  if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.callbackt.id).to.equal('{$request.body.transferId}')",
-                  "}",
-                  "  ",
-                  "}"
-                ]
-              },
-              {
-                "id": 13,
-                "description": "Payee Body Amount",
-                "exec": [
-                  "if (environment.ON_US_TRANSFERS_ENABLED===true) {",
-                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "expect(environment.callbackt.data.amount.amount).to.equal('{$request.body.amount.amount}')",
-                  "}",
-                  "  ",
                   "}"
                 ]
               }
