@@ -446,10 +446,11 @@
               },
               {
                 "id": 12,
-                "description": "Payer side Callback Body - errorCode is 3200",
+                "description": "Payer side Callback Body - errorCode is 3100 or 3200",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorCode']).to.equal('3200')",
+                  "  // With INTERSCHEME enabled, we expect 3200, otherwise we expect 3100",
+                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorCode']).to.satisfy(value => value === '3100' || value === '3200' )",
                   "}"
                 ]
               },
@@ -459,7 +460,8 @@
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
                   "  if(environment.API_TYPE === 'fspiop') {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Generic ID not found - Payer proxy or payee proxy not found')",
+                  "    // The error descriptions are different when INTERSCHEME is enabled",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.satisfy(value => value.includes('account is inactive') || value.includes('Generic ID not found - Payer proxy or payee proxy not found'))",
                   "  } else {",
                   "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
                   "  }",
