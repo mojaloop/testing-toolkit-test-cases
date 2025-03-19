@@ -2,144 +2,6 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
-      "name": "Setup Hub accounts",
-      "meta": {
-        "info": "Hub account"
-      },
-      "requests": [
-        {
-          "id": 1,
-          "meta": {
-            "info": "Add {$inputs.HUB_NAME} Account-HUB_MULTILATERAL_SETTLEMENT Second Currency"
-          },
-          "description": "Add {$inputs.HUB_NAME} Account-HUB_MULTILATERAL_SETTLEMENT Second Currency",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.HUB_NAME}/accounts",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.HUB_NAME}"
-          },
-          "body": {
-            "type": "HUB_MULTILATERAL_SETTLEMENT",
-            "currency": "{$inputs.currency}"
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "hub_operator"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "status to be 201 if not exists or 400 if exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.status).to.equal(400)",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 2,
-          "meta": {
-            "info": "Add {$inputs.HUB_NAME} Account-HUB_RECONCILIATION for the DFSP currency"
-          },
-          "description": "Add {$inputs.HUB_NAME} Account-HUB_RECONCILIATION for the DFSP currency",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.HUB_NAME}/accounts",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.HUB_NAME}"
-          },
-          "body": {
-            "type": "HUB_RECONCILIATION",
-            "currency": "{$inputs.currency}"
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "hub_operator"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "status to be 201 if not exists or 400 if exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.status).to.equal(400)",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 3,
-          "meta": {
-            "info": "Register MSISDN Oracle"
-          },
-          "description": "Register MSISDN Oracle",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "als_admin"
-          },
-          "operationPath": "/oracles",
-          "path": "/oracles",
-          "method": "post",
-          "body": {
-            "oracleIdType": "MSISDN",
-            "endpoint": {
-              "value": "{$inputs.HOST_ORACLE_MSISDN}",
-              "endpointType": "URL"
-            },
-            "currency": "{$inputs.currency}",
-            "isDefault": true
-          },
-          "headers": {
-            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-            "Accept": "application/vnd.interoperability.participants+json;version=1",
-            "Date": "{$function.generic.curDate}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_ADMIN}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "status to be 201 or errorCode 2001 already exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.body.errorInformation.errorCode).to.equal(\"2001\")",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
       "id": 2,
       "name": "Setup DFSP accounts and limits",
       "meta": {
@@ -161,9 +23,9 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "{$inputs.DFSP_NAME}",
+            "name": "{$inputs.PROXY2_NAME}",
             "currency": "{$inputs.currency}",
-            "isProxy": "{$inputs.isProxy}"
+            "isProxy": "true"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -198,16 +60,16 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.DFSP_NAME}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.PROXY2_NAME}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "body": {
             "currency": "{$inputs.currency}",
             "limit": {
               "type": "NET_DEBIT_CAP",
-              "value": "{$inputs.NET_DEBIT_CAP}"
+              "value": 10000000000
             },
             "initialPosition": 0
           },
@@ -244,10 +106,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.DFSP_NAME}/accounts",
+          "path": "/participants/{$inputs.PROXY2_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -292,10 +154,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.DFSP_NAME}/accounts/{$environment.dfspSettlementAccountId}",
+          "path": "/participants/{$inputs.PROXY2_NAME}/accounts/{$environment.dfspSettlementAccountId}",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}",
+            "name": "{$inputs.PROXY2_NAME}",
             "id": "{$environment.dfspSettlementAccountId}"
           },
           "body": {
@@ -304,7 +166,7 @@
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$inputs.fundsIn}",
+              "amount": "{$environment.dfspfundsInPrepareAmount}",
               "currency": "{$inputs.currency}"
             },
             "extensionList": {
@@ -336,7 +198,8 @@
             "preRequest": {
               "exec": [
                 "var uuid = require('uuid');",
-                "pm.environment.set('dfspfundsInPrepareTransferId', uuid.v4())"
+                "pm.environment.set('dfspfundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('dfspfundsInPrepareAmount', 5000000000);"
               ]
             }
           }
@@ -353,10 +216,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.DFSP_NAME}/accounts",
+          "path": "/participants/{$inputs.PROXY2_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -376,7 +239,7 @@
                 "id": 2,
                 "description": "DFSP Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.dfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.dfspSettlementAccountBalanceBeforeFundsIn - {$inputs.fundsIn})"
+                  "expect(+environment.dfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.dfspSettlementAccountBalanceBeforeFundsIn - +environment.dfspfundsInPrepareAmount)"
                 ]
               }
             ]
@@ -420,10 +283,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -432,7 +295,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_AUTHORIZATIONS",
-            "value": "{$inputs.DFSP_CALLBACK_URL}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}"
           },
           "tests": {
             "assertions": [
@@ -458,10 +321,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -470,7 +333,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -496,10 +359,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -508,7 +371,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
@@ -534,10 +397,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -546,7 +409,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{requestId}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/participants/{{requestId}}"
           },
           "tests": {
             "assertions": [
@@ -572,10 +435,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -584,7 +447,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{requestId}}/error"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/participants/{{requestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -610,10 +473,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -622,7 +485,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -648,10 +511,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -660,7 +523,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -686,10 +549,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -698,7 +561,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
@@ -724,10 +587,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -735,7 +598,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_QUOTES",
-            "value": "{$inputs.DFSP_CALLBACK_URL}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}"
           },
           "tests": {
             "assertions": [
@@ -761,10 +624,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -772,7 +635,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE",
-            "value": "{$inputs.DFSP_CALLBACK_URL}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}"
           },
           "tests": {
             "assertions": [
@@ -798,10 +661,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -809,7 +672,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/transfers"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/transfers"
           },
           "tests": {
             "assertions": [
@@ -835,10 +698,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -846,7 +709,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/transfers/{{transferId}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}"
           },
           "tests": {
             "assertions": [
@@ -872,10 +735,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -883,7 +746,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/transfers/{{transferId}}/error"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}/error"
           },
           "tests": {
             "assertions": [
@@ -909,10 +772,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -920,7 +783,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/bulkTransfers"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers"
           },
           "tests": {
             "assertions": [
@@ -946,10 +809,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -957,7 +820,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/bulkTransfers/{{id}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers/{{id}}"
           },
           "tests": {
             "assertions": [
@@ -983,10 +846,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -994,7 +857,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/bulkTransfers/{{id}}/error"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers/{{id}}/error"
           },
           "tests": {
             "assertions": [
@@ -1020,10 +883,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1031,7 +894,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -1057,10 +920,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1068,7 +931,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
           },
           "tests": {
             "assertions": [
@@ -1094,10 +957,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1105,7 +968,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -1131,10 +994,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1142,7 +1005,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -1168,10 +1031,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1179,7 +1042,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -1205,10 +1068,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1216,7 +1079,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
           },
           "tests": {
             "assertions": [
@@ -1242,10 +1105,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1253,7 +1116,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_POST",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/fxTransfers"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers"
           },
           "tests": {
             "assertions": [
@@ -1279,10 +1142,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1290,7 +1153,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/fxTransfers/{{commitRequestId}}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}"
           },
           "tests": {
             "assertions": [
@@ -1316,10 +1179,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1327,7 +1190,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
-            "value": "{$inputs.DFSP_CALLBACK_URL}/fxTransfers/{{commitRequestId}}/error"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -1353,10 +1216,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1364,7 +1227,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
-            "value": "{$inputs.DFSP_CALLBACK_URL}"
+            "value": "{$inputs.PROXY2_CALLBACK_ENDPOINT_BASE_URL}"
           },
           "tests": {
             "assertions": [
@@ -1402,15 +1265,15 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.DFSP_NAME}"
+            "FSPIOP-Source": "{$inputs.PROXY2_NAME}"
           },
           "body": {
             "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
@@ -1440,10 +1303,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1478,15 +1341,15 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.DFSP_NAME}/endpoints",
+          "path": "/participants/{$inputs.PROXY2_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.DFSP_NAME}"
+            "name": "{$inputs.PROXY2_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.DFSP_NAME}"
+            "FSPIOP-Source": "{$inputs.PROXY2_NAME}"
           },
           "body": {
             "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",

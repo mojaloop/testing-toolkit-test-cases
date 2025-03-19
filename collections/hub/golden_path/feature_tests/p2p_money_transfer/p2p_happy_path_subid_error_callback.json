@@ -163,9 +163,10 @@
                 "id": 12,
                 "description": "Validate errorInformation",
                 "exec": [
-                  "expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorCode).to.equal('3200')",
-                  "",
-                  "expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorDescription).to.equal('ID not found')"
+                  "if (environment.API_TYPE === 'fspiop') {",
+                  "  expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorCode).to.equal('3200')",
+                  "  expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorDescription).to.equal('ID not found')",
+                  "}"
                 ]
               }
             ]

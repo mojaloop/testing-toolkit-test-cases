@@ -127,7 +127,7 @@
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "amount": {
-              "amount": "105.11",
+              "amount": "105",
               "currency": "{$inputs.currency}"
             },
             "expiration": "{$requestVariables.transferExpiration}",
@@ -228,9 +228,9 @@
             },
             "postRequest": {
               "exec": [
-                "requestVariables.payerCallback = await inboundEvent.getMessage('payerCallback')",
+                "requestVariables.payerCallback = await inboundEvent.getMessage('payerCallback', 15000)",
                 "console.log(requestVariables.payerCallback)",
-                "requestVariables.payeeCallback = await inboundEvent.getMessage('payeeCallback')",
+                "requestVariables.payeeCallback = await inboundEvent.getMessage('payeeCallback', 15000)",
                 "console.log(requestVariables.payeeCallback)"
               ]
             }

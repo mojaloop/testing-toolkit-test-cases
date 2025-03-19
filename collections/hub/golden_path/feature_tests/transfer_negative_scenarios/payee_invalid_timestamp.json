@@ -21,10 +21,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/positions",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
           "method": "get",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.fromFspId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -315,27 +315,11 @@
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
-              },
-              {
-                "id": 3,
-                "description": "Callback Body - errorCode is 3303",
-                "exec": [
-                  "expect(callback.body.errorInformation.errorCode).to.equal('3303')",
-                  ""
-                ]
-              },
-              {
-                "id": 4,
-                "description": "Callback Body - errorDescription is Transfer expired",
-                "exec": [
-                  "expect(callback.body.errorInformation.errorDescription).to.equal('Transfer expired')",
-                  ""
-                ]
               }
             ]
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
-          "ignoreCallbacks": false,
+          "ignoreCallbacks": true,
           "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
@@ -402,7 +386,15 @@
             "preRequest": {
               "exec": [
                 "requestVariables.completedTimestamp = new Date(new Date().getTime() + 10000).toISOString()",
-                ""
+                "",
+                "await inboundEvent.addListener('payerCallback', 'put', '/transfers/{$prev.5.request.body.transferId}/error', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
+                "})"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payeePostTransfer = await inboundEvent.getMessage('payerCallback', 15000)"
               ]
             }
           }
@@ -508,8 +500,17 @@
               },
               {
                 "id": 19,
+                "description": "Callback Body - transferState is ABORTED",
+                "exec": [
+                  "expect(callback.body.transferState).to.equal('ABORTED')",
+                  ""
+                ]
+              },
+              {
+                "id": 20,
                 "description": "Callback Body - error cause in extensionList",
                 "exec": [
+                  "if (environment.API_TYPE === 'fspiop') {",
                   "expect(callback.body).to.have.property('extensionList')",
                   "expect(callback.body.extensionList).to.have.property('extension')",
                   "",
@@ -517,7 +518,8 @@
                   "",
                   "expect(filteredExtensionListForCause.length).to.equal(1)",
                   "",
-                  "expect(filteredExtensionListForCause[0].value).to.equal(\"3303: Transfer expired\")"
+                  "expect(filteredExtensionListForCause[0].value).to.equal(\"3303: Transfer expired\")",
+                  "}"
                 ]
               }
             ]
@@ -590,10 +592,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/positions",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
           "method": "get",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.fromFspId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {

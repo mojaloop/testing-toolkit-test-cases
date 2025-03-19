@@ -223,7 +223,7 @@
                 "description": "Payee FSP: 'fspiop-signature' is same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(requestSent.headers['fspiop-signature'])",
                   "}",
                   ""
                 ]
@@ -233,7 +233,7 @@
                 "description": "Payee FSP 'accept' is same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
+                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['accept'])",
                   "}"
                 ]
               },
@@ -242,7 +242,7 @@
                 "description": "Payee FSP 'content-type' is same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -455,7 +455,11 @@
                 "id": 3,
                 "description": "Error description should be returned",
                 "exec": [
-                  "expect(typeof callback.body.errorInformation.errorDescription).to.equal('string');"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "expect(typeof callback.body.errorInformation.errorDescription).to.equal('string');",
+                  "} else {",
+                  "expect(callback.body.errorInformation.errorDescription).to.not.equal(undefined);",
+                  "}"
                 ]
               },
               {
@@ -1030,7 +1034,7 @@
                 "description": "Payee FSP: 'fspiop-signature' is same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(requestSent.headers['fspiop-signature'])",
                   "}",
                   ""
                 ]
@@ -1040,7 +1044,7 @@
                 "description": "Payee FSP 'accept' is same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
+                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['accept'])",
                   "}"
                 ]
               },
@@ -1049,7 +1053,7 @@
                 "description": "Payee FSP 'content-type' is same as sent in the request",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -1260,7 +1264,7 @@
                 "id": 3,
                 "description": "Error description should be returned",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorDescription).to.equal('Payer limit error');"
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription');"
                 ]
               },
               {

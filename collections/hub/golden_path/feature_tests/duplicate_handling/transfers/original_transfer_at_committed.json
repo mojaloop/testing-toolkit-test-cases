@@ -60,7 +60,8 @@
           "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
           "headers": {
             "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Content-Type": "application/json"
           },
           "body": {
             "displayName": "Test PayeeFSP",
@@ -216,7 +217,7 @@
                 "description": "Payee Side Request Header - fspiop-signature is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(requestSent.headers['fspiop-signature'])",
                   "}"
                 ]
               },
@@ -225,7 +226,7 @@
                 "description": "Payee Side Request Header - accept is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
+                  "  expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['accept'])",
                   "}"
                 ]
               },
@@ -234,7 +235,7 @@
                 "description": "Payee Side Request Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -243,7 +244,7 @@
                 "description": "Payee Side Request Header - fspiop-uri is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(request.headers['fspiop-uri'])",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(requestSent.headers['fspiop-uri'])",
                   "}"
                 ]
               },
@@ -252,7 +253,7 @@
                 "description": "Payee Side Request Header - fspiop-http-method is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(request.headers['fspiop-http-method'])",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(requestSent.headers['fspiop-http-method'])",
                   "}"
                 ]
               },
@@ -480,7 +481,7 @@
                 "description": "Payee Side Request Header - fspiop-signature is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(requestSent.headers['fspiop-signature'])",
                   "}"
                 ]
               },
@@ -489,7 +490,7 @@
                 "description": "Payee Side Request Header - accept is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
+                  "  expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['accept'])",
                   "}"
                 ]
               },
@@ -498,7 +499,7 @@
                 "description": "Payee Side Request Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
@@ -507,7 +508,7 @@
                 "description": "Payee Side Request Header - fspiop-uri is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(request.headers['fspiop-uri'])",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(requestSent.headers['fspiop-uri'])",
                   "}"
                 ]
               },
@@ -516,7 +517,7 @@
                 "description": "Payee Side Request Header - fspiop-http-method is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(request.headers['fspiop-http-method'])",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(requestSent.headers['fspiop-http-method'])",
                   "}"
                 ]
               },

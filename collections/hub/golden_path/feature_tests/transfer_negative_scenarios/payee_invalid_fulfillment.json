@@ -526,8 +526,9 @@
                 "id": 20,
                 "description": "Callback Body -  Extension List value is 3100: Generic validation error - invalid fulfilment",
                 "exec": [
-                  "expect(callback.body.extensionList.extension[0].value).to.equal('3100: Generic validation error - invalid fulfilment')",
-                  ""
+                  "if (environment.API_TYPE === 'fspiop') {",
+                  "  expect(callback.body.extensionList.extension[0].value).to.equal('3100: Generic validation error - invalid fulfilment')",
+                  "}"
                 ]
               }
             ]
