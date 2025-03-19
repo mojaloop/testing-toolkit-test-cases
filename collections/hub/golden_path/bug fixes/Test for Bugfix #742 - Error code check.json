@@ -123,7 +123,7 @@
           "meta": {
             "info": "Check Error 3101 Malformed syntax #742"
           },
-          "description": "Check Error 3101 Malformed syntax #742",
+          "description": "Check Error 3100 Malformed syntax #742",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
@@ -166,6 +166,20 @@
               },
               {
                 "id": 2,
+                "description": "Check Generic validation error",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Generic validation error');"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Transfer Id is included in error",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('transferId');"
+                ]
+              },
+              {
+                "id": 4,
                 "description": "Check Error code 3100",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100');"
