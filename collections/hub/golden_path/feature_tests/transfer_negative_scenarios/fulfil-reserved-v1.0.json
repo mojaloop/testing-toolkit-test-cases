@@ -127,10 +127,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.1.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.1.request.body.quoteId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.quoteId}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
@@ -176,7 +176,7 @@
             "preRequest": {
               "exec": [
                 "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.1.request.body.quoteId}', (headers, body) => {",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})"
               ]
@@ -274,10 +274,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -331,10 +331,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -450,10 +450,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -578,7 +578,7 @@
                 "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
                 "",
                 "const callbackName = 'put-transfer'",
-                "const callbackPath = `/transfers/{$prev.3.request.body.transferId}`",
+                "const callbackPath = `/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}`",
                 "",
                 "async function main() {",
                 "  let _response = response",
@@ -610,7 +610,7 @@
                 "async function makeRequest() {",
                 "  const reqParams = {",
                 "      method: 'get', ",
-                "      url: `{$inputs.HOST_ML_API_ADAPTER}/transfers/{$prev.3.request.body.transferId}`,",
+                "      url: `{$inputs.HOST_ML_API_ADAPTER}/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}`,",
                 "      headers: {",
                 "        'Content-Type': `{$inputs.contentTypeTransfers}`,",
                 "        Accept: `{$inputs.acceptTransfers}`,",

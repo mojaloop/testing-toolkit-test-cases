@@ -164,10 +164,10 @@
             "asynchronous": true
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.2.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-quote.request.body.quoteId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.2.request.body.quoteId}"
+            "ID": "{$prev.Send-quote.request.body.quoteId}"
           },
           "headers": {
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
@@ -216,8 +216,8 @@
                 "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
-                  "expect(callback.body.transferAmount.amount).to.equal('{$prev.2.request.body.amount.amount}')",
-                  "expect(callback.body.transferAmount.currency).to.equal('{$prev.2.request.body.amount.currency}')"
+                  "expect(callback.body.transferAmount.amount).to.equal('{$prev.Send-quote.request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$prev.Send-quote.request.body.amount.currency}')"
                 ]
               },
               {
@@ -231,21 +231,21 @@
                 "id": "cb-expiration-previous-cb",
                 "description": "Callback expiration to match with the previous callback",
                 "exec": [
-                  "expect(callback.body.expiration).to.equal('{$prev.2.callback.body.expiration}')"
+                  "expect(callback.body.expiration).to.equal('{$prev.Send-quote.callback.body.expiration}')"
                 ]
               },
               {
                 "id": "cb-ilpPacket-previous-cb",
                 "description": "Callback ilpPacket to match with the previous callback",
                 "exec": [
-                  "expect(callback.body.ilpPacket).to.equal('{$prev.2.callback.body.ilpPacket}')"
+                  "expect(callback.body.ilpPacket).to.equal('{$prev.Send-quote.callback.body.ilpPacket}')"
                 ]
               },
               {
                 "id": "cb-condition-previous-cb",
                 "description": "Callback condition to match with the previous callback",
                 "exec": [
-                  "expect(callback.body.condition).to.equal('{$prev.2.callback.body.condition}')"
+                  "expect(callback.body.condition).to.equal('{$prev.Send-quote.callback.body.condition}')"
                 ]
               }
             ]
@@ -483,22 +483,22 @@
                 "id": "req-transferId-quote-req-trans",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
-                  "expect('{$request.body.transferId}').to.equal('{$prev.2.request.body.transactionId}')"
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
                 ]
               },
               {
                 "id": "req-transferAmount-amt-curr-qu",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
-                  "expect('{$prev.2.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$prev.2.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
                 "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.2.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
@@ -517,10 +517,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-trans.request.body.transferId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-trans.request.body.transferId}"
           },
           "headers": {
             "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
@@ -562,14 +562,14 @@
                 "id": "cb-transferState-previous-cb",
                 "description": "Callback transferState to match with previous callback",
                 "exec": [
-                  "expect(callback.body.transferState).to.equal('{$prev.3.callback.body.transferState}')"
+                  "expect(callback.body.transferState).to.equal('{$prev.Send-trans.callback.body.transferState}')"
                 ]
               },
               {
                 "id": "cb-fulfilment-previous-cb",
                 "description": "Callback fulfilment to match with previous callback",
                 "exec": [
-                  "expect(callback.body.fulfilment).to.equal('{$prev.3.callback.body.fulfilment}')"
+                  "expect(callback.body.fulfilment).to.equal('{$prev.Send-trans.callback.body.fulfilment}')"
                 ]
               }
             ]

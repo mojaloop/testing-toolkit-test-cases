@@ -304,10 +304,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$prev.3.callback.body.party.partyIdInfo.fspId}/accounts",
+          "path": "/participants/{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}/accounts",
           "method": "get",
           "params": {
-            "name": "{$prev.3.callback.body.party.partyIdInfo.fspId}"
+            "name": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",
@@ -626,22 +626,22 @@
                 "id": "req-transferId-quote-req-trans",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
-                  "expect('{$request.body.transferId}').to.equal('{$prev.4.request.body.transactionId}')"
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
                 ]
               },
               {
                 "id": "req-transferAmount-amt-curr-qu",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
-                  "expect('{$prev.4.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$prev.4.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
                 "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.4.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
                 ]
               },
               {
@@ -875,10 +875,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$prev.3.callback.body.party.partyIdInfo.fspId}/accounts",
+          "path": "/participants/{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}/accounts",
           "method": "get",
           "params": {
-            "name": "{$prev.3.callback.body.party.partyIdInfo.fspId}"
+            "name": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "scriptingEngine": "javascript",

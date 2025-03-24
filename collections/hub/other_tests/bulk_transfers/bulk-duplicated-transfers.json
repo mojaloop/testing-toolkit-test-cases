@@ -421,7 +421,7 @@
           "headers": {
             "Accept": "{$inputs.acceptBulkTransfers}",
             "Content-Type": "{$inputs.contentBulkTransfers}",
-            "Date": "{$prev.3.request.headers.date}",
+            "Date": "{$prev.POST-Bulk-trans.request.headers.date}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
@@ -498,17 +498,17 @@
                 "id": "payerfsp-cb-compare-cb-against",
                 "description": "payerfsp callback - compare callback against previous callback",
                 "exec": [
-                  "expect(callback.body.bulkTransferState).to.equal('{$prev.3.callback.body.bulkTransferState}')",
+                  "expect(callback.body.bulkTransferState).to.equal('{$prev.POST-Bulk-trans.callback.body.bulkTransferState}')",
                   "",
-                  "expect(callback.body.completedTimestamp).to.equal('{$prev.3.callback.body.completedTimestamp}')",
+                  "expect(callback.body.completedTimestamp).to.equal('{$prev.POST-Bulk-trans.callback.body.completedTimestamp}')",
                   "",
-                  "expect(callback.body.individualTransferResults[0].transferId).to.equal('{$prev.3.callback.body.individualTransferResults[0].transferId}')",
+                  "expect(callback.body.individualTransferResults[0].transferId).to.equal('{$prev.POST-Bulk-trans.callback.body.individualTransferResults[0].transferId}')",
                   "",
-                  "expect(callback.body.individualTransferResults[0].fulfilment).to.equal('{$prev.3.callback.body.individualTransferResults[0].fulfilment}')",
+                  "expect(callback.body.individualTransferResults[0].fulfilment).to.equal('{$prev.POST-Bulk-trans.callback.body.individualTransferResults[0].fulfilment}')",
                   "",
-                  "expect(callback.body.individualTransferResults[1].transferId).to.equal('{$prev.3.callback.body.individualTransferResults[1].transferId}')",
+                  "expect(callback.body.individualTransferResults[1].transferId).to.equal('{$prev.POST-Bulk-trans.callback.body.individualTransferResults[1].transferId}')",
                   "",
-                  "expect(callback.body.individualTransferResults[1].fulfilment).to.equal('{$prev.3.callback.body.individualTransferResults[1].fulfilment}')",
+                  "expect(callback.body.individualTransferResults[1].fulfilment).to.equal('{$prev.POST-Bulk-trans.callback.body.individualTransferResults[1].fulfilment}')",
                   ""
                 ]
               }
@@ -965,7 +965,7 @@
           "headers": {
             "Accept": "{$inputs.acceptBulkTransfers}",
             "Content-Type": "{$inputs.contentBulkTransfers}",
-            "Date": "{$prev.3.request.headers.date}",
+            "Date": "{$prev.POST-Bulk-trans.request.headers.date}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },

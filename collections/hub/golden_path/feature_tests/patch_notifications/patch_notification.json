@@ -245,22 +245,22 @@
                 "id": "req-transferId-quote-req-trans",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
-                  "expect('{$request.body.transferId}').to.equal('{$prev.1.request.body.transactionId}')"
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
                 ]
               },
               {
                 "id": "req-transferAmount-amt-curr-qu",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
-                  "expect('{$prev.1.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$prev.1.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
                 "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.1.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
                 ]
               },
               {
@@ -575,22 +575,22 @@
                 "id": "req-transferId-quote-req-trans",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
-                  "expect('{$request.body.transferId}').to.equal('{$prev.1.request.body.transactionId}')"
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
                 ]
               },
               {
                 "id": "req-transferAmount-amt-curr-qu",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
-                  "expect('{$prev.1.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$prev.1.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
                 "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.1.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
                 ]
               },
               {
@@ -662,10 +662,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.1.request.body.transactionId}",
+          "path": "/transfers/{$prev.Send-quote.request.body.transactionId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.1.request.body.transactionId}"
+            "ID": "{$prev.Send-quote.request.body.transactionId}"
           },
           "headers": {
             "Accept": "{$inputs.acceptTransfers}",

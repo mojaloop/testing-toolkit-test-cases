@@ -148,10 +148,10 @@
             "asynchronous": true
           },
           "operationPath": "/transactionRequests/{ID}",
-          "path": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
+          "path": "/transactionRequests/{$prev.Payee-initiate-req.request.body.transactionRequestId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.5.request.body.transactionRequestId}"
+            "ID": "{$prev.Payee-initiate-req.request.body.transactionRequestId}"
           },
           "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
           "headers": {
@@ -160,7 +160,7 @@
             "Date": "{$function.generic.curDate}",
             "Content-Type": "{$inputs.contentTypeTransactionRequests}",
             "FSPIOP-HTTP-Method": "PUT",
-            "FSPIOP-URI": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
+            "FSPIOP-URI": "/transactionRequests/{$prev.Payee-initiate-req.request.body.transactionRequestId}",
             "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
@@ -202,7 +202,7 @@
                 "id": "transactionId-matches",
                 "description": "transactionId matches",
                 "exec": [
-                  "expect(environment.payeecallback.data.transactionId).to.equal('{$prev.5.request.body.transactionRequestId}');"
+                  "expect(environment.payeecallback.data.transactionId).to.equal('{$prev.Payee-initiate-req.request.body.transactionRequestId}');"
                 ]
               }
             ]
@@ -212,11 +212,11 @@
             "preRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.5.request.body.transactionRequestId}', 'payeecallback')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.Payee-initiate-req.request.body.transactionRequestId}', 'payeecallback')",
                 "  ",
                 " ",
                 "}",
-                "console.log(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.5.request.body.transactionRequestId}');"
+                "console.log(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.Payee-initiate-req.request.body.transactionRequestId}');"
               ]
             },
             "postRequest": {

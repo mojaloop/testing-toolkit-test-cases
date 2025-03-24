@@ -120,10 +120,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.1.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.1.request.body.quoteId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.quoteId}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
@@ -169,7 +169,7 @@
             "preRequest": {
               "exec": [
                 "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.1.request.body.quoteId}', (headers, body) => {",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})"
               ]
@@ -262,10 +262,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}/error",
-          "path": "/transfers/{$prev.3.request.body.transferId}/error",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}/error",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -313,7 +313,7 @@
             "preRequest": {
               "exec": [
                 "environment.fulfillCompletedTimestamp = new Date().toISOString()",
-                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.3.request.body.transferId}/error', (headers, body) => {",
+                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}/error', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})",
                 ""
@@ -334,10 +334,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}/error",
-          "path": "/transfers/{$prev.3.request.body.transferId}/error",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}/error",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -384,7 +384,7 @@
             },
             "preRequest": {
               "exec": [
-                "await inboundEvent.addListener('payeeFulfilCallback', 'put', '/transfers/{$prev.3.request.body.transferId}', (headers, body) => {",
+                "await inboundEvent.addListener('payeeFulfilCallback', 'put', '/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
                 "})",
                 ""
@@ -405,10 +405,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -635,10 +635,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.1.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.1.request.body.quoteId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.quoteId}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
@@ -684,7 +684,7 @@
             "preRequest": {
               "exec": [
                 "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.1.request.body.quoteId}', (headers, body) => {",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})"
               ]
@@ -777,10 +777,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}/error",
-          "path": "/transfers/{$prev.3.request.body.transferId}/error",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}/error",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -828,7 +828,7 @@
             "preRequest": {
               "exec": [
                 "environment.fulfillCompletedTimestamp = new Date().toISOString()",
-                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.3.request.body.transferId}/error', (headers, body) => {",
+                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}/error', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})",
                 ""
@@ -849,10 +849,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}/error",
-          "path": "/transfers/{$prev.3.request.body.transferId}/error",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}/error",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -906,7 +906,7 @@
             },
             "preRequest": {
               "exec": [
-                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.3.request.body.transferId}', (headers, body) => {",
+                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
                 "})",
                 ""
@@ -927,10 +927,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {

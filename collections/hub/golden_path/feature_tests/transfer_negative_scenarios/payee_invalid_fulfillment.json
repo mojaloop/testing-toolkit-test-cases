@@ -204,10 +204,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.3.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.quoteId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.quoteId}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
@@ -253,7 +253,7 @@
             "preRequest": {
               "exec": [
                 "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.3.request.body.quoteId}', (headers, body) => {",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})"
               ]
@@ -350,10 +350,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transactionId}",
+          "path": "/transfers/{$prev.Send-Quote-RECEIVE.request.body.transactionId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transactionId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.transactionId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -401,7 +401,7 @@
               "exec": [
                 "requestVariables.completedTimestamp = new Date().toISOString()",
                 "",
-                "await inboundEvent.addListener('payee_invalid_fulfillment_put_transfer_id', 'put', '/transfers/{$prev.5.request.body.transferId}/error')",
+                "await inboundEvent.addListener('payee_invalid_fulfillment_put_transfer_id', 'put', '/transfers/{$prev.Send-Prepare.request.body.transferId}/error')",
                 ""
               ]
             },
@@ -428,10 +428,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transactionId}",
+          "path": "/transfers/{$prev.Send-Quote-RECEIVE.request.body.transactionId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.3.request.body.transactionId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.transactionId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
