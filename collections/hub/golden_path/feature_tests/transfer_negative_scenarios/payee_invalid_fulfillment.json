@@ -10,7 +10,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Store-SIMPAYER-pos",
           "meta": {
             "info": "Store SIMPAYER position"
           },
@@ -52,7 +52,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Store-SIMPAYEE-pos",
           "meta": {
             "info": "Store NORESPONSE_SIMPAYEE position"
           },
@@ -94,7 +94,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-Quote-RECEIVE",
           "meta": {
             "info": "Send Quote - RECEIVE"
           },
@@ -190,7 +190,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-Quote-rsp",
           "description": "Send Quote - Response",
           "apiVersion": {
             "minorVersion": 1,
@@ -212,19 +212,19 @@
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
             "transferAmount": {
-              "currency": "{$prev.3.request.body.amount.currency}",
-              "amount": "{$prev.3.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeReceiveAmount": {
-              "currency": "{$prev.3.request.body.amount.currency}",
-              "amount": "{$prev.3.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeFspFee": {
-              "currency": "{$prev.3.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "payeeFspCommission": {
-              "currency": "{$prev.3.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "expiration": "{$requestVariables.quoteExpiration}",
@@ -267,7 +267,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-Prepare",
           "meta": {
             "info": "Send Prepare"
           },
@@ -289,16 +289,16 @@
             "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "body": {
-            "transferId": "{$prev.3.request.body.transactionId}",
+            "transferId": "{$prev.Send-Quote-RECEIVE.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.request.body.expiration}",
-            "ilpPacket": "{$prev.4.request.body.ilpPacket}",
-            "condition": "{$prev.4.request.body.condition}"
+            "expiration": "{$prev.Send-Quote-rsp.request.body.expiration}",
+            "ilpPacket": "{$prev.Send-Quote-rsp.request.body.ilpPacket}",
+            "condition": "{$prev.Send-Quote-rsp.request.body.condition}"
           },
           "tests": {
             "assertions": [
@@ -338,7 +338,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Send-Payee-Invalid-Fulfillment",
           "meta": {
             "info": "Send Payee Invalid Fulfillment"
           },
@@ -416,7 +416,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Check-trans-status-SIMPAYER-AB",
           "meta": {
             "info": "Check Transfer status on SIMPAYER - ABORTED"
           },
@@ -535,7 +535,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Check-Payeefsp-pos",
           "meta": {
             "info": "Check Payeefsp position"
           },
@@ -590,7 +590,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "Check-Payerfsp-pos",
           "meta": {
             "info": "Check Payerfsp position"
           },

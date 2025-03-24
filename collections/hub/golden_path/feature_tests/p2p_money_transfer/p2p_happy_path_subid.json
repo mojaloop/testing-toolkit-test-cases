@@ -9,7 +9,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-part-ALS",
           "meta": {
             "info": "Add Participant to ALS"
           },
@@ -79,7 +79,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Add-Party-Simulator",
           "meta": {
             "info": "Add Party to Simulator"
           },
@@ -112,7 +112,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Get-party-information",
           "meta": {
             "info": "Get party information"
           },
@@ -247,7 +247,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -287,10 +287,10 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.3.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.3.callback.body.party.partyIdInfo.partyIdentifier}",
-                "partySubIdOrType": "{$prev.3.callback.body.party.partyIdInfo.partySubIdOrType}",
-                "fspId": "{$prev.3.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdentifier}",
+                "partySubIdOrType": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partySubIdOrType}",
+                "fspId": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "RECEIVE",
@@ -448,7 +448,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -469,16 +469,16 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$prev.4.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
-            "payeeFsp": "{$prev.3.callback.body.party.partyIdInfo.fspId}",
+            "payeeFsp": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.callback.body.expiration}",
-            "ilpPacket": "{$prev.4.callback.body.ilpPacket}",
-            "condition": "{$prev.4.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
           "tests": {

@@ -9,7 +9,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Send-Quote",
           "meta": {
             "info": "Send Quote"
           },
@@ -244,7 +244,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-trans",
           "meta": {
             "info": "Send Transfer"
           },
@@ -261,16 +261,16 @@
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "scriptingEngine": "javascript",
           "body": {
-            "transferId": "{$prev.1.request.body.transactionId}",
+            "transferId": "{$prev.Send-Quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
             "amount": {
               "amount": "10",
               "currency": "{$inputs.SIMPAYEE_CURRENCY}"
             },
-            "expiration": "{$prev.1.callback.body.expiration}",
-            "ilpPacket": "{$prev.1.callback.body.ilpPacket}",
-            "condition": "{$prev.1.callback.body.condition}"
+            "expiration": "{$prev.Send-Quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-Quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-Quote.callback.body.condition}"
           },
           "headers": {
             "Accept": "{$inputs.acceptTransfers}",
@@ -507,7 +507,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "GET-trans-COMMITTED",
           "meta": {
             "info": "GET transfer - COMMITTED"
           },
@@ -621,7 +621,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "src-original-receiver",
           "meta": {
             "info": "Source is original receiver"
           },
@@ -749,7 +749,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "src-not-part-original-sender-r",
           "meta": {
             "info": "Source is not part of original sender/receiver"
           },
@@ -890,7 +890,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "200-3208-trans-ID-not-found",
           "meta": {
             "info": "200 - 3208 - Transfer ID not found"
           },

@@ -15,7 +15,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -166,7 +166,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -187,16 +187,16 @@
             "FSPIOP-Destination": "ttkpayeefsp"
           },
           "body": {
-            "transferId": "{$prev.1.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "ttkpayeefsp",
             "amount": {
               "amount": "{$environment.patchAmount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.1.callback.body.expiration}",
-            "ilpPacket": "{$prev.1.callback.body.ilpPacket}",
-            "condition": "{$prev.1.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
@@ -332,7 +332,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Get-trans",
           "description": "Get Transfer",
           "apiVersion": {
             "minorVersion": 1,
@@ -381,7 +381,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -532,7 +532,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -553,16 +553,16 @@
             "FSPIOP-Destination": "ttkpayeefsp"
           },
           "body": {
-            "transferId": "{$prev.1.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "ttkpayeefsp",
             "amount": {
               "amount": "{$environment.patchAmount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.1.callback.body.expiration}",
-            "ilpPacket": "{$prev.1.callback.body.ilpPacket}",
-            "condition": "{$prev.1.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
@@ -690,7 +690,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Get-trans",
           "description": "Get Transfer",
           "apiVersion": {
             "minorVersion": 1,

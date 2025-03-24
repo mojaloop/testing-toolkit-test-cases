@@ -9,7 +9,7 @@
       },
       "requests": [
         {
-          "id": 3,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -170,7 +170,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -191,16 +191,16 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$prev.3.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.payeefsp}",
             "amount": {
               "amount": "60.1234",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.3.callback.body.expiration}",
-            "ilpPacket": "{$prev.3.callback.body.ilpPacket}",
-            "condition": "{$prev.3.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [

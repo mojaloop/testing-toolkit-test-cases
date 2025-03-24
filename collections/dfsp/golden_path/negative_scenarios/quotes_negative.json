@@ -9,7 +9,7 @@
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -153,7 +153,7 @@
           "path": "/quotes"
         },
         {
-          "id": 4,
+          "id": "Post-Quote-Missing-content-hdr",
           "meta": {
             "info": "Post Quote - Missing content header (BUG)"
           },
@@ -260,7 +260,7 @@
           "path": "/quotes"
         },
         {
-          "id": 5,
+          "id": "Post-Quote-Missing-Accept-hdr",
           "meta": {
             "info": "Post Quote - Missing Accept header"
           },
@@ -367,7 +367,7 @@
           "path": "/quotes"
         },
         {
-          "id": 6,
+          "id": "Post-Quote-Missing-Date-hdr",
           "meta": {
             "info": "Post Quote - Missing Date header"
           },
@@ -474,7 +474,7 @@
           "path": "/quotes"
         },
         {
-          "id": 7,
+          "id": "Post-Quote-Missing-FSPIOP-src-",
           "meta": {
             "info": "Post Quote - Missing FSPIOP Source header"
           },
@@ -590,7 +590,7 @@
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -734,7 +734,7 @@
           "path": "/quotes"
         },
         {
-          "id": 4,
+          "id": "Post-Quote-Wrong-content-hdr-B",
           "meta": {
             "info": "Post Quote - Wrong content header (BUG)"
           },
@@ -842,7 +842,7 @@
           "path": "/quotes"
         },
         {
-          "id": 5,
+          "id": "Post-Quote-Missing-Accept-hdr-",
           "meta": {
             "info": "Post Quote - Missing Accept header (BUG)"
           },
@@ -949,7 +949,7 @@
           "path": "/quotes"
         },
         {
-          "id": 6,
+          "id": "Post-Quote-Wrong-Date-hdr-BUG",
           "meta": {
             "info": "Post Quote - Wrong Date header (BUG)"
           },
@@ -1059,7 +1059,7 @@
       },
       "requests": [
         {
-          "id": 4,
+          "id": "Post-Quote-Missing-quote-ID",
           "meta": {
             "info": "Post Quote - Missing quote ID in Body"
           },
@@ -1167,7 +1167,7 @@
           "path": "/quotes"
         },
         {
-          "id": 5,
+          "id": "Post-Quote-Missing-txn-ID",
           "meta": {
             "info": "Post Quote - Missing transaction ID in body"
           },
@@ -1275,7 +1275,7 @@
           "path": "/quotes"
         },
         {
-          "id": 6,
+          "id": "Post-Quote-Missing-payer-info",
           "meta": {
             "info": "Post Quote - Missing payer info in body "
           },
@@ -1379,7 +1379,7 @@
           "path": "/quotes"
         },
         {
-          "id": 7,
+          "id": "Post-Quote-Missing-amt-type",
           "meta": {
             "info": "Post Quote - Missing amount type in Body"
           },
@@ -1487,7 +1487,7 @@
           "path": "/quotes"
         },
         {
-          "id": 8,
+          "id": "Post-Quote-Missing-amt",
           "meta": {
             "info": "Post Quote - Missing amount in Body "
           },
@@ -1595,7 +1595,7 @@
           "path": "/quotes"
         },
         {
-          "id": 9,
+          "id": "Post-Quote-Missing-curr",
           "meta": {
             "info": "Post Quote - Missing currency in Body"
           },
@@ -1703,7 +1703,7 @@
           "path": "/quotes"
         },
         {
-          "id": 10,
+          "id": "Post-Quote-Missing-transaction",
           "meta": {
             "info": "Post Quote - Missing transactionType-scenario in Body"
           },
@@ -1811,7 +1811,7 @@
           "path": "/quotes"
         },
         {
-          "id": 11,
+          "id": "Post-Quote-Missing-transaction",
           "meta": {
             "info": "Post Quote - Missing transactionType-initiatorType in Body "
           },
@@ -1919,7 +1919,7 @@
           "path": "/quotes"
         },
         {
-          "id": 12,
+          "id": "Post-Quote-Missing-transaction",
           "meta": {
             "info": "Post Quote - Missing transactionType-initiator in Body "
           },
@@ -2036,7 +2036,7 @@
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -2179,7 +2179,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -2199,16 +2199,16 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
@@ -2280,7 +2280,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-trans-wrong-curr",
           "meta": {
             "info": "Send transfer with wrong  currency in body"
           },
@@ -2300,16 +2300,16 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "POC"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
@@ -2359,7 +2359,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-trans-wrong-amt",
           "meta": {
             "info": "Send transfer with wrong  amount in body"
           },
@@ -2379,16 +2379,16 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "fasdas",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
@@ -2438,7 +2438,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Send-trans-wrong-transferId-pa",
           "meta": {
             "info": "Send transfer with wrong  transferId in body parameters"
           },
@@ -2465,9 +2465,9 @@
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
@@ -2517,7 +2517,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Send-trans-wrong-expiration",
           "meta": {
             "info": "Send transfer with wrong  expiration in body"
           },
@@ -2537,7 +2537,7 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
@@ -2545,8 +2545,8 @@
               "currency": "{$inputs.currency}"
             },
             "expiration": "thursd",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
@@ -2605,7 +2605,7 @@
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -2748,7 +2748,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Post-Quote-wrong-optional-para",
           "meta": {
             "info": "Post Quote with wrong optional parameter - name"
           },
@@ -2891,7 +2891,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Post-Quote-wrong-optional-hdr-",
           "meta": {
             "info": "Post Quote with wrong optional header - HTTP Method  "
           },

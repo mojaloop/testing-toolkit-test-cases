@@ -9,7 +9,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-part-ALS",
           "meta": {
             "info": "Add Participant to ALS"
           },
@@ -54,7 +54,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Add-Party-Simulator",
           "meta": {
             "info": "Add Party to Simulator"
           },
@@ -84,7 +84,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -288,7 +288,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -309,9 +309,9 @@
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$prev.4.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.toFspId}",
-            "payeeFsp": "{$prev.4.request.body.payee.partyIdInfo.fspId}",
+            "payeeFsp": "{$prev.Send-quote.request.body.payee.partyIdInfo.fspId}",
             "amount": {
               "amount": "5",
               "currency": "{$inputs.currency}"

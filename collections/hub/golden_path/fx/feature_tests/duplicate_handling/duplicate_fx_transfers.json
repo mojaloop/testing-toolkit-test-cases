@@ -18,7 +18,7 @@
       "breakOnError": false,
       "requests": [
         {
-          "id": 4,
+          "id": "POST-fxQuotes",
           "description": "POST /fxQuotes",
           "apiVersion": {
             "minorVersion": 0,
@@ -143,7 +143,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "POST-quotes",
           "description": "POST /quotes",
           "apiVersion": {
             "minorVersion": 0,
@@ -169,7 +169,7 @@
           },
           "body": {
             "quoteId": "{$function.generic.generateID}",
-            "transactionId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
+            "transactionId": "{$prev.POST-fxQuotes.request.body.conversionTerms.determiningTransferId}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -193,8 +193,8 @@
             },
             "amountType": "SEND",
             "amount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.targetAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.targetAmount.currency}"
+              "amount": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.amount}",
+              "currency": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -274,7 +274,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Get-Accounts-Payer-BEFORE-fxTr",
           "description": "Get Accounts for Payer BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -315,7 +315,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "POST-fxTransfers",
           "description": "POST /fxTransfers",
           "apiVersion": {
             "minorVersion": 0,
@@ -340,20 +340,20 @@
             "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "body": {
-            "commitRequestId": "{$prev.4.callback.body.conversionTerms.conversionId}",
-            "determiningTransferId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
+            "commitRequestId": "{$prev.POST-fxQuotes.callback.body.conversionTerms.conversionId}",
+            "determiningTransferId": "{$prev.POST-fxQuotes.request.body.conversionTerms.determiningTransferId}",
             "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
             "amountType": "SEND",
             "sourceAmount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.sourceAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.sourceAmount.currency}"
+              "amount": "{$prev.POST-fxQuotes.callback.body.conversionTerms.sourceAmount.amount}",
+              "currency": "{$prev.POST-fxQuotes.callback.body.conversionTerms.sourceAmount.currency}"
             },
             "targetAmount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.targetAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.targetAmount.currency}"
+              "amount": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.amount}",
+              "currency": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.currency}"
             },
-            "condition": "{$prev.4.callback.body.condition}",
+            "condition": "{$prev.POST-fxQuotes.callback.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "scriptingEngine": "javascript",
@@ -395,7 +395,7 @@
           }
         },
         {
-          "id": 10,
+          "id": "Get-Accounts-Payer-AFTER-fx-tr",
           "description": "Get Accounts for Payer AFTER fx transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -444,7 +444,7 @@
           }
         },
         {
-          "id": 12,
+          "id": "POST-trans",
           "description": "POST /transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -462,16 +462,16 @@
           "method": "post",
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "body": {
-            "transferId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
+            "transferId": "{$prev.POST-fxQuotes.request.body.conversionTerms.determiningTransferId}",
             "payeeFsp": "{$inputs.FX_PAYEE_DFSP_ID}",
             "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
-              "currency": "{$prev.5.callback.body.transferAmount.currency}",
-              "amount": "{$prev.5.callback.body.transferAmount.amount}"
+              "currency": "{$prev.POST-quotes.callback.body.transferAmount.currency}",
+              "amount": "{$prev.POST-quotes.callback.body.transferAmount.amount}"
             },
-            "ilpPacket": "{$prev.5.callback.body.ilpPacket}",
-            "condition": "{$prev.5.callback.body.condition}",
-            "expiration": "{$prev.5.callback.body.expiration}"
+            "ilpPacket": "{$prev.POST-quotes.callback.body.ilpPacket}",
+            "condition": "{$prev.POST-quotes.callback.body.condition}",
+            "expiration": "{$prev.POST-quotes.callback.body.expiration}"
           },
           "headers": {
             "Accept": "{$inputs.acceptTransfers}",
@@ -540,7 +540,7 @@
           }
         },
         {
-          "id": 13,
+          "id": "Duplicate-POST-fxTransfers-mod",
           "description": "Duplicate POST /fxTransfers with modified payload",
           "apiVersion": {
             "minorVersion": 0,
@@ -565,20 +565,20 @@
             "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "body": {
-            "commitRequestId": "{$prev.9.request.body.commitRequestId}",
-            "determiningTransferId": "{$prev.9.request.body.determiningTransferId}",
-            "initiatingFsp": "{$prev.9.request.body.initiatingFsp}",
-            "counterPartyFsp": "{$prev.9.request.body.counterPartyFsp}",
-            "amountType": "{$prev.9.request.body.amountType}",
+            "commitRequestId": "{$prev.POST-fxTransfers.request.body.commitRequestId}",
+            "determiningTransferId": "{$prev.POST-fxTransfers.request.body.determiningTransferId}",
+            "initiatingFsp": "{$prev.POST-fxTransfers.request.body.initiatingFsp}",
+            "counterPartyFsp": "{$prev.POST-fxTransfers.request.body.counterPartyFsp}",
+            "amountType": "{$prev.POST-fxTransfers.request.body.amountType}",
             "sourceAmount": {
-              "amount": "{$prev.9.request.body.sourceAmount.amount}",
-              "currency": "{$prev.9.request.body.sourceAmount.currency}"
+              "amount": "{$prev.POST-fxTransfers.request.body.sourceAmount.amount}",
+              "currency": "{$prev.POST-fxTransfers.request.body.sourceAmount.currency}"
             },
             "targetAmount": {
-              "amount": "{$prev.9.request.body.targetAmount.amount}",
-              "currency": "{$prev.9.request.body.targetAmount.currency}"
+              "amount": "{$prev.POST-fxTransfers.request.body.targetAmount.amount}",
+              "currency": "{$prev.POST-fxTransfers.request.body.targetAmount.currency}"
             },
-            "condition": "{$prev.9.request.body.condition}",
+            "condition": "{$prev.POST-fxTransfers.request.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "scriptingEngine": "javascript",
@@ -627,7 +627,7 @@
           }
         },
         {
-          "id": 14,
+          "id": "Duplicate-POST-fxTransfers-sam",
           "description": "Duplicate POST /fxTransfers with sam payload",
           "apiVersion": {
             "minorVersion": 0,
@@ -652,21 +652,21 @@
             "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "body": {
-            "commitRequestId": "{$prev.9.request.body.commitRequestId}",
-            "determiningTransferId": "{$prev.9.request.body.determiningTransferId}",
-            "initiatingFsp": "{$prev.9.request.body.initiatingFsp}",
-            "counterPartyFsp": "{$prev.9.request.body.counterPartyFsp}",
-            "amountType": "{$prev.9.request.body.amountType}",
+            "commitRequestId": "{$prev.POST-fxTransfers.request.body.commitRequestId}",
+            "determiningTransferId": "{$prev.POST-fxTransfers.request.body.determiningTransferId}",
+            "initiatingFsp": "{$prev.POST-fxTransfers.request.body.initiatingFsp}",
+            "counterPartyFsp": "{$prev.POST-fxTransfers.request.body.counterPartyFsp}",
+            "amountType": "{$prev.POST-fxTransfers.request.body.amountType}",
             "sourceAmount": {
-              "amount": "{$prev.9.request.body.sourceAmount.amount}",
-              "currency": "{$prev.9.request.body.sourceAmount.currency}"
+              "amount": "{$prev.POST-fxTransfers.request.body.sourceAmount.amount}",
+              "currency": "{$prev.POST-fxTransfers.request.body.sourceAmount.currency}"
             },
             "targetAmount": {
-              "amount": "{$prev.9.request.body.targetAmount.amount}",
-              "currency": "{$prev.9.request.body.targetAmount.currency}"
+              "amount": "{$prev.POST-fxTransfers.request.body.targetAmount.amount}",
+              "currency": "{$prev.POST-fxTransfers.request.body.targetAmount.currency}"
             },
-            "condition": "{$prev.9.request.body.condition}",
-            "expiration": "{$prev.9.request.body.expiration}"
+            "condition": "{$prev.POST-fxTransfers.request.body.condition}",
+            "expiration": "{$prev.POST-fxTransfers.request.body.expiration}"
           },
           "scriptingEngine": "javascript",
           "disabled": false,

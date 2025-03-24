@@ -10,7 +10,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Send-Quote-RECEIVE",
           "meta": {
             "info": "Send Quote - RECEIVE"
           },
@@ -106,7 +106,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-Quote-rsp",
           "description": "Send Quote - Response",
           "apiVersion": {
             "minorVersion": 1,
@@ -128,19 +128,19 @@
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
             "transferAmount": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "{$prev.1.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeReceiveAmount": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "{$prev.1.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeFspFee": {
-              "currency": "{$prev.1.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "payeeFspCommission": {
-              "currency": "{$prev.1.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "expiration": "{$requestVariables.quoteExpiration}",
@@ -183,7 +183,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-Transfer-Prepare",
           "meta": {
             "info": "Send Transfer-Prepare"
           },
@@ -207,7 +207,7 @@
             "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "body": {
-            "transferId": "{$prev.1.request.body.transactionId}",
+            "transferId": "{$prev.Send-Quote-RECEIVE.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "amount": {
@@ -250,7 +250,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-Fulfill-Reject",
           "meta": {
             "info": "Send Fulfill-Reject"
           },
@@ -322,7 +322,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-Duplicate-Fulfill-Reject",
           "meta": {
             "info": "Send Duplicate Fulfill-Reject"
           },
@@ -393,7 +393,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Check-trans-status",
           "meta": {
             "info": "Check Transfer status"
           },
@@ -525,7 +525,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Send-Quote-RECEIVE",
           "meta": {
             "info": "Send Quote - RECEIVE"
           },
@@ -621,7 +621,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-Quote-rsp",
           "description": "Send Quote - Response",
           "apiVersion": {
             "minorVersion": 1,
@@ -643,19 +643,19 @@
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
             "transferAmount": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "{$prev.1.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeReceiveAmount": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "{$prev.1.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeFspFee": {
-              "currency": "{$prev.1.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "payeeFspCommission": {
-              "currency": "{$prev.1.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "expiration": "{$requestVariables.quoteExpiration}",
@@ -698,7 +698,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-Transfer-Prepare",
           "meta": {
             "info": "Send Transfer-Prepare"
           },
@@ -722,7 +722,7 @@
             "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "body": {
-            "transferId": "{$prev.1.request.body.transactionId}",
+            "transferId": "{$prev.Send-Quote-RECEIVE.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "amount": {
@@ -765,7 +765,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-Fulfill-Reject",
           "meta": {
             "info": "Send Fulfill-Reject"
           },
@@ -837,7 +837,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-Invalid-Duplicate-Fulfill",
           "meta": {
             "info": "Send Invalid Duplicate Fulfill-Reject"
           },
@@ -915,7 +915,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Check-trans-status",
           "meta": {
             "info": "Check Transfer status"
           },

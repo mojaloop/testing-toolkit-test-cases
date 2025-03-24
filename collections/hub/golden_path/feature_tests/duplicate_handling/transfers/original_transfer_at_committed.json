@@ -9,7 +9,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-part-ALS",
           "meta": {
             "info": "Add Participant to ALS"
           },
@@ -43,7 +43,7 @@
           "ignoreCallbacks": true
         },
         {
-          "id": 2,
+          "id": "Add-Party-Simulator",
           "meta": {
             "info": "Add Party to Simulator"
           },
@@ -75,7 +75,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -373,7 +373,7 @@
           "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
-          "id": 5,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -394,16 +394,16 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$prev.4.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.callback.body.expiration}",
-            "ilpPacket": "{$prev.4.callback.body.ilpPacket}",
-            "condition": "{$prev.4.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
@@ -671,7 +671,7 @@
           "url": "{$inputs.HOST_ML_API_ADAPTER}"
         },
         {
-          "id": 6,
+          "id": "Duplicate-trans",
           "meta": {
             "info": "Duplicate transfer"
           },
@@ -692,16 +692,16 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$prev.4.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.callback.body.expiration}",
-            "ilpPacket": "{$prev.4.callback.body.ilpPacket}",
-            "condition": "{$prev.4.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
           "scripts": {

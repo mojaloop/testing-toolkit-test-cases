@@ -19,7 +19,7 @@
       "breakOnError": false,
       "requests": [
         {
-          "id": 1,
+          "id": "Add-part-ALS",
           "description": "Add Participant to ALS",
           "apiVersion": {
             "minorVersion": 1,
@@ -65,7 +65,7 @@
           "disabled": false
         },
         {
-          "id": 2,
+          "id": "Get-party-info",
           "description": "Get party info",
           "apiVersion": {
             "minorVersion": 0,
@@ -136,7 +136,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "POST-fxQuotes",
           "description": "POST /fxQuotes",
           "apiVersion": {
             "minorVersion": 0,
@@ -257,7 +257,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "POST-quotes",
           "description": "POST /quotes",
           "apiVersion": {
             "minorVersion": 0,
@@ -283,7 +283,7 @@
           },
           "body": {
             "quoteId": "{$function.generic.generateID}",
-            "transactionId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
+            "transactionId": "{$prev.POST-fxQuotes.request.body.conversionTerms.determiningTransferId}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -300,15 +300,15 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.2.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.2.callback.body.party.partyIdInfo.partyIdentifier}",
-                "fspId": "{$prev.2.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.Get-party-info.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-info.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.Get-party-info.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "SEND",
             "amount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.targetAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.targetAmount.currency}"
+              "amount": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.amount}",
+              "currency": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -388,7 +388,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Get-Accounts-Payer-BEFORE-fxTr",
           "description": "Get Accounts for Payer BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -429,7 +429,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Get-Accounts-Payee-BEFORE-fxTr",
           "description": "Get Accounts for Payee BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -471,7 +471,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Get-Accounts-FXP-BEFORE-fxTran",
           "description": "Get Accounts for FXP BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -520,7 +520,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "POST-fxTransfers",
           "description": "POST /fxTransfers",
           "apiVersion": {
             "minorVersion": 0,
@@ -545,20 +545,20 @@
             "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "body": {
-            "commitRequestId": "{$prev.4.callback.body.conversionTerms.conversionId}",
-            "determiningTransferId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
+            "commitRequestId": "{$prev.POST-fxQuotes.callback.body.conversionTerms.conversionId}",
+            "determiningTransferId": "{$prev.POST-fxQuotes.request.body.conversionTerms.determiningTransferId}",
             "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
             "amountType": "SEND",
             "sourceAmount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.sourceAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.sourceAmount.currency}"
+              "amount": "{$prev.POST-fxQuotes.callback.body.conversionTerms.sourceAmount.amount}",
+              "currency": "{$prev.POST-fxQuotes.callback.body.conversionTerms.sourceAmount.currency}"
             },
             "targetAmount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.targetAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.targetAmount.currency}"
+              "amount": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.amount}",
+              "currency": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.currency}"
             },
-            "condition": "{$prev.4.callback.body.condition}",
+            "condition": "{$prev.POST-fxQuotes.callback.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "scriptingEngine": "javascript",
@@ -597,7 +597,7 @@
           }
         },
         {
-          "id": 10,
+          "id": "Get-Accounts-Payer-AFTER-fx-tr",
           "description": "Get Accounts for Payer AFTER fx transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -646,7 +646,7 @@
           }
         },
         {
-          "id": 11,
+          "id": "Get-Accounts-FXP-AFTER-fx-tran",
           "description": "Get Accounts for FXP AFTER fx transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -722,7 +722,7 @@
           }
         },
         {
-          "id": 15,
+          "id": "Get-FxTransfers",
           "description": "Get FxTransfers",
           "apiVersion": {
             "minorVersion": 0,
@@ -803,7 +803,7 @@
           }
         },
         {
-          "id": 12,
+          "id": "POST-trans",
           "description": "POST /transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -821,16 +821,16 @@
           "method": "post",
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "body": {
-            "transferId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
+            "transferId": "{$prev.POST-fxQuotes.request.body.conversionTerms.determiningTransferId}",
             "payeeFsp": "{$inputs.FX_PAYEE_DFSP_ID}",
             "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
-              "currency": "{$prev.5.callback.body.transferAmount.currency}",
-              "amount": "{$prev.5.callback.body.transferAmount.amount}"
+              "currency": "{$prev.POST-quotes.callback.body.transferAmount.currency}",
+              "amount": "{$prev.POST-quotes.callback.body.transferAmount.amount}"
             },
-            "ilpPacket": "{$prev.5.callback.body.ilpPacket}",
-            "condition": "{$prev.5.callback.body.condition}",
-            "expiration": "{$prev.5.callback.body.expiration}"
+            "ilpPacket": "{$prev.POST-quotes.callback.body.ilpPacket}",
+            "condition": "{$prev.POST-quotes.callback.body.condition}",
+            "expiration": "{$prev.POST-quotes.callback.body.expiration}"
           },
           "headers": {
             "Accept": "{$inputs.acceptTransfers}",
@@ -896,7 +896,7 @@
           }
         },
         {
-          "id": 13,
+          "id": "Get-Accounts-FXP-AFTER-trans",
           "description": "Get Accounts for FXP AFTER transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -958,7 +958,7 @@
           }
         },
         {
-          "id": 14,
+          "id": "Get-Accounts-Payee-AFTER-trans",
           "description": "Get Accounts for Payee AFTER transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -1009,7 +1009,7 @@
           }
         },
         {
-          "id": 16,
+          "id": "Get-FxTransfers-after-final-tr",
           "description": "Get FxTransfers after final transfer",
           "apiVersion": {
             "minorVersion": 0,

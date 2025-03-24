@@ -15,7 +15,7 @@
       },
       "requests": [
         {
-          "id": 3,
+          "id": "Get-party-information",
           "meta": {
             "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
           },
@@ -140,7 +140,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Get-party-information",
           "description": "Get party information",
           "meta": {
             "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
@@ -229,7 +229,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Get-party-information",
           "description": "Get party information",
           "meta": {
             "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
@@ -333,7 +333,7 @@
       },
       "requests": [
         {
-          "id": 3,
+          "id": "Get-party-information",
           "meta": {
             "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
           },
@@ -461,7 +461,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-quote",
           "meta": {
             "info": "This request allows us to send a request for Quote (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
           },
@@ -501,9 +501,9 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.3.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.3.callback.body.party.partyIdInfo.partyIdentifier}",
-                "fspId": "{$prev.3.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "RECEIVE",
@@ -665,7 +665,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-quote",
           "description": "Send quote",
           "meta": {
             "info": "This request allows us to send a request for Quote (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction. Validate Not Support Accept header."
@@ -705,9 +705,9 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.3.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.3.callback.body.party.partyIdInfo.partyIdentifier}",
-                "fspId": "{$prev.3.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "RECEIVE",
@@ -791,7 +791,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Send-quote",
           "description": "Send quote",
           "meta": {
             "info": "This request allows us to send a request for Quote (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction. Validate Not Support Content-Type header."
@@ -831,9 +831,9 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.3.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.3.callback.body.party.partyIdInfo.partyIdentifier}",
-                "fspId": "{$prev.3.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "RECEIVE",
@@ -932,7 +932,7 @@
       },
       "requests": [
         {
-          "id": 3,
+          "id": "Get-party-information",
           "meta": {
             "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
           },
@@ -1056,7 +1056,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-quote",
           "meta": {
             "info": "This request allows us to send a request for Quote (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
           },
@@ -1096,9 +1096,9 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.3.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.3.callback.body.party.partyIdInfo.partyIdentifier}",
-                "fspId": "{$prev.3.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "RECEIVE",
@@ -1256,7 +1256,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-trans",
           "meta": {
             "info": "This request allows us to send a Transfer (payerfsp to payeefsp), resulting in an ILP transfer exchanged between two account holders on either side of a common ledger."
           },
@@ -1277,16 +1277,16 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$prev.4.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
-            "payeeFsp": "{$prev.3.callback.body.party.partyIdInfo.fspId}",
+            "payeeFsp": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.callback.body.expiration}",
-            "ilpPacket": "{$prev.4.callback.body.ilpPacket}",
-            "condition": "{$prev.4.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -1412,7 +1412,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Send-trans",
           "description": "Send transfer",
           "meta": {
             "info": "This request allows us to send a Transfer (payerfsp to payeefsp), resulting in an ILP transfer exchanged between two account holders on either side of a common ledger. Validate Not Support Accept header."
@@ -1433,16 +1433,16 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$prev.4.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
-            "payeeFsp": "{$prev.3.callback.body.party.partyIdInfo.fspId}",
+            "payeeFsp": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.callback.body.expiration}",
-            "ilpPacket": "{$prev.4.callback.body.ilpPacket}",
-            "condition": "{$prev.4.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -1508,7 +1508,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Send-trans",
           "description": "Send transfer",
           "meta": {
             "info": "This request allows us to send a Transfer (payerfsp to payeefsp), resulting in an ILP transfer exchanged between two account holders on either side of a common ledger. Validate Not Support Content-Type header."
@@ -1529,16 +1529,16 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$prev.4.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
-            "payeeFsp": "{$prev.3.callback.body.party.partyIdInfo.fspId}",
+            "payeeFsp": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.callback.body.expiration}",
-            "ilpPacket": "{$prev.4.callback.body.ilpPacket}",
-            "condition": "{$prev.4.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
           "tests": {
@@ -1616,7 +1616,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-transactionRequests-by-tra",
           "description": "Get transactionRequests by transactionId",
           "apiVersion": {
             "minorVersion": 1,
@@ -1654,7 +1654,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Get-transactionRequests-by-tra",
           "description": "Get transactionRequests by transactionId",
           "apiVersion": {
             "minorVersion": 1,
@@ -1724,7 +1724,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Get-transactionRequests-by-tra",
           "description": "Get transactionRequests by transactionId",
           "apiVersion": {
             "minorVersion": 1,

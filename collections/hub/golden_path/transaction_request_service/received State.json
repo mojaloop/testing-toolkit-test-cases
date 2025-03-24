@@ -9,7 +9,7 @@
       },
       "requests": [
         {
-          "id": 5,
+          "id": "Payee-initiate-req",
           "meta": {
             "info": "Payee initiate request"
           },
@@ -136,7 +136,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "send-RECEIVED-state",
           "meta": {
             "info": "send RECEIVED state"
           },
@@ -164,7 +164,7 @@
             "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
-            "transactionId": "{$prev.5.request.body.transactionRequestId}",
+            "transactionId": "{$prev.Payee-initiate-req.request.body.transactionRequestId}",
             "transactionRequestState": "RECEIVED"
           },
           "scriptingEngine": "javascript",
@@ -233,7 +233,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Check-transactionRequest-state",
           "meta": {
             "info": "Check transactionRequest state"
           },

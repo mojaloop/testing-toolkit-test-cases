@@ -16,7 +16,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-part-ALS",
           "description": "Add Participant to ALS",
           "apiVersion": {
             "minorVersion": 1,
@@ -60,7 +60,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Get-party-info-Copy",
           "description": "Get party info Copy",
           "apiVersion": {
             "minorVersion": 0,
@@ -131,7 +131,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "GET-services-FXP",
           "description": "GET /services/FXP",
           "apiVersion": {
             "minorVersion": 0,
@@ -192,7 +192,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "POST-fxQuotes",
           "description": "POST /fxQuotes",
           "apiVersion": {
             "minorVersion": 0,
@@ -304,7 +304,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "POST-quotes",
           "description": "POST /quotes",
           "apiVersion": {
             "minorVersion": 0,
@@ -348,9 +348,9 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.2.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.2.callback.body.party.partyIdInfo.partyIdentifier}",
-                "fspId": "{$prev.2.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.Get-party-info-Copy.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-info-Copy.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.Get-party-info-Copy.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "SEND",
@@ -443,7 +443,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Get-Accounts-FXP-BEFORE-fxTran",
           "description": "Get Accounts for FXP BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -492,7 +492,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "POST-fxTransfers",
           "description": "POST /fxTransfers",
           "apiVersion": {
             "minorVersion": 0,
@@ -516,7 +516,7 @@
             "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}"
           },
           "body": {
-            "commitRequestId": "{$prev.4.callback.body.conversionTerms.conversionId}",
+            "commitRequestId": "{$prev.POST-fxQuotes.callback.body.conversionTerms.conversionId}",
             "determiningTransferId": "{$function.generic.generateID}",
             "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
@@ -529,7 +529,7 @@
               "currency": "{$inputs.FX_TARGET_CURRENCY}",
               "amount": "{$inputs.FX_TARGET_AMOUNT}"
             },
-            "condition": "{$prev.4.callback.body.condition}",
+            "condition": "{$prev.POST-fxQuotes.callback.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "scriptingEngine": "javascript",
@@ -603,7 +603,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "POST-trans",
           "description": "POST /transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -621,15 +621,15 @@
           "method": "post",
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "body": {
-            "transferId": "{$prev.6.request.body.determiningTransferId}",
+            "transferId": "{$prev.Get-Accounts-FXP-BEFORE-fxTran.request.body.determiningTransferId}",
             "payeeFsp": "{$inputs.FXP_PAYEE_DFSP_ID}",
             "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
               "currency": "{$inputs.FX_TARGET_CURRENCY}",
               "amount": "{$inputs.amount}"
             },
-            "ilpPacket": "{$prev.5.callback.body.ilpPacket}",
-            "condition": "{$prev.5.callback.body.condition}",
+            "ilpPacket": "{$prev.POST-quotes.callback.body.ilpPacket}",
+            "condition": "{$prev.POST-quotes.callback.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "headers": {
@@ -702,7 +702,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "Get-Accounts-FXP-AFTER-trans",
           "description": "Get Accounts for FXP AFTER Transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -760,7 +760,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-Existing-Open-Window",
           "meta": {
             "info": "Get Existing Open Window"
           },
@@ -816,7 +816,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Close-existent-window",
           "meta": {
             "info": "Close existent window"
           },
@@ -899,7 +899,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Create-settle-Closed-Window",
           "meta": {
             "info": "Create Settlement for Closed Window"
           },
@@ -1005,7 +1005,7 @@
       },
       "requests": [
         {
-          "id": 4,
+          "id": "Prepare-settle",
           "meta": {
             "info": "Prepare Settlement"
           },
@@ -1068,7 +1068,7 @@
       },
       "requests": [
         {
-          "id": 4,
+          "id": "reserve-settle",
           "meta": {
             "info": "reserve Settlement"
           },
@@ -1118,7 +1118,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "check-state-participants-after",
           "meta": {
             "info": "check state for participants after prepare"
           },
@@ -1222,7 +1222,7 @@
       },
       "requests": [
         {
-          "id": 4,
+          "id": "commit-settle",
           "meta": {
             "info": "commit Settlement"
           },
@@ -1287,7 +1287,7 @@
       },
       "requests": [
         {
-          "id": 4,
+          "id": "settle-settle",
           "meta": {
             "info": "settle Settlement"
           },
@@ -1337,7 +1337,7 @@
           }
         },
         {
-          "id": 15,
+          "id": "Get-Accounts-FXP-AFTER-settle",
           "description": "Get Accounts for FXP AFTER Settlement",
           "apiVersion": {
             "minorVersion": 0,

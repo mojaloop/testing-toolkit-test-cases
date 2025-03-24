@@ -9,7 +9,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-party-information",
           "meta": {
             "info": "Get party information"
           },
@@ -95,7 +95,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -133,9 +133,9 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.1.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.1.callback.body.party.partyIdInfo.partyIdentifier}",
-                "fspId": "{$prev.1.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "SEND",
@@ -234,7 +234,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -254,16 +254,16 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
-            "payeeFsp": "{$prev.1.callback.body.party.partyIdInfo.fspId}",
+            "payeeFsp": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
