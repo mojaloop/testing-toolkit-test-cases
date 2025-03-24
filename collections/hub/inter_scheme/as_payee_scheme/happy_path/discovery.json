@@ -79,42 +79,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-src-hdr-Payeefsp-Id",
                 "description": "Response Source Header same as Payeefsp Id",
                 "exec": [
                   "expect(callback.headers['fspiop-source']).to.equal('{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-dest-hdr-Payerfsp-Id",
                 "description": "Response Destination Header same as Payerfsp Id",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.PROXY_PAYEE_TEST_PAYERFSP_ID}')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-content-type-parties",
                 "description": "Callback content-type to be parties",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-partyIdInfo-partyIdType-par",
                 "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
                 "exec": [
                   "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-partyIdInfo-partyIdType-par",
                 "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
                 "exec": [
                   "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID}')"

@@ -70,7 +70,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)",
@@ -78,14 +78,14 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-error-code-4001",
                 "description": "Check error code 4001",
                 "exec": [
                   "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorCode).to.equal('4001')"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-error-description-ID-Not",
                 "description": "Check error description is ID Not Found",
                 "exec": [
                   "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorDescription).to.equal('Party Not Found in the backend application')"
@@ -172,7 +172,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)",
@@ -180,28 +180,28 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-number-returned-transfer",
                 "description": "Check number of returned transfers",
                 "exec": [
                   "expect(callback.body.individualTransferResults.length).to.equal(1)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-that-rsp-has-error-code-",
                 "description": "Check that the response has an error code of 4001",
                 "exec": [
                   "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorCode).to.equal('2004')"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-that-rsp-has-error-descr",
                 "description": "Check that the response has an error description of Server timed out",
                 "exec": [
                   "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Server timed out')"
                 ]
               },
               {
-                "id": 5,
+                "id": "Check-that-state-final-rsp-WAI",
                 "description": "Check that the state in the final response is WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
                   "expect(callback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
@@ -289,7 +289,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)",
@@ -297,7 +297,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-Receiver-name-not-exist",
                 "description": "Check Receiver name should not exist",
                 "exec": [
                   "expect(callback.body.individualTransferResults[0].to.personalInfo).to.be.undefined"
@@ -396,7 +396,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)",
@@ -404,49 +404,49 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-number-returned-transfer",
                 "description": "Check number of returned transfers",
                 "exec": [
                   "expect(callback.body.individualTransferResults.length).to.equal(2)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-rsp-has-receiver-fspid-p",
                 "description": "Check response has the receiver fspid populated",
                 "exec": [
                   "expect(environment.partySuccess.to.partyIdInfo.fspId).to.not.be.empty"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-rsp-receiver-first-name-",
                 "description": "Check response receiver first name is ReceiverFirst",
                 "exec": [
                   "expect(environment.partySuccess.to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
                 ]
               },
               {
-                "id": 5,
+                "id": "Check-rsp-receiver-last-name-R",
                 "description": "Check response receiver last name is ReceiverLast",
                 "exec": [
                   "expect(environment.partySuccess.to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
                 ]
               },
               {
-                "id": 6,
+                "id": "Check-that-rsp-has-error-code-",
                 "description": "Check that the response has an error code of 4001",
                 "exec": [
                   "expect(requestVariables.partyFailure.lastError.mojaloopError.errorCode).to.equal('4001')"
                 ]
               },
               {
-                "id": 7,
+                "id": "Check-that-rsp-has-error-descr",
                 "description": "Check that the response has an error description of ID Not Found",
                 "exec": [
                   "expect(requestVariables.partyFailure.lastError.mojaloopError.errorDescription).to.equal('Party Not Found in the backend application')"
                 ]
               },
               {
-                "id": 8,
+                "id": "Check-current-state-WAITING_FO",
                 "description": "Check current state is WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
                   "expect(requestVariables.acceptPartyCallback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
@@ -559,7 +559,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)",
@@ -567,49 +567,49 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-number-returned-transfer",
                 "description": "Check number of returned transfers",
                 "exec": [
                   "expect(callback.body.individualTransferResults.length).to.equal(2)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-rsp-has-receiver-fspid-p",
                 "description": "Check response has the receiver fspid populated",
                 "exec": [
                   "expect(requestVariables.partySuccess.to.partyIdInfo.fspId).to.not.be.empty"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-rsp-receiver-first-name-",
                 "description": "Check response receiver first name is ReceiverFirst",
                 "exec": [
                   "expect(requestVariables.partySuccess.to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
                 ]
               },
               {
-                "id": 5,
+                "id": "Check-rsp-receiver-last-name-R",
                 "description": "Check response receiver last name is ReceiverLast",
                 "exec": [
                   "expect(requestVariables.partySuccess.to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
                 ]
               },
               {
-                "id": 6,
+                "id": "Check-that-rsp-has-error-code-",
                 "description": "Check that the response has an error code of 2004",
                 "exec": [
                   "expect(requestVariables.partyFailure.lastError.mojaloopError.errorInformation.errorCode).to.equal('2004')"
                 ]
               },
               {
-                "id": 7,
+                "id": "Check-that-rsp-has-error-descr",
                 "description": "Check that the response has an error description of ID Not Found",
                 "exec": [
                   "expect(requestVariables.partyFailure.lastError.mojaloopError.errorInformation.errorDescription).to.equal('Server timed out')"
                 ]
               },
               {
-                "id": 8,
+                "id": "Check-current-state-WAITING_FO",
                 "description": "Check current state is WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
                   "expect(callback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
@@ -723,7 +723,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)",
@@ -731,42 +731,42 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-number-returned-transfer",
                 "description": "Check number of returned transfers",
                 "exec": [
                   "expect(callback.body.individualTransferResults.length).to.equal(2)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-that-rsp-has-error-code-",
                 "description": "Check that the response has an error code of 2004",
                 "exec": [
                   "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorCode).to.equal('2004')"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-that-rsp-has-error-descr",
                 "description": "Check that the response has an error description of ID Not Found",
                 "exec": [
                   "expect(callback.body.individualTransferResults[0].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Server timed out')"
                 ]
               },
               {
-                "id": 5,
+                "id": "Check-that-rsp-has-error-code-",
                 "description": "Check that the response has an error code of 2004",
                 "exec": [
                   "expect(callback.body.individualTransferResults[1].lastError.mojaloopError.errorInformation.errorCode).to.equal('2004')"
                 ]
               },
               {
-                "id": 6,
+                "id": "Check-that-rsp-has-error-descr",
                 "description": "Check that the response has an error description of ID Not Found",
                 "exec": [
                   "expect(callback.body.individualTransferResults[1].lastError.mojaloopError.errorInformation.errorDescription).to.equal('Server timed out')"
                 ]
               },
               {
-                "id": 8,
+                "id": "Check-current-state-WAITING_FO",
                 "description": "Check current state is WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
                   "expect(callback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"

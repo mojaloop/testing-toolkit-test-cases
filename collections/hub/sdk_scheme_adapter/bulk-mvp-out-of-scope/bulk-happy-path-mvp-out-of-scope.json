@@ -95,7 +95,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)",
@@ -103,14 +103,14 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-number-returned-transfer",
                 "description": "Check number of returned transfers",
                 "exec": [
                   "expect(environment.acceptPartyCallback.body.individualTransferResults.length).to.equal(3)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-current-state-WAITING_FO",
                 "description": "Check current state is WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
                   "expect(environment.acceptPartyCallback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
@@ -182,28 +182,28 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-number-returned-transfer",
                 "description": "Check number of returned transfers",
                 "exec": [
                   "expect(environment.acceptQuoteCallback.body.individualTransferResults.length).to.equal(2)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-rsp-has-quote-result-fir",
                 "description": "Check response has quote result for first transfer",
                 "exec": [
                   "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse).to.exist;"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-rsp-has-ilpPacket-condit",
                 "description": "Check response has ilpPacket and condition for first transfer",
                 "exec": [
                   "expect(environment.acceptQuoteCallback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
@@ -212,7 +212,7 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Check-state-WAITING_FOR_QUOTE_",
                 "description": "Check state is WAITING_FOR_QUOTE_ACCEPTANCE",
                 "exec": [
                   "expect(environment.acceptQuoteCallback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
@@ -279,42 +279,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-number-returned-transfer",
                 "description": "Check number of returned transfers",
                 "exec": [
                   "expect(environment.transfersCallback.body.individualTransferResults.length).to.equal(1)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-rsp-MSISDN-req",
                 "description": "Check response MSISDN is same as in the request",
                 "exec": [
                   "expect(environment.transfersCallback.body.individualTransferResults[0].to.partyIdInfo.partyIdentifier).to.equal('56781234')"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-rsp-has-receiver-fspid-p",
                 "description": "Check response has the receiver fspid populated",
                 "exec": [
                   "expect(environment.transfersCallback.body.individualTransferResults[0].to.partyIdInfo.fspId).to.not.be.empty"
                 ]
               },
               {
-                "id": 5,
+                "id": "Check-rsp-has-quote-result",
                 "description": "Check response has quote result",
                 "exec": [
                   "expect(environment.transfersCallback.body.individualTransferResults[0].quoteResponse).to.exist;"
                 ]
               },
               {
-                "id": 6,
+                "id": "Check-rsp-has-ilpPacket-condit",
                 "description": "Check response has ilpPacket and condition",
                 "exec": [
                   "expect(environment.transfersCallback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
@@ -323,21 +323,21 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "Check-rsp-has-fulfillment",
                 "description": "Check response has  fulfillment",
                 "exec": [
                   "expect(environment.transfersCallback.body.individualTransferResults[0].fulfil.fulfilment).to.exist;"
                 ]
               },
               {
-                "id": 8,
+                "id": "Check-rsp-has-COMPLETED-state",
                 "description": "Check response has  COMPLETED state",
                 "exec": [
                   "expect(environment.transfersCallback.body.individualTransferResults[0].fulfil.transferState).to.equal('COMMITTED');"
                 ]
               },
               {
-                "id": 9,
+                "id": "Check-overall-bulk-txn-state-C",
                 "description": "Check overall bulk transaction state is COMPLETED",
                 "exec": [
                   "expect(environment.transfersCallback.body.currentState).to.equal('COMPLETED')"
