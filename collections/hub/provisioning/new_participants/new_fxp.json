@@ -3,14 +3,14 @@
   "name": "switch_onboarding_participant_fxp",
   "test_cases": [
     {
-      "id": 1,
+      "id": "setup-fxp-accounts",
       "name": "Setup FXP Accounts",
       "meta": {
         "info": "FXP Accounts"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-FXP-part-curr",
           "meta": {
             "info": "Add FXP participant"
           },
@@ -34,7 +34,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-201-if-not-exists-400-i",
                 "description": "status to be 201 if not exists or 400 if exists",
                 "exec": [
                   "if (response.body.errorInformation) {",
@@ -48,7 +48,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Add-initial-pos-limits-FX-curr",
           "meta": {
             "info": "Add initial position and limits"
           },
@@ -79,7 +79,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-201-if-not-exists-500-i",
                 "description": "status to be 201 if not exists or 500 if exists",
                 "exec": [
                   "if (response.body.errorInformation) {",
@@ -95,14 +95,14 @@
       ]
     },
     {
-      "id": 2,
+      "id": "funds-in",
       "name": "Funds In",
       "meta": {
         "info": "Funds In"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-Status-req-before-deposit",
           "meta": {
             "info": "Get Status Request before deposit"
           },
@@ -126,7 +126,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-200",
                 "description": "status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -150,7 +150,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Deposit-Funds-settle-acc-FX-cu",
           "meta": {
             "info": "Deposit Funds in Settlement Account"
           },
@@ -193,7 +193,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-202",
                 "description": "status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -212,7 +212,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Get-Status-req-after-deposit",
           "meta": {
             "info": "Get Status Request after deposit"
           },
@@ -236,14 +236,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-200",
                 "description": "status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "settle-acc-bal-After-FundsIn-b",
                 "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
                   "expect(+environment.fxpCurrency1SettlementAccountBalanceAfterFundsIn).to.equal(+environment.fxpCurrency1SettlementAccountBalanceBeforeFundsIn - +environment.fxpCurrency1fundsInPrepareAmount)"
@@ -269,14 +269,14 @@
       ]
     },
     {
-      "id": 3,
+      "id": "setup-callback-endpoints",
       "name": "Setup Callback Endpoints",
       "meta": {
         "info": "FXP callbacks"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-FXP-cb-AUTHORIZATIONS",
           "meta": {
             "info": "Add FXP callback - AUTHORIZATIONS"
           },
@@ -304,7 +304,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -314,7 +314,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Add-FXP-cb-part-PUT",
           "meta": {
             "info": "Add FXP callback - PARTICIPANT PUT"
           },
@@ -342,7 +342,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -352,7 +352,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Add-FXP-cb-part-PUT-Error",
           "meta": {
             "info": "Add FXP callback - PARTICIPANT PUT Error"
           },
@@ -380,7 +380,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -390,7 +390,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Add-FXP-cb-part-PUT-Batch",
           "meta": {
             "info": "Add FXP callback - PARTICIPANT PUT Batch"
           },
@@ -418,7 +418,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -428,7 +428,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Add-FXP-cb-part-PUT-Batch-Erro",
           "meta": {
             "info": "Add FXP callback - PARTICIPANT PUT Batch Error"
           },
@@ -456,7 +456,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -466,7 +466,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Add-FXP-cb-PARTIES-GET",
           "meta": {
             "info": "Add FXP callback - PARTIES GET"
           },
@@ -494,7 +494,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -504,7 +504,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Add-FXP-cb-PARTIES-PUT",
           "meta": {
             "info": "Add FXP callback - PARTIES PUT"
           },
@@ -532,7 +532,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -542,7 +542,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Add-FXP-cb-PARTIES-PUT-Error",
           "meta": {
             "info": "Add FXP callback - PARTIES PUT Error"
           },
@@ -570,7 +570,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -580,7 +580,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "Add-FXP-cb-QUOTES",
           "meta": {
             "info": "Add FXP callback - QUOTES"
           },
@@ -607,7 +607,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -617,7 +617,7 @@
           }
         },
         {
-          "id": 10,
+          "id": "Add-FXP-cb-TXN-req",
           "meta": {
             "info": "Add FXP callback - TXN REQUEST"
           },
@@ -644,7 +644,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -654,7 +654,7 @@
           }
         },
         {
-          "id": 11,
+          "id": "Add-FXP-cb-TRANSFERS-POST",
           "meta": {
             "info": "Add FXP callback - TRANSFERS POST"
           },
@@ -681,7 +681,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -691,7 +691,7 @@
           }
         },
         {
-          "id": 12,
+          "id": "Add-FXP-cb-TRANSFERS-PUT",
           "meta": {
             "info": "Add FXP callback - TRANSFERS PUT"
           },
@@ -718,7 +718,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -728,7 +728,7 @@
           }
         },
         {
-          "id": 13,
+          "id": "Add-FXP-cb-TRANSFERS-ERROR",
           "meta": {
             "info": "Add FXP callback - TRANSFERS ERROR"
           },
@@ -755,7 +755,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -765,7 +765,7 @@
           }
         },
         {
-          "id": 14,
+          "id": "Add-FXP-cb-BULK-TRANSFER-POST",
           "meta": {
             "info": "Add FXP callback - BULK-TRANSFER POST"
           },
@@ -792,7 +792,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -802,7 +802,7 @@
           }
         },
         {
-          "id": 15,
+          "id": "Add-FXP-cb-BULK-TRANSFER-PUT",
           "meta": {
             "info": "Add FXP callback - BULK-TRANSFER PUT"
           },
@@ -829,7 +829,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -839,7 +839,7 @@
           }
         },
         {
-          "id": 16,
+          "id": "Add-FXP-cb-BULK-TRANSFER-ERROR",
           "meta": {
             "info": "Add FXP callback - BULK-TRANSFER ERROR"
           },
@@ -866,7 +866,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -876,7 +876,7 @@
           }
         },
         {
-          "id": 17,
+          "id": "Add-FXP-cb-part-SUB-ID-PUT",
           "meta": {
             "info": "Add FXP callback - PARTICIPANT SUB-ID PUT"
           },
@@ -903,7 +903,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -913,7 +913,7 @@
           }
         },
         {
-          "id": 18,
+          "id": "Add-FXP-cb-part-SUB-ID-PUT-Err",
           "meta": {
             "info": "Add FXP callback - PARTICIPANT SUB-ID PUT Error"
           },
@@ -940,7 +940,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -950,7 +950,7 @@
           }
         },
         {
-          "id": 19,
+          "id": "Add-FXP-cb-part-SUB-ID-DELETE",
           "meta": {
             "info": "Add FXP callback - PARTICIPANT SUB-ID DELETE"
           },
@@ -977,7 +977,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -987,7 +987,7 @@
           }
         },
         {
-          "id": 20,
+          "id": "Add-FXP-cb-PARTIES-SUB-ID-GET",
           "meta": {
             "info": "Add FXP callback - PARTIES SUB-ID GET"
           },
@@ -1014,7 +1014,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1024,7 +1024,7 @@
           }
         },
         {
-          "id": 21,
+          "id": "Add-FXP-cb-PARTIES-SUB-ID-PUT",
           "meta": {
             "info": "Add FXP callback - PARTIES SUB-ID PUT"
           },
@@ -1051,7 +1051,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1061,7 +1061,7 @@
           }
         },
         {
-          "id": 22,
+          "id": "Add-FXP-cb-PARTIES-SUB-ID-ERRO",
           "meta": {
             "info": "Add FXP callback - PARTIES SUB-ID ERROR PUT"
           },
@@ -1088,7 +1088,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1098,7 +1098,7 @@
           }
         },
         {
-          "id": 23,
+          "id": "Add-cb-FX-TRANSFERS-POST",
           "description": "Add callback - FX TRANSFERS POST",
           "meta": {
             "info": "Add callback - FX TRANSFERS POST"
@@ -1125,7 +1125,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1135,7 +1135,7 @@
           }
         },
         {
-          "id": 24,
+          "id": "Add-cb-FX-TRANSFERS-PUT",
           "description": "Add callback - FX TRANSFERS PUT",
           "meta": {
             "info": "Add callback - FX TRANSFERS PUT"
@@ -1162,7 +1162,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1172,7 +1172,7 @@
           }
         },
         {
-          "id": 25,
+          "id": "Add-cb-FX-TRANSFERS-ERROR",
           "description": "Add callback - FX TRANSFERS ERROR",
           "meta": {
             "info": "Add callback - FX TRANSFERS ERROR"
@@ -1199,7 +1199,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1209,7 +1209,7 @@
           }
         },
         {
-          "id": 26,
+          "id": "Add-cb-FXQUOTES-PUT",
           "description": "Add callback - FXQUOTES PUT",
           "meta": {
             "info": "Add callback - FXQUOTES PUT"
@@ -1236,7 +1236,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1248,14 +1248,14 @@
       ]
     },
     {
-      "id": 4,
+      "id": "setup-notification-emails",
       "name": "Setup Notification Emails",
       "meta": {
         "info": "FXP notification_emails"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Set-Email-NET_DEBIT_CAP_THRESH",
           "meta": {
             "info": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL"
           },
@@ -1283,7 +1283,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1293,7 +1293,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Set-Email-NET_DEBIT_CAP_ADJUST",
           "meta": {
             "info": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL"
           },
@@ -1321,7 +1321,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1331,7 +1331,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Set-Email-SETTLEMENT_TRANSFER_",
           "meta": {
             "info": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL"
           },
@@ -1359,7 +1359,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"

@@ -2,14 +2,14 @@
   "name": "Create Participant Details - [seq-acct-lookup-post-participants-7.1.3]",
   "test_cases": [
     {
-      "id": 1,
+      "id": "create-participa-b1d4",
       "name": "Create Participant - Happy Path - [seq-acct-lookup-post-participants-7.1.3]",
       "meta": {
         "info": "Create Participant - Happy Path - [seq-acct-lookup-post-participants-7.1.3]"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Create-part",
           "meta": {
             "info": "Create Participant"
           },
@@ -41,49 +41,49 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-partyList",
                 "description": "Callback body should contain partyList",
                 "exec": [
                   "expect(callback.body).to.have.property('partyList')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-curr",
                 "description": "Callback body should contain currency",
                 "exec": [
                   "expect(callback.body).to.have.property('currency')"
                 ]
               },
               {
-                "id": 6,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-participants",
                 "description": "Callback content-type to be participants",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
@@ -100,7 +100,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Get-part",
           "meta": {
             "info": "Get Participant"
           },
@@ -128,42 +128,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-fspId",
                 "description": "Callback body should contain fspId",
                 "exec": [
                   "expect(callback.body).to.have.property('fspId')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-fspId-src",
                 "description": "Callback fspId should be same as fspiop-source",
                 "exec": [
                   "expect(callback.body.fspId).to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-participants",
                 "description": "Callback content-type to be participants",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
@@ -180,7 +180,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Delete-part",
           "meta": {
             "info": "Delete Participant"
           },
@@ -208,42 +208,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-fspId",
                 "description": "Callback body should contain fspId",
                 "exec": [
                   "expect(callback.body).to.have.property('fspId')"
                 ]
               },
               {
-                "id": 5,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-participants",
                 "description": "Callback content-type to be participants",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
@@ -265,14 +265,14 @@
       }
     },
     {
-      "id": 2,
+      "id": "create-participa-04cf",
       "name": "Create Participant - Error Invalid IdType - [seq-acct-lookup-post-participants-7.1.3]",
       "meta": {
         "info": "Create Participant - Error Invalid IdType - [seq-acct-lookup-post-participants-7.1.3]"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Create-part",
           "meta": {
             "info": "Create Participant"
           },
@@ -304,42 +304,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-errorInformation",
                 "description": "Callback body should contain errorInformation",
                 "exec": [
                   "expect(callback.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-participants",
                 "description": "Callback content-type to be participants",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "cb-errorCode-errorDescription",
                 "description": "Callback body should contain errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3003')",
@@ -347,7 +347,7 @@
                 ]
               },
               {
-                "id": 9,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
@@ -364,7 +364,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Get-part",
           "meta": {
             "info": "Get Participant"
           },
@@ -392,49 +392,49 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-errorInformation",
                 "description": "Callback body should contain errorInformation",
                 "exec": [
                   "expect(callback.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-participants",
                 "description": "Callback content-type to be participants",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-errorCode-errorDescription",
                 "description": "Callback body should contain errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3204')",

@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "bugfix-981",
       "name": "Tests for Bugfix #981 - Fix 500 http code instead of 400",
       "meta": {
         "info": "Tests for Bugfix #981 - Fix 500 http code instead of 400"
       },
       "requests": [
         {
-          "id": 6,
+          "id": "Add-part-duplicate-acc",
           "meta": {
             "info": "Add participant - duplicate account"
           },
@@ -37,21 +37,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-400",
                 "description": "Response code is 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-Generic-client-error-dup",
                 "description": "Check Generic client error for duplicate currency",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Generic client error');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3000",
                 "description": "Check Error code 3000",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3000');"
@@ -61,7 +61,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Add-non-existing-part",
           "meta": {
             "info": "Add non existing Participant"
           },
@@ -86,21 +86,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-400",
                 "description": "Response code is 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-Generic-ID-not-found-non",
                 "description": "Check Generic ID not found - non existing participant",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Generic ID not found');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3200",
                 "description": "Check Error code 3200",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3200');"
@@ -110,7 +110,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Add-part-Invalid-curr",
           "meta": {
             "info": "Add Participant - Invalid Currency"
           },
@@ -138,21 +138,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-400",
                 "description": "Response code is 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-Malformed-syntax-malform",
                 "description": "Check Malformed syntax - malformed currency",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3101",
                 "description": "Check Error code 3101",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3101');"

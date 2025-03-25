@@ -3,7 +3,7 @@
   "name": "fxp_error",
   "test_cases": [
     {
-      "id": 3,
+      "id": "pos-payee-invalid",
       "name": "Check that positions for FXP, Payer and Payee are not changed after payee sends invalid fulfillment",
       "fileInfo": {
         "path": "hub/golden_path/fx/feature_tests/negative_scenarios/payee_invalid_fulfillment.json",
@@ -17,7 +17,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-Accounts-Payer-BEFORE-fxTr",
           "description": "Get Accounts for Payer BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -58,7 +58,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Get-Accounts-Payee-BEFORE-fxTr",
           "description": "Get Accounts for Payee BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -100,7 +100,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Get-Accounts-FXP-BEFORE-fxTran",
           "description": "Get Accounts for FXP BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -149,7 +149,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "POST-fxTransfers",
           "description": "POST /fxTransfers",
           "apiVersion": {
             "minorVersion": 0,
@@ -194,28 +194,28 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
@@ -235,7 +235,7 @@
           }
         },
         {
-          "id": 10,
+          "id": "POST-trans-that-receives-inval",
           "description": "POST /transfer  that receives invalid fulfilment",
           "apiVersion": {
             "minorVersion": 0,
@@ -253,7 +253,7 @@
           "method": "post",
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "body": {
-            "transferId": "{$prev.9.request.body.determiningTransferId}",
+            "transferId": "{$prev.POST-fxTransfers.request.body.determiningTransferId}",
             "payeeFsp": "{$inputs.FX_PAYEE_DFSP_ID}",
             "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
@@ -275,42 +275,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-have-error-code",
                 "description": "Callback should have error code",
                 "exec": [
                   "expect(callback.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-have-error-description",
                 "description": "Callback should have error description",
                 "exec": [
                   "expect(callback.body.errorInformation).to.have.property('errorDescription')"
@@ -327,7 +327,7 @@
           }
         },
         {
-          "id": 11,
+          "id": "Get-Accounts-Payer-AFTER-trans",
           "description": "Get Accounts for Payer AFTER transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -366,7 +366,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Payer-pos-not-changed",
                 "description": "Payer position should not be changed",
                 "exec": [
                   "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
@@ -376,7 +376,7 @@
           }
         },
         {
-          "id": 12,
+          "id": "Get-Accounts-Payee-AFTER-trans",
           "description": "Get Accounts for Payee AFTER transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -399,7 +399,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "FXP-pos-not-changed",
                 "description": "FXP position should not be changed",
                 "exec": [
                   "expect(environment.payeePositionBalanceAfterTransfer).to.equal(environment.payeePositionBalanceBeforeFxTransfer)"
@@ -427,7 +427,7 @@
           }
         },
         {
-          "id": 13,
+          "id": "Get-Accounts-FXP-AFTER-trans",
           "description": "Get Accounts for FXP AFTER transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -450,14 +450,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "FXP-src-curr-pos-not-changed",
                 "description": "FXP Source currency position should not be changed",
                 "exec": [
                   "expect(environment.fxpSourceCurrencyPositionBalanceAfterTransfer).to.equal(environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer)"
                 ]
               },
               {
-                "id": 2,
+                "id": "FXP-Target-curr-pos-not-change",
                 "description": "FXP Target currency position should not be changed",
                 "exec": [
                   "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer).to.equal(environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer)"

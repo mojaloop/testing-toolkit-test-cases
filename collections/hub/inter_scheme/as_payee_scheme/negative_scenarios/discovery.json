@@ -6,7 +6,7 @@
       "name": "Test Case for scenario when there is an error in payee dfsp",
       "requests": [
         {
-          "id": 1,
+          "id": "Add-part-ALS",
           "meta": {
             "info": "This request allows us to add a new participant to Account Lookup Service."
           },
@@ -53,7 +53,7 @@
           "disabled": false
         },
         {
-          "id": "2",
+          "id": "Negative-test-case-error-code-",
           "description": "Negative test case for error code 5xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -78,21 +78,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode",
                 "description": "Callback response has errorCode",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_TEST_PAYEE_DFSP_ERROR_CODE_5XXX}')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-rsp-has-errorDescription",
                 "description": "Callback response has errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation).to.have.property('errorDescription')"

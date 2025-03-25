@@ -3,14 +3,14 @@
   "name": "switch_onboarding_participant_fxp",
   "test_cases": [
     {
-      "id": 1,
+      "id": "accounts",
       "name": "Accounts",
       "meta": {
         "info": "Accounts"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-part-SOURCE_CURRENCY",
           "meta": {
             "info": "Add participant"
           },
@@ -34,7 +34,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-201-if-not-exists-400-i",
                 "description": "status to be 201 if not exists or 400 if exists",
                 "exec": [
                   "if (response.body.errorInformation) {",
@@ -48,7 +48,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Add-initial-pos-limits-SOURCE_",
           "meta": {
             "info": "Add initial position and limits"
           },
@@ -79,7 +79,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-201-if-not-exists-500-i",
                 "description": "status to be 201 if not exists or 500 if exists",
                 "exec": [
                   "if (response.body.errorInformation) {",
@@ -93,7 +93,7 @@
           }
         },
         {
-          "id": 27,
+          "id": "Add-part-TARGET_CURRENCY",
           "meta": {
             "info": "Add participant with second currency"
           },
@@ -117,7 +117,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-201-if-not-exists-400-i",
                 "description": "status to be 201 if not exists or 400 if exists",
                 "exec": [
                   "if (response.body.errorInformation) {",
@@ -134,7 +134,7 @@
           }
         },
         {
-          "id": 28,
+          "id": "Add-initial-pos-limits-TARGET_",
           "meta": {
             "info": "Add initial position and limits with second currency"
           },
@@ -165,7 +165,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-201-if-not-exists-500-i",
                 "description": "status to be 201 if not exists or 500 if exists",
                 "exec": [
                   "if (response.body.errorInformation) {",
@@ -181,14 +181,14 @@
       ]
     },
     {
-      "id": 2,
+      "id": "funds-in",
       "name": "Funds In",
       "meta": {
         "info": "Funds In"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-Status-req-before-deposit",
           "meta": {
             "info": "Get Status Request before deposit"
           },
@@ -212,7 +212,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-200",
                 "description": "status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -236,7 +236,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Deposit-Funds-settle-acc-SOURC",
           "meta": {
             "info": "Deposit Funds in Settlement Account"
           },
@@ -279,7 +279,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-202",
                 "description": "status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -298,7 +298,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Get-Status-req-after-deposit",
           "meta": {
             "info": "Get Status Request after deposit"
           },
@@ -322,14 +322,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-200",
                 "description": "status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "settle-acc-bal-After-FundsIn-b",
                 "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
                   "expect(+environment.fxpCurrency1SettlementAccountBalanceAfterFundsIn).to.equal(+environment.fxpCurrency1SettlementAccountBalanceBeforeFundsIn - +environment.fxpCurrency1fundsInPrepareAmount)"
@@ -353,7 +353,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Get-Status-req-before-deposit-",
           "description": "Get Status Request before deposit for TARGET_CURRENCY",
           "meta": {
             "info": "Get Status Request before deposit"
@@ -377,7 +377,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-200",
                 "description": "status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -401,7 +401,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Deposit-Funds-settle-acc-TARGE",
           "description": "Deposit Funds in Settlement Account TARGET_CURRENCY",
           "meta": {
             "info": "Deposit Funds in Settlement Account"
@@ -444,7 +444,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-202",
                 "description": "status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -463,7 +463,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Get-Status-req-after-deposit-T",
           "description": "Get Status Request after deposit for TARGET_CURRENCY",
           "meta": {
             "info": "Get Status Request after deposit"
@@ -487,14 +487,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-200",
                 "description": "status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "settle-acc-bal-After-FundsIn-b",
                 "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
                   "expect(+environment.fxpCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.fxpCurrency2SettlementAccountBalanceBeforeFundsIn - +environment.fxpCurrency1fundsInPrepareAmount)"

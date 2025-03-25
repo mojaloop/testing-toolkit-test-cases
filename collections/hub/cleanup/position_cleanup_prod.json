@@ -2,7 +2,7 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "close-current-open-win",
       "name": "Close current open window and store data for all closed windows",
       "meta": {
         "info": "Close current open window and store data for all closed windows"
@@ -12,7 +12,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-Existing-Open-Window",
           "meta": {
             "info": "Get Existing Open Window"
           },
@@ -37,14 +37,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "State-OPEN",
                 "description": "State should be OPEN",
                 "exec": [
                   "expect(environment.openWindowstate).to.equal(\"OPEN\")"
@@ -68,7 +68,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Close-existing-open-window",
           "meta": {
             "info": "Close existing open window"
           },
@@ -97,7 +97,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200-400",
                 "description": "Status code is 200 or 400",
                 "exec": [
                   "if(response.status === 400){",
@@ -111,7 +111,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "New-window-State-OPEN",
                 "description": "New window State should be OPEN",
                 "exec": [
                   "",
@@ -160,7 +160,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Get-list-all-Closed-Windows",
           "meta": {
             "info": "Get list of all Closed Windows"
           },
@@ -185,7 +185,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200-400",
                 "description": "Response status to be 200/400",
                 "exec": [
                   "if(response.status === 400){",
@@ -217,7 +217,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "get-settlements-models",
           "meta": {
             "info": "get settlements models"
           },
@@ -235,7 +235,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-code-200",
                 "description": "status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -273,7 +273,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "run-deferred-def-settle",
       "name": "Run deferred default settlement model for all the closed windows",
       "meta": {
         "info": "Run deferred default settlement model for all the closed windows"
@@ -283,7 +283,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Create-settle-all-Closed-Windo",
           "meta": {
             "info": "Create Settlement for all Closed Windows in deferred settlement model"
           },
@@ -310,7 +310,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200-400",
                 "description": "Status code is 200 or 400",
                 "exec": [
                   "expect(response.status).to.be.oneOf([200,400])"
@@ -355,7 +355,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Prepare-settle",
           "meta": {
             "info": "Prepare Settlement"
           },
@@ -382,7 +382,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status is 200",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -391,7 +391,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Overall-state-PS_TRANSFERS_REC",
                 "description": "Overall state is PS_TRANSFERS_RECORDED",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -400,7 +400,7 @@
                 ]
               },
               {
-                "id": 3,
+                "id": "settle-Window-state-PENDING_SE",
                 "description": "Settlement Window state is PENDING_SETTLEMENT",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -409,7 +409,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "Participants-state-PS_TRANSFER",
                 "description": "Participants state is PS_TRANSFERS_RECORDED",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -488,7 +488,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Reserve-settle",
           "meta": {
             "info": "Reserve Settlement"
           },
@@ -515,7 +515,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status is 200",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -524,7 +524,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Overall-state-PS_TRANSFERS_RES",
                 "description": "Overall state is PS_TRANSFERS_RESERVED",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -533,7 +533,7 @@
                 ]
               },
               {
-                "id": 3,
+                "id": "settle-Window-state-PENDING_SE",
                 "description": "Settlement Window state is PENDING_SETTLEMENT",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -542,7 +542,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "Participants-state-PS_TRANSFER",
                 "description": "Participants state is PS_TRANSFERS_RESERVED",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -620,7 +620,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Commit-settle",
           "meta": {
             "info": "Commit Settlement"
           },
@@ -647,7 +647,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status is 200",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -656,7 +656,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Overall-state-PS_TRANSFERS_COM",
                 "description": "Overall state is PS_TRANSFERS_COMMITTED",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -665,7 +665,7 @@
                 ]
               },
               {
-                "id": 3,
+                "id": "settle-Window-state-PENDING_SE",
                 "description": "Settlement Window state is PENDING_SETTLEMENT",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -674,7 +674,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "Participants-state-PS_TRANSFER",
                 "description": "Participants state is PS_TRANSFERS_COMMITTED",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -752,7 +752,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Settle-settle",
           "meta": {
             "info": "Settle Settlement"
           },
@@ -779,7 +779,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status is 200",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -788,7 +788,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Overall-state-SETTLED",
                 "description": "Overall state is SETTLED",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -797,7 +797,7 @@
                 ]
               },
               {
-                "id": 3,
+                "id": "settle-Window-state-SETTLED",
                 "description": "Settlement Window state is SETTLED",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -806,7 +806,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "Participants-state-SETTLED",
                 "description": "Participants state is SETTLED",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -881,7 +881,7 @@
       ]
     },
     {
-      "id": 4,
+      "id": "run-interchange-fee",
       "name": "Run Interchange fee settlement model for all the closed windows",
       "meta": {
         "info": "Run Interchange fee settlement model for all the closed windows"
@@ -891,7 +891,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Create-settle-Closed-Window-In",
           "meta": {
             "info": "Create Settlement for Closed Window in Interchange fee settlement model "
           },
@@ -913,7 +913,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -922,7 +922,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "settle-State-PENDING_SETTLEMEN",
                 "description": "Settlement State should be PENDING_SETTLEMENT",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -931,7 +931,7 @@
                 ]
               },
               {
-                "id": 3,
+                "id": "Number-associated-windows-1",
                 "description": "Number of associated windows should be 1",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -940,7 +940,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "Associated-settle-Window-ID-co",
                 "description": "Associated Settlement Window ID is the correct one",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
@@ -949,7 +949,7 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Associated-settle-Window-state",
                 "description": "Associated Settlement Window state should be PENDING_SETTLEMENT",
                 "exec": [
                   "if(environment.WINDOWISEMPTY === false){",
