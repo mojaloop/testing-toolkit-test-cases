@@ -2,14 +2,14 @@
   "name": "dfspb-provisioning",
   "test_cases": [
     {
-      "id": 1,
+      "id": "dfspb-account",
       "name": "dfspb account",
       "meta": {
         "info": "dfspb account"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-dfspb",
           "meta": {
             "info": "Add dfspb"
           },
@@ -34,7 +34,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-201-if-not-exists-400-i",
                 "description": "status to be 201 if not exists or 400 if exists",
                 "exec": [
                   "if (response.body.errorInformation) {",
@@ -48,7 +48,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Add-initial-pos-limits-dfspb",
           "meta": {
             "info": "Add initial position and limits - dfspb"
           },
@@ -80,7 +80,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-201-if-not-exists-500-i",
                 "description": "status to be 201 if not exists or 500 if exists",
                 "exec": [
                   "if (response.body.errorInformation) {",
@@ -94,7 +94,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "dfspb-Get-Status-req-before-de",
           "meta": {
             "info": "dfspb Get Status Request before deposit"
           },
@@ -118,7 +118,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-200",
                 "description": "status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -142,7 +142,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Deposit-Funds-settle-acc-dfspb",
           "meta": {
             "info": "Deposit Funds in Settlement Account - dfspb"
           },
@@ -185,7 +185,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-202",
                 "description": "status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -204,7 +204,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "dfspb-Get-Status-req-after-dep",
           "meta": {
             "info": "dfspb Get Status Request after deposit"
           },
@@ -228,14 +228,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-200",
                 "description": "status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "dfspb-settle-acc-bal-After-Fun",
                 "description": "dfspb Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
                   "expect(+environment.dfspbSettlementAccountBalanceAfterFundsIn).to.equal(+environment.dfspbSettlementAccountBalanceBeforeFundsIn - +environment.dfspbfundsInPrepareAmount)"
@@ -259,7 +259,7 @@
           "delay": "500"
         },
         {
-          "id": 6,
+          "id": "Add-dfspb-different-curr-defau",
           "meta": {
             "info": "Add dfspb with different currency for default settlement case"
           },
@@ -284,7 +284,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-201-if-not-exists-400-i",
                 "description": "status to be 201 if not exists or 400 if exists",
                 "exec": [
                   "if (response.body.errorInformation) {",
@@ -298,7 +298,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Add-initial-pos-limits-differe",
           "meta": {
             "info": "Add initial position and limits with different currency - dfspb"
           },
@@ -330,7 +330,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "status-201-if-not-exists-500-i",
                 "description": "status to be 201 if not exists or 500 if exists",
                 "exec": [
                   "if (response.body.errorInformation) {",
@@ -349,14 +349,14 @@
       }
     },
     {
-      "id": 2,
+      "id": "dfspb-callbacks",
       "name": "dfspb callbacks",
       "meta": {
         "info": "dfspb callbacks"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-dfspb-cb-AUTHORIZATIONS",
           "meta": {
             "info": "Add dfspb callback - AUTHORIZATIONS"
           },
@@ -384,7 +384,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -394,7 +394,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Add-dfspb-cb-part-PUT",
           "meta": {
             "info": "Add dfspb callback - PARTICIPANT PUT"
           },
@@ -422,7 +422,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -432,7 +432,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Add-dfspb-cb-part-PUT-Error",
           "meta": {
             "info": "Add dfspb callback - PARTICIPANT PUT Error"
           },
@@ -460,7 +460,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -470,7 +470,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Add-dfspb-cb-part-PUT-Batch",
           "meta": {
             "info": "Add dfspb callback - PARTICIPANT PUT Batch"
           },
@@ -498,7 +498,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -508,7 +508,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Add-dfspb-cb-part-PUT-Batch-Er",
           "meta": {
             "info": "Add dfspb callback - PARTICIPANT PUT Batch Error"
           },
@@ -536,7 +536,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -546,7 +546,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Add-dfspb-cb-PARTIES-GET",
           "meta": {
             "info": "Add dfspb callback - PARTIES GET"
           },
@@ -574,7 +574,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -584,7 +584,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Add-dfspb-cb-PARTIES-PUT",
           "meta": {
             "info": "Add dfspb callback - PARTIES PUT"
           },
@@ -612,7 +612,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -622,7 +622,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Add-dfspb-cb-PARTIES-PUT-Error",
           "meta": {
             "info": "Add dfspb callback - PARTIES PUT Error"
           },
@@ -650,7 +650,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -660,7 +660,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "Add-dfspb-cb-QUOTES",
           "meta": {
             "info": "Add dfspb callback - QUOTES"
           },
@@ -687,7 +687,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -697,7 +697,7 @@
           }
         },
         {
-          "id": 10,
+          "id": "Add-dfspb-cb-TXN-req",
           "meta": {
             "info": "Add dfspb callback - TXN REQUEST"
           },
@@ -724,7 +724,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -734,7 +734,7 @@
           }
         },
         {
-          "id": 11,
+          "id": "Add-dfspb-cb-TRANSFERS-POST",
           "meta": {
             "info": "Add dfspb callback - TRANSFERS POST"
           },
@@ -761,7 +761,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -771,7 +771,7 @@
           }
         },
         {
-          "id": 12,
+          "id": "Add-dfspb-cb-TRANSFERS-PUT",
           "meta": {
             "info": "Add dfspb callback - TRANSFERS PUT"
           },
@@ -798,7 +798,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -808,7 +808,7 @@
           }
         },
         {
-          "id": 13,
+          "id": "Add-dfspb-cb-TRANSFERS-ERROR",
           "meta": {
             "info": "Add dfspb callback - TRANSFERS ERROR"
           },
@@ -835,7 +835,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -845,7 +845,7 @@
           }
         },
         {
-          "id": 14,
+          "id": "Add-dfspb-cb-BULK-TRANSFER-POS",
           "meta": {
             "info": "Add dfspb callback - BULK-TRANSFER POST"
           },
@@ -872,7 +872,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -882,7 +882,7 @@
           }
         },
         {
-          "id": 15,
+          "id": "Add-dfspb-cb-BULK-TRANSFER-PUT",
           "meta": {
             "info": "Add dfspb callback - BULK-TRANSFER PUT"
           },
@@ -909,7 +909,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -919,7 +919,7 @@
           }
         },
         {
-          "id": 16,
+          "id": "Add-dfspb-cb-BULK-TRANSFER-ERR",
           "meta": {
             "info": "Add dfspb callback - BULK-TRANSFER ERROR"
           },
@@ -946,7 +946,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -956,7 +956,7 @@
           }
         },
         {
-          "id": 21,
+          "id": "Add-cb-part-SUB-ID-PUT",
           "meta": {
             "info": "Add callback - PARTICIPANT SUB-ID PUT"
           },
@@ -983,7 +983,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -993,7 +993,7 @@
           }
         },
         {
-          "id": 22,
+          "id": "Add-cb-part-SUB-ID-PUT-Error",
           "meta": {
             "info": "Add callback - PARTICIPANT SUB-ID PUT Error"
           },
@@ -1020,7 +1020,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1030,7 +1030,7 @@
           }
         },
         {
-          "id": 23,
+          "id": "Add-cb-part-SUB-ID-DELETE",
           "meta": {
             "info": "Add callback - PARTICIPANT SUB-ID DELETE"
           },
@@ -1057,7 +1057,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1067,7 +1067,7 @@
           }
         },
         {
-          "id": 24,
+          "id": "Add-cb-PARTIES-SUB-ID-GET",
           "meta": {
             "info": "Add callback - PARTIES SUB-ID GET"
           },
@@ -1094,7 +1094,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1104,7 +1104,7 @@
           }
         },
         {
-          "id": 25,
+          "id": "Add-cb-PARTIES-SUB-ID-PUT",
           "meta": {
             "info": "Add callback - PARTIES SUB-ID PUT"
           },
@@ -1131,7 +1131,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1141,7 +1141,7 @@
           }
         },
         {
-          "id": 26,
+          "id": "Add-cb-PARTIES-SUB-ID-ERROR-PU",
           "meta": {
             "info": "Add callback - PARTIES SUB-ID ERROR PUT"
           },
@@ -1168,7 +1168,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-201",
                 "description": "Status code is 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -1183,14 +1183,14 @@
       }
     },
     {
-      "id": 3,
+      "id": "dfspb-oracleregi-45c9",
       "name": "dfspb oracle_registration",
       "meta": {
         "info": "dfspb oracle_registration"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-987654321-payeeIdType-Orac",
           "meta": {
             "info": "Add 987654321 in payeeIdType Oracle"
           },
@@ -1222,7 +1222,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -1267,14 +1267,14 @@
       }
     },
     {
-      "id": 4,
+      "id": "dfspb-oracleregi-45c9",
       "name": "dfspb oracle_registration",
       "meta": {
         "info": "dfspb oracle_registration"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-910498498-payeeIdType-Orac",
           "meta": {
             "info": "Add 910498498 in payeeIdType Oracle"
           },
@@ -1306,7 +1306,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"

@@ -2,14 +2,14 @@
   "name": "Get Participant Details - [seq-acct-lookup-get-participants-7.1.0]",
   "test_cases": [
     {
-      "id": 8,
+      "id": "get-participants-51b4",
       "name": "Get participants details - Happy Path - [seq-acct-lookup-get-participants-7.1.0]",
       "meta": {
         "info": "Get participants details - Happy Path - [seq-acct-lookup-get-participants-7.1.0]"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-part-Information",
           "meta": {
             "info": "Get Participant Information"
           },
@@ -37,56 +37,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "HTTP-status-code-202-returned",
                 "description": "HTTP status code 202 returned ",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "HTTP-status-Accepted",
                 "description": "HTTP status should be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-content-length-not-zero",
                 "description": "Callback content-length should not be zero",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-fspId",
                 "description": "Callback body should contain fspId",
                 "exec": [
                   "expect(callback.body).to.have.property('fspId')"
                 ]
               },
               {
-                "id": 5,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-participants",
                 "description": "Callback content-type to be participants",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "cb-fspId-toFspId",
                 "description": "Callback fspId should be toFspId",
                 "exec": [
                   "expect(callback.body.fspId).to.equal('{$inputs.toFspId}')",
@@ -164,14 +164,14 @@
       }
     },
     {
-      "id": 9,
+      "id": "get-participants-e534",
       "name": "Get participants details - Error invalid Party ID - [seq-acct-lookup-get-participants-7.1.0]",
       "meta": {
         "info": "Get participants details - Error invalid Party ID - [seq-acct-lookup-get-participants-7.1.0]"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-part-Information",
           "meta": {
             "info": "Get Participant Information"
           },
@@ -199,56 +199,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "HTTP-status-code-202-returned",
                 "description": "HTTP status code 202 returned ",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "HTTP-status-Accepted",
                 "description": "HTTP status should be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-content-length-not-zero",
                 "description": "Callback content-length should not be zero",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-errorInformation",
                 "description": "Callback body should contain errorInformation",
                 "exec": [
                   "expect(callback.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 5,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-participants",
                 "description": "Callback content-type to be participants",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "cb-errorCode-errorDescription-",
                 "description": "Callback errorCode and errorDescription validation",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3204')",
@@ -327,14 +327,14 @@
       }
     },
     {
-      "id": 10,
+      "id": "get-participants-89a0",
       "name": "Get participants details - Error ACCOUNT_ID type not setup - [seq-acct-lookup-get-participants-7.1.0]",
       "meta": {
         "info": "Get participants details - Error ACCOUNT_ID type not setup - [seq-acct-lookup-get-participants-7.1.0]"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-part-Information",
           "meta": {
             "info": "Get Participant Information"
           },
@@ -362,56 +362,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "HTTP-status-code-202-returned",
                 "description": "HTTP status code 202 returned ",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "HTTP-status-Accepted",
                 "description": "HTTP status should be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-content-length-not-zero",
                 "description": "Callback content-length should not be zero",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-errorInformation",
                 "description": "Callback body should contain errorInformation",
                 "exec": [
                   "expect(callback.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 5,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-participants",
                 "description": "Callback content-type to be participants",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "cb-errorCode-errorDescription-",
                 "description": "Callback errorCode and errorDescription validation",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3003')",

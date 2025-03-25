@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "update-oracle-en-744b",
       "name": "Update Oracle Endpoint - Happy Path [seq-acct-lookup-admin-put-oracle-7.3.3].json",
       "meta": {
         "info": "Update Oracle Endpoint - Happy Path [seq-acct-lookup-admin-put-oracle-7.3.3].json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Create-Sample-Oracle-Endpoint",
           "meta": {
             "info": "Create Sample Oracle Endpoint"
           },
@@ -41,7 +41,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-201",
                 "description": "Response status should be 201",
                 "exec": [
                   "if (response.status !== 500) {",
@@ -50,7 +50,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-status-could-500-if-duplic",
                 "description": "Response status could be 500 if duplicate request is sent",
                 "exec": [
                   "if (response.status !== 201) {",
@@ -88,7 +88,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Update-Oracle-Endpoint",
           "meta": {
             "info": "Update Oracle Endpoint"
           },
@@ -123,7 +123,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-204",
                 "description": "Response status code should be 204",
                 "exec": [
                   "expect(response.status).to.equal(204)"
@@ -133,7 +133,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Verify-Oracle-Update",
           "meta": {
             "info": "Verify Oracle Update"
           },
@@ -159,14 +159,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status should be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Oracle-endpoint-details",
                 "description": "Oracle endpoint details should match",
                 "exec": [
                   "const updatedOracle = response.body.find(o => o.oracleId = environment.testOracleId )",
@@ -193,14 +193,14 @@
       }
     },
     {
-      "id": 2,
+      "id": "update-oracle-en-f1f3",
       "name": "Update Oracle Endpoint - Unhappy Path [seq-acct-lookup-admin-put-oracle-7.3.3].json",
       "meta": {
         "info": "Update Oracle Endpoint - Unhappy Path [seq-acct-lookup-admin-put-oracle-7.3.3].json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Create-Sample-Oracle-Endpoint",
           "meta": {
             "info": "Create Sample Oracle Endpoint"
           },
@@ -232,7 +232,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-201",
                 "description": "Response status should be 201",
                 "exec": [
                   "if (response.status !== 500) {",
@@ -241,7 +241,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-status-could-500-if-duplic",
                 "description": "Response status could be 500 if duplicate request is sent",
                 "exec": [
                   "if (response.status !== 201) {",
@@ -279,7 +279,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Endpoint-Missing",
           "meta": {
             "info": "Endpoint Missing"
           },
@@ -310,7 +310,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-400",
                 "description": "Response status code should be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
@@ -320,7 +320,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "OracleIdType-Missing",
           "meta": {
             "info": "OracleIdType Missing"
           },
@@ -354,7 +354,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-400",
                 "description": "Response status code should be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
@@ -364,7 +364,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "ID-not-found",
           "meta": {
             "info": "ID not found"
           },
@@ -399,14 +399,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-400",
                 "description": "Response status code should be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-appropriate-error-informat",
                 "description": "Response should contain appropriate error information",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.equal('3003')",
@@ -417,7 +417,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Required-hdr-Missing-Content-T",
           "meta": {
             "info": "Required Header Missing - Content-Type"
           },
@@ -449,14 +449,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-400",
                 "description": "Response status code should be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-appropriate-error-informat",
                 "description": "Response should contain appropriate error information",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.equal('3102')",

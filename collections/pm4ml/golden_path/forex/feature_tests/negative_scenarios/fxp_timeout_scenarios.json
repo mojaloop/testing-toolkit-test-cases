@@ -3,7 +3,7 @@
   "name": "fxp_error",
   "test_cases": [
     {
-      "id": 1,
+      "id": "fx-quote---timeo-7cfa",
       "name": "FX Quote - Timeout scenario",
       "fileInfo": {
         "path": "pm4ml/sdk_fx_transfer.json"
@@ -13,7 +13,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Initiate-trans",
           "description": "Initiate a transfer",
           "apiVersion": {
             "minorVersion": 1,
@@ -50,14 +50,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-200",
                 "description": "Status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Current-state-WAITING_FOR_PART",
                 "description": "Current state should be WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
                   "expect(response.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
@@ -67,7 +67,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Accept-Party",
           "description": "Accept Party",
           "apiVersion": {
             "minorVersion": 1,
@@ -76,10 +76,10 @@
             "asynchronous": false
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "path": "/transfers/{$prev.Initiate-trans.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.1.response.body.transferId}"
+            "transferId": "{$prev.Initiate-trans.response.body.transferId}"
           },
           "url": null,
           "body": {
@@ -89,14 +89,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-500",
                 "description": "Status is 500",
                 "exec": [
                   "expect(response.status).to.equal(500)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-error-rsp-timeout-inform",
                 "description": "Check for /error response with timeout information",
                 "exec": [
                   "expect(response.body.currentState).to.equal('WAITING_FOR_CONVERSION_ACCEPTANCE')"
@@ -108,7 +108,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "fx-transfer---ti-edb7",
       "name": "FX Transfer - Timeout Scenario",
       "fileInfo": {
         "path": "pm4ml/sdk_fx_transfer.json"
@@ -118,7 +118,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Initiate-trans",
           "description": "Initiate a transfer",
           "apiVersion": {
             "minorVersion": 1,
@@ -155,14 +155,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-200",
                 "description": "Status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Current-state-WAITING_FOR_PART",
                 "description": "Current state should be WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
                   "expect(response.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
@@ -172,7 +172,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Accept-Party",
           "description": "Accept Party",
           "apiVersion": {
             "minorVersion": 1,
@@ -181,10 +181,10 @@
             "asynchronous": false
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "path": "/transfers/{$prev.Initiate-trans.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.1.response.body.transferId}"
+            "transferId": "{$prev.Initiate-trans.response.body.transferId}"
           },
           "url": null,
           "body": {
@@ -194,14 +194,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-200",
                 "description": "Status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Current-state-WAITING_FOR_CONV",
                 "description": "Current state should be WAITING_FOR_CONVERSION_ACCEPTANCE",
                 "exec": [
                   "expect(response.body.currentState).to.equal('WAITING_FOR_CONVERSION_ACCEPTANCE')"
@@ -211,7 +211,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Accept-Conversion",
           "description": "Accept Conversion",
           "apiVersion": {
             "minorVersion": 1,
@@ -220,10 +220,10 @@
             "asynchronous": false
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "path": "/transfers/{$prev.Initiate-trans.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.1.response.body.transferId}"
+            "transferId": "{$prev.Initiate-trans.response.body.transferId}"
           },
           "url": null,
           "body": {
@@ -233,14 +233,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-200",
                 "description": "Status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Current-state-WAITING_FOR_QUOT",
                 "description": "Current state should be WAITING_FOR_QUOTE_ACCEPTANCE",
                 "exec": [
                   "expect(response.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
@@ -250,7 +250,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Accept-Quote",
           "description": "Accept Quote",
           "apiVersion": {
             "minorVersion": 1,
@@ -259,10 +259,10 @@
             "asynchronous": false
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "path": "/transfers/{$prev.Initiate-trans.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.1.response.body.transferId}"
+            "transferId": "{$prev.Initiate-trans.response.body.transferId}"
           },
           "url": null,
           "body": {
@@ -272,14 +272,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-200",
                 "description": "Status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Current-state-COMPLETED",
                 "description": "Current state should be COMPLETED",
                 "exec": [
                   "expect(response.body.currentState).to.equal('COMPLETED')"
@@ -291,7 +291,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": "fx---regular-tra-c060",
       "name": "FX - Regular Transfer - Timeout Scenario",
       "fileInfo": {
         "path": "pm4ml/sdk_fx_transfer.json"
@@ -301,7 +301,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Initiate-trans",
           "description": "Initiate a transfer",
           "apiVersion": {
             "minorVersion": 1,
@@ -338,14 +338,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-200",
                 "description": "Status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Current-state-WAITING_FOR_PART",
                 "description": "Current state should be WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
                   "expect(response.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
@@ -355,7 +355,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Accept-Party",
           "description": "Accept Party",
           "apiVersion": {
             "minorVersion": 1,
@@ -364,10 +364,10 @@
             "asynchronous": false
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "path": "/transfers/{$prev.Initiate-trans.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.1.response.body.transferId}"
+            "transferId": "{$prev.Initiate-trans.response.body.transferId}"
           },
           "url": null,
           "body": {
@@ -377,14 +377,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-200",
                 "description": "Status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Current-state-WAITING_FOR_CONV",
                 "description": "Current state should be WAITING_FOR_CONVERSION_ACCEPTANCE",
                 "exec": [
                   "expect(response.body.currentState).to.equal('WAITING_FOR_CONVERSION_ACCEPTANCE')"
@@ -394,7 +394,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Accept-Conversion",
           "description": "Accept Conversion",
           "apiVersion": {
             "minorVersion": 1,
@@ -403,10 +403,10 @@
             "asynchronous": false
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "path": "/transfers/{$prev.Initiate-trans.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.1.response.body.transferId}"
+            "transferId": "{$prev.Initiate-trans.response.body.transferId}"
           },
           "url": null,
           "body": {
@@ -416,14 +416,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-200",
                 "description": "Status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Current-state-WAITING_FOR_QUOT",
                 "description": "Current state should be WAITING_FOR_QUOTE_ACCEPTANCE",
                 "exec": [
                   "expect(response.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
@@ -433,7 +433,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Accept-Quote",
           "description": "Accept Quote",
           "apiVersion": {
             "minorVersion": 1,
@@ -442,10 +442,10 @@
             "asynchronous": false
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "path": "/transfers/{$prev.Initiate-trans.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.1.response.body.transferId}"
+            "transferId": "{$prev.Initiate-trans.response.body.transferId}"
           },
           "url": null,
           "body": {
@@ -455,14 +455,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-200",
                 "description": "Status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Current-state-COMPLETED",
                 "description": "Current state should be COMPLETED",
                 "exec": [
                   "expect(response.body.currentState).to.equal('COMPLETED')"

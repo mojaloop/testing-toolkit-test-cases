@@ -6,7 +6,7 @@
       "name": "Test Case for Bad Request - 400",
       "requests": [
         {
-          "id": "1",
+          "id": "Send-party-lookup-req",
           "description": "Send party lookup request",
           "apiVersion": {
             "minorVersion": 1,
@@ -29,14 +29,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-code-3102",
                 "description": "Response error code to be 3102",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.equal('3102')"
@@ -52,7 +52,7 @@
       "name": "Test Case for error in Payer Scheme",
       "requests": [
         {
-          "id": "1",
+          "id": "Negative-test-case-error-code-",
           "description": "Negative test case for error code 2xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -76,14 +76,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYER_SCHEME_ERROR_CODE_2XXX}')",
@@ -95,7 +95,7 @@
           "disabled": true
         },
         {
-          "id": "2",
+          "id": "Negative-test-case-error-code--1",
           "description": "Negative test case for error code 3xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -118,14 +118,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYER_SCHEME_ERROR_CODE_3XXX}')",
@@ -137,7 +137,7 @@
           "disabled": true
         },
         {
-          "id": "3",
+          "id": "Negative-test-case-error-code--2",
           "description": "Negative test case for error code 4xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -160,14 +160,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYER_SCHEME_ERROR_CODE_4XXX}')",
@@ -179,7 +179,7 @@
           "disabled": true
         },
         {
-          "id": "4",
+          "id": "Negative-test-case-error-code--3",
           "description": "Negative test case for error code 5xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -202,14 +202,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYER_SCHEME_ERROR_CODE_5XXX}')",
@@ -227,7 +227,7 @@
       "name": "Test Case for scenario where the receiving dfsp is not in payer proxy cache",
       "requests": [
         {
-          "id": "1",
+          "id": "Send-party-lookup-req",
           "description": "Send party lookup request",
           "apiVersion": {
             "minorVersion": 1,
@@ -250,14 +250,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('${inputs.PROXY_PAYEEFSP_PARTY_ID_NOT_IN_PAYER_PROXY_CACHE_ERROR_CODE}')",
@@ -275,7 +275,7 @@
       "name": "Test Case for scenario when there is an error in proxy",
       "requests": [
         {
-          "id": "1",
+          "id": "Send-party-lookup-req",
           "description": "Send party lookup request",
           "apiVersion": {
             "minorVersion": 1,
@@ -299,35 +299,35 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-src-hdr-proxy",
                 "description": "Response Source Header should be proxy",
                 "exec": [
                   "expect(callback.headers['fspiop-source']).to.equal('{$inputs.PROXY_HEADER}')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-dest-hdr-Payerfsp-Id",
                 "description": "Response Destination Header same as Payerfsp Id",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-rsp-has-errorCode",
                 "description": "Callback response has errorCode",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY_ERROR_CODE}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-rsp-has-errorDescription",
                 "description": "Callback response has  errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation).to.have.property('errorDescription')"
@@ -343,7 +343,7 @@
       "name": "Test Case for scenario when there is an error in payee scheme",
       "requests": [
         {
-          "id": "1",
+          "id": "Negative-test-case-error-code-",
           "description": "Negative test case for error code 2xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -367,21 +367,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_SCHEME_ERROR_CODE_2XXX}')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation).to.have.property('errorDescription')"
@@ -399,7 +399,7 @@
           }
         },
         {
-          "id": "2",
+          "id": "Negative-test-case-error-code--1",
           "description": "Negative test case for error code 3xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -423,21 +423,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_SCHEME_ERROR_CODE_3XXX}')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation).to.have.property('errorDescription')"
@@ -455,7 +455,7 @@
           }
         },
         {
-          "id": "3",
+          "id": "Negative-test-case-error-code--2",
           "description": "Negative test case for error code 4xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -479,21 +479,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_SCHEME_ERROR_CODE_4XXX}')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation).to.have.property('errorDescription')"
@@ -511,7 +511,7 @@
           }
         },
         {
-          "id": "4",
+          "id": "Negative-test-case-error-code--3",
           "description": "Negative test case for error code 5xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -535,21 +535,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_SCHEME_ERROR_CODE_5XXX}')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation).to.have.property('errorDescription')"
@@ -573,7 +573,7 @@
       "name": "Test Case for scenario when there is an error in payee dfsp",
       "requests": [
         {
-          "id": "1",
+          "id": "Negative-test-case-error-code-",
           "description": "Negative test case for error code 5xxx",
           "apiVersion": {
             "minorVersion": 1,
@@ -597,21 +597,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode",
                 "description": "Callback response has errorCode",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYER_TEST_PAYEE_DFSP_ERROR_CODE_5XXX}')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-rsp-has-errorDescription",
                 "description": "Callback response has errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation).to.have.property('errorDescription')"
@@ -627,7 +627,7 @@
       "name": "Party Lookup for scenario when there is an eror in Oracle",
       "requests": [
         {
-          "id": "1",
+          "id": "Send-party-lookup-req",
           "description": "Send party lookup request",
           "apiVersion": {
             "minorVersion": 1,
@@ -651,14 +651,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_ORACLE_ERROR_ERROR_CODE}')",
@@ -676,7 +676,7 @@
       "name": "Party Lookup for Payer Cache no longer valid",
       "requests": [
         {
-          "id": "1",
+          "id": "Send-party-lookup-req",
           "description": "Send party lookup request",
           "apiVersion": {
             "minorVersion": 1,
@@ -700,14 +700,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-rsp-has-errorCode-errorDesc",
                 "description": "Callback response has errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_CACHE_NOT_VALID_ERROR_CODE}')",
@@ -719,7 +719,7 @@
           "disabled": true
         },
         {
-          "id": "2",
+          "id": "Send-Oracle-lookup-req",
           "description": "Send Oracle lookup request",
           "apiVersion": {
             "minorVersion": 1,
@@ -741,14 +741,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Oracle-not-have-mapping-party-",
                 "description": "Oracle should not have mapping for the party ID",
                 "exec": [
                   "expect(response.fspId).to.equal('')"

@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "quoting-service",
       "name": "quoting_service",
       "meta": {
         "info": "quoting_service"
       },
       "requests": [
         {
-          "id": 4,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -70,42 +70,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(environment.callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(environment.callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(environment.callback.data).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(environment.callback.data.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -113,42 +113,42 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-quotes",
                 "description": "Callback content-type to be quotes",
                 "exec": [
                   "expect(environment.callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-amountType-SEND",
                 "description": "Request amountType to be SEND",
                 "exec": [
                   "expect('{$request.body.amountType}').to.equal('SEND')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-transactionType-scenario-t",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": 10,
+                "id": "req-transactionType-initiator-",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": 11,
+                "id": "req-transactionType-initiatorT",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
                 ]
               },
               {
-                "id": 12,
+                "id": "Payee-src",
                 "description": "Payee FSPIOP-Source",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -157,7 +157,7 @@
                 ]
               },
               {
-                "id": 13,
+                "id": "Payee-Content-Type",
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -166,7 +166,7 @@
                 ]
               },
               {
-                "id": 14,
+                "id": "IlpPacket-exists",
                 "description": "IlpPacket exists",
                 "exec": [
                   "",
@@ -174,7 +174,7 @@
                 ]
               },
               {
-                "id": 15,
+                "id": "confition-exists",
                 "description": "confition exists",
                 "exec": [
                   "expect(environment.callback.data.condition).not.equal(undefined)"
@@ -213,7 +213,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Get-health-status-Quoting-Serv",
           "meta": {
             "info": "Get health status of Quoting Service"
           },
@@ -230,21 +230,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-services-array",
                 "description": "Response services to be an array",
                 "exec": [
                   "expect(response.body.services).to.be.an('array');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Expected-services-have-data-st",
                 "description": "Expected services to have data store and status is OK",
                 "exec": [
                   "if(!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
@@ -273,7 +273,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Get-Quote",
           "meta": {
             "info": "Get Quote"
           },
@@ -285,10 +285,10 @@
             "asynchronous": true
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.4.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-quote.request.body.quoteId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.4.request.body.quoteId}"
+            "ID": "{$prev.Send-quote.request.body.quoteId}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "ignoreCallbacks": true,
@@ -303,7 +303,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -313,7 +313,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Send-quote-missing-date",
           "meta": {
             "info": "Send quote - missing date"
           },
@@ -373,28 +373,28 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3102",
                 "description": "Check Error code 3102",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.equal('3102')"
                 ]
               },
               {
-                "id": 4,
+                "id": "Error-message-date-required",
                 "description": "Error message date is required",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('date');"
                 ]
               },
               {
-                "id": 5,
+                "id": "Missing-element-error",
                 "description": "Missing element error",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element');"
@@ -424,7 +424,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Send-quote-Copy",
           "meta": {
             "info": "Send quote Copy"
           },
@@ -484,21 +484,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-Error-code-3102",
                 "description": "Check Error code 3102",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.equal('3102')"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Missing-mandatory-elemen",
                 "description": "Check Missing mandatory element - Invalid accept header",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('/header must have required property \\'accept\\'');"
@@ -528,7 +528,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "Get-Quote-Missing-content-type",
           "meta": {
             "info": "Get Quote - Missing content type"
           },
@@ -540,10 +540,10 @@
             "asynchronous": true
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.4.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-quote.request.body.quoteId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.4.request.body.quoteId}"
+            "ID": "{$prev.Send-quote.request.body.quoteId}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "ignoreCallbacks": false,
@@ -557,21 +557,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Missing-mandatory-element-erro",
                 "description": "Missing mandatory element error",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element ');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3102",
                 "description": "Check Error code 3102",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.equal('3102')"
@@ -591,7 +591,7 @@
           }
         },
         {
-          "id": 10,
+          "id": "Get-Quote-Invalid-content-type",
           "meta": {
             "info": "Get Quote - Invalid content type"
           },
@@ -603,10 +603,10 @@
             "asynchronous": true
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.4.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-quote.request.body.quoteId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.4.request.body.quoteId}"
+            "ID": "{$prev.Send-quote.request.body.quoteId}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "ignoreCallbacks": false,
@@ -621,21 +621,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-Malformed-syntax-error",
                 "description": "Check Malformed syntax error",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3101",
                 "description": "Check Error code 3101",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.equal('3101')"

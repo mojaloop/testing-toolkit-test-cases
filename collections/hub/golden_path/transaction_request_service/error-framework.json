@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "error-framework",
       "name": "error-framework",
       "meta": {
         "info": "error-framework"
       },
       "requests": [
         {
-          "id": 7,
+          "id": "Check-transactionRequest-state",
           "meta": {
             "info": "Check transactionRequest state - invalid transactionid"
           },
@@ -40,7 +40,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-202",
                 "description": "Response code status 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -76,7 +76,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Payee-initiate-req-MIssing-dat",
           "meta": {
             "info": "Payee initiate request - MIssing date"
           },
@@ -152,21 +152,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-400",
                 "description": "Response code status 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Error-message-date-required",
                 "description": "Error message date is required",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('date');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3102",
                 "description": "Check Error code 3102",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3102');"
@@ -198,7 +198,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "Payee-initiate-req-Missing-src",
           "meta": {
             "info": "Payee initiate request - Missing fspiop-source"
           },
@@ -274,7 +274,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-400",
                 "description": "Response code status 400",
                 "exec": [
                   "if (environment.WS02_OAUTH_ENABLED===true) {",
@@ -285,7 +285,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Error-message-src-required",
                 "description": "Error message fspiop-source is required",
                 "exec": [
                   "if (environment.WS02_OAUTH_ENABLED===true) {",
@@ -294,7 +294,7 @@
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3102",
                 "description": "Check Error code 3102",
                 "exec": [
                   "if (environment.WS02_OAUTH_ENABLED===true) {",
@@ -328,7 +328,7 @@
           }
         },
         {
-          "id": 10,
+          "id": "Payee-initiate-req-Wrong-conte",
           "meta": {
             "info": "Payee initiate request - Wrong content type version"
           },
@@ -405,21 +405,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-406",
                 "description": "Response code status 406",
                 "exec": [
                   "expect(response.status).to.equal(406)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Error-message-Unacceptable-ver",
                 "description": "Error message Unacceptable version requested ",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Unacceptable version requested');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3001",
                 "description": "Check Error code 3001",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3001');"
@@ -451,7 +451,7 @@
           }
         },
         {
-          "id": 11,
+          "id": "Payee-initiate-req-Unsupported",
           "meta": {
             "info": "Payee initiate request - Unsupported Media Type"
           },
@@ -540,21 +540,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-400",
                 "description": "Response code status 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-Malformed-syntax-Unsuppo",
                 "description": "Check Malformed syntax - Unsupported Media Type",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax - Unsupported Media Type');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3101",
                 "description": "Check Error code 3101",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3101');"

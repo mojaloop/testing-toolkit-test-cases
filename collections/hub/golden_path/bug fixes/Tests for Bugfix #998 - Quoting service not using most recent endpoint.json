@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "bugfix-998",
       "name": "Tests for Bugfix #998 - Quoting service not using most recent endpoint",
       "meta": {
         "info": "Tests for Bugfix #998 - Quoting service not using most recent endpoint"
       },
       "requests": [
         {
-          "id": 6,
+          "id": "Add-payeefsp-req-URL-QUOTES-PU",
           "meta": {
             "info": "Add payeefsp request URL - QUOTES PUT with incorrect endpoint"
           },
@@ -39,7 +39,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-201",
                 "description": "Response status to be 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -66,7 +66,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -128,14 +128,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 15,
+                "id": "Test-Passed-Because-didn-t-get",
                 "description": "Test Passed - Because didn't get request at payeefsp request URL",
                 "exec": [
                   "expect(environment.payercallbackx.data.errorInformation.errorCode).to.equal('3000');"
@@ -170,7 +170,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Add-payeefsp-req-URL-QUOTES-PU-1",
           "meta": {
             "info": "Add payeefsp request URL - QUOTES PUT with correct endpoint"
           },
@@ -200,7 +200,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-201",
                 "description": "Response status to be 201",
                 "exec": [
                   "expect(response.status).to.equal(201)"
@@ -227,7 +227,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Send-quote-Copy",
           "meta": {
             "info": "Send quote Copy"
           },
@@ -289,21 +289,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 15,
+                "id": "Ilppacket-exist",
                 "description": "Ilppacket exist",
                 "exec": [
                   "expect(environment.payercallbackx.data.ilpPacket).not.to.equal(undefined);"
                 ]
               },
               {
-                "id": 16,
+                "id": "condition-exist",
                 "description": "condition exist",
                 "exec": [
                   "expect(environment.payercallbackx.data.condition).not.to.equal(undefined);"

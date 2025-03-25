@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "p2p-receive-quote",
       "name": "p2p_money_transfer - p2p_happy_path RECEIVE_QUOTE",
       "meta": {
         "info": "p2p_money_transfer - p2p_happy_path RECEIVE_QUOTE"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-part-ALS",
           "meta": {
             "info": "Add Participant to ALS"
           },
@@ -43,7 +43,7 @@
           "ignoreCallbacks": true
         },
         {
-          "id": 2,
+          "id": "Add-Party-Simulator",
           "meta": {
             "info": "Add Party to Simulator"
           },
@@ -75,7 +75,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -164,21 +164,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Validate-Protected-Headers",
                 "description": "Callback Validate Protected Headers",
                 "exec": [
                   "if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
@@ -187,7 +187,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-Validate-JWS",
                 "description": "Callback Validate JWS",
                 "exec": [
                   "if (environment.ENABLE_JWS_VALIDATION) {",
@@ -196,7 +196,7 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Payee-req-hdr-src",
                 "description": "Payee Side Request Header - fspiop-source is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -205,7 +205,7 @@
                 ]
               },
               {
-                "id": 6,
+                "id": "Payee-req-hdr-dest",
                 "description": "Payee Side Request Header - fspiop-destination is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -214,7 +214,7 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "Payee-req-hdr-fspiop-signature",
                 "description": "Payee Side Request Header - fspiop-signature is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -223,7 +223,7 @@
                 ]
               },
               {
-                "id": 8,
+                "id": "Payee-req-hdr-accept",
                 "description": "Payee Side Request Header - accept is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -232,7 +232,7 @@
                 ]
               },
               {
-                "id": 9,
+                "id": "Payee-req-hdr-content-type",
                 "description": "Payee Side Request Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -241,7 +241,7 @@
                 ]
               },
               {
-                "id": 10,
+                "id": "Payee-req-hdr-uri",
                 "description": "Payee Side Request Header - fspiop-uri is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -250,7 +250,7 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "Payee-req-hdr-method",
                 "description": "Payee Side Request Header - fspiop-http-method is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -259,7 +259,7 @@
                 ]
               },
               {
-                "id": 13,
+                "id": "Payee-req-QuoteId",
                 "description": "Payee Side Request Body - QuoteId",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -268,7 +268,7 @@
                 ]
               },
               {
-                "id": 14,
+                "id": "Payee-TransactionId",
                 "description": "Payee Side Body - TransactionId",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -277,7 +277,7 @@
                 ]
               },
               {
-                "id": 15,
+                "id": "cb-hdr-src-dest-req",
                 "description": "Callback Header - fspiop-source is fspiop-destination in request",
                 "exec": [
                   "expect(callback.headers['fspiop-source']).to.equal(request.headers['fspiop-destination'])",
@@ -285,7 +285,7 @@
                 ]
               },
               {
-                "id": 16,
+                "id": "cb-hdr-fspiop-desination-src-r",
                 "description": "Callback Header - fspiop-desination is fspiop-source in request",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal(request.headers['fspiop-source'])",
@@ -293,7 +293,7 @@
                 ]
               },
               {
-                "id": 17,
+                "id": "cb-hdr-content-type-correct",
                 "description": "Callback Header - content-type is correct",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
@@ -301,7 +301,7 @@
                 ]
               },
               {
-                "id": 18,
+                "id": "cb-hdr-accept-empty",
                 "description": "Callback Header - accept is empty",
                 "exec": [
                   "expect(callback.headers['accept']).to.equal(undefined)",
@@ -309,7 +309,7 @@
                 ]
               },
               {
-                "id": 19,
+                "id": "cb-hdr-uri-quotes-quoteId",
                 "description": "Callback Header - fspiop-uri is /quotes/quoteId",
                 "exec": [
                   "expect(callback.headers['fspiop-uri']).to.equal('/quotes/' + request.body.quoteId)",
@@ -317,7 +317,7 @@
                 ]
               },
               {
-                "id": 20,
+                "id": "cb-hdr-method-PUT",
                 "description": "Callback Header - fspiop-http-method is PUT",
                 "exec": [
                   "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
@@ -325,7 +325,7 @@
                 ]
               },
               {
-                "id": 21,
+                "id": "cb-quoteId-null",
                 "description": "Callback Body - quoteId is null",
                 "exec": [
                   "expect(callback.body.quoteId).to.equal(undefined)",
@@ -333,7 +333,7 @@
                 ]
               },
               {
-                "id": 22,
+                "id": "cb-ilpPacket-not-null",
                 "description": "Callback Body - ilpPacket is not null",
                 "exec": [
                   "expect(callback.body.ilpPacket).to.not.equal(undefined)",
@@ -341,7 +341,7 @@
                 ]
               },
               {
-                "id": 23,
+                "id": "cb-condition-not-nul",
                 "description": "Callback Body - condition is not nul",
                 "exec": [
                   "expect(callback.body.condition).to.not.equal(undefined)",
@@ -349,14 +349,14 @@
                 ]
               },
               {
-                "id": 24,
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 25,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -373,7 +373,7 @@
           "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
-          "id": 5,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -394,16 +394,16 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$prev.4.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.callback.body.expiration}",
-            "ilpPacket": "{$prev.4.callback.body.ilpPacket}",
-            "condition": "{$prev.4.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
@@ -437,21 +437,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Validate-Protected-Headers",
                 "description": "Callback Validate Protected Headers",
                 "exec": [
                   "if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
@@ -460,7 +460,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-Validate-JWS",
                 "description": "Callback Validate JWS",
                 "exec": [
                   "if (environment.ENABLE_JWS_VALIDATION) {",
@@ -469,7 +469,7 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Payee-req-hdr-src",
                 "description": "Payee Side Request Header - fspiop-source is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -478,7 +478,7 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "Payee-req-hdr-fspiop-signature",
                 "description": "Payee Side Request Header - fspiop-signature is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -487,7 +487,7 @@
                 ]
               },
               {
-                "id": 8,
+                "id": "Payee-req-hdr-accept",
                 "description": "Payee Side Request Header - accept is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -496,7 +496,7 @@
                 ]
               },
               {
-                "id": 9,
+                "id": "Payee-req-hdr-content-type",
                 "description": "Payee Side Request Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -505,7 +505,7 @@
                 ]
               },
               {
-                "id": 10,
+                "id": "Payee-req-hdr-uri",
                 "description": "Payee Side Request Header - fspiop-uri is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -514,7 +514,7 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "Payee-req-hdr-method",
                 "description": "Payee Side Request Header - fspiop-http-method is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -523,7 +523,7 @@
                 ]
               },
               {
-                "id": 13,
+                "id": "Payee-req-TransferId",
                 "description": "Payee Side Request Body - TransferId",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -532,7 +532,7 @@
                 ]
               },
               {
-                "id": 27,
+                "id": "Payee-req-payerFsp",
                 "description": "Payee Side Request Body - payerFsp is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -541,7 +541,7 @@
                 ]
               },
               {
-                "id": 28,
+                "id": "Payee-req-payeeFsp",
                 "description": "Payee Side Request Body - payeeFsp is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -550,7 +550,7 @@
                 ]
               },
               {
-                "id": 29,
+                "id": "Payee-req-amt",
                 "description": "Payee Side Request Body - amount is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -559,7 +559,7 @@
                 ]
               },
               {
-                "id": 30,
+                "id": "Payee-req-curr",
                 "description": "Payee Side Request Body - currency is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -568,7 +568,7 @@
                 ]
               },
               {
-                "id": 31,
+                "id": "Payee-req-expiration",
                 "description": "Payee Side Request Body - expiration is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -577,7 +577,7 @@
                 ]
               },
               {
-                "id": 14,
+                "id": "Payee-req-ilpPacket",
                 "description": "Payee Side Request Body - ilpPacket is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -586,7 +586,7 @@
                 ]
               },
               {
-                "id": 26,
+                "id": "Payee-req-condition",
                 "description": "Payee Side Request Body - condition is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -595,7 +595,7 @@
                 ]
               },
               {
-                "id": 15,
+                "id": "cb-hdr-src-dest-req",
                 "description": "Callback Header - fspiop-source is fspiop-destination in request",
                 "exec": [
                   "expect(callback.headers['fspiop-source']).to.equal('{$inputs.SIMPAYEE_NAME}')",
@@ -603,7 +603,7 @@
                 ]
               },
               {
-                "id": 16,
+                "id": "cb-hdr-fspiop-desination-src-r",
                 "description": "Callback Header - fspiop-desination is fspiop-source in request",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal(request.headers['fspiop-source'])",
@@ -611,7 +611,7 @@
                 ]
               },
               {
-                "id": 17,
+                "id": "cb-hdr-content-type-correct",
                 "description": "Callback Header - content-type is correct",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
@@ -619,7 +619,7 @@
                 ]
               },
               {
-                "id": 18,
+                "id": "cb-hdr-accept-empty",
                 "description": "Callback Header - accept is empty",
                 "exec": [
                   "expect(callback.headers['accept']).to.equal(undefined)",
@@ -627,7 +627,7 @@
                 ]
               },
               {
-                "id": 19,
+                "id": "cb-hdr-uri-quotes-quoteId",
                 "description": "Callback Header - fspiop-uri is /quotes/quoteId",
                 "exec": [
                   "expect(callback.headers['fspiop-uri']).to.equal('/transfers/' + request.body.transferId)",
@@ -635,7 +635,7 @@
                 ]
               },
               {
-                "id": 20,
+                "id": "cb-hdr-method-PUT",
                 "description": "Callback Header - fspiop-http-method is PUT",
                 "exec": [
                   "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
@@ -643,7 +643,7 @@
                 ]
               },
               {
-                "id": 21,
+                "id": "cb-transferId-null",
                 "description": "Callback Body - transferId is null",
                 "exec": [
                   "expect(callback.body.transferId).to.equal(undefined)",
@@ -651,7 +651,7 @@
                 ]
               },
               {
-                "id": 22,
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback Body - transferState is COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')",
@@ -659,7 +659,7 @@
                 ]
               },
               {
-                "id": 23,
+                "id": "cb-fulfilment-not-nul",
                 "description": "Callback Body - fulfilment is not nul",
                 "exec": [
                   "expect(callback.body.fulfilment).to.not.equal(undefined)",
@@ -671,7 +671,7 @@
           "url": "{$inputs.HOST_ML_API_ADAPTER}"
         },
         {
-          "id": 6,
+          "id": "Duplicate-trans",
           "meta": {
             "info": "Duplicate transfer"
           },
@@ -692,16 +692,16 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$prev.4.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.callback.body.expiration}",
-            "ilpPacket": "{$prev.4.callback.body.ilpPacket}",
-            "condition": "{$prev.4.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
           "scripts": {
@@ -723,21 +723,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 15,
+                "id": "cb-hdr-src-switch-s-name",
                 "description": "Callback Header - fspiop-source is switch's name",
                 "exec": [
                   "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
@@ -745,7 +745,7 @@
                 ]
               },
               {
-                "id": 16,
+                "id": "cb-hdr-fspiop-desination-src-r",
                 "description": "Callback Header - fspiop-desination is fspiop-source in request",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal(request.headers['fspiop-source'])",
@@ -753,7 +753,7 @@
                 ]
               },
               {
-                "id": 17,
+                "id": "cb-hdr-content-type-correct",
                 "description": "Callback Header - content-type is correct",
                 "exec": [
                   "expect(callback.headers['content-type']).to.have.string('{$inputs.expectedTransfersVersion}')",
@@ -761,7 +761,7 @@
                 ]
               },
               {
-                "id": 18,
+                "id": "cb-hdr-accept-empty",
                 "description": "Callback Header - accept is empty",
                 "exec": [
                   "expect(callback.headers['accept']).to.equal(undefined)",
@@ -769,7 +769,7 @@
                 ]
               },
               {
-                "id": 24,
+                "id": "cb-hdr-fspiop-signature-not-nu",
                 "description": "Callback Header - fspiop-signature is not null",
                 "exec": [
                   "expect(callback.headers['fspiop-signature']).to.not.equal(undefined)",
@@ -777,7 +777,7 @@
                 ]
               },
               {
-                "id": 19,
+                "id": "cb-hdr-uri-quotes-quoteId",
                 "description": "Callback Header - fspiop-uri is /quotes/quoteId",
                 "exec": [
                   "expect(callback.headers['fspiop-uri']).to.equal('/transfers/' + request.body.transferId)",
@@ -785,7 +785,7 @@
                 ]
               },
               {
-                "id": 20,
+                "id": "cb-hdr-method-PUT",
                 "description": "Callback Header - fspiop-http-method is PUT",
                 "exec": [
                   "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
@@ -793,7 +793,7 @@
                 ]
               },
               {
-                "id": 21,
+                "id": "cb-transferId-null",
                 "description": "Callback Body - transferId is null",
                 "exec": [
                   "expect(callback.body.transferId).to.equal(undefined)",
@@ -801,7 +801,7 @@
                 ]
               },
               {
-                "id": 22,
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback Body - transferState is COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')",
@@ -809,10 +809,10 @@
                 ]
               },
               {
-                "id": 23,
+                "id": "cb-fulfilment-last-cb",
                 "description": "Callback Body - fulfilment is same as in the last callback",
                 "exec": [
-                  "expect(callback.body.fulfilment).to.equal('{$prev.5.callback.body.fulfilment}')",
+                  "expect(callback.body.fulfilment).to.equal('{$prev.Send-trans.callback.body.fulfilment}')",
                   ""
                 ]
               }

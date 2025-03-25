@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "delete-oracle-en-5705",
       "name": "Delete Oracle Endpoint - Happy Path [seq-acct-lookup-admin-delete-oracle-7.3.4].json",
       "meta": {
         "info": "Delete Oracle Endpoint - Happy Path [seq-acct-lookup-admin-delete-oracle-7.3.4].json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Create-Sample-Oracle-Endpoint",
           "meta": {
             "info": "Create Sample Oracle Endpoint"
           },
@@ -41,7 +41,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-201",
                 "description": "Response status should be 201",
                 "exec": [
                   "if (response.status !== 500) {",
@@ -50,7 +50,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-status-could-500-if-duplic",
                 "description": "Response status could be 500 if duplicate request is sent",
                 "exec": [
                   "if (response.status !== 201) {",
@@ -88,7 +88,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Delete-Oracle-Endpoint",
           "meta": {
             "info": "Delete Oracle Endpoint"
           },
@@ -124,7 +124,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-204",
                 "description": "Response status code should be 204",
                 "exec": [
                   "expect(response.status).to.equal(204)"
@@ -134,7 +134,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Verify-Oracle-Disabled",
           "meta": {
             "info": "Verify Oracle is Disabled"
           },
@@ -160,14 +160,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status should be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Oracle-endpoint-details",
                 "description": "Oracle endpoint details should match",
                 "exec": [
                   "const deletedOracle = response.body.find(o => o.oracleId = environment.testOracleIdDelete )",
@@ -192,14 +192,14 @@
       }
     },
     {
-      "id": 2,
+      "id": "delete-oracle-en-1176",
       "name": "Delete Oracle Endpoint - Unhappy Path [seq-acct-lookup-admin-put-oracle-7.3.4].json",
       "meta": {
         "info": "Delete Oracle Endpoint - Unhappy Path [seq-acct-lookup-admin-put-oracle-7.3.4].json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Create-Sample-Oracle-Endpoint",
           "meta": {
             "info": "Create Sample Oracle Endpoint"
           },
@@ -231,7 +231,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-201",
                 "description": "Response status should be 201",
                 "exec": [
                   "if (response.status !== 500) {",
@@ -240,7 +240,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-status-could-500-if-duplic",
                 "description": "Response status could be 500 if duplicate request is sent",
                 "exec": [
                   "if (response.status !== 201) {",
@@ -278,7 +278,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "ID-not-found",
           "meta": {
             "info": "ID not found"
           },
@@ -306,14 +306,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-204",
                 "description": "Response status code should be 204",
                 "exec": [
                   "expect(response.status).to.equal(204)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-empty",
                 "description": "Response body should be empty",
                 "exec": [
                   "expect(response.body).to.equal('')"
@@ -323,7 +323,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Required-hdr-Missing-Accept",
           "meta": {
             "info": "Required Header Missing - Accept"
           },
@@ -350,14 +350,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-400",
                 "description": "Response status code should be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-appropriate-error-informat",
                 "description": "Response should contain appropriate error information",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.equal('3102')",
