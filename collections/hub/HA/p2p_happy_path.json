@@ -2,7 +2,7 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": "p2p-happy-path",
+      "id": "p2p",
       "name": "p2p_happy_path - RECEIVE_QUOTE",
       "meta": {
         "info": "This is a happy path to test an end to end transfers. It includes party lookup, quote and transfer phases."
@@ -16,7 +16,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "add-participant",
           "meta": {
             "info": "This request allows us to add a new participant to Account Lookup Service."
           },
@@ -66,7 +66,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "add-party",
           "meta": {
             "info": "This request allows us to add a new party to Simulator."
           },
@@ -97,7 +97,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "get-party-info",
           "meta": {
             "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
           },
@@ -124,56 +124,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "response-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "response-status-text-accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "callback-content-length-not-zero",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "callback-body-contains-party",
                 "description": "Callback body should contain party",
                 "exec": [
                   "expect(callback.body).to.have.property('party')"
                 ]
               },
               {
-                "id": 5,
+                "id": "request-fspiop-source-matches-input",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "callback-fspiop-destination-matches-request-source",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "callback-content-type-parties",
                 "description": "Callback content-type to be parties",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "callback-party-id-info",
                 "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
                 "exec": [
                   "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
@@ -181,7 +181,7 @@
                 ]
               },
               {
-                "id": 9,
+                "id": "payee-fspiop-source",
                 "description": "Payee FSPIOP-Source",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -190,7 +190,7 @@
                 ]
               },
               {
-                "id": 10,
+                "id": "payee-content-type",
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -221,7 +221,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "send-quote",
           "meta": {
             "info": "This request allows us to send a request for Quote (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
           },
@@ -283,42 +283,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "response-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "response-status-text-accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "callback-content-length-not-zero",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "callback-fspiop-destination-matches-request-source",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "callback-body-contains-transfer-amount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "callback-transfer-amount-matches-request",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -326,42 +326,42 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "callback-content-type-quotes",
                 "description": "Callback content-type to be quotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "request-amount-type-receive",
                 "description": "Request amountType to be RECEIVE",
                 "exec": [
                   "expect('{$request.body.amountType}').to.equal('RECEIVE')"
                 ]
               },
               {
-                "id": 9,
+                "id": "request-transaction-type-scenario-transfer",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": 10,
+                "id": "request-transaction-type-initiator-payer",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": 11,
+                "id": "request-transaction-type-initiator-type-consumer",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
                 ]
               },
               {
-                "id": 12,
+                "id": "payee-fspiop-source",
                 "description": "Payee FSPIOP-Source",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -370,7 +370,7 @@
                 ]
               },
               {
-                "id": 13,
+                "id": "payee-content-type",
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -379,7 +379,7 @@
                 ]
               },
               {
-                "id": 14,
+                "id": "payee-body-quote-id",
                 "description": "Payee Body QuoteId",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -388,7 +388,7 @@
                 ]
               },
               {
-                "id": 15,
+                "id": "payee-body-transaction-id",
                 "description": "Payee Body TransactionId",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -422,7 +422,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "send-transfer",
           "meta": {
             "info": "This request allows us to send a Transfer (payerfsp to payeefsp), resulting in an ILP transfer exchanged between two account holders on either side of a common ledger."
           },
@@ -458,56 +458,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "response-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "response-status-text-accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "callback-content-length-not-zero",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "callback-fspiop-destination-matches-request-source",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "callback-transfer-state-committed",
                 "description": "Callback transferState to be COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": 6,
+                "id": "callback-content-type-transfers",
                 "description": "Callback content-type to be transfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "request-transfer-id-matches-quote-request",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
                   "expect('{$request.body.transferId}').to.equal('{$prev.4.request.body.transactionId}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "request-transfer-amount-matches-quote-request",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
                   "expect('{$prev.4.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
@@ -515,14 +515,14 @@
                 ]
               },
               {
-                "id": 9,
+                "id": "request-fspiop-source-matches-quote-callback-destination",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.4.callback.headers.fspiop-destination}')"
                 ]
               },
               {
-                "id": 10,
+                "id": "payee-fspiop-source",
                 "description": "Payee FSPIOP-Source",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -531,7 +531,7 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "payee-content-type",
                 "description": "Payee Content-Type",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -540,7 +540,7 @@
                 ]
               },
               {
-                "id": 12,
+                "id": "payee-body-transfer-id",
                 "description": "Payee Body TransferId",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -549,7 +549,7 @@
                 ]
               },
               {
-                "id": 13,
+                "id": "payee-body-amount",
                 "description": "Payee Body Amount",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
