@@ -281,7 +281,7 @@
           },
           "body": {
             "quoteId": "{$function.generic.generateID}",
-            "transactionId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
+            "transactionId": "{$prev.postFxQuotes.request.body.conversionTerms.determiningTransferId}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -298,15 +298,15 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.2.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.2.callback.body.party.partyIdInfo.partyIdentifier}",
-                "fspId": "{$prev.2.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.getPartyInfo.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.getPartyInfo.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.getPartyInfo.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "SEND",
             "amount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.targetAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.targetAmount.currency}"
+              "amount": "{$prev.postFxQuotes.callback.body.conversionTerms.targetAmount.amount}",
+              "currency": "{$prev.postFxQuotes.callback.body.conversionTerms.targetAmount.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -543,20 +543,20 @@
             "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "body": {
-            "commitRequestId": "{$prev.4.callback.body.conversionTerms.conversionId}",
-            "determiningTransferId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
+            "commitRequestId": "{$prev.postFxQuotes.callback.body.conversionTerms.conversionId}",
+            "determiningTransferId": "{$prev.postFxQuotes.request.body.conversionTerms.determiningTransferId}",
             "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
             "amountType": "SEND",
             "sourceAmount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.sourceAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.sourceAmount.currency}"
+              "amount": "{$prev.postFxQuotes.callback.body.conversionTerms.sourceAmount.amount}",
+              "currency": "{$prev.postFxQuotes.callback.body.conversionTerms.sourceAmount.currency}"
             },
             "targetAmount": {
-              "amount": "{$prev.4.callback.body.conversionTerms.targetAmount.amount}",
-              "currency": "{$prev.4.callback.body.conversionTerms.targetAmount.currency}"
+              "amount": "{$prev.postFxQuotes.callback.body.conversionTerms.targetAmount.amount}",
+              "currency": "{$prev.postFxQuotes.callback.body.conversionTerms.targetAmount.currency}"
             },
-            "condition": "{$prev.4.callback.body.condition}",
+            "condition": "{$prev.postFxQuotes.callback.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "scriptingEngine": "javascript",
@@ -734,10 +734,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
           },
           "operationPath": "/fxTransfers/{ID}",
-          "path": "/fxTransfers/{$prev.9.request.body.commitRequestId}",
+          "path": "/fxTransfers/{$prev.postFxTransfers.request.body.commitRequestId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.9.request.body.commitRequestId}"
+            "ID": "{$prev.postFxTransfers.request.body.commitRequestId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -819,16 +819,16 @@
           "method": "post",
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "body": {
-            "transferId": "{$prev.4.request.body.conversionTerms.determiningTransferId}",
+            "transferId": "{$prev.postFxQuotes.request.body.conversionTerms.determiningTransferId}",
             "payeeFsp": "{$inputs.FX_PAYEE_DFSP_ID}",
             "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
-              "currency": "{$prev.5.callback.body.transferAmount.currency}",
-              "amount": "{$prev.5.callback.body.transferAmount.amount}"
+              "currency": "{$prev.postQuotes.callback.body.transferAmount.currency}",
+              "amount": "{$prev.postQuotes.callback.body.transferAmount.amount}"
             },
-            "ilpPacket": "{$prev.5.callback.body.ilpPacket}",
-            "condition": "{$prev.5.callback.body.condition}",
-            "expiration": "{$prev.5.callback.body.expiration}"
+            "ilpPacket": "{$prev.postQuotes.callback.body.ilpPacket}",
+            "condition": "{$prev.postQuotes.callback.body.condition}",
+            "expiration": "{$prev.postQuotes.callback.body.expiration}"
           },
           "headers": {
             "Accept": "{$inputs.acceptTransfers}",
@@ -880,7 +880,7 @@
                 "id": "requestFSPSourceMatchesQuoteCallbackDestination",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.4.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.postFxQuotes.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
@@ -1021,10 +1021,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
           },
           "operationPath": "/fxTransfers/{ID}",
-          "path": "/fxTransfers/{$prev.9.request.body.commitRequestId}",
+          "path": "/fxTransfers/{$prev.postFxTransfers.request.body.commitRequestId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.9.request.body.commitRequestId}"
+            "ID": "{$prev.postFxTransfers.request.body.commitRequestId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
