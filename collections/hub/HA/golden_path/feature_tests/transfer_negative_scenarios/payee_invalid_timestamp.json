@@ -3,13 +3,13 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": "payee-invalid-fulfill",
-      "name": "payee_invalid_fulfillment",
+      "id": "payee-invalid-ts",
+      "name": "payee_invalid_timestamp",
       "meta": {
-        "info": "payee_invalid_fulfillment"
+        "info": "payee_invalid_timestamp"
       },
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payee_invalid_fulfillment.json",
+        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payee_invalid_timestamp.json",
         "labels": [
           "HA-tests",
           "p2p"
@@ -28,10 +28,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/positions",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
           "method": "get",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.fromFspId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -53,17 +53,17 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "environment['payerfspPositionBeforeTransfer'] = response.body[0].value"
+                "environment[environment.SIMPAYER_NAME + 'PositionBeforeTransfer'] = response.body[0].value"
               ]
             }
           }
         },
         {
-          "id": "Store-SIMPAYEE-pos",
+          "id": "Store-NORESPONSE_SIMPAYEE-pos",
           "meta": {
             "info": "Store NORESPONSE_SIMPAYEE position"
           },
-          "description": "Store SIMPAYEE position",
+          "description": "Store NORESPONSE_SIMPAYEE position",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -303,7 +303,7 @@
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.Send-Quote-rsp.request.body.expiration}",
+            "expiration": "{$requestVariables.transferExpiration}",
             "ilpPacket": "{$prev.Send-Quote-rsp.request.body.ilpPacket}",
             "condition": "{$prev.Send-Quote-rsp.request.body.condition}"
           },
@@ -331,6 +331,7 @@
           "scripts": {
             "preRequest": {
               "exec": [
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 2000).toISOString()",
                 "await inboundEvent.addListener('payeePostTransfer', 'post', '/transfers', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
                 "})"
@@ -345,11 +346,11 @@
           }
         },
         {
-          "id": "Send-Payee-Invalid-Fulfillment",
+          "id": "Send-Payee-Invalid-Timestamp",
           "meta": {
-            "info": "Send Payee Invalid Fulfillment"
+            "info": "Send Payee Invalid Timestamp"
           },
-          "description": "Send Payee Invalid Fulfillment",
+          "description": "Send Payee Invalid Timestamp",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
@@ -379,25 +380,10 @@
           "tests": {
             "assertions": [
               {
-                "id": "rsp-status-200",
-                "description": "Response status to be 200",
+                "id": "rsp-status-400",
+                "description": "Response status to be 400",
                 "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              },
-              {
-                "id": "rsp-statusText-OK",
-                "description": "Response statusText be OK",
-                "exec": [
-                  "expect(response.statusText).to.equal('OK')"
-                ]
-              },
-              {
-                "id": "eventListener-errorCode-3100",
-                "description": "eventListener Body - errorCode is 3100",
-                "exec": [
-                  "expect(requestVariables.inboundEventMsg.body.errorInformation.errorCode).to.equal('3100')",
-                  ""
+                  "expect(response.status).to.equal(400)"
                 ]
               }
             ]
@@ -406,18 +392,16 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.completedTimestamp = new Date().toISOString()",
+                "requestVariables.completedTimestamp = new Date(new Date().getTime() + 10000).toISOString()",
                 "",
-                "await inboundEvent.addListener('payee_invalid_fulfillment_put_transfer_id', 'put', '/transfers/{$prev.Send-Prepare.request.body.transferId}/error')",
-                ""
+                "await inboundEvent.addListener('payerCallback', 'put', '/transfers/{$prev.Send-Prepare.request.body.transferId}/error', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
+                "})"
               ]
             },
             "postRequest": {
               "exec": [
-                "requestVariables.inboundEventMsg = await inboundEvent.getMessage('payee_invalid_fulfillment_put_transfer_id')",
-                "",
-                "console.log('Callback result:')",
-                "console.log(requestVariables.inboundEventMsg)"
+                "requestVariables.payeePostTransfer = await inboundEvent.getMessage('payerCallback', 15000)"
               ]
             }
           }
@@ -523,18 +507,25 @@
               },
               {
                 "id": "cb-transferState-ABORTED",
-                "description": "Callback Body -  transferState is ABORTED",
+                "description": "Callback Body - transferState is ABORTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('ABORTED')",
                   ""
                 ]
               },
               {
-                "id": "cb-Extension-List-value-3100-G",
-                "description": "Callback Body -  Extension List value is 3100: Generic validation error - invalid fulfilment",
+                "id": "cb-error-cause-extensionList",
+                "description": "Callback Body - error cause in extensionList",
                 "exec": [
                   "if (environment.API_TYPE === 'fspiop') {",
-                  "  expect(callback.body.extensionList.extension[0].value).to.equal('3100: Generic validation error - invalid fulfilment')",
+                  "expect(callback.body).to.have.property('extensionList')",
+                  "expect(callback.body.extensionList).to.have.property('extension')",
+                  "",
+                  "const filteredExtensionListForCause = callback.body.extensionList.extension.filter(ext => ext.key === \"cause\")",
+                  "",
+                  "expect(filteredExtensionListForCause.length).to.equal(1)",
+                  "",
+                  "expect(filteredExtensionListForCause[0].value).to.equal(\"3303: Transfer expired\")",
                   "}"
                 ]
               }
@@ -608,10 +599,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/positions",
-          "path": "/participants/{$inputs.SIMPAYER_NAME}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
           "method": "get",
           "params": {
-            "name": "{$inputs.SIMPAYER_NAME}"
+            "name": "{$inputs.fromFspId}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "tests": {
@@ -651,8 +642,8 @@
             }
           }
         }
-      ],    
-      "options": {
+      ],
+       "options": {
         "executionOrder": 10
       }
     }
