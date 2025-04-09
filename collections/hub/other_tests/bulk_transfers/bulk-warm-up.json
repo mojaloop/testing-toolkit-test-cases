@@ -2,7 +2,7 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "bulk-warmup-1",
       "name": "Bulk warmup 1",
       "meta": {
         "info": "Bulk warmup 1"
@@ -12,7 +12,7 @@
       },
       "requests": [
         {
-          "id": 3,
+          "id": "POST-Bulk-trans",
           "meta": {
             "info": "POST Bulk Transfer"
           },
@@ -34,13 +34,13 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "bulkTransferId": "{$function.generic.generateUUID}",
-            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "bulkTransferId": "{$function.generic.generateID}",
+            "bulkQuoteId": "{$function.generic.generateID}",
             "payeeFsp": "{$inputs.toFspId}",
             "payerFsp": "{$inputs.fromFspId}",
             "individualTransfers": [
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency}",
                   "amount": "1"
@@ -61,7 +61,7 @@
                 }
               },
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency2}",
                   "amount": "1"
@@ -115,7 +115,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "GET-Bulk-trans-PayeeFSP",
           "meta": {
             "info": "GET Bulk Transfer - PayeeFSP"
           },
@@ -139,7 +139,7 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.toFspId}",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": []
@@ -165,7 +165,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "GET-Bulk-trans-PayerFSP",
           "meta": {
             "info": "GET Bulk Transfer - PayerFSP"
           },
@@ -189,7 +189,7 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "testingtoolkitdfsp",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": []
@@ -212,7 +212,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "bulk-warmup-2",
       "name": "Bulk warmup 2",
       "meta": {
         "info": "Bulk warmup 2"
@@ -222,7 +222,7 @@
       },
       "requests": [
         {
-          "id": 3,
+          "id": "POST-Bulk-trans",
           "meta": {
             "info": "POST Bulk Transfer"
           },
@@ -244,13 +244,13 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "bulkTransferId": "{$function.generic.generateUUID}",
-            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "bulkTransferId": "{$function.generic.generateID}",
+            "bulkQuoteId": "{$function.generic.generateID}",
             "payeeFsp": "{$inputs.toFspId}",
             "payerFsp": "{$inputs.fromFspId}",
             "individualTransfers": [
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency}",
                   "amount": "1"
@@ -271,7 +271,7 @@
                 }
               },
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency2}",
                   "amount": "1"
@@ -325,7 +325,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "GET-Bulk-trans-PayeeFSP",
           "meta": {
             "info": "GET Bulk Transfer - PayeeFSP"
           },
@@ -349,7 +349,7 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.toFspId}",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": []
@@ -375,7 +375,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "GET-Bulk-trans-PayerFSP",
           "meta": {
             "info": "GET Bulk Transfer - PayerFSP"
           },
@@ -399,7 +399,7 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "testingtoolkitdfsp",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": []
@@ -422,7 +422,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": "bulk-warmup-3",
       "name": "Bulk warmup 3",
       "meta": {
         "info": "Bulk warmup 3"
@@ -432,7 +432,7 @@
       },
       "requests": [
         {
-          "id": 3,
+          "id": "POST-Bulk-trans",
           "meta": {
             "info": "POST Bulk Transfer"
           },
@@ -454,13 +454,13 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "bulkTransferId": "{$function.generic.generateUUID}",
-            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "bulkTransferId": "{$function.generic.generateID}",
+            "bulkQuoteId": "{$function.generic.generateID}",
             "payeeFsp": "{$inputs.toFspId}",
             "payerFsp": "{$inputs.fromFspId}",
             "individualTransfers": [
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency}",
                   "amount": "1"
@@ -481,7 +481,7 @@
                 }
               },
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency2}",
                   "amount": "1"
@@ -535,7 +535,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "GET-Bulk-trans-PayeeFSP",
           "meta": {
             "info": "GET Bulk Transfer - PayeeFSP"
           },
@@ -559,7 +559,7 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.toFspId}",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": []
@@ -585,7 +585,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "GET-Bulk-trans-PayerFSP",
           "meta": {
             "info": "GET Bulk Transfer - PayerFSP"
           },
@@ -609,7 +609,7 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "testingtoolkitdfsp",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": []

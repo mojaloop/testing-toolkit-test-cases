@@ -2,31 +2,31 @@
   "name": "Bulk Warm Up",
   "test_cases": [
     {
-      "id": 1,
+      "id": "bulk-warm-up-1",
       "name": "Bulk Warm Up 1",
       "requests": [
         {
-          "id": 1,
+          "id": "Post-bulkTransaction",
           "description": "Post /bulkTransaction",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/bulkTransactions",
           "path": "/bulkTransactions",
           "method": "post",
           "body": {
             "bulkHomeTransactionID": "abc123",
-            "bulkTransactionId": "{$function.generic.generateUUID}",
+            "bulkTransactionId": "{$function.generic.generateID}",
             "options": {
               "onlyValidateParty": true,
               "autoAcceptParty": {
@@ -108,26 +108,26 @@
           }
         },
         {
-          "id": 2,
+          "id": "put-bulk-txn-acceptParty",
           "description": "put bulk transaction for acceptParty",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/bulkTransactions/{bulkTransactionId}",
-          "path": "/bulkTransactions/{$prev.1.request.body.bulkTransactionId}",
+          "path": "/bulkTransactions/{$prev.Post-bulkTransaction.request.body.bulkTransactionId}",
           "method": "put",
           "params": {
-            "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
+            "bulkTransactionId": "{$prev.Post-bulkTransaction.request.body.bulkTransactionId}"
           },
           "body": {
             "individualTransfers": []
@@ -162,26 +162,26 @@
           }
         },
         {
-          "id": 3,
+          "id": "put-bulk-txn-acceptQuote",
           "description": "put bulk transaction for acceptQuote",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/bulkTransactions/{bulkTransactionId}",
-          "path": "/bulkTransactions/{$prev.1.request.body.bulkTransactionId}",
+          "path": "/bulkTransactions/{$prev.Post-bulkTransaction.request.body.bulkTransactionId}",
           "method": "put",
           "params": {
-            "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
+            "bulkTransactionId": "{$prev.Post-bulkTransaction.request.body.bulkTransactionId}"
           },
           "body": {
             "individualTransfers": []
@@ -224,31 +224,31 @@
       }
     },
     {
-      "id": 2,
+      "id": "bulk-warm-up-2",
       "name": "Bulk Warm Up 2",
       "requests": [
         {
-          "id": 1,
+          "id": "Post-bulkTransaction",
           "description": "Post /bulkTransaction",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/bulkTransactions",
           "path": "/bulkTransactions",
           "method": "post",
           "body": {
             "bulkHomeTransactionID": "abc123",
-            "bulkTransactionId": "{$function.generic.generateUUID}",
+            "bulkTransactionId": "{$function.generic.generateID}",
             "options": {
               "onlyValidateParty": true,
               "autoAcceptParty": {
@@ -330,26 +330,26 @@
           }
         },
         {
-          "id": 2,
+          "id": "put-bulk-txn-acceptParty",
           "description": "put bulk transaction for acceptParty",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/bulkTransactions/{bulkTransactionId}",
-          "path": "/bulkTransactions/{$prev.1.request.body.bulkTransactionId}",
+          "path": "/bulkTransactions/{$prev.Post-bulkTransaction.request.body.bulkTransactionId}",
           "method": "put",
           "params": {
-            "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
+            "bulkTransactionId": "{$prev.Post-bulkTransaction.request.body.bulkTransactionId}"
           },
           "body": {
             "individualTransfers": []
@@ -384,26 +384,26 @@
           }
         },
         {
-          "id": 3,
+          "id": "put-bulk-txn-acceptQuote",
           "description": "put bulk transaction for acceptQuote",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/bulkTransactions/{bulkTransactionId}",
-          "path": "/bulkTransactions/{$prev.1.request.body.bulkTransactionId}",
+          "path": "/bulkTransactions/{$prev.Post-bulkTransaction.request.body.bulkTransactionId}",
           "method": "put",
           "params": {
-            "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
+            "bulkTransactionId": "{$prev.Post-bulkTransaction.request.body.bulkTransactionId}"
           },
           "body": {
             "individualTransfers": []

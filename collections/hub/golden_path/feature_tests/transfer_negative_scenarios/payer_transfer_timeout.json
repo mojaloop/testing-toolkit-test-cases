@@ -3,14 +3,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "payer-transfer-timeout",
       "name": "payer transfer timeout",
       "meta": {
         "info": "Payer and payee should receive a callback notification when a transfer prepare request times out after receiving no fulfil request.\n"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Store-SIMPAYER-pos-before-prep",
           "meta": {
             "info": "Store SIMPAYER position before prepare"
           },
@@ -30,7 +30,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -58,7 +58,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Store-NORESPONSE_SIMPAYEE-pos-",
           "meta": {
             "info": "Store NORESPONSE_SIMPAYEE position before prepare"
           },
@@ -78,7 +78,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -101,7 +101,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-Prepare",
           "meta": {
             "info": "Send Prepare"
           },
@@ -123,11 +123,11 @@
             "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "body": {
-            "transferId": "{$function.generic.generateUUID}",
+            "transferId": "{$function.generic.generateID}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "amount": {
-              "amount": "105.11",
+              "amount": "105",
               "currency": "{$inputs.currency}"
             },
             "expiration": "{$requestVariables.transferExpiration}",
@@ -137,14 +137,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Payer-cb-hdr-content-type",
                 "description": "Payer FSP Callback Header - content-type",
                 "exec": [
                   "expect(requestVariables.payerCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
@@ -152,15 +152,15 @@
                 ]
               },
               {
-                "id": 3,
-                "description": "Payer FSP Callback Header - fspiop-source is switch",
+                "id": "Payer-cb-hdr-src-switch-s-name",
+                "description": "Payer FSP Callback Header - fspiop-source is switch's name",
                 "exec": [
-                  "expect(requestVariables.payerCallback.headers['fspiop-source']).to.equal('switch')",
+                  "expect(requestVariables.payerCallback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
                   ""
                 ]
               },
               {
-                "id": 4,
+                "id": "Payer-cb-hdr-dest-req-hdr-src",
                 "description": "Payer FSP Callback Header - fspiop-destination is request.header.fspiop-source",
                 "exec": [
                   "expect(requestVariables.payerCallback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}')",
@@ -168,7 +168,7 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Payer-cb-errorInformation-erro",
                 "description": "Payer FSP Callback body - errorInformation.errorCode = '3303'",
                 "exec": [
                   "expect(requestVariables.payerCallback.body.errorInformation && callback.body.errorInformation.errorCode).to.equal('3303')",
@@ -176,7 +176,7 @@
                 ]
               },
               {
-                "id": 6,
+                "id": "Payee-cb-hdr-content-type",
                 "description": "Payee FSP Callback Header - content-type",
                 "exec": [
                   "expect(requestVariables.payeeCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
@@ -184,15 +184,15 @@
                 ]
               },
               {
-                "id": 7,
-                "description": "Payee FSP Callback Header - fspiop-source is switch",
+                "id": "Payee-cb-hdr-src-switch-s-name",
+                "description": "Payee FSP Callback Header - fspiop-source is switch's name",
                 "exec": [
-                  "expect(requestVariables.payeeCallback.headers['fspiop-source']).to.equal('switch')",
+                  "expect(requestVariables.payeeCallback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
                   ""
                 ]
               },
               {
-                "id": 8,
+                "id": "Payee-cb-hdr-dest-req-hdr-dest",
                 "description": "Payee FSP Callback Header - fspiop-destination is request.header.fspiop-destination",
                 "exec": [
                   "expect(requestVariables.payeeCallback.headers['fspiop-destination']).to.equal('{$inputs.NORESPONSE_SIMPAYEE_NAME}')",
@@ -200,7 +200,7 @@
                 ]
               },
               {
-                "id": 9,
+                "id": "Payee-cb-errorInformation-erro",
                 "description": "Payee FSP Callback body - errorInformation.errorCode = '3303'",
                 "exec": [
                   "expect(requestVariables.payeeCallback.body.errorInformation && callback.body.errorInformation.errorCode).to.equal('3303')",
@@ -228,16 +228,16 @@
             },
             "postRequest": {
               "exec": [
-                "requestVariables.payerCallback = await inboundEvent.getMessage('payerCallback')",
+                "requestVariables.payerCallback = await inboundEvent.getMessage('payerCallback', 15000)",
                 "console.log(requestVariables.payerCallback)",
-                "requestVariables.payeeCallback = await inboundEvent.getMessage('payeeCallback')",
+                "requestVariables.payeeCallback = await inboundEvent.getMessage('payeeCallback', 15000)",
                 "console.log(requestVariables.payeeCallback)"
               ]
             }
           }
         },
         {
-          "id": 9,
+          "id": "Check-SIMPAYER-pos-after-Abort",
           "meta": {
             "info": "Check SIMPAYER position after Abort"
           },
@@ -258,14 +258,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Payeefsp-pos-after-after-Payee",
                 "description": "Payeefsp position after after Payee ABORT should be same as position before prepare",
                 "exec": [
                   "expect(response.body[0].value).to.equal(+environment[environment.fromFspId + 'PositionBeforePrepare'])"
@@ -294,7 +294,7 @@
           }
         },
         {
-          "id": 10,
+          "id": "Check-NORESPONSE_SIMPAYEE-pos-",
           "meta": {
             "info": "Check NORESPONSE_SIMPAYEE position after Abort"
           },
@@ -315,14 +315,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Payeefsp-pos-after-Payee-ABORT",
                 "description": "Payeefsp position after Payee ABORT should be same as position before prepare",
                 "exec": [
                   "expect(response.body[0].value).to.equal(+environment[environment.NORESPONSE_SIMPAYEE_NAME + 'PositionBeforePrepare'])"
@@ -352,7 +352,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payer_transfer_timeout.json"
+        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payer_transfer_timeout.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

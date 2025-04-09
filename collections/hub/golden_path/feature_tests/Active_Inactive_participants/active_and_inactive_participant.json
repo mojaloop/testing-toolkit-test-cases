@@ -1,14 +1,14 @@
 {
   "test_cases": [
     {
-      "id": 1,
+      "id": "act-inact-participant",
       "name": "Active and inactive participant",
       "meta": {
         "info": "Active and inactive participant"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Update-part-SIM2-inactive",
           "meta": {
             "info": "Update participant (SIM2 to inactive)"
           },
@@ -31,7 +31,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-200",
                 "description": "Response status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -46,7 +46,7 @@
           "disabled": false
         },
         {
-          "id": 2,
+          "id": "Send-Quote-fail-SIM1-SIM2",
           "meta": {
             "info": "Send Quote fail (SIM1 to SIM2)"
           },
@@ -70,8 +70,8 @@
             "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
@@ -140,21 +140,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Validate-Protected-Headers",
                 "description": "Callback Validate Protected Headers",
                 "exec": [
                   "if(environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
@@ -163,7 +163,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-Validate-JWS",
                 "description": "Callback Validate JWS",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_JWS_VALIDATION) {",
@@ -172,16 +172,16 @@
                 ]
               },
               {
-                "id": 5,
-                "description": "Payer side Callback Header - fspiop-source is switch",
+                "id": "Payer-cb-hdr-src-switch-s-name",
+                "description": "Payer side Callback Header - fspiop-source is switch's name",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.headers['fspiop-source']).to.equal('switch')",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
                   "}"
                 ]
               },
               {
-                "id": 6,
+                "id": "Payer-cb-hdr-dest-SIM1",
                 "description": "Payer side Callback Header - fspiop-destination is SIM1",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -190,7 +190,7 @@
                 ]
               },
               {
-                "id": 8,
+                "id": "Payer-cb-hdr-accept-empty",
                 "description": "Payer side Callback Header - accept is empty",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -199,16 +199,16 @@
                 ]
               },
               {
-                "id": 9,
+                "id": "Payer-cb-hdr-content-type",
                 "description": "Payer side Callback Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
               {
-                "id": 10,
+                "id": "Payer-cb-hdr-uri-quotes-quoteI",
                 "description": "Payer side Callback Header - fspiop-uri is /quotes/quoteId/error",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -217,7 +217,7 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "Payer-cb-hdr-method-PUT",
                 "description": "Payer side Callback Header - fspiop-http-method is PUT",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -226,7 +226,7 @@
                 ]
               },
               {
-                "id": 12,
+                "id": "Payer-cb-errorCode-3201",
                 "description": "Payer side Callback Body - errorCode is 3201",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -235,11 +235,15 @@
                 ]
               },
               {
-                "id": 13,
+                "id": "Payer-cb-Error-Description-des",
                 "description": "Payer side Callback Body - Error Description is Destination FSP Error",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Unsupported participant')",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Unsupported participant')",
+                  "  } else {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "  }",
                   "}"
                 ]
               }
@@ -248,7 +252,7 @@
           "disabled": false
         },
         {
-          "id": 3,
+          "id": "Send-trans-fail-SIM1-SIM2",
           "meta": {
             "info": "Send Transfer fail (SIM1 to SIM2)"
           },
@@ -273,7 +277,7 @@
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-Quote-fail-SIM1-SIM2.request.body.transactionId}",
             "payerFsp": "{$inputs.SIM1_NAME}",
             "payeeFsp": "{$inputs.SIM2_NAME}",
             "amount": {
@@ -319,21 +323,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Validate-Protected-Headers",
                 "description": "Callback Validate Protected Headers",
                 "exec": [
                   "if(environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
@@ -342,7 +346,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-Validate-JWS",
                 "description": "Callback Validate JWS",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_JWS_VALIDATION) {",
@@ -351,16 +355,16 @@
                 ]
               },
               {
-                "id": 5,
-                "description": "Payer side Callback Header - fspiop-source is switch",
+                "id": "Payer-cb-hdr-src-switch-s-name",
+                "description": "Payer side Callback Header - fspiop-source is switch's name",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.headers['fspiop-source']).to.equal('switch')",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
                   "}"
                 ]
               },
               {
-                "id": 6,
+                "id": "Payer-cb-hdr-dest-SIM1",
                 "description": "Payer side Callback Header - fspiop-destination is SIM1",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -369,7 +373,7 @@
                 ]
               },
               {
-                "id": 8,
+                "id": "Payer-cb-hdr-accept-empty",
                 "description": "Payer side Callback Header - accept is empty",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -378,16 +382,16 @@
                 ]
               },
               {
-                "id": 9,
+                "id": "Payer-cb-hdr-content-type",
                 "description": "Payer side Callback Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
               {
-                "id": 10,
+                "id": "Payer-cb-hdr-uri-transfers-tra",
                 "description": "Payer side Callback Header - fspiop-uri is /transfers/transferId/error",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -396,7 +400,7 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "Payer-cb-hdr-method-PUT",
                 "description": "Payer side Callback Header - fspiop-http-method is PUT",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -405,7 +409,7 @@
                 ]
               },
               {
-                "id": 12,
+                "id": "Payer-cb-errorCode-3100",
                 "description": "Payer side Callback Body - errorCode is 3100",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -414,11 +418,15 @@
                 ]
               },
               {
-                "id": 13,
+                "id": "Payer-cb-Error-Description-Gen",
                 "description": "Payer side Callback Body - Error Description is Generic validation error",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Generic validation error - Participant')",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Generic validation error - Participant')",
+                  "  } else {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "  }",
                   "}"
                 ]
               }
@@ -427,7 +435,7 @@
           "disabled": false
         },
         {
-          "id": 4,
+          "id": "Update-part-SIM2-active",
           "meta": {
             "info": "Update participant (SIM2 to active)"
           },
@@ -450,7 +458,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-200",
                 "description": "Response status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -465,7 +473,7 @@
           "disabled": false
         },
         {
-          "id": 5,
+          "id": "Send-Quote-SIM1-SIM2",
           "meta": {
             "info": "Send Quote (SIM1 to SIM2)"
           },
@@ -489,8 +497,8 @@
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "MSISDN",
@@ -566,21 +574,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Validate-Protected-Headers",
                 "description": "Callback Validate Protected Headers",
                 "exec": [
                   "if(environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
@@ -589,7 +597,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-Validate-JWS",
                 "description": "Callback Validate JWS",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_JWS_VALIDATION) {",
@@ -598,7 +606,7 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Payee-req-hdr-src-SIM1",
                 "description": "Payee side Request Header - fspiop-source is SIM1",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -607,7 +615,7 @@
                 ]
               },
               {
-                "id": 6,
+                "id": "Payee-req-hdr-dest-SIM2",
                 "description": "Payee side Request Header - fspiop-destination is SIM2",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -616,25 +624,25 @@
                 ]
               },
               {
-                "id": 8,
+                "id": "Payee-req-hdr-accept",
                 "description": "Payee side Request Header - accept is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['Accept'])",
+                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['accept'])",
                   "}"
                 ]
               },
               {
-                "id": 9,
+                "id": "Payee-req-hdr-content-type",
                 "description": "Payee side Request Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
               {
-                "id": 10,
+                "id": "Payee-req-hdr-uri-quotes",
                 "description": "Payee side Request Header - fspiop-uri is /quotes",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -643,7 +651,7 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "Payee-req-hdr-method-POST",
                 "description": "Payee side Request Header - fspiop-http-method is POST",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -652,7 +660,7 @@
                 ]
               },
               {
-                "id": 15,
+                "id": "Payer-cb-hdr-src-SIM2",
                 "description": "Payer side Callback Header - fspiop-source is SIM2",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -661,7 +669,7 @@
                 ]
               },
               {
-                "id": 16,
+                "id": "Payer-cb-hdr-dest-SIM1",
                 "description": "Payer side Callback Header - fspiop-destination is SIM1",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -670,7 +678,7 @@
                 ]
               },
               {
-                "id": 17,
+                "id": "Payer-cb-hdr-accept-empty",
                 "description": "Payer side Callback Header - accept is empty",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -679,7 +687,7 @@
                 ]
               },
               {
-                "id": 18,
+                "id": "Payer-cb-hdr-content-type-expe",
                 "description": "Payer side Callback Header - content-type is as expected",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -688,7 +696,7 @@
                 ]
               },
               {
-                "id": 19,
+                "id": "Payer-cb-hdr-uri-quotes-quoteI",
                 "description": "Payer side Callback Header - fspiop-uri is /quotes/quoteId",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -697,7 +705,7 @@
                 ]
               },
               {
-                "id": 20,
+                "id": "Payer-cb-hdr-method-PUT",
                 "description": "Payer side Callback Header - fspiop-http-method is PUT",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -706,7 +714,7 @@
                 ]
               },
               {
-                "id": 21,
+                "id": "Payer-cb-quoteId-null",
                 "description": "Payer side Callback Body - quoteId is null",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -715,7 +723,7 @@
                 ]
               },
               {
-                "id": 22,
+                "id": "Payer-cb-ilpPacket-not-null",
                 "description": "Payer side Callback Body - ilpPacket is not null",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -724,7 +732,7 @@
                 ]
               },
               {
-                "id": 23,
+                "id": "Payer-cb-condition-not-null",
                 "description": "Payer side Callback Body - condition is not null",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -737,7 +745,7 @@
           "disabled": false
         },
         {
-          "id": 6,
+          "id": "Send-trans-SIM1-SIM2",
           "meta": {
             "info": "Send Transfer (SIM1 to SIM2)"
           },
@@ -762,7 +770,7 @@
             "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
           },
           "body": {
-            "transferId": "{$prev.5.request.body.transactionId}",
+            "transferId": "{$prev.Send-Quote-SIM1-SIM2.request.body.transactionId}",
             "payerFsp": "{$inputs.SIM1_NAME}",
             "payeeFsp": "{$inputs.SIM2_NAME}",
             "amount": {
@@ -815,21 +823,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Validate-Protected-Headers",
                 "description": "Callback Validate Protected Headers",
                 "exec": [
                   "if(environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
@@ -838,7 +846,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-Validate-JWS",
                 "description": "Callback Validate JWS",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_JWS_VALIDATION) {",
@@ -847,7 +855,7 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Payee-req-hdr-src-SIM1",
                 "description": "Payee side Request Header - fspiop-source is SIM1",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -856,7 +864,7 @@
                 ]
               },
               {
-                "id": 6,
+                "id": "Payee-req-hdr-dest-SIM2",
                 "description": "Payee side Request Header - fspiop-destination is SIM2",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -865,25 +873,25 @@
                 ]
               },
               {
-                "id": 8,
+                "id": "Payee-req-hdr-accept",
                 "description": "Payee side Request Header - accept is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['Accept'])",
+                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['accept'])",
                   "}"
                 ]
               },
               {
-                "id": 9,
+                "id": "Payee-req-hdr-content-type",
                 "description": "Payee side Request Header - content-type is same",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['content-type'])",
                   "}"
                 ]
               },
               {
-                "id": 10,
+                "id": "Payee-req-hdr-uri-transfers",
                 "description": "Payee side Request Header - fspiop-uri is /transfers",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -892,7 +900,7 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "Payee-req-hdr-method-POST",
                 "description": "Payee side Request Header - fspiop-http-method is POST",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -901,7 +909,7 @@
                 ]
               },
               {
-                "id": 15,
+                "id": "Payer-cb-hdr-src-SIM2",
                 "description": "Payer side Callback Header - fspiop-source is SIM2",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -910,7 +918,7 @@
                 ]
               },
               {
-                "id": 16,
+                "id": "Payer-cb-hdr-dest-SIM1",
                 "description": "Payer side Callback Header - fspiop-destination is SIM1",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -919,7 +927,7 @@
                 ]
               },
               {
-                "id": 17,
+                "id": "Payer-cb-hdr-accept-empty",
                 "description": "Payer side Callback Header - accept is empty",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -928,7 +936,7 @@
                 ]
               },
               {
-                "id": 18,
+                "id": "Payer-cb-hdr-content-type-expe",
                 "description": "Payer side Callback Header - content-type is as expected",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -937,7 +945,7 @@
                 ]
               },
               {
-                "id": 19,
+                "id": "Payer-cb-hdr-uri-transfers-tra",
                 "description": "Payer side Callback Header - fspiop-uri is /transfers/transferId",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -946,7 +954,7 @@
                 ]
               },
               {
-                "id": 20,
+                "id": "Payer-cb-hdr-method-PUT",
                 "description": "Payer side Callback Header - fspiop-http-method is PUT",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -955,7 +963,7 @@
                 ]
               },
               {
-                "id": 21,
+                "id": "Payer-cb-transferId-null",
                 "description": "Payer side Callback Body - transferId is null",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -964,7 +972,7 @@
                 ]
               },
               {
-                "id": 22,
+                "id": "Payer-cb-transferState-COMMITT",
                 "description": "Payer side Callback Body - transferState is COMMITTED",
                 "exec": [
                   "if (environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -978,7 +986,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/Active_Inactive_participants/active_and_inactive_participant.json"
+        "path": "hub/golden_path/feature_tests/Active_Inactive_participants/active_and_inactive_participant.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

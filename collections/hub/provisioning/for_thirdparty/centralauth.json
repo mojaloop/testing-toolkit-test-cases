@@ -1,0 +1,677 @@
+{
+  "name": "centralauth-provisioning",
+  "test_cases": [
+    {
+      "id": "centralauth-account",
+      "name": "centralauth account",
+      "meta": {
+        "info": "centralauth account"
+      },
+      "requests": [
+        {
+          "id": "Add-centralauth",
+          "meta": {
+            "info": "Add centralauth"
+          },
+          "description": "Add centralauth",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.CENTRALAUTH_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-different-curr",
+          "meta": {
+            "info": "Add centralauth with different currency for default settlement case"
+          },
+          "description": "Add centralauth with different currency for default settlement case",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.CENTRALAUTH_NAME}",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning_thirdparty/centralauth.json"
+      }
+    },
+    {
+      "id": "centralauth-call-b781",
+      "name": "centralauth callbacks",
+      "meta": {
+        "info": "centralauth callbacks"
+      },
+      "requests": [
+        {
+          "id": "Add-centralauth-cb-TP_CB_URL_T",
+          "meta": {
+            "info": "Add centralauth callback - TP_CB_URL_TRANSACTION_REQUEST_VERIFY_POST"
+          },
+          "description": "Add centralauth callback - TP_CB_URL_TRANSACTION_REQUEST_VERIFY_POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_VERIFY_POST",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-TP_CB_URL_T-1",
+          "meta": {
+            "info": "Add centralauth callback - TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT"
+          },
+          "description": "Add centralauth callback - TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-TP_CB_URL_T-2",
+          "meta": {
+            "info": "Add centralauth callback - TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR"
+          },
+          "description": "Add centralauth callback - TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-TP_CB_URL_C",
+          "meta": {
+            "info": "Add centralauth callback - TP_CB_URL_CONSENT_POST"
+          },
+          "description": "Add centralauth callback - TP_CB_URL_CONSENT_POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_POST",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-TP_CB_URL_C-1",
+          "meta": {
+            "info": "Add centralauth callback - TP_CB_URL_CONSENT_GET"
+          },
+          "description": "Add centralauth callback - TP_CB_URL_CONSENT_GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_GET",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-TP_CB_URL_C-2",
+          "meta": {
+            "info": "Add centralauth callback - TP_CB_URL_CONSENT_PUT"
+          },
+          "description": "Add centralauth callback - TP_CB_URL_CONSENT_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_PUT",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-TP_CB_URL_C-3",
+          "meta": {
+            "info": "Add centralauth callback - TP_CB_URL_CONSENT_PUT_ERROR"
+          },
+          "description": "Add centralauth callback - TP_CB_URL_CONSENT_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_PUT_ERROR",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-TP_CB_URL_C-4",
+          "meta": {
+            "info": "Add centralauth callback - TP_CB_URL_CONSENT_PATCH"
+          },
+          "description": "Add centralauth callback - TP_CB_URL_CONSENT_PATCH",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "TP_CB_URL_CONSENT_PATCH",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-FSPIOP_CALL",
+          "meta": {
+            "info": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_PUT"
+          },
+          "description": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}/participants/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-FSPIOP_CALL-1",
+          "meta": {
+            "info": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR"
+          },
+          "description": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-FSPIOP_CALL-2",
+          "meta": {
+            "info": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT"
+          },
+          "description": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}/participants/{{requestId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-FSPIOP_CALL-3",
+          "meta": {
+            "info": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR"
+          },
+          "description": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}/participants/{{requestId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-FSPIOP_CALL-4",
+          "meta": {
+            "info": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE"
+          },
+          "description": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-FSPIOP_CALL-5",
+          "meta": {
+            "info": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT"
+          },
+          "description": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-centralauth-cb-FSPIOP_CALL-6",
+          "meta": {
+            "info": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR"
+          },
+          "description": "Add centralauth callback - FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.CENTRALAUTH_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.CENTRALAUTH_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.CENTRALAUTH_CB_FSPIOP}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning_thirdparty/centralauth.json"
+      }
+    }
+  ]
+}

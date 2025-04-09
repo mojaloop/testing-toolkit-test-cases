@@ -2,7 +2,7 @@
   "name": "Happy Path",
   "test_cases": [
     {
-      "id": 1,
+      "id": "tc-bhp1-when-the-66a6",
       "name": "TC-BHP1. When there are 4 transfers in the bulk request 2 of which that have the same receiver fsp id and the others has a different receiver fsp id and acceptParty is true for all the transfers, Then the PUT response should have details of all the 4 transfers.",
       "fileInfo": {
         "path": "hub/sdk_scheme_adapter/bulk/basic/bulk-happy-path.json",
@@ -12,27 +12,27 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Post-bulkTransaction",
           "description": "Post /bulkTransaction",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/bulkTransactions",
           "path": "/bulkTransactions",
           "method": "post",
           "body": {
             "bulkHomeTransactionID": "abc123",
-            "bulkTransactionId": "{$function.generic.generateUUID}",
+            "bulkTransactionId": "{$function.generic.generateID}",
             "options": {
               "onlyValidateParty": true,
               "autoAcceptParty": {
@@ -107,7 +107,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)",
@@ -115,14 +115,14 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-number-returned-transfer",
                 "description": "Check number of returned transfers",
                 "exec": [
                   "expect(callback.body.individualTransferResults.length).to.equal(4)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-current-state-WAITING_FO",
                 "description": "Check current state is WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
                   "expect(callback.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
@@ -144,26 +144,26 @@
           }
         },
         {
-          "id": 2,
+          "id": "put-bulk-txn-acceptParty",
           "description": "put bulk transaction for acceptParty",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/bulkTransactions/{bulkTransactionId}",
-          "path": "/bulkTransactions/{$prev.1.request.body.bulkTransactionId}",
+          "path": "/bulkTransactions/{$prev.Post-bulkTransaction.request.body.bulkTransactionId}",
           "method": "put",
           "params": {
-            "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
+            "bulkTransactionId": "{$prev.Post-bulkTransaction.request.body.bulkTransactionId}"
           },
           "body": {
             "individualTransfers": [
@@ -189,28 +189,28 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-number-returned-transfer",
                 "description": "Check number of returned transfers",
                 "exec": [
                   "expect(callback.body.individualTransferResults.length).to.equal(4)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-rsp-has-quote-result-fir",
                 "description": "Check response has quote result for first transfer",
                 "exec": [
                   "expect(callback.body.individualTransferResults[0].quoteResponse).to.exist;"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-rsp-has-ilpPacket-condit",
                 "description": "Check response has ilpPacket and condition for first transfer",
                 "exec": [
                   "expect(callback.body.individualTransferResults[0].quoteResponse.ilpPacket).to.not.be.empty;",
@@ -219,14 +219,14 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Check-rsp-has-quote-result-sec",
                 "description": "Check response has quote result for second transfer",
                 "exec": [
                   "expect(callback.body.individualTransferResults[1].quoteResponse).to.exist;"
                 ]
               },
               {
-                "id": 6,
+                "id": "Check-rsp-has-ilpPacket-condit",
                 "description": "Check response has ilpPacket and condition for second transfer",
                 "exec": [
                   "expect(callback.body.individualTransferResults[1].quoteResponse.ilpPacket).to.not.be.empty;",
@@ -235,14 +235,14 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "Check-rsp-has-quote-result-thi",
                 "description": "Check response has quote result for third transfer",
                 "exec": [
                   "expect(callback.body.individualTransferResults[2].quoteResponse).to.exist;"
                 ]
               },
               {
-                "id": 8,
+                "id": "Check-rsp-has-ilpPacket-condit",
                 "description": "Check response has ilpPacket and condition for third transfer",
                 "exec": [
                   "expect(callback.body.individualTransferResults[2].quoteResponse.ilpPacket).to.not.be.empty;",
@@ -251,7 +251,7 @@
                 ]
               },
               {
-                "id": 9,
+                "id": "Check-state-WAITING_FOR_QUOTE_",
                 "description": "Check state is WAITING_FOR_QUOTE_ACCEPTANCE",
                 "exec": [
                   "expect(callback.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
@@ -269,26 +269,26 @@
           "disabled": false
         },
         {
-          "id": 3,
+          "id": "put-bulk-txn-acceptQuote",
           "description": "put bulk transaction for acceptQuote",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/bulkTransactions/{bulkTransactionId}",
-          "path": "/bulkTransactions/{$prev.1.request.body.bulkTransactionId}",
+          "path": "/bulkTransactions/{$prev.Post-bulkTransaction.request.body.bulkTransactionId}",
           "method": "put",
           "params": {
-            "bulkTransactionId": "{$prev.1.request.body.bulkTransactionId}"
+            "bulkTransactionId": "{$prev.Post-bulkTransaction.request.body.bulkTransactionId}"
           },
           "body": {
             "individualTransfers": [
@@ -314,56 +314,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-number-returned-transfer",
                 "description": "Check number of returned transfers",
                 "exec": [
                   "expect(callback.body.individualTransferResults.length).to.equal(4)"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-rsp-MSISDN-req",
                 "description": "Check response MSISDN is same as in the request",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn1response.to.partyIdInfo.partyIdentifier).to.equal('{$inputs.TTKSIM2_MSISDN_1}')"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-rsp-has-receiver-fspid-p",
                 "description": "Check response has the receiver fspid populated",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn1response.to.partyIdInfo.fspId).to.not.be.empty"
                 ]
               },
               {
-                "id": 5,
+                "id": "Check-rsp-receiver-first-name-",
                 "description": "Check response receiver first name is ReceiverFirst",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn1response.to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
                 ]
               },
               {
-                "id": 6,
+                "id": "Check-rsp-receiver-last-name-R",
                 "description": "Check response receiver last name is ReceiverLast",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn1response.to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
                 ]
               },
               {
-                "id": 7,
+                "id": "Check-rsp-has-quote-result",
                 "description": "Check response has quote result",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn1response.quoteResponse).to.exist;"
                 ]
               },
               {
-                "id": 8,
+                "id": "Check-rsp-has-ilpPacket-condit",
                 "description": "Check response has ilpPacket and condition",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn1response.quoteResponse.ilpPacket).to.not.be.empty;",
@@ -372,56 +372,56 @@
                 ]
               },
               {
-                "id": 9,
+                "id": "Check-rsp-has-fulfillment",
                 "description": "Check response has  fulfillment",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn1response.fulfil.fulfilment).to.exist;"
                 ]
               },
               {
-                "id": 10,
+                "id": "Check-rsp-has-COMPLETED-state",
                 "description": "Check response has  COMPLETED state",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn1response.fulfil.transferState).to.equal('COMMITTED');"
                 ]
               },
               {
-                "id": 11,
+                "id": "Check-rsp-MSISDN-req",
                 "description": "Check response MSISDN is same as in the request",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn2response.to.partyIdInfo.partyIdentifier).to.equal('{$inputs.TTKSIM2_MSISDN_2}')"
                 ]
               },
               {
-                "id": 12,
+                "id": "Check-rsp-has-receiver-fspid-p",
                 "description": "Check response has the receiver fspid populated",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn2response.to.partyIdInfo.fspId).to.not.be.empty"
                 ]
               },
               {
-                "id": 13,
+                "id": "Check-rsp-receiver-first-name-",
                 "description": "Check response receiver first name is ReceiverFirst",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn2response.to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
                 ]
               },
               {
-                "id": 14,
+                "id": "Check-rsp-receiver-last-name-R",
                 "description": "Check response receiver last name is ReceiverLast",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn2response.to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
                 ]
               },
               {
-                "id": 15,
+                "id": "Check-rsp-has-quote-result",
                 "description": "Check response has quote result",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn2response.quoteResponse).to.exist;"
                 ]
               },
               {
-                "id": 16,
+                "id": "Check-rsp-has-ilpPacket-condit",
                 "description": "Check response has ilpPacket and condition",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn2response.quoteResponse.ilpPacket).to.not.be.empty;",
@@ -430,56 +430,56 @@
                 ]
               },
               {
-                "id": 17,
+                "id": "Check-rsp-has-fulfillment",
                 "description": "Check response has  fulfillment",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn2response.fulfil.fulfilment).to.exist;"
                 ]
               },
               {
-                "id": 18,
+                "id": "Check-rsp-has-COMPLETED-state",
                 "description": "Check response has  COMPLETED state",
                 "exec": [
                   "expect(requestVariables.ttksim2msisdn2response.fulfil.transferState).to.equal('COMMITTED');"
                 ]
               },
               {
-                "id": 19,
+                "id": "Check-rsp-MSISDN-req",
                 "description": "Check response MSISDN is same as in the request",
                 "exec": [
                   "expect(requestVariables.ttksim3msisdn1response.to.partyIdInfo.partyIdentifier).to.equal('{$inputs.TTKSIM3_MSISDN_1}')"
                 ]
               },
               {
-                "id": 20,
+                "id": "Check-rsp-has-receiver-fspid-p",
                 "description": "Check response has the receiver fspid populated",
                 "exec": [
                   "expect(requestVariables.ttksim3msisdn1response.to.partyIdInfo.fspId).to.not.be.empty"
                 ]
               },
               {
-                "id": 21,
+                "id": "Check-rsp-receiver-first-name-",
                 "description": "Check response receiver first name is ReceiverFirst",
                 "exec": [
                   "expect(requestVariables.ttksim3msisdn1response.to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
                 ]
               },
               {
-                "id": 22,
+                "id": "Check-rsp-receiver-last-name-R",
                 "description": "Check response receiver last name is ReceiverLast",
                 "exec": [
                   "expect(requestVariables.ttksim3msisdn1response.to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
                 ]
               },
               {
-                "id": 23,
+                "id": "Check-rsp-has-quote-result",
                 "description": "Check response has quote result",
                 "exec": [
                   "expect(requestVariables.ttksim3msisdn1response.quoteResponse).to.exist;"
                 ]
               },
               {
-                "id": 24,
+                "id": "Check-rsp-has-ilpPacket-condit",
                 "description": "Check response has ilpPacket and condition",
                 "exec": [
                   "expect(requestVariables.ttksim3msisdn1response.quoteResponse.ilpPacket).to.not.be.empty;",
@@ -488,56 +488,56 @@
                 ]
               },
               {
-                "id": 25,
+                "id": "Check-rsp-has-fulfillment",
                 "description": "Check response has  fulfillment",
                 "exec": [
                   "expect(requestVariables.ttksim3msisdn1response.fulfil.fulfilment).to.exist;"
                 ]
               },
               {
-                "id": 26,
+                "id": "Check-rsp-has-COMPLETED-state",
                 "description": "Check response has  COMPLETED state",
                 "exec": [
                   "expect(requestVariables.ttksim3msisdn1response.fulfil.transferState).to.equal('COMMITTED');"
                 ]
               },
               {
-                "id": 27,
+                "id": "Check-rsp-MSISDN-req",
                 "description": "Check response MSISDN is same as in the request",
                 "exec": [
                   "expect(requestVariables.sim3msisdn2response.to.partyIdInfo.partyIdentifier).to.equal('{$inputs.TTKSIM3_MSISDN_2}')"
                 ]
               },
               {
-                "id": 28,
+                "id": "Check-rsp-has-receiver-fspid-p",
                 "description": "Check response has the receiver fspid populated",
                 "exec": [
                   "expect(requestVariables.sim3msisdn2response.to.partyIdInfo.fspId).to.not.be.empty"
                 ]
               },
               {
-                "id": 29,
+                "id": "Check-rsp-receiver-first-name-",
                 "description": "Check response receiver first name is ReceiverFirst",
                 "exec": [
                   "expect(requestVariables.sim3msisdn2response.to.personalInfo.complexName.firstName).to.equal('ReceiverFirst')"
                 ]
               },
               {
-                "id": 30,
+                "id": "Check-rsp-receiver-last-name-R",
                 "description": "Check response receiver last name is ReceiverLast",
                 "exec": [
                   "expect(requestVariables.sim3msisdn2response.to.personalInfo.complexName.lastName).to.equal('ReceiverLast')"
                 ]
               },
               {
-                "id": 31,
+                "id": "Check-rsp-has-quote-result",
                 "description": "Check response has quote result",
                 "exec": [
                   "expect(requestVariables.sim3msisdn2response.quoteResponse).to.exist;"
                 ]
               },
               {
-                "id": 32,
+                "id": "Check-rsp-has-ilpPacket-condit",
                 "description": "Check response has ilpPacket and condition",
                 "exec": [
                   "expect(requestVariables.sim3msisdn2response.quoteResponse.ilpPacket).to.not.be.empty;",
@@ -546,21 +546,21 @@
                 ]
               },
               {
-                "id": 33,
+                "id": "Check-rsp-has-fulfillment",
                 "description": "Check response has  fulfillment",
                 "exec": [
                   "expect(requestVariables.sim3msisdn2response.fulfil.fulfilment).to.exist;"
                 ]
               },
               {
-                "id": 34,
+                "id": "Check-rsp-has-COMPLETED-state",
                 "description": "Check response has  COMPLETED state",
                 "exec": [
                   "expect(requestVariables.sim3msisdn2response.fulfil.transferState).to.equal('COMMITTED');"
                 ]
               },
               {
-                "id": 35,
+                "id": "Check-overall-bulk-txn-state-C",
                 "description": "Check overall bulk transaction state is COMPLETED",
                 "exec": [
                   "expect(callback.body.currentState).to.equal('COMPLETED')"
@@ -593,7 +593,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "tc-bhp3-when-the-363f",
       "name": "TC-BHP3. When the incoming request has a format issue that fails schema validation, Then the return code should be 400 instead of 202",
       "fileInfo": {
         "path": "hub/sdk_scheme_adapter/bulk/basic/bulk-happy-path.json",
@@ -603,27 +603,27 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Post-bulkTransaction",
           "description": "Post /bulkTransaction",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/bulkTransactions",
           "path": "/bulkTransactions",
           "method": "post",
           "body": {
             "bulkHomeTransactionID": "abc123",
-            "bulkTransactionId": "{$function.generic.generateUUID}",
+            "bulkTransactionId": "{$function.generic.generateID}",
             "options": {
               "onlyValidateParty": true,
               "autoAcceptParty": {
@@ -675,7 +675,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(400)",
@@ -683,21 +683,21 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-rsp-has-statusText-value",
                 "description": "Check response has statusText with value Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-rsp-message-must-one-all",
                 "description": "Check response body message should be must be equal to one of the allowed values",
                 "exec": [
                   "expect(response.body.message).to.equal('must be equal to one of the allowed values')"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-rsp-status-code-400",
                 "description": "Check response body status code to be 400",
                 "exec": [
                   "expect(response.body.statusCode).to.equal(400)"

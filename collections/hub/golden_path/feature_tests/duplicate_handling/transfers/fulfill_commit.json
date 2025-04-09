@@ -3,14 +3,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "positive",
       "name": "positive",
       "meta": {
         "info": "Duplicate valid fulfil request after a successful valid fulfil request from Payee FSP should return callback to Payee FSP containing transfer information."
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Send-Quote-RECEIVE",
           "meta": {
             "info": "Send Quote - RECEIVE"
           },
@@ -34,8 +34,8 @@
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -73,14 +73,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
@@ -106,7 +106,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-Quote-rsp",
           "description": "Send Quote - Response",
           "apiVersion": {
             "minorVersion": 1,
@@ -120,27 +120,27 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.1.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.1.request.body.quoteId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.quoteId}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
             "transferAmount": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "{$prev.1.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeReceiveAmount": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "{$prev.1.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeFspFee": {
-              "currency": "{$prev.1.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "payeeFspCommission": {
-              "currency": "{$prev.1.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "expiration": "{$requestVariables.quoteExpiration}",
@@ -157,7 +157,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -169,7 +169,7 @@
             "preRequest": {
               "exec": [
                 "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.1.request.body.quoteId}', (headers, body) => {",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})"
               ]
@@ -183,7 +183,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-Transfer-Prepare",
           "meta": {
             "info": "Send Transfer-Prepare"
           },
@@ -207,7 +207,7 @@
             "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "body": {
-            "transferId": "{$prev.1.request.body.transactionId}",
+            "transferId": "{$prev.Send-Quote-RECEIVE.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "amount": {
@@ -223,7 +223,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -250,7 +250,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-Fulfill",
           "meta": {
             "info": "Send Fulfill"
           },
@@ -262,10 +262,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -285,7 +285,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -304,7 +304,7 @@
             "preRequest": {
               "exec": [
                 "environment.fulfillCompletedTimestamp = new Date().toISOString()",
-                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.2.request.body.transferId}', (headers, body) => {",
+                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.Send-Quote-rsp.request.body.transferId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})",
                 ""
@@ -313,7 +313,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Duplicate-Fulfill",
           "meta": {
             "info": "Duplicate Fulfill request should return transfer status, timestamp and fulfilment."
           },
@@ -325,10 +325,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -348,21 +348,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Duplicate-Fulfill-cb-transferS",
                 "description": "Duplicate Fulfill Callback Body - transferState is COMMITED ",
                 "exec": [
                   "expect(requestVariables.payeeDuplicateCallback.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": 3,
+                "id": "Duplicate-Fulfill-cb-fulfilmen",
                 "description": "Duplicate Fulfill Callback Body - fulfilment is same as request",
                 "exec": [
                   "expect(requestVariables.payeeDuplicateCallback.body.fulfilment).to.equal('{$inputs.validFulfillment}')",
@@ -370,7 +370,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "Duplicate-Fulfill-cb-method-PU",
                 "description": "Duplicate Fulfill Callback Body - fspiop-http-method is PUT",
                 "exec": [
                   "expect(requestVariables.payeeDuplicateCallback.headers['fspiop-http-method']).to.equal('PUT')"
@@ -388,7 +388,7 @@
             },
             "preRequest": {
               "exec": [
-                "await inboundEvent.addListener('payeeDuplicateCallback', 'put', '/transfers/{$prev.3.request.body.transferId}', (headers, body) => {",
+                "await inboundEvent.addListener('payeeDuplicateCallback', 'put', '/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
                 "})",
                 ""
@@ -397,7 +397,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Check-trans-status",
           "meta": {
             "info": "Check Transfer status"
           },
@@ -409,10 +409,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -426,29 +426,29 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 12,
-                "description": "Callback Header - fspiop-source is switch",
+                "id": "cb-hdr-src-switch-s-name",
+                "description": "Callback Header - fspiop-source is switch's name",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal('switch')",
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
                   ""
                 ]
               },
               {
-                "id": 13,
+                "id": "cb-hdr-fspiop-desination-src-r",
                 "description": "Callback Header - fspiop-desination is fspiop-source in request",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}')",
@@ -456,7 +456,7 @@
                 ]
               },
               {
-                "id": 14,
+                "id": "cb-hdr-content-type",
                 "description": "Callback Header - content-type",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
@@ -464,7 +464,7 @@
                 ]
               },
               {
-                "id": 15,
+                "id": "cb-hdr-accept-empty",
                 "description": "Callback Header - accept is empty",
                 "exec": [
                   "expect(callback.headers['accept']).to.equal(undefined)",
@@ -472,7 +472,7 @@
                 ]
               },
               {
-                "id": 16,
+                "id": "cb-hdr-Date-not-empty",
                 "description": "Callback Header - Date is not empty",
                 "exec": [
                   "expect(callback.headers['date']).to.not.equal(undefined)",
@@ -480,7 +480,7 @@
                 ]
               },
               {
-                "id": 17,
+                "id": "cb-hdr-uri-transfers-transferI",
                 "description": "Callback Header - fspiop-uri is /transfers/transferId",
                 "exec": [
                   "expect(callback.headers['fspiop-uri']).to.equal('/transfers/' + request.params.ID)",
@@ -488,7 +488,7 @@
                 ]
               },
               {
-                "id": 18,
+                "id": "cb-hdr-method-PUT",
                 "description": "Callback Header - fspiop-http-method is PUT",
                 "exec": [
                   "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
@@ -496,7 +496,7 @@
                 ]
               },
               {
-                "id": 19,
+                "id": "cb-transferState-COMMITED",
                 "description": "Callback Body -  transferState is COMMITED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')",
@@ -504,7 +504,7 @@
                 ]
               },
               {
-                "id": 20,
+                "id": "cb-fulfillment-req",
                 "description": "Callback Body -  fulfillment is same as request",
                 "exec": [
                   "expect(callback.body.fulfilment).to.equal('{$inputs.validFulfillment}')",
@@ -516,18 +516,21 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json"
+        "path": "hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     },
     {
-      "id": 2,
+      "id": "negative",
       "name": "negative",
       "meta": {
         "info": "Duplicate invalid fulfil request after a successful valid fulfil request from Payee FSP should return callback to Payee FSP containing transfer information."
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Send-Quote-RECEIVE",
           "meta": {
             "info": "Send Quote - RECEIVE"
           },
@@ -551,8 +554,8 @@
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -590,14 +593,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
@@ -623,7 +626,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-Quote-rsp",
           "description": "Send Quote - Response",
           "apiVersion": {
             "minorVersion": 1,
@@ -637,26 +640,26 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.1.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.1.request.body.quoteId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.quoteId}"
           },
           "body": {
             "transferAmount": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "{$prev.1.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeReceiveAmount": {
-              "currency": "{$prev.1.request.body.amount.currency}",
-              "amount": "{$prev.1.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeFspFee": {
-              "currency": "{$prev.1.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "payeeFspCommission": {
-              "currency": "{$prev.1.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "expiration": "{$requestVariables.quoteExpiration}",
@@ -673,7 +676,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -686,7 +689,7 @@
             "preRequest": {
               "exec": [
                 "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.1.request.body.quoteId}', (headers, body) => {",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})"
               ]
@@ -700,7 +703,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-Transfer-Prepare",
           "meta": {
             "info": "Send Transfer-Prepare"
           },
@@ -724,7 +727,7 @@
             "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "body": {
-            "transferId": "{$prev.1.request.body.transactionId}",
+            "transferId": "{$prev.Send-Quote-RECEIVE.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "amount": {
@@ -740,7 +743,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -767,7 +770,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-Fulfill",
           "meta": {
             "info": "Send Fulfill"
           },
@@ -779,10 +782,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -802,7 +805,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -821,7 +824,7 @@
             "preRequest": {
               "exec": [
                 "environment.fulfillCompletedTimestamp = new Date().toISOString()",
-                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.2.request.body.transferId}', (headers, body) => {",
+                "await inboundEvent.addListener('payerFulfilCallback', 'put', '/transfers/{$prev.Send-Quote-rsp.request.body.transferId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})",
                 ""
@@ -830,7 +833,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Duplicate-Fulfill",
           "meta": {
             "info": "Duplicate Fulfill"
           },
@@ -842,10 +845,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transferId}",
+          "path": "/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transferId}"
+            "ID": "{$prev.Send-Transfer-Prepare.request.body.transferId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -865,29 +868,29 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-OK",
                 "description": "Response statusText be OK",
                 "exec": [
                   "expect(response.statusText).to.equal('OK')"
                 ]
               },
               {
-                "id": 3,
-                "description": "Payee Side Callback Header - fspiop-source is switch",
+                "id": "Payee-cb-hdr-src-switch-s-name",
+                "description": "Payee Side Callback Header - fspiop-source is switch's name",
                 "exec": [
-                  "expect(requestVariables.payeeCallback.headers['fspiop-source']).to.equal('switch')",
+                  "expect(requestVariables.payeeCallback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
                   ""
                 ]
               },
               {
-                "id": 4,
+                "id": "Payee-cb-hdr-dest-NORESPONSE_S",
                 "description": "Payee Side Callback Header - fspiop-destination is NORESPONSE_SIMPAYEE_NAME",
                 "exec": [
                   "expect(requestVariables.payeeCallback.headers['fspiop-destination']).to.equal('{$inputs.NORESPONSE_SIMPAYEE_NAME}')",
@@ -895,7 +898,7 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Payee-cb-hdr-fspiop-signature-",
                 "description": "Payee Side Callback Header - fspiop-signature is not empty",
                 "exec": [
                   "expect(requestVariables.payeeCallback.headers['fspiop-signature']).to.not.equal(undefined)",
@@ -903,7 +906,7 @@
                 ]
               },
               {
-                "id": 6,
+                "id": "Payee-cb-hdr-accept-empty",
                 "description": "Payee Side Callback Header - accept is empty",
                 "exec": [
                   "expect(requestVariables.payeeCallback.headers['accept']).to.equal(undefined)",
@@ -911,23 +914,23 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "Payee-cb-hdr-content-type",
                 "description": "Payee Side Callback Header - content-type is same",
                 "exec": [
-                  "expect(requestVariables.payeeCallback.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "expect(requestVariables.payeeCallback.headers['content-type']).to.equal(request.headers['content-type'])",
                   ""
                 ]
               },
               {
-                "id": 8,
+                "id": "Payee-cb-hdr-uri-transfers-tra",
                 "description": "Payee Side Callback Header - fspiop-uri is /transfers/transferId/error",
                 "exec": [
-                  "expect(requestVariables.payeeCallback.headers['fspiop-uri']).to.equal('/transfers/{$prev.3.request.body.transferId}/error')",
+                  "expect(requestVariables.payeeCallback.headers['fspiop-uri']).to.equal('/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}/error')",
                   ""
                 ]
               },
               {
-                "id": 9,
+                "id": "Payee-cb-hdr-method-PUT",
                 "description": "Payee Side Callback Header - fspiop-http-method is PUT",
                 "exec": [
                   "expect(requestVariables.payeeCallback.headers['fspiop-http-method']).to.equal('PUT')",
@@ -935,7 +938,7 @@
                 ]
               },
               {
-                "id": 10,
+                "id": "Payee-cb-rsp-Error-Code-3106",
                 "description": "Payee Side Callback Body - Response Error Code is 3106",
                 "exec": [
                   "expect(requestVariables.payeeCallback.body.errorInformation['errorCode']).to.equal('3106')",
@@ -943,11 +946,14 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "Payee-cb-rsp-Error-Description",
                 "description": "Payee Side Callback Body - Response Error Description is Modified request",
                 "exec": [
+                  "if (environment.API_TYPE === 'fspiop') {",
                   "expect(requestVariables.payeeCallback.body.errorInformation['errorDescription']).to.equal('Modified request')",
-                  ""
+                  "} else {",
+                  "expect(requestVariables.payeeCallback.body.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "}"
                 ]
               }
             ]
@@ -961,14 +967,17 @@
             },
             "preRequest": {
               "exec": [
-                "await inboundEvent.addListener('put-error-callback', 'put', '/transfers/{$prev.3.request.body.transferId}/error')"
+                "await inboundEvent.addListener('put-error-callback', 'put', '/transfers/{$prev.Send-Transfer-Prepare.request.body.transferId}/error')"
               ]
             }
           }
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json"
+        "path": "hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

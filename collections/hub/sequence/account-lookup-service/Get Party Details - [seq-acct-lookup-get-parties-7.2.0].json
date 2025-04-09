@@ -2,14 +2,14 @@
   "name": "Get Parties",
   "test_cases": [
     {
-      "id": 5,
+      "id": "get-party-detail-9b1e",
       "name": "Get party details - Happy Path - [seq-acct-lookup-get-parties-7.2.0]",
       "meta": {
         "info": "Get party details - Happy Path - [seq-acct-lookup-get-parties-7.2.0]"
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Get-party-information",
           "meta": {
             "info": "Get party information"
           },
@@ -35,56 +35,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-party",
                 "description": "Callback body should contain party",
                 "exec": [
                   "expect(callback.body).to.have.property('party')"
                 ]
               },
               {
-                "id": 5,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-parties",
                 "description": "Callback content-type to be parties",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "cb-partyIdInfo-partyIdType-par",
                 "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
                 "exec": [
                   "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
@@ -156,14 +156,14 @@
       }
     },
     {
-      "id": 6,
+      "id": "get-party-detail-c4fe",
       "name": "Get party details - Error invalid ID - [seq-acct-lookup-get-parties-7.2.0]",
       "meta": {
         "info": "Get party details - Error invalid ID - [seq-acct-lookup-get-parties-7.2.0]"
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Get-party-information-error-in",
           "meta": {
             "info": "Get party information error invalid party ID"
           },
@@ -189,56 +189,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-errorInformation",
                 "description": "Callback body should contain errorInformation",
                 "exec": [
                   "expect(callback.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 5,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-parties",
                 "description": "Callback content-type to be parties",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "cb-errorCode-errorDescription",
                 "description": "Callback body should contain errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3204')",
@@ -263,14 +263,14 @@
       }
     },
     {
-      "id": 7,
+      "id": "get-party-detail-54fe",
       "name": "Get party details - Error ACCOUNT_ID Type not setup - [seq-acct-lookup-get-parties-7.2.0] ",
       "meta": {
         "info": "Get party details - Error ACCOUNT_ID Type not setup - [seq-acct-lookup-get-parties-7.2.0] "
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Get-party-information-error-AC",
           "meta": {
             "info": "Get party information error ACCOUNT_ID Type not setup"
           },
@@ -296,56 +296,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-errorInformation",
                 "description": "Callback body should contain errorInformation",
                 "exec": [
                   "expect(callback.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 5,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-parties",
                 "description": "Callback content-type to be parties",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "cb-errorCode-errorDescription",
                 "description": "Callback body should contain errorCode and errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3003')",
@@ -370,14 +370,14 @@
       }
     },
     {
-      "id": 8,
+      "id": "get-party-detail-c2b5",
       "name": "Get party details - Error PayeeFSP doesn't exist - [seq-acct-lookup-get-parties-7.2.0]",
       "meta": {
         "info": "Get party details - Error PayeeFSP doesn't exist - [seq-acct-lookup-get-parties-7.2.0]"
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Get-party-information-error-Pa",
           "meta": {
             "info": "Get party information error PayeeFSP doesn't exist"
           },
@@ -403,56 +403,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-errorInformation",
                 "description": "Callback body should contain errorInformation",
                 "exec": [
                   "expect(callback.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 5,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-parties",
                 "description": "Callback content-type to be parties",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "cb-errorCode-errorDescription",
                 "description": "Callback errorCode errorDescription",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3204')",

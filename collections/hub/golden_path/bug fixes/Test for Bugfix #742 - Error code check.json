@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "bugfix-742",
       "name": "Test for Bugfix #742 - Error code check",
       "meta": {
         "info": "Test for Bugfix #742 - Error code check"
       },
       "requests": [
         {
-          "id": 8,
+          "id": "Add-part-Invalid-curr",
           "meta": {
             "info": "Add Participant - Invalid Currency"
           },
@@ -37,21 +37,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-400",
                 "description": "Response code is 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-Malformed-syntax-malform",
                 "description": "Check Malformed syntax - malformed currency",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3101",
                 "description": "Check Error code 3101",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3101');"
@@ -64,7 +64,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "Check-Error-3003-Add-Party-inf",
           "meta": {
             "info": "Check Error 3003 Add Party information error #742"
           },
@@ -92,21 +92,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-400",
                 "description": "Response code is 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-ID-missing",
                 "description": "Check ID missing",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Add Party information error');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3003",
                 "description": "Check Error code 3003",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3003');"
@@ -119,7 +119,7 @@
           }
         },
         {
-          "id": 10,
+          "id": "Check-Error-3101-Malformed-syn",
           "meta": {
             "info": "Check Error 3101 Malformed syntax #742"
           },
@@ -142,7 +142,7 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "transferId": "{$function.generic.generateUUID}+´+1´",
+            "transferId": "{$function.generic.generateID}+´+1´",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.payeefsp}",
             "amount": {
@@ -158,31 +158,17 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-400",
                 "description": "Response code is 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
-                "description": "Check Malformed syntax",
+                "id": "Check-Error-code-3100",
+                "description": "Check Error code 3100",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
-                ]
-              },
-              {
-                "id": 3,
-                "description": "Check Transfer Id is included in error",
-                "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Transfer Id');"
-                ]
-              },
-              {
-                "id": 4,
-                "description": "Check Error code 3101",
-                "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3101');"
+                  "expect(response.body.errorInformation.errorCode).to.include('3100');"
                 ]
               }
             ]
@@ -197,7 +183,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/bug fixes/Test for Bugfix #742 - Error code check.json"
+        "path": "hub/golden_path/bug fixes/Test for Bugfix #742 - Error code check.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

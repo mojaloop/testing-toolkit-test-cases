@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "p2p-invalid-subid",
       "name": "p2p_money_transfer - p2p_unhappy_path with invalid subID at PayeeFSP",
       "meta": {
         "info": "p2p_money_transfer - p2p_unhappy_path with invalid subID at PayeeFSP"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-part-ALS",
           "meta": {
             "info": "Add Participant to ALS"
           },
@@ -33,6 +33,7 @@
             "Accept": "{$inputs.acceptParticipants}",
             "Content-Type": "{$inputs.contentTypeParticipants}",
             "Date": "{$function.generic.curDate}",
+            "baggage": "errorExpect=ALS.1001",
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
@@ -60,7 +61,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Get-party-information",
           "meta": {
             "info": "Get party information"
           },
@@ -88,56 +89,56 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-party",
                 "description": "Callback body should contain party",
                 "exec": [
                   "expect(callback.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 5,
+                "id": "req-src-inputs-fromFspId",
                 "description": "Request FSPIOP-Source same as inputs fromFspId",
                 "exec": [
                   "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-parties",
                 "description": "Callback content-type to be parties",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "Payee-src",
                 "description": "Payee FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-source']).to.equal('{$inputs.toFspId}')",
@@ -145,7 +146,7 @@
                 ]
               },
               {
-                "id": 10,
+                "id": "Payee-Content-Type",
                 "description": "Payee Content-Type",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
@@ -153,19 +154,20 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "cb-uri-ID-SubID",
                 "description": "Callback FSPIOP-URI should contain ID and SubID",
                 "exec": [
                   "expect(callback.headers['fspiop-uri']).to.equal('/parties/{$inputs.toIdType}/{$inputs.toIdValue}/31/error')"
                 ]
               },
               {
-                "id": 12,
+                "id": "Validate-errorInformation",
                 "description": "Validate errorInformation",
                 "exec": [
-                  "expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorCode).to.equal('3200')",
-                  "",
-                  "expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorDescription).to.equal('ID not found')"
+                  "if (environment.API_TYPE === 'fspiop') {",
+                  "  expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorCode).to.equal('3200')",
+                  "  expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorDescription).to.equal('ID not found')",
+                  "}"
                 ]
               }
             ]
@@ -199,6 +201,7 @@
       "fileInfo": {
         "path": "hub/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path_subid_error_callback.json",
         "labels": [
+          "prod-tests",
           "p2p"
         ]
       }

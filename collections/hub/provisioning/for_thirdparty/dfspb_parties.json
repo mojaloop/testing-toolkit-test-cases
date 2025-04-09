@@ -1,0 +1,55 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "dfspb-parties-up-bca3",
+      "name": "dfspb parties upload into sim backend",
+      "meta": {
+        "info": "pisp account"
+      },
+      "fileInfo": {
+        "path": "hub/provisioning_thirdparty/dfspb_parties.json"
+      },
+      "requests": [
+        {
+          "id": "Load-987654321-into-DFSPB-Back",
+          "description": "Load 987654321 into DFSPB Backend Simulator",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "body": {
+            "displayName": "Bob Babirusa",
+            "firstName": "Bob",
+            "middleName": "O",
+            "lastName": "Babirusa",
+            "dateOfBirth": "1970-01-01",
+            "idType": "MSISDN",
+            "idValue": "987654321"
+          },
+          "url": "{$inputs.DFSPB_BACKEND_TESTAPI_URL}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-204",
+                "description": "Status to be 204",
+                "exec": [
+                  "if (response.status === 500) {",
+                  "  expect(response.body.message).to.equal(\"ID is already registered\")",
+                  "} else {",
+                  "  expect(response.status).to.equal(204)",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,764 @@
+{
+  "name": "Party Lookup Negative Scenarios",
+  "test_cases": [
+    {
+      "id": "1",
+      "name": "Test Case for Bad Request - 400",
+      "requests": [
+        {
+          "id": "Send-party-lookup-req",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYER_TEST_PAYEEFSP_PARTY_ID}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "rsp-error-code-3102",
+                "description": "Response error code to be 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Test Case for error in Payer Scheme",
+      "requests": [
+        {
+          "id": "Negative-test-case-error-code-",
+          "description": "Negative test case for error code 2xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYER_SCHEME_2XXX}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYER_SCHEME_ERROR_CODE_2XXX}')",
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": "Negative-test-case-error-code--1",
+          "description": "Negative test case for error code 3xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYER_SCHEME_3XXX}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYER_SCHEME_ERROR_CODE_3XXX}')",
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": "Negative-test-case-error-code--2",
+          "description": "Negative test case for error code 4xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYER_SCHEME_4XXX}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYER_SCHEME_ERROR_CODE_4XXX}')",
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": "Negative-test-case-error-code--3",
+          "description": "Negative test case for error code 5xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYER_SCHEME_5XXX}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYER_SCHEME_ERROR_CODE_5XXX}')",
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Test Case for scenario where the receiving dfsp is not in payer proxy cache",
+      "requests": [
+        {
+          "id": "Send-party-lookup-req",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_NOT_IN_PAYER_PROXY_CACHE}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('${inputs.PROXY_PAYEEFSP_PARTY_ID_NOT_IN_PAYER_PROXY_CACHE_ERROR_CODE}')",
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Test Case for scenario when there is an error in proxy",
+      "requests": [
+        {
+          "id": "Send-party-lookup-req",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-src-hdr-proxy",
+                "description": "Response Source Header should be proxy",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.PROXY_HEADER}')"
+                ]
+              },
+              {
+                "id": "rsp-dest-hdr-Payerfsp-Id",
+                "description": "Response Destination Header same as Payerfsp Id",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}')"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode",
+                "description": "Callback response has errorCode",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_IN_PROXY_ERROR_CODE}')"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorDescription",
+                "description": "Callback response has  errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Test Case for scenario when there is an error in payee scheme",
+      "requests": [
+        {
+          "id": "Negative-test-case-error-code-",
+          "description": "Negative test case for error code 2xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_2XXX}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_SCHEME_ERROR_CODE_2XXX}')"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "await custom.sleep(maxRetryWait)"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Negative-test-case-error-code--1",
+          "description": "Negative test case for error code 3xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_3XXX}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_SCHEME_ERROR_CODE_3XXX}')"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "await custom.sleep(maxRetryWait)"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Negative-test-case-error-code--2",
+          "description": "Negative test case for error code 4xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_4XXX}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_SCHEME_ERROR_CODE_4XXX}')"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "await custom.sleep(maxRetryWait)"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Negative-test-case-error-code--3",
+          "description": "Negative test case for error code 5xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_ERROR_PAYEE_SCHEME_5XXX}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_SCHEME_ERROR_CODE_5XXX}')"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "await custom.sleep(maxRetryWait)"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Test Case for scenario when there is an error in payee dfsp",
+      "requests": [
+        {
+          "id": "Negative-test-case-error-code-",
+          "description": "Negative test case for error code 5xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYER_TEST_PAYEEFSP_PARTY_ID_ERROR}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode",
+                "description": "Callback response has errorCode",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYER_TEST_PAYEE_DFSP_ERROR_CODE_5XXX}')"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorDescription",
+                "description": "Callback response has errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Party Lookup for scenario when there is an eror in Oracle",
+      "requests": [
+        {
+          "id": "Send-party-lookup-req",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_ORACLE_ERROR}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_ORACLE_ERROR_ERROR_CODE}')",
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Party Lookup for Payer Cache no longer valid",
+      "requests": [
+        {
+          "id": "Send-party-lookup-req",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_CACHE_NOT_VALID}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode-errorDesc",
+                "description": "Callback response has errorCode and errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_CACHE_NOT_VALID_ERROR_CODE}')",
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": "Send-Oracle-lookup-req",
+          "description": "Send Oracle lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_PAYER_SCHEME_CACHE_NOT_VALID}"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Date": "{$function.generic.curDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Oracle-not-have-mapping-party-",
+                "description": "Oracle should not have mapping for the party ID",
+                "exec": [
+                  "expect(response.fspId).to.equal('')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    }
+  ]
+}

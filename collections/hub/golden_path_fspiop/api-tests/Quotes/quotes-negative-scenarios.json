@@ -1,0 +1,2157 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "api-tests-quotes",
+      "name": "api-tests/quotes",
+      "meta": {
+        "info": "api-tests/quotes"
+      },
+      "requests": [
+        {
+          "id": "FNLN-Send-Quotes-missing-FN",
+          "meta": {
+            "info": "FNLN-Send Quotes - missing FN"
+          },
+          "description": "FNLN-Send Quotes - missing FN",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-202",
+                "description": "Response code 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-Validate-JWS",
+                "description": "Callback Validate JWS",
+                "exec": [
+                  "if (environment.ENABLE_JWS_VALIDATION) {",
+                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-src",
+                "description": "Payee Side Request Header - fspiop-source is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(request.headers['fspiop-source'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-dest",
+                "description": "Payee Side Request Header - fspiop-destination is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(request.headers['fspiop-destination'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-fspiop-signature",
+                "description": "Payee Side Request Header - fspiop-signature is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-accept",
+                "description": "Payee Side Request Header - accept is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-content-type",
+                "description": "Payee Side Request Header - content-type is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-uri",
+                "description": "Payee Side Request Header - fspiop-uri is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(request.headers['fspiop-uri'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-method",
+                "description": "Payee Side Request Header - fspiop-http-method is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(request.headers['fspiop-http-method'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "cb-hdr-src-dest-req",
+                "description": "Callback Header - fspiop-source is fspiop-destination in request",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal(request.headers['fspiop-destination'])",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-fspiop-desination-src-r",
+                "description": "Callback Header - fspiop-desination is fspiop-source in request",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(request.headers['fspiop-source'])",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-content-type-correct",
+                "description": "Callback Header - content-type is correct",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-accept-empty",
+                "description": "Callback Header - accept is empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-uri-quotes-quoteId",
+                "description": "Callback Header - fspiop-uri is /quotes/quoteId",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/quotes/' + request.body.quoteId)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-method-PUT",
+                "description": "Callback Header - fspiop-http-method is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-quoteId-null",
+                "description": "Callback Body - quoteId is null",
+                "exec": [
+                  "expect(callback.body.quoteId).to.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-ilpPacket-not-null",
+                "description": "Callback Body - ilpPacket is not null",
+                "exec": [
+                  "expect(callback.body.ilpPacket).to.not.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-condition-not-nul",
+                "description": "Callback Body - condition is not nul",
+                "exec": [
+                  "expect(callback.body.condition).to.not.equal(undefined)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "FNLN-Send-Quotes-missing-LN",
+          "meta": {
+            "info": "FNLN-Send Quotes - missing LN"
+          },
+          "description": "FNLN-Send Quotes - missing LN",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "FirstName": "{$inputs.fromFirstName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-202",
+                "description": "Response code 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-Validate-JWS",
+                "description": "Callback Validate JWS",
+                "exec": [
+                  "if (environment.ENABLE_JWS_VALIDATION) {",
+                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-src",
+                "description": "Payee Side Request Header - fspiop-source is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(request.headers['fspiop-source'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-dest",
+                "description": "Payee Side Request Header - fspiop-destination is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(request.headers['fspiop-destination'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-fspiop-signature",
+                "description": "Payee Side Request Header - fspiop-signature is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-accept",
+                "description": "Payee Side Request Header - accept is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-content-type",
+                "description": "Payee Side Request Header - content-type is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-uri",
+                "description": "Payee Side Request Header - fspiop-uri is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(request.headers['fspiop-uri'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-method",
+                "description": "Payee Side Request Header - fspiop-http-method is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(request.headers['fspiop-http-method'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "cb-hdr-src-dest-req",
+                "description": "Callback Header - fspiop-source is fspiop-destination in request",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal(request.headers['fspiop-destination'])",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-fspiop-desination-src-r",
+                "description": "Callback Header - fspiop-desination is fspiop-source in request",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(request.headers['fspiop-source'])",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-content-type-correct",
+                "description": "Callback Header - content-type is correct",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-accept-empty",
+                "description": "Callback Header - accept is empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-uri-quotes-quoteId",
+                "description": "Callback Header - fspiop-uri is /quotes/quoteId",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/quotes/' + request.body.quoteId)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-method-PUT",
+                "description": "Callback Header - fspiop-http-method is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-quoteId-null",
+                "description": "Callback Body - quoteId is null",
+                "exec": [
+                  "expect(callback.body.quoteId).to.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-ilpPacket-not-null",
+                "description": "Callback Body - ilpPacket is not null",
+                "exec": [
+                  "expect(callback.body.ilpPacket).to.not.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-condition-not-nul",
+                "description": "Callback Body - condition is not nul",
+                "exec": [
+                  "expect(callback.body.condition).to.not.equal(undefined)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "FNLN-Send-Quotes-Invalid-Lastn",
+          "meta": {
+            "info": "FNLN-Send Quotes - Invalid Lastname (not string)"
+          },
+          "description": "FNLN-Send Quotes - Invalid Lastname (not string)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "FirstName": "{$inputs.fromFirstName}",
+                  "lastName": "@#4768"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-code-3100",
+                "description": "Error code is 3100",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql(\"3100\")"
+                ]
+              },
+              {
+                "id": "ERROR-msg-Malformed-Payer-Last",
+                "description": "ERROR msg is Malformed Payer Lastname",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include(\"lastName\")"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "FNLN-Send-Quotes-Payer-persona",
+          "meta": {
+            "info": "FNLN-Send Quotes - Payer personal info missing"
+          },
+          "description": "FNLN-Send Quotes - Payer personal info missing",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-202",
+                "description": "Response code 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-Validate-JWS",
+                "description": "Callback Validate JWS",
+                "exec": [
+                  "if (environment.ENABLE_JWS_VALIDATION) {",
+                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-src",
+                "description": "Payee Side Request Header - fspiop-source is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(request.headers['fspiop-source'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-dest",
+                "description": "Payee Side Request Header - fspiop-destination is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(request.headers['fspiop-destination'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-fspiop-signature",
+                "description": "Payee Side Request Header - fspiop-signature is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-accept",
+                "description": "Payee Side Request Header - accept is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-content-type",
+                "description": "Payee Side Request Header - content-type is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-uri",
+                "description": "Payee Side Request Header - fspiop-uri is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(request.headers['fspiop-uri'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-method",
+                "description": "Payee Side Request Header - fspiop-http-method is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(request.headers['fspiop-http-method'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "cb-hdr-src-dest-req",
+                "description": "Callback Header - fspiop-source is fspiop-destination in request",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal(request.headers['fspiop-destination'])",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-fspiop-desination-src-r",
+                "description": "Callback Header - fspiop-desination is fspiop-source in request",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(request.headers['fspiop-source'])",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-content-type-correct",
+                "description": "Callback Header - content-type is correct",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-accept-empty",
+                "description": "Callback Header - accept is empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-uri-quotes-quoteId",
+                "description": "Callback Header - fspiop-uri is /quotes/quoteId",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/quotes/' + request.body.quoteId)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-method-PUT",
+                "description": "Callback Header - fspiop-http-method is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-quoteId-null",
+                "description": "Callback Body - quoteId is null",
+                "exec": [
+                  "expect(callback.body.quoteId).to.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-ilpPacket-not-null",
+                "description": "Callback Body - ilpPacket is not null",
+                "exec": [
+                  "expect(callback.body.ilpPacket).to.not.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-condition-not-nul",
+                "description": "Callback Body - condition is not nul",
+                "exec": [
+                  "expect(callback.body.condition).to.not.equal(undefined)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "  console.log(requestVariables.protectedHeadersValidationStatus)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "FNLN-Send-Quotes-String-payerF",
+          "meta": {
+            "info": "FNLN-Send Quotes - String payerFN (Mats123)"
+          },
+          "description": "FNLN-Send Quotes - String payerFN (Mats123)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "FirstName": "Mats123",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-202",
+                "description": "Response code 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-Validate-JWS",
+                "description": "Callback Validate JWS",
+                "exec": [
+                  "if (environment.ENABLE_JWS_VALIDATION) {",
+                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-src",
+                "description": "Payee Side Request Header - fspiop-source is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(request.headers['fspiop-source'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-dest",
+                "description": "Payee Side Request Header - fspiop-destination is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(request.headers['fspiop-destination'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-fspiop-signature",
+                "description": "Payee Side Request Header - fspiop-signature is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(request.headers['fspiop-signature'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-accept",
+                "description": "Payee Side Request Header - accept is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['Accept'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-content-type",
+                "description": "Payee Side Request Header - content-type is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['Content-Type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-uri",
+                "description": "Payee Side Request Header - fspiop-uri is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(request.headers['fspiop-uri'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-method",
+                "description": "Payee Side Request Header - fspiop-http-method is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(request.headers['fspiop-http-method'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "cb-hdr-src-dest-req",
+                "description": "Callback Header - fspiop-source is fspiop-destination in request",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal(request.headers['fspiop-destination'])",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-fspiop-desination-src-r",
+                "description": "Callback Header - fspiop-desination is fspiop-source in request",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(request.headers['fspiop-source'])",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-content-type-correct",
+                "description": "Callback Header - content-type is correct",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-accept-empty",
+                "description": "Callback Header - accept is empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-uri-quotes-quoteId",
+                "description": "Callback Header - fspiop-uri is /quotes/quoteId",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/quotes/' + request.body.quoteId)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-method-PUT",
+                "description": "Callback Header - fspiop-http-method is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-quoteId-null",
+                "description": "Callback Body - quoteId is null",
+                "exec": [
+                  "expect(callback.body.quoteId).to.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-ilpPacket-not-null",
+                "description": "Callback Body - ilpPacket is not null",
+                "exec": [
+                  "expect(callback.body.ilpPacket).to.not.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-condition-not-nul",
+                "description": "Callback Body - condition is not nul",
+                "exec": [
+                  "expect(callback.body.condition).to.not.equal(undefined)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "FNLN-Send-Quote-String-payerFN",
+          "meta": {
+            "info": "FNLN-Send Quote - String payerFN (Mats123@#$)"
+          },
+          "description": "FNLN-Send Quote - String payerFN (Mats123@#$)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-code-3100",
+                "description": "Error code is 3100",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.eql(\"3100\")"
+                ]
+              },
+              {
+                "id": "ERROR-msg-Malformed-Payer-Last",
+                "description": "ERROR msg is Malformed Payer Lastname",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include(\"firstName\")"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Mats12@#$3",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/api-tests/Quotes/quotes-negative-scenarios.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "api-tests-quotes-dob",
+      "name": "api-tests/Quotes/DOB",
+      "meta": {
+        "info": "api-tests/Quotes/DOB"
+      },
+      "requests": [
+        {
+          "id": "Send-Quote-Malformed-DOB",
+          "meta": {
+            "info": "Send Quote - Malformed DOB"
+          },
+          "description": "Send Quote - Malformed DOB",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "1983-25-25"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-code-3100",
+                "description": "Error code 3100",
+                "exec": [
+                  "\r",
+                  "  expect(response.body.errorInformation.errorCode).to.eql(\"3100\");"
+                ]
+              },
+              {
+                "id": "Malformed-DOB-from-payer",
+                "description": "Malformed DOB from payer",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {\r",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')\r",
+                "}\r",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "\r",
+                "if(environment.ENABLE_JWS_VALIDATION) {\r",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)\r",
+                "}\r",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {\r",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)\r",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Quote-Empty-string-DOB",
+          "meta": {
+            "info": "Send Quote - Empty string DOB"
+          },
+          "description": "Send Quote - Empty string DOB",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": ""
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-code-3100",
+                "description": "Error code 3100",
+                "exec": [
+                  "\r",
+                  "  expect(response.body.errorInformation.errorCode).to.eql(\"3100\");"
+                ]
+              },
+              {
+                "id": "Malformed-DOB-from-payer",
+                "description": "Malformed DOB from payer",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {\r",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')\r",
+                "}\r",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "\r",
+                "if(environment.ENABLE_JWS_VALIDATION) {\r",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)\r",
+                "}\r",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {\r",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)\r",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Quote-null-string-DOB",
+          "meta": {
+            "info": "Send Quote - null string DOB"
+          },
+          "description": "Send Quote - null string DOB",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "null"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-code-3100",
+                "description": "Error code 3100",
+                "exec": [
+                  "\r",
+                  "  expect(response.body.errorInformation.errorCode).to.eql(\"3100\");"
+                ]
+              },
+              {
+                "id": "Malformed-DOB-from-payer",
+                "description": "Malformed DOB from payer",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {\r",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')\r",
+                "}\r",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "\r",
+                "if(environment.ENABLE_JWS_VALIDATION) {\r",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)\r",
+                "}\r",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {\r",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)\r",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Quote-null-DOB",
+          "meta": {
+            "info": "Send Quote - null DOB"
+          },
+          "description": "Send Quote - null DOB",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": null
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-code-3100",
+                "description": "Error code 3100",
+                "exec": [
+                  "\r",
+                  "  expect(response.body.errorInformation.errorCode).to.eql(\"3100\");"
+                ]
+              },
+              {
+                "id": "Malformed-DOB-from-payer",
+                "description": "Malformed DOB from payer",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {\r",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')\r",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {\r",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)\r",
+                "}\r",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {\r",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)\r",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Quote-Invalid-DOB-format",
+          "meta": {
+            "info": "Send Quote - Invalid DOB format"
+          },
+          "description": "Send Quote - Invalid DOB format",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "1980/05/05"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-code-3100",
+                "description": "Error code 3100",
+                "exec": [
+                  "\r",
+                  "  expect(response.body.errorInformation.errorCode).to.eql(\"3100\");"
+                ]
+              },
+              {
+                "id": "Malformed-DOB-from-payer",
+                "description": "Malformed DOB from payer",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {\r",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')\r",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {\r",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)\r",
+                "}\r",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {\r",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)\r",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Quote-MIssing-DOB-payer-o",
+          "meta": {
+            "info": "Send Quote - MIssing DOB on payer object"
+          },
+          "description": "Send Quote - MIssing DOB on payer object",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "1980/05/05"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-code-3100",
+                "description": "Error code 3100",
+                "exec": [
+                  "\r",
+                  "  expect(response.body.errorInformation.errorCode).to.eql(\"3100\");"
+                ]
+              },
+              {
+                "id": "Malformed-DOB-from-payer",
+                "description": "Malformed DOB from payer",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {\r",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')\r",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {\r",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)\r",
+                "}\r",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {\r",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)\r",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Quote-Malformed-DOB2",
+          "meta": {
+            "info": "Send Quote - Malformed DOB2"
+          },
+          "description": "Send Quote - Malformed DOB2",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "abc@3#"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-code-3100",
+                "description": "Error code 3100",
+                "exec": [
+                  "\r",
+                  "  expect(response.body.errorInformation.errorCode).to.eql(\"3100\");"
+                ]
+              },
+              {
+                "id": "Malformed-DOB-from-payer",
+                "description": "Malformed DOB from payer",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {\r",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')\r",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {\r",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)\r",
+                "}\r",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {\r",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)\r",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Quote-Malformed-DOB3",
+          "meta": {
+            "info": "Send Quote - Malformed DOB3"
+          },
+          "description": "Send Quote - Malformed DOB3",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "83-10-25"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.payeefsp}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-code-3100",
+                "description": "Error code 3100",
+                "exec": [
+                  "\r",
+                  "  expect(response.body.errorInformation.errorCode).to.eql(\"3100\");"
+                ]
+              },
+              {
+                "id": "Malformed-DOB-from-payer",
+                "description": "Malformed DOB from payer",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include(\"dateOfBirth\");"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {\r",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')\r",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_VALIDATION) {\r",
+                "  requestVariables.jwsValidationStatus =  custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)\r",
+                "}\r",
+                "else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {\r",
+                "  requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(callback.headers)\r",
+                "}\r",
+                "\r",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {\r",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)\r",
+                "}"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/api-tests/Quotes/quotes-negative-scenarios.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

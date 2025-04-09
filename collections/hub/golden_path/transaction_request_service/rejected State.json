@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "rejected-state",
       "name": "rejected State",
       "meta": {
         "info": "rejected State"
       },
       "requests": [
         {
-          "id": 5,
+          "id": "Payee-initiate-req",
           "meta": {
             "info": "Payee initiate request"
           },
@@ -34,7 +34,7 @@
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
-            "transactionRequestId": "{$function.generic.generateUUID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payee": {
               "partyIdInfo": {
                 "partyIdType": "PERSONAL_ID",
@@ -69,7 +69,7 @@
               "initiator": "PAYEE",
               "initiatorType": "CONSUMER",
               "refundInfo": {
-                "originalTransactionId": "{$function.generic.generateUUID}",
+                "originalTransactionId": "{$function.generic.generateID}",
                 "refundReason": "free text indicating reason for the refund"
               },
               "balanceOfPayments": "123"
@@ -86,14 +86,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-202",
                 "description": "Response code status 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "transactionRequestState-RECEIV",
                 "description": "transactionRequestState is RECEIVED",
                 "exec": [
                   "expect(environment.payeecallbackyy.data.transactionRequestState).to.eql('RECEIVED');"
@@ -105,7 +105,7 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "//environment.tranid = '{$function.generic.generateUUID}'",
+                "//environment.tranid = '{$function.generic.generateID}'",
                 "//console.log(environment.tranid)",
                 "",
                 "environment.transferExpirationx= new Date(new Date().getTime() + 600000).toISOString();",
@@ -135,7 +135,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "send-REJECTED-state",
           "meta": {
             "info": "send REJECTED state"
           },
@@ -147,10 +147,10 @@
             "asynchronous": true
           },
           "operationPath": "/transactionRequests/{ID}",
-          "path": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
+          "path": "/transactionRequests/{$prev.Payee-initiate-req.request.body.transactionRequestId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.5.request.body.transactionRequestId}"
+            "ID": "{$prev.Payee-initiate-req.request.body.transactionRequestId}"
           },
           "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
           "headers": {
@@ -159,46 +159,46 @@
             "Date": "{$function.generic.curDate}",
             "Content-Type": "{$inputs.contentTypeTransactionRequests}",
             "FSPIOP-HTTP-Method": "PUT",
-            "FSPIOP-URI": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
+            "FSPIOP-URI": "/transactionRequests/{$prev.Payee-initiate-req.request.body.transactionRequestId}",
             "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
-            "transactionId": "{$prev.5.request.body.transactionRequestId}",
+            "transactionId": "{$prev.Payee-initiate-req.request.body.transactionRequestId}",
             "transactionRequestState": "REJECTED"
           },
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "check-src",
                 "description": "check fsp source",
                 "exec": [
                   "expect(environment.payeecallback.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME);"
                 ]
               },
               {
-                "id": 3,
+                "id": "check-dest",
                 "description": "check fsp destination",
                 "exec": [
                   "expect(environment.payeecallback.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME);"
                 ]
               },
               {
-                "id": 4,
+                "id": "check-method-put",
                 "description": "check method put",
                 "exec": [
                   "expect(environment.payeecallback.headers['fspiop-http-method']).to.equal('PUT');"
                 ]
               },
               {
-                "id": 5,
+                "id": "transactionId-matches",
                 "description": "transactionId matches",
                 "exec": [
                   "expect(environment.payeecallback.data.transactionId).to.equal(environment.tranid);"
@@ -231,7 +231,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Check-transactionRequest-state",
           "meta": {
             "info": "Check transactionRequest state"
           },
@@ -252,7 +252,7 @@
           "headers": {
             "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
             "FSPIOP-Destination": "{$inputs.payeefsp}",
-            "Date": "{$environment.transactionRequestDatex}",
+            "Date": "{$function.generic.curDate}",
             "Accept": "{$inputs.acceptTransactionRequests}",
             "FSPIOP-HTTP-Method": "GET",
             "FSPIOP-URI": "/transactionRequests",
@@ -262,14 +262,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-202",
                 "description": "Response code status 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "transactionRequestState-REJECT",
                 "description": "transactionRequestState is REJECTED",
                 "exec": [
                   "//expect(environment.payeecallbackxx.data.transactionRequestState).to.eql('REJECTED');"
@@ -311,7 +311,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/transaction_request_service/rejected State.json"
+        "path": "hub/golden_path/transaction_request_service/rejected State.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

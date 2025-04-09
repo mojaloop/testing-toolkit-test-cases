@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "bugfix-1378",
       "name": "Test for Bugfix #1378 - extension list missing",
       "meta": {
         "info": "Test for Bugfix #1378 - extension list missing"
       },
       "requests": [
         {
-          "id": 4,
+          "id": "Send-quote-wrong-accept-hdr",
           "meta": {
             "info": "Send quote"
           },
@@ -31,8 +31,8 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -70,21 +70,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-406",
                 "description": "Response status to be 406",
                 "exec": [
                   "expect(response.status).to.equal(406)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-Unacceptable-version-req",
                 "description": "Check Unacceptable version requested",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Unacceptable version requested');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3001",
                 "description": "Check Error code 3001",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3001');"
@@ -113,7 +113,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-quote-wrong-content-type-",
           "meta": {
             "info": "Send quote Copy"
           },
@@ -135,8 +135,8 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -174,21 +174,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-406",
                 "description": "Response status to be 406",
                 "exec": [
                   "expect(response.status).to.equal(406)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-Unacceptable-version-req",
                 "description": "Check Unacceptable version requested",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('Unacceptable version requested');"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-Error-code-3001",
                 "description": "Check Error code 3001",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3001');"
@@ -218,7 +218,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/bug fixes/Test for Bugfix #1378 - extension list missing.json"
+        "path": "hub/golden_path/bug fixes/Test for Bugfix #1378 - extension list missing.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

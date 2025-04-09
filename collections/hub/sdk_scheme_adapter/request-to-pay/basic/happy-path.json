@@ -3,27 +3,27 @@
   "name": "basic_request-to-pay",
   "test_cases": [
     {
-      "id": 1,
+      "id": "request-to-pay",
       "name": "Request To Pay",
       "fileInfo": {
         "path": "hub/sdk_scheme_adapter/request-to-pay/basic/happy-path.json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "POST-requestToPay",
           "description": "POST /requestToPay",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/requestToPay",
           "path": "/requestToPay",
@@ -53,14 +53,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-rsp-has-fspid",
                 "description": "Check response has fspid",
                 "exec": [
                   "expect(response.body.to.fspId).to.equal('{$inputs.TTKSIM2_FSPID}')",
@@ -68,35 +68,35 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Check-rsp-first-name-ReceiverF",
                 "description": "Check response first name is ReceiverFirst",
                 "exec": [
                   "expect(response.body.to.firstName).to.equal('ReceiverFirst')"
                 ]
               },
               {
-                "id": 6,
+                "id": "Check-rsp-last-name-ReceiverLa",
                 "description": "Check response last name is ReceiverLast",
                 "exec": [
                   "expect(response.body.to.lastName).to.equal('ReceiverLast')"
                 ]
               },
               {
-                "id": 7,
+                "id": "Check-rsp-has-party-result",
                 "description": "Check response has party result",
                 "exec": [
                   "expect(response.body.getPartiesResponse).to.exist;"
                 ]
               },
               {
-                "id": 10,
+                "id": "Check-rsp-has-WAITING_FOR_PART",
                 "description": "Check response has  WAITING_FOR_PARTY_ACCEPTANCE state",
                 "exec": [
                   "expect(response.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE');"
                 ]
               },
               {
-                "id": 11,
+                "id": "Check-rsp-MSISDN-req",
                 "description": "Check response MSISDN is same as in the request",
                 "exec": [
                   "expect(response.body.to.idValue).to.equal('{$inputs.TTKSIM2_MSISDN_1}')"
@@ -106,26 +106,26 @@
           }
         },
         {
-          "id": 2,
+          "id": "PUT-requestToPay-party-confirm",
           "description": "PUT /requestToPay party confirmation",
           "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
+            "minorVersion": 1,
+            "majorVersion": 2,
             "type": "scheme_adapter_outbound",
             "asynchronous": true,
             "prefix": "/sdk-out",
             "hostnames": [],
-            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_1.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_sdk_outbound_scheme_adapter_2.1/trigger_templates"
           },
           "operationPath": "/requestToPay/{transactionRequestId}",
-          "path": "/requestToPay/{$prev.1.response.body.transactionRequestId}",
+          "path": "/requestToPay/{$prev.POST-requestToPay.response.body.transactionRequestId}",
           "method": "put",
           "params": {
-            "transactionRequestId": "{$prev.1.response.body.transactionRequestId}"
+            "transactionRequestId": "{$prev.POST-requestToPay.response.body.transactionRequestId}"
           },
           "body": {
             "acceptParty": true
@@ -133,14 +133,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Check-Return-Status-Code",
                 "description": "Check Return Status Code",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 4,
+                "id": "Check-rsp-has-fspid",
                 "description": "Check response has fspid",
                 "exec": [
                   "expect(response.body.to.fspId).to.equal('{$inputs.TTKSIM2_FSPID}')",
@@ -148,126 +148,126 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Check-rsp-first-name-ReceiverF",
                 "description": "Check response first name is ReceiverFirst",
                 "exec": [
                   "expect(response.body.to.firstName).to.equal('ReceiverFirst')"
                 ]
               },
               {
-                "id": 6,
+                "id": "Check-rsp-last-name-ReceiverLa",
                 "description": "Check response last name is ReceiverLast",
                 "exec": [
                   "expect(response.body.to.lastName).to.equal('ReceiverLast')"
                 ]
               },
               {
-                "id": 7,
+                "id": "Check-rsp-has-party-result",
                 "description": "Check response has party result",
                 "exec": [
                   "expect(response.body.getPartiesResponse).to.exist;"
                 ]
               },
               {
-                "id": 10,
+                "id": "Check-rsp-has-COMPLETED-state",
                 "description": "Check response has  COMPLETED state",
                 "exec": [
                   "expect(response.body.currentState).to.equal('COMPLETED');"
                 ]
               },
               {
-                "id": 11,
+                "id": "Check-rsp-has-transactionReque",
                 "description": "Check response has transactionRequest response",
                 "exec": [
                   "expect(response.body.transactionRequestResponse).to.exist;"
                 ]
               },
               {
-                "id": 12,
+                "id": "Check-rsp-has-transactionReque",
                 "description": "Check response has transactionRequestState as RECEIVED",
                 "exec": [
                   "expect(response.body.transactionRequestResponse.body.transactionRequestState).to.equal('RECEIVED');"
                 ]
               },
               {
-                "id": 13,
+                "id": "Inbound-Quotes-req-amt",
                 "description": "Inbound Quotes Request - amount",
                 "exec": [
                   "expect(environment.inboundQuotesRequest.body.amount).to.equal(response.body.amount)"
                 ]
               },
               {
-                "id": 14,
+                "id": "Inbound-Quotes-req-curr",
                 "description": "Inbound Quotes Request - currency",
                 "exec": [
                   "expect(environment.inboundQuotesRequest.body.currency).to.equal(response.body.currency)"
                 ]
               },
               {
-                "id": 15,
+                "id": "Inbound-Quotes-req-from-idValu",
                 "description": "Inbound Quotes Request - from idValue",
                 "exec": [
                   "expect(environment.inboundQuotesRequest.body.from.idValue).to.equal(response.body.to.idValue)"
                 ]
               },
               {
-                "id": 16,
+                "id": "Inbound-Quotes-req-idValue",
                 "description": "Inbound Quotes Request - to idValue",
                 "exec": [
                   "expect(environment.inboundQuotesRequest.body.to.idValue).to.equal(response.body.from.idValue)"
                 ]
               },
               {
-                "id": 17,
+                "id": "Inbound-Quotes-req-from-fspId",
                 "description": "Inbound Quotes Request - from fspId",
                 "exec": [
                   "expect(environment.inboundQuotesRequest.body.from.fspId).to.equal(response.body.to.fspId)"
                 ]
               },
               {
-                "id": 18,
+                "id": "Inbound-Quotes-req-transaction",
                 "description": "Inbound Quotes Request - transactionRequestId",
                 "exec": [
                   "expect(environment.inboundQuotesRequest.body.transactionRequestId).to.equal(response.body.transactionRequestId)"
                 ]
               },
               {
-                "id": 19,
+                "id": "Inbound-Quotes-req-homeR2PTran",
                 "description": "Inbound Quotes Request - homeR2PTransactionId",
                 "exec": [
                   "expect(environment.inboundQuotesRequest.body.homeR2PTransactionId).to.equal(response.body.homeR2PTransactionId)"
                 ]
               },
               {
-                "id": 20,
+                "id": "Inbound-Transfers-req-amt",
                 "description": "Inbound Transfers Request - amount",
                 "exec": [
                   "expect(environment.inboundTransfersRequest.body.amount).to.equal(response.body.amount)"
                 ]
               },
               {
-                "id": 21,
+                "id": "Inbound-Transfers-req-curr",
                 "description": "Inbound Transfers Request - currency",
                 "exec": [
                   "expect(environment.inboundTransfersRequest.body.currency).to.equal(response.body.currency)"
                 ]
               },
               {
-                "id": 22,
+                "id": "Inbound-Transfers-req-quoteId",
                 "description": "Inbound Transfers Request - quoteId",
                 "exec": [
                   "expect(environment.inboundTransfersRequest.body.quote.quoteId).to.equal(environment.inboundQuotesRequest.body.quoteId)"
                 ]
               },
               {
-                "id": 23,
+                "id": "Inbound-Transfers-req-transact",
                 "description": "Inbound Transfers Request - transactionRequestId",
                 "exec": [
                   "expect(environment.inboundTransfersRequest.body.transactionRequestId).to.equal(response.body.transactionRequestId)"
                 ]
               },
               {
-                "id": 24,
+                "id": "Inbound-Transfers-req-homeR2PT",
                 "description": "Inbound Transfers Request - homeR2PTransactionId",
                 "exec": [
                   "expect(environment.inboundTransfersRequest.body.homeR2PTransactionId).to.equal(response.body.homeR2PTransactionId)"

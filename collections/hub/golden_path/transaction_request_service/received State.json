@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "received-state",
       "name": "received State",
       "meta": {
         "info": "received State"
       },
       "requests": [
         {
-          "id": 5,
+          "id": "Payee-initiate-req",
           "meta": {
             "info": "Payee initiate request"
           },
@@ -34,7 +34,7 @@
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
           },
           "body": {
-            "transactionRequestId": "{$function.generic.generateUUID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payee": {
               "partyIdInfo": {
                 "partyIdType": "PERSONAL_ID",
@@ -69,7 +69,7 @@
               "initiator": "PAYEE",
               "initiatorType": "CONSUMER",
               "refundInfo": {
-                "originalTransactionId": "{$function.generic.generateUUID}",
+                "originalTransactionId": "{$function.generic.generateID}",
                 "refundReason": "free text indicating reason for the refund"
               },
               "balanceOfPayments": "123"
@@ -86,14 +86,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-202",
                 "description": "Response code status 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "transactionRequestState-RECEIV",
                 "description": "transactionRequestState is RECEIVED",
                 "exec": [
                   "expect(environment.payeecallback.data.transactionRequestState).to.eql('RECEIVED');"
@@ -105,7 +105,7 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "//environment.tranid = '{$function.generic.generateUUID}'",
+                "//environment.tranid = '{$function.generic.generateID}'",
                 "//console.log(environment.tranid)",
                 "",
                 "environment.transferExpirationx= new Date(new Date().getTime() + 600000).toISOString();",
@@ -136,7 +136,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "send-RECEIVED-state",
           "meta": {
             "info": "send RECEIVED state"
           },
@@ -148,10 +148,10 @@
             "asynchronous": true
           },
           "operationPath": "/transactionRequests/{ID}",
-          "path": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
+          "path": "/transactionRequests/{$prev.Payee-initiate-req.request.body.transactionRequestId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.5.request.body.transactionRequestId}"
+            "ID": "{$prev.Payee-initiate-req.request.body.transactionRequestId}"
           },
           "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
           "headers": {
@@ -160,49 +160,49 @@
             "Date": "{$function.generic.curDate}",
             "Content-Type": "{$inputs.contentTypeTransactionRequests}",
             "FSPIOP-HTTP-Method": "PUT",
-            "FSPIOP-URI": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
+            "FSPIOP-URI": "/transactionRequests/{$prev.Payee-initiate-req.request.body.transactionRequestId}",
             "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
           },
           "body": {
-            "transactionId": "{$prev.5.request.body.transactionRequestId}",
+            "transactionId": "{$prev.Payee-initiate-req.request.body.transactionRequestId}",
             "transactionRequestState": "RECEIVED"
           },
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "check-src",
                 "description": "check fsp source",
                 "exec": [
                   "expect(environment.payeecallback.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME);"
                 ]
               },
               {
-                "id": 3,
+                "id": "check-dest",
                 "description": "check fsp destination",
                 "exec": [
                   "expect(environment.payeecallback.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME);"
                 ]
               },
               {
-                "id": 4,
+                "id": "check-method-put",
                 "description": "check method put",
                 "exec": [
                   "expect(environment.payeecallback.headers['fspiop-http-method']).to.equal('PUT');"
                 ]
               },
               {
-                "id": 5,
+                "id": "transactionId-matches",
                 "description": "transactionId matches",
                 "exec": [
-                  "expect(environment.payeecallback.data.transactionId).to.equal('{$prev.5.request.body.transactionRequestId}');"
+                  "expect(environment.payeecallback.data.transactionId).to.equal('{$prev.Payee-initiate-req.request.body.transactionRequestId}');"
                 ]
               }
             ]
@@ -212,11 +212,11 @@
             "preRequest": {
               "exec": [
                 "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.5.request.body.transactionRequestId}', 'payeecallback')",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.Payee-initiate-req.request.body.transactionRequestId}', 'payeecallback')",
                 "  ",
                 " ",
                 "}",
-                "console.log(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.5.request.body.transactionRequestId}');"
+                "console.log(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.Payee-initiate-req.request.body.transactionRequestId}');"
               ]
             },
             "postRequest": {
@@ -233,7 +233,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Check-transactionRequest-state",
           "meta": {
             "info": "Check transactionRequest state"
           },
@@ -264,14 +264,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-202",
                 "description": "Response code status 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "transactionRequestState-RECEIV",
                 "description": "transactionRequestState is RECEIVED",
                 "exec": [
                   "//expect(environment.payeecallbackz.data.transactionRequestState).to.equal('RECEIVED');"
@@ -311,7 +311,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/transaction_request_service/received State.json"
+        "path": "hub/golden_path/transaction_request_service/received State.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

@@ -2,7 +2,7 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "neg-scenario-abort",
       "name": "negative scenario - payee_abort",
       "meta": {
         "info": "negative scenario - payee_abort"
@@ -12,7 +12,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Store-Payerfsp-pos-before-prep",
           "meta": {
             "info": "Store Payerfsp position before prepare"
           },
@@ -32,7 +32,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -50,7 +50,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Store-Payeefsp-pos-before-prep",
           "meta": {
             "info": "Store Payeefsp position before prepare"
           },
@@ -70,7 +70,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -88,7 +88,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-Prepare",
           "meta": {
             "info": "Send Prepare"
           },
@@ -151,7 +151,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -187,7 +187,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Store-Payerfsp-pos-after-Prepa",
           "meta": {
             "info": "Store Payerfsp position after Prepare"
           },
@@ -207,7 +207,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -231,7 +231,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Put-bulk-trans-error",
           "meta": {
             "info": "Put bulk transfer error"
           },
@@ -266,7 +266,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "payerfsp-cb-payer-informed-pay",
                 "description": "payerfsp callback - payer should be informed of payee abort",
                 "exec": [
                   "expect(environment.payerCallbackNotification.body).to.have.property(\"errorInformation\")",
@@ -294,7 +294,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "GET-Bulk-trans-PayerFSP",
           "meta": {
             "info": "GET Bulk Transfer - PayerFSP"
           },
@@ -318,54 +318,54 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$environment.headerDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "payerfsp-cb-date-hdr-set",
                 "description": "payerfsp callback - date header should be set",
                 "exec": [
                   "expect(callback.headers).to.have.property('date')"
                 ]
               },
               {
-                "id": 3,
-                "description": "payerfsp callback - fspiop-source should be switch",
+                "id": "payerfsp-cb-src-inputs-HUB_NAM",
+                "description": "payerfsp callback - fspiop-source should be {$inputs.HUB_NAME}",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal('switch')"
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
               },
               {
-                "id": 4,
+                "id": "payerfsp-cb-dest-testingtoolki",
                 "description": "payerfsp callback - fspiop-destination should be testingtoolkitdfsp",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
                 ]
               },
               {
-                "id": 5,
+                "id": "payerfsp-cb-uri-expected",
                 "description": "payerfsp callback - fspiop-uri should be as expected",
                 "exec": [
                   "expect(callback.headers['fspiop-uri']).to.equal(`/testingtoolkitdfsp/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
-                "id": 6,
+                "id": "payerfsp-cb-method-PUT",
                 "description": "payerfsp callback - fspiop-http-method should be PUT",
                 "exec": [
                   "expect(callback.headers['fspiop-http-method']).to.equal('PUT')"
                 ]
               },
               {
-                "id": 8,
+                "id": "payerfsp-cb-bulkTransfer-REJEC",
                 "description": "payerfsp callback - bulkTransfer should be REJECTED",
                 "exec": [
                   "expect(callback.body).to.have.property(\"bulkTransferState\")",
@@ -391,7 +391,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Check-Payerfsp-pos-after-Abort",
           "meta": {
             "info": "Check Payerfsp position after Abort"
           },
@@ -412,14 +412,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Payerfsp-pos-after-Payer-ABORT",
                 "description": "Payerfsp position after Payer ABORT should be same as position before prepare.",
                 "exec": [
                   "expect(response.body[0].value).to.equal(+environment.payerfspPositionBeforePrepare)"
@@ -429,7 +429,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Check-Payeefsp-pos-after-Abort",
           "meta": {
             "info": "Check Payeefsp position after Abort"
           },
@@ -449,14 +449,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Payeefsp-pos-after-Payee-ABORT",
                 "description": "Payeefsp position after Payee ABORT should be same as position before prepare.",
                 "exec": [
                   "expect(response.body[0].value).to.equal(+environment.payeefspPositionBeforePrepare)"
@@ -468,7 +468,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "neg-scenario-part",
       "name": "negative scenario - partial fulfil",
       "meta": {
         "info": "negative scenario - partial fulfil"
@@ -478,7 +478,7 @@
       },
       "requests": [
         {
-          "id": 3,
+          "id": "Send-Prepare",
           "meta": {
             "info": "Send Prepare"
           },
@@ -500,13 +500,13 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "bulkTransferId": "{$function.generic.generateUUID}",
-            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "bulkTransferId": "{$function.generic.generateID}",
+            "bulkQuoteId": "{$function.generic.generateID}",
             "payeeFsp": "{$environment.toFspId}",
             "payerFsp": "{$environment.fromFspId}",
             "individualTransfers": [
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency}",
                   "amount": "1"
@@ -527,7 +527,7 @@
                 }
               },
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "AED",
                   "amount": "2"
@@ -541,70 +541,70 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "payer-cb-date-hdr-set",
                 "description": "payer callback date header should be set",
                 "exec": [
                   "expect(callback.headers).to.have.property('date')"
                 ]
               },
               {
-                "id": 3,
-                "description": "payer callback fspiop-source should be switch",
+                "id": "payer-cb-src-inputs-HUB_NAME",
+                "description": "payer callback fspiop-source should be {$inputs.HUB_NAME}",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal('switch')"
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
               },
               {
-                "id": 4,
+                "id": "payer-cb-dest-testingtoolkitdf",
                 "description": "payer callback fspiop-destination should be testingtoolkitdfsp",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
                 ]
               },
               {
-                "id": 5,
+                "id": "payer-cb-method-PUT",
                 "description": "payer callback fspiop-http-method should be PUT",
                 "exec": [
                   "expect(callback.headers['fspiop-http-method']).to.equal('PUT')"
                 ]
               },
               {
-                "id": 6,
+                "id": "payer-cb-uri-expected",
                 "description": "payer callback fspiop-uri should be as expected",
                 "exec": [
                   "expect(callback.headers['fspiop-uri']).to.equal(`/${environment.fromFspId}/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
-                "id": 7,
+                "id": "payer-cb-Bulk-trans-state-COMP",
                 "description": "payer callback Bulk Transfer state should be COMPLETED on Payer side",
                 "exec": [
                   "expect(callback.body.bulkTransferState).to.equal('COMPLETED')"
                 ]
               },
               {
-                "id": 8,
+                "id": "payer-cb-Completed-timestamp-s",
                 "description": "payer callback Completed timestamp should be set",
                 "exec": [
                   "expect(callback.body).to.have.property('completedTimestamp')"
                 ]
               },
               {
-                "id": 9,
+                "id": "payer-cb-All-individual-trans-",
                 "description": "payer callback All individual transfer results (failed & successful) should be returned",
                 "exec": [
                   "expect(callback.body.individualTransferResults.length).to.equal(2)"
                 ]
               },
               {
-                "id": 10,
+                "id": "payer-cb-One-individual-trans-",
                 "description": "payer callback One individual transfer result should contain successful transfer fulfilment",
                 "exec": [
                   "const successTransfer = callback.body.individualTransferResults.find(t => t.transferId === environment.transferId)",
@@ -613,7 +613,7 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "payer-cb-One-individual-trans-",
                 "description": "payer callback One individual transfer result should contain errorInformation",
                 "exec": [
                   "const failedTransfer = callback.body.individualTransferResults.find(t => t.transferId === environment.transferId2)",
@@ -622,168 +622,168 @@
                 ]
               },
               {
-                "id": 12,
+                "id": "payee-cb-date-hdr-set",
                 "description": "payee callback - date header should be set",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.headers).to.have.property('date')"
                 ]
               },
               {
-                "id": 13,
-                "description": "payee callback - fspiop-source should be switch",
+                "id": "payee-cb-src-switch-s-name",
+                "description": "payee callback - fspiop-source should be switch's name",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-source']).to.equal('switch')"
+                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
               },
               {
-                "id": 14,
+                "id": "payee-cb-dest-payeefsp",
                 "description": "payee callback - fspiop-destination should be payeefsp",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-destination']).to.equal(environment.toFspId)"
                 ]
               },
               {
-                "id": 15,
+                "id": "payee-cb-uri-expected",
                 "description": "payee callback - fspiop-uri should be as expected",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-uri']).to.equal(`/${environment.toFspId}/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
-                "id": 16,
+                "id": "payee-cb-method-PUT",
                 "description": "payee callback - fspiop-http-method should be PUT",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-http-method']).to.equal('PUT')"
                 ]
               },
               {
-                "id": 17,
+                "id": "payee-cb-Bulk-trans-state-COMP",
                 "description": "payee callback - Bulk Transfer state should be COMPLETED on Payee side",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.data.bulkTransferState).to.equal('COMPLETED')"
                 ]
               },
               {
-                "id": 18,
+                "id": "payee-cb-Completed-timestamp-s",
                 "description": "payee callback - Completed timestamp should be set",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.data).to.have.property('completedTimestamp')"
                 ]
               },
               {
-                "id": 19,
+                "id": "payee-cb-Only-one-1-individual",
                 "description": "payee callback - Only one (1) individual transfer result (fulfilments) should be returned",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.data.individualTransferResults.length).to.equal(1)"
                 ]
               },
               {
-                "id": 20,
+                "id": "payee-cb-Individual-trans-resu",
                 "description": "payee callback - Individual transfer result should have transferId",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.data.individualTransferResults[0]).to.have.property('transferId')"
                 ]
               },
               {
-                "id": 21,
+                "id": "payee-cb-Individual-trans-resu",
                 "description": "payee callback Individual transfer result should have fulfilment",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.data.individualTransferResults[0]).to.have.property('fulfilment')"
                 ]
               },
               {
-                "id": 22,
+                "id": "req-payee-date-hdr-set",
                 "description": "request to payee - date header should be set",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.headers).to.have.property('date')"
                 ]
               },
               {
-                "id": 23,
-                "description": "request to payee - fspiop-source should be switch",
+                "id": "req-payee-src-switch-s-name",
+                "description": "request to payee - fspiop-source should be switch's name",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeRequest.headers['fspiop-source']).to.equal('switch')"
+                  "expect(environment.bulkTransfersNegativeRequest.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
               },
               {
-                "id": 24,
+                "id": "req-payee-dest-payeefsp",
                 "description": "request to payee - fspiop-destination should be payeefsp",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.headers['fspiop-destination']).to.equal(environment.toFspId)"
                 ]
               },
               {
-                "id": 25,
+                "id": "req-payee-uri-expected",
                 "description": "request to payee - fspiop-uri should be as expected",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.headers['fspiop-uri']).to.equal('/bulkTransfers')"
                 ]
               },
               {
-                "id": 26,
+                "id": "req-payee-method-POST",
                 "description": "request to payee - fspiop-http-method should be POST",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.headers['fspiop-http-method']).to.equal('POST')"
                 ]
               },
               {
-                "id": 27,
+                "id": "req-payee-Bulk-trans-Id-set",
                 "description": "request to payee - Bulk transfer Id should be set",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.data.bulkTransferId).to.equal(environment.bulkTransferId)"
                 ]
               },
               {
-                "id": 28,
+                "id": "req-payee-Bulk-quote-Id-set",
                 "description": "request to payee - Bulk quote Id should be set",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.data.bulkQuoteId).to.equal(environment.bulkQuoteId)"
                 ]
               },
               {
-                "id": 29,
+                "id": "req-payee-PayerFsp-testingtool",
                 "description": "request to payee - PayerFsp should be testingtoolkitdfsp",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.data.payerFsp).to.equal(environment.fromFspId)"
                 ]
               },
               {
-                "id": 30,
+                "id": "req-payee-PayeeFsp-payeefsp",
                 "description": "request to payee - PayeeFsp should be payeefsp",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.data.payeeFsp).to.equal(environment.toFspId)"
                 ]
               },
               {
-                "id": 31,
+                "id": "req-payee-expiration-set",
                 "description": "request to payee - expiration should be set",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.data).to.have.property('expiration')"
                 ]
               },
               {
-                "id": 32,
+                "id": "req-payee-Individual-transfers",
                 "description": "request to payee - Individual transfers (prepare) should be one (1)",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.data.individualTransfers.length).to.equal(1)"
                 ]
               },
               {
-                "id": 33,
+                "id": "req-payee-Individual-trans-hav",
                 "description": "request to payee - Individual transfer should have transferId",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.data.individualTransfers[0]).to.have.property('transferId')"
                 ]
               },
               {
-                "id": 34,
+                "id": "req-payee-Individual-trans-hav",
                 "description": "request to payee - Individual transfer should have ilpPacket",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.data.individualTransfers[0]).to.have.property('ilpPacket')"
                 ]
               },
               {
-                "id": 35,
+                "id": "req-payee-Individual-trans-hav",
                 "description": "request to payee - Individual transfer should have condition",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeRequest.data.individualTransfers[0]).to.have.property('condition')"
@@ -830,7 +830,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "GET-Bulk-trans-PayeeFSP",
           "meta": {
             "info": "GET Bulk Transfer - PayeeFSP"
           },
@@ -854,82 +854,82 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.toFspId}",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-date-hdr-set",
                 "description": "Callback - date header should be set",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.headers).to.have.property('date')"
                 ]
               },
               {
-                "id": 3,
-                "description": "Callback - fspiop-source should be switch",
+                "id": "cb-src-switch-s-name",
+                "description": "Callback - fspiop-source should be switch's name",
                 "exec": [
-                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-source']).to.equal('switch')"
+                  "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-payeefsp",
                 "description": "Callback - fspiop-destination should be payeefsp",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-destination']).to.equal(environment.toFspId)"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-uri-expected",
                 "description": "Callback - fspiop-uri should be as expected",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-uri']).to.equal(`/${environment.toFspId}/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-method-PUT",
                 "description": "Callback - fspiop-http-method should be PUT",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.headers['fspiop-http-method']).to.equal('PUT')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-Bulk-trans-state-COMPLETED-",
                 "description": "Callback - Bulk Transfer state should be COMPLETED on Payee side",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.data.bulkTransferState).to.equal('COMPLETED')"
                 ]
               },
               {
-                "id": 8,
+                "id": "cb-Completed-timestamp-set",
                 "description": "Callback - Completed timestamp should be set",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.data).to.have.property('completedTimestamp')"
                 ]
               },
               {
-                "id": 9,
+                "id": "cb-Only-one-1-individual-trans",
                 "description": "Callback - Only one (1) individual transfer result (fulfilments) should be returned",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.data.individualTransferResults.length).to.equal(1)"
                 ]
               },
               {
-                "id": 10,
+                "id": "cb-Individual-trans-result-hav",
                 "description": "Callback - Individual transfer result should have transferId",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.data.individualTransferResults[0]).to.have.property('transferId')"
                 ]
               },
               {
-                "id": 11,
+                "id": "cb-Individual-trans-result-hav",
                 "description": "Callback - Individual transfer result should have fulfilment",
                 "exec": [
                   "expect(environment.bulkTransfersNegativeCallback.data.individualTransferResults[0]).to.have.property('fulfilment')"
@@ -957,7 +957,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "GET-Bulk-trans-PayerFSP",
           "meta": {
             "info": "GET Bulk Transfer - PayerFSP"
           },
@@ -981,75 +981,75 @@
             "Content-Type": "{$inputs.contentBulkTransfers}",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "FSPIOP-Destination": "switch"
+            "FSPIOP-Destination": "{$inputs.HUB_NAME}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-date-hdr-set",
                 "description": "Callback - date header should be set",
                 "exec": [
                   "expect(callback.headers).to.have.property('date')"
                 ]
               },
               {
-                "id": 3,
-                "description": "Callback - fspiop-source should be switch",
+                "id": "cb-src-switch-s-name",
+                "description": "Callback - fspiop-source should be switch's name",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal('switch')"
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-testingtoolkitdfsp",
                 "description": "Callback - fspiop-destination should be testingtoolkitdfsp",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-uri-expected",
                 "description": "Callback - fspiop-uri should be as expected",
                 "exec": [
                   "expect(callback.headers['fspiop-uri']).to.equal(`/${environment.fromFspId}/bulkTransfers/${environment.bulkTransferId}`)"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-method-PUT",
                 "description": "Callback - fspiop-http-method should be PUT",
                 "exec": [
                   "expect(callback.headers['fspiop-http-method']).to.equal('PUT')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-Bulk-trans-state-COMPLETED-",
                 "description": "Callback - Bulk Transfer state should be COMPLETED on Payer side",
                 "exec": [
                   "expect(callback.body.bulkTransferState).to.equal('COMPLETED')"
                 ]
               },
               {
-                "id": 8,
+                "id": "cb-Completed-timestamp-set",
                 "description": "Callback - Completed timestamp should be set",
                 "exec": [
                   "expect(callback.body).to.have.property('completedTimestamp')"
                 ]
               },
               {
-                "id": 9,
+                "id": "cb-All-individual-trans-result",
                 "description": "Callback - All individual transfer results (fulfilments) should be returned",
                 "exec": [
                   "expect(callback.body.individualTransferResults.length).to.equal(2)"
                 ]
               },
               {
-                "id": 10,
+                "id": "cb-1st-individual-trans-have-f",
                 "description": "Callback - 1st individual transfer should have fulfilment",
                 "exec": [
                   "const transfer1 = callback.body.individualTransferResults.find(t => t.transferId === environment.transferId);",
@@ -1057,7 +1057,7 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "cb-2nd-individual-trans-not-ha",
                 "description": "Callback - 2nd individual transfer should not have fulfilment",
                 "exec": [
                   "const transfer2 = callback.body.individualTransferResults.find(t => t.transferId === environment.transferId2);",
@@ -1065,7 +1065,7 @@
                 ]
               },
               {
-                "id": 12,
+                "id": "cb-2nd-individual-trans-valid-",
                 "description": "Callback - 2nd individual transfer should contain valid error information",
                 "exec": [
                   "const transfer2 = callback.body.individualTransferResults.find(t => t.transferId === environment.transferId2);",

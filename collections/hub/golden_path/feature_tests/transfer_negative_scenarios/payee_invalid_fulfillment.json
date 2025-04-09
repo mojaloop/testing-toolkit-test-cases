@@ -3,14 +3,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "payee-invalid-fulfill",
       "name": "payee_invalid_fulfillment",
       "meta": {
         "info": "payee_invalid_fulfillment"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Store-SIMPAYER-pos",
           "meta": {
             "info": "Store SIMPAYER position"
           },
@@ -30,7 +30,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -52,7 +52,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Store-SIMPAYEE-pos",
           "meta": {
             "info": "Store NORESPONSE_SIMPAYEE position"
           },
@@ -72,7 +72,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -94,7 +94,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-Quote-RECEIVE",
           "meta": {
             "info": "Send Quote - RECEIVE"
           },
@@ -118,8 +118,8 @@
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -157,14 +157,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
@@ -190,7 +190,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Send-Quote-rsp",
           "description": "Send Quote - Response",
           "apiVersion": {
             "minorVersion": 1,
@@ -204,27 +204,27 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
           },
           "operationPath": "/quotes/{ID}",
-          "path": "/quotes/{$prev.3.request.body.quoteId}",
+          "path": "/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.quoteId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.quoteId}"
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "body": {
             "transferAmount": {
-              "currency": "{$prev.3.request.body.amount.currency}",
-              "amount": "{$prev.3.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeReceiveAmount": {
-              "currency": "{$prev.3.request.body.amount.currency}",
-              "amount": "{$prev.3.request.body.amount.amount}"
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
+              "amount": "{$prev.Send-Quote-RECEIVE.request.body.amount.amount}"
             },
             "payeeFspFee": {
-              "currency": "{$prev.3.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "payeeFspCommission": {
-              "currency": "{$prev.3.request.body.amount.currency}",
+              "currency": "{$prev.Send-Quote-RECEIVE.request.body.amount.currency}",
               "amount": "0"
             },
             "expiration": "{$requestVariables.quoteExpiration}",
@@ -241,7 +241,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -253,7 +253,7 @@
             "preRequest": {
               "exec": [
                 "requestVariables.quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.3.request.body.quoteId}', (headers, body) => {",
+                "await inboundEvent.addListener('payerPutQuotes', 'put', '/quotes/{$prev.Send-Quote-RECEIVE.request.body.quoteId}', (headers, body) => {",
                 "  return headers['fspiop-destination'] === '{$inputs.fromFspId}'",
                 "})"
               ]
@@ -267,7 +267,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-Prepare",
           "meta": {
             "info": "Send Prepare"
           },
@@ -289,28 +289,28 @@
             "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
           },
           "body": {
-            "transferId": "{$prev.3.request.body.transactionId}",
+            "transferId": "{$prev.Send-Quote-RECEIVE.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.request.body.expiration}",
-            "ilpPacket": "{$prev.4.request.body.ilpPacket}",
-            "condition": "{$prev.4.request.body.condition}"
+            "expiration": "{$prev.Send-Quote-rsp.request.body.expiration}",
+            "ilpPacket": "{$prev.Send-Quote-rsp.request.body.ilpPacket}",
+            "condition": "{$prev.Send-Quote-rsp.request.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
@@ -338,7 +338,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Send-Payee-Invalid-Fulfillment",
           "meta": {
             "info": "Send Payee Invalid Fulfillment"
           },
@@ -350,10 +350,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transactionId}",
+          "path": "/transfers/{$prev.Send-Quote-RECEIVE.request.body.transactionId}",
           "method": "put",
           "params": {
-            "ID": "{$prev.3.request.body.transactionId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.transactionId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -372,21 +372,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-OK",
                 "description": "Response statusText be OK",
                 "exec": [
                   "expect(response.statusText).to.equal('OK')"
                 ]
               },
               {
-                "id": 3,
+                "id": "eventListener-errorCode-3100",
                 "description": "eventListener Body - errorCode is 3100",
                 "exec": [
                   "expect(requestVariables.inboundEventMsg.body.errorInformation.errorCode).to.equal('3100')",
@@ -401,7 +401,7 @@
               "exec": [
                 "requestVariables.completedTimestamp = new Date().toISOString()",
                 "",
-                "await inboundEvent.addListener('payee_invalid_fulfillment_put_transfer_id', 'put', '/transfers/{$prev.5.request.body.transferId}/error')",
+                "await inboundEvent.addListener('payee_invalid_fulfillment_put_transfer_id', 'put', '/transfers/{$prev.Send-Prepare.request.body.transferId}/error')",
                 ""
               ]
             },
@@ -416,7 +416,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Check-trans-status-SIMPAYER-AB",
           "meta": {
             "info": "Check Transfer status on SIMPAYER - ABORTED"
           },
@@ -428,10 +428,10 @@
             "asynchronous": true
           },
           "operationPath": "/transfers/{ID}",
-          "path": "/transfers/{$prev.3.request.body.transactionId}",
+          "path": "/transfers/{$prev.Send-Quote-RECEIVE.request.body.transactionId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.3.request.body.transactionId}"
+            "ID": "{$prev.Send-Quote-RECEIVE.request.body.transactionId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -445,29 +445,29 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 12,
-                "description": "Callback Header - fspiop-source is switch",
+                "id": "cb-hdr-src-switch-s-name",
+                "description": "Callback Header - fspiop-source is switch's name",
                 "exec": [
-                  "expect(callback.headers['fspiop-source']).to.equal('switch')",
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
                   ""
                 ]
               },
               {
-                "id": 13,
+                "id": "cb-hdr-fspiop-desination-src-r",
                 "description": "Callback Header - fspiop-desination is fspiop-source in request",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}')",
@@ -475,7 +475,7 @@
                 ]
               },
               {
-                "id": 14,
+                "id": "cb-hdr-content-type",
                 "description": "Callback Header - content-type",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
@@ -483,7 +483,7 @@
                 ]
               },
               {
-                "id": 15,
+                "id": "cb-hdr-accept-empty",
                 "description": "Callback Header - accept is empty",
                 "exec": [
                   "expect(callback.headers['accept']).to.equal(undefined)",
@@ -491,7 +491,7 @@
                 ]
               },
               {
-                "id": 16,
+                "id": "cb-hdr-Date-not-empty",
                 "description": "Callback Header - Date is not empty",
                 "exec": [
                   "expect(callback.headers['date']).to.not.equal(undefined)",
@@ -499,7 +499,7 @@
                 ]
               },
               {
-                "id": 17,
+                "id": "cb-hdr-uri-transfers-transferI",
                 "description": "Callback Header - fspiop-uri is /transfers/transferId",
                 "exec": [
                   "expect(callback.headers['fspiop-uri']).to.equal('/transfers/' + request.params.ID)",
@@ -507,7 +507,7 @@
                 ]
               },
               {
-                "id": 18,
+                "id": "cb-hdr-method-PUT",
                 "description": "Callback Header - fspiop-http-method is PUT",
                 "exec": [
                   "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
@@ -515,7 +515,7 @@
                 ]
               },
               {
-                "id": 19,
+                "id": "cb-transferState-ABORTED",
                 "description": "Callback Body -  transferState is ABORTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('ABORTED')",
@@ -523,18 +523,19 @@
                 ]
               },
               {
-                "id": 20,
+                "id": "cb-Extension-List-value-3100-G",
                 "description": "Callback Body -  Extension List value is 3100: Generic validation error - invalid fulfilment",
                 "exec": [
-                  "expect(callback.body.extensionList.extension[0].value).to.equal('3100: Generic validation error - invalid fulfilment')",
-                  ""
+                  "if (environment.API_TYPE === 'fspiop') {",
+                  "  expect(callback.body.extensionList.extension[0].value).to.equal('3100: Generic validation error - invalid fulfilment')",
+                  "}"
                 ]
               }
             ]
           }
         },
         {
-          "id": 8,
+          "id": "Check-Payeefsp-pos",
           "meta": {
             "info": "Check Payeefsp position"
           },
@@ -554,14 +555,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Payeefsp-pos-after-Payee-Inval",
                 "description": "Payeefsp position after Payee Invalid Fulfillment should be same as position before transfer.",
                 "exec": [
                   "expect(response.body[0].value).to.equal(+environment[environment.NORESPONSE_SIMPAYEE_NAME + 'PositionBeforeTransfer'])"
@@ -589,7 +590,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "Check-Payerfsp-pos",
           "meta": {
             "info": "Check Payerfsp position"
           },
@@ -609,14 +610,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Payeefsp-pos-after-Payee-Inval",
                 "description": "Payeefsp position after Payee Invalid Fulfillment should be same as position before transfer.",
                 "exec": [
                   "expect(response.body[0].value).to.equal(+environment.payerfspPositionBeforeTransfer)"
@@ -645,7 +646,10 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payee_invalid_fulfillment.json"
+        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payee_invalid_fulfillment.json",
+        "labels": [
+          "prod-tests"
+        ]
       }
     }
   ]

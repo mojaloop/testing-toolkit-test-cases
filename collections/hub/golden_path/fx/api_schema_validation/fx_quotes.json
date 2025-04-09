@@ -1,0 +1,190 @@
+{
+  "options": {},
+  "name": "fx_quotes",
+  "test_cases": [
+    {
+      "id": "fx-quote-400",
+      "name": "FX Quote - 400",
+      "fileInfo": {
+        "path": "hub/golden_path/fx/api_schema_validation/fx_quotes.json",
+        "labels": [
+          "prod-tests",
+          "fx"
+        ]
+      },
+      "meta": {
+        "info": "FX Quote - 400"
+      },
+      "requests": [
+        {
+          "id": "POST-fxQuotes-Invalid-amt-Type",
+          "description": "POST /fxQuotes - Invalid Amount Type",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/fxQuotes",
+          "path": "/fxQuotes",
+          "method": "post",
+          "body": {
+            "conversionRequestId": "{$function.generic.generateID}",
+            "conversionTerms": {
+              "conversionId": "{$function.generic.generateID}",
+              "determiningTransferId": "{$function.generic.generateID}",
+              "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+              "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
+              "amountType": "INVALID",
+              "sourceAmount": {
+                "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+                "amount": "{$inputs.FX_SOURCE_AMOUNT}"
+              },
+              "targetAmount": {
+                "currency": "{$inputs.FX_TARGET_CURRENCY}"
+              },
+              "expiration": "{$inputs.FX_EXPIRATION}"
+            }
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptFxQuotes}",
+            "Content-Type": "{$inputs.contentTypeFxQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "POST-fxQuotes-Invalid-conversi",
+          "description": "POST /fxQuotes - Invalid conversionRequestId",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/fxQuotes",
+          "path": "/fxQuotes",
+          "method": "post",
+          "body": {
+            "conversionRequestId": "invalid",
+            "conversionTerms": {
+              "conversionId": "{$function.generic.generateID}",
+              "determiningTransferId": "{$function.generic.generateID}",
+              "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+              "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
+              "amountType": "SEND",
+              "sourceAmount": {
+                "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+                "amount": "{$inputs.FX_SOURCE_AMOUNT}"
+              },
+              "targetAmount": {
+                "currency": "{$inputs.FX_TARGET_CURRENCY}"
+              },
+              "expiration": "{$inputs.FX_EXPIRATION}"
+            }
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptFxQuotes}",
+            "Content-Type": "{$inputs.contentTypeFxQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "POST-fxQuotes-Invalid-curr",
+          "description": "POST /fxQuotes - Invalid currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/fxQuotes",
+          "path": "/fxQuotes",
+          "method": "post",
+          "body": {
+            "conversionRequestId": "{$function.generic.generateID}",
+            "conversionTerms": {
+              "conversionId": "{$function.generic.generateID}",
+              "determiningTransferId": "{$function.generic.generateID}",
+              "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+              "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
+              "amountType": "SEND",
+              "sourceAmount": {
+                "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+                "amount": "{$inputs.FX_SOURCE_AMOUNT}"
+              },
+              "targetAmount": {
+                "currency": "ABC"
+              },
+              "expiration": "{$inputs.FX_EXPIRATION}"
+            }
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptFxQuotes}",
+            "Content-Type": "{$inputs.contentTypeFxQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

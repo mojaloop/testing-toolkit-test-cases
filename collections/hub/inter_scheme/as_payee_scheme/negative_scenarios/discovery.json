@@ -1,0 +1,107 @@
+{
+  "name": "Party Lookup Negative Scenarios",
+  "test_cases": [
+    {
+      "id": "1",
+      "name": "Test Case for scenario when there is an error in payee dfsp",
+      "requests": [
+        {
+          "id": "Add-part-ALS",
+          "meta": {
+            "info": "This request allows us to add a new participant to Account Lookup Service."
+          },
+          "description": "Add Participant to ALS",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}/{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID_ERROR}"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "fspId": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}",
+            "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "Negative-test-case-error-code-",
+          "description": "Negative test case for error code 5xxx",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_PARTY_ID_ERROR}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYEE_TEST_PAYERFSP_ID}",
+            "FSPIOP-Proxy": "{$inputs.PROXY_HEADER}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorCode",
+                "description": "Callback response has errorCode",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('{$inputs.PROXY_PAYEE_TEST_PAYEE_DFSP_ERROR_CODE_5XXX}')"
+                ]
+              },
+              {
+                "id": "cb-rsp-has-errorDescription",
+                "description": "Callback response has errorDescription",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "neg-scenario-payee",
       "name": "negative scenario - invalid Payee FSP ID in request",
       "meta": {
         "info": "negative scenario - invalid Payee FSP ID"
@@ -12,7 +12,7 @@
       },
       "requests": [
         {
-          "id": 3,
+          "id": "Send-Prepare-invalid-Payer-ID-",
           "meta": {
             "info": "Send Bulk Prepare. Invalid Payer FSP ID should return error."
           },
@@ -34,13 +34,13 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "bulkTransferId": "{$function.generic.generateUUID}",
-            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "bulkTransferId": "{$function.generic.generateID}",
+            "bulkQuoteId": "{$function.generic.generateID}",
             "payeeFsp": "DUMMY",
             "payerFsp": "{$environment.fromFspId}",
             "individualTransfers": [
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency}",
                   "amount": "1"
@@ -61,7 +61,7 @@
                 }
               },
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "GBP",
                   "amount": "2"
@@ -75,14 +75,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 17,
+                "id": "payer-cb-error-3203-req-part-n",
                 "description": "payer callback - should be error 3203. request.body participant not found.",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3203')",
@@ -130,7 +130,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Send-Prepare-Invalid-Payee-ID-",
           "description": "Send Prepare Invalid Payee FSP ID header only",
           "meta": {
             "info": "Send Bulk Prepare. Invalid Payer FSP ID should return error."
@@ -152,13 +152,13 @@
             "FSPIOP-Destination": "DUMMY"
           },
           "body": {
-            "bulkTransferId": "{$function.generic.generateUUID}",
-            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "bulkTransferId": "{$function.generic.generateID}",
+            "bulkQuoteId": "{$function.generic.generateID}",
             "payeeFsp": "{$environment.toFspId}",
             "payerFsp": "{$environment.fromFspId}",
             "individualTransfers": [
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency}",
                   "amount": "1"
@@ -179,7 +179,7 @@
                 }
               },
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "GBP",
                   "amount": "2"
@@ -193,14 +193,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 7,
+                "id": "payer-cb-error-3203-req-header",
                 "description": "payer callback - should be error 3203. request.headers['FSPIOP-Destination'] participant not found.",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3203')",
@@ -249,7 +249,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Send-Prepare-Invalid-Payee-ID--1",
           "description": "Send Prepare Invalid Payee FSP ID header and body",
           "meta": {
             "info": "Send Bulk Prepare. Invalid Payer FSP ID should return error."
@@ -271,13 +271,13 @@
             "FSPIOP-Destination": "DUMMY"
           },
           "body": {
-            "bulkTransferId": "{$function.generic.generateUUID}",
-            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "bulkTransferId": "{$function.generic.generateID}",
+            "bulkQuoteId": "{$function.generic.generateID}",
             "payeeFsp": "DUMMY",
             "payerFsp": "{$environment.fromFspId}",
             "individualTransfers": [
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency}",
                   "amount": "1"
@@ -298,7 +298,7 @@
                 }
               },
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "GBP",
                   "amount": "2"
@@ -312,14 +312,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 7,
+                "id": "payer-cb-error-3203-req-header",
                 "description": "payer callback - should be error 3203. request.headers['FSPIOP-Destination'] participant not found.",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3203')",
@@ -370,7 +370,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "neg-scenario-payer",
       "name": "negative scenario - invalid Payer FSP ID in request",
       "meta": {
         "info": "negative scenario - invalid Payer FSP ID"
@@ -380,7 +380,7 @@
       },
       "requests": [
         {
-          "id": 3,
+          "id": "Send-Prepare-invalid-Payer-ID-",
           "meta": {
             "info": "Send Bulk Prepare. Mismatching Payer FSP ID in header and body should return error."
           },
@@ -402,13 +402,13 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "bulkTransferId": "{$function.generic.generateUUID}",
-            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "bulkTransferId": "{$function.generic.generateID}",
+            "bulkQuoteId": "{$function.generic.generateID}",
             "payeeFsp": "{$inputs.toFspId}",
             "payerFsp": "DUMMY",
             "individualTransfers": [
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency}",
                   "amount": "1"
@@ -429,7 +429,7 @@
                 }
               },
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "GBP",
                   "amount": "2"
@@ -443,14 +443,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 7,
+                "id": "payer-cb-error-3100-src-hdr-Pa",
                 "description": "payer callback - should be error 3100. FSPIOP-Source header should match Payer FSP ID.",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3100')",
@@ -500,7 +500,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": "neg-scenario-inact",
       "name": "negative scenario - inactive Payer FSP ID in request",
       "meta": {
         "info": "negative scenario - inactive Payer FSP ID"
@@ -510,7 +510,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Update-part-inputs-fromFspId-i",
           "meta": {
             "info": "Update participant ({$inputs.fromFspId} to inactive)"
           },
@@ -533,7 +533,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-200",
                 "description": "Response status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -547,7 +547,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-Prepare-inactive-Payer-ID",
           "meta": {
             "info": "Send Bulk Prepare. Inactive Payer FSP ID should return error."
           },
@@ -569,13 +569,13 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "bulkTransferId": "{$function.generic.generateUUID}",
-            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "bulkTransferId": "{$function.generic.generateID}",
+            "bulkQuoteId": "{$function.generic.generateID}",
             "payeeFsp": "{$inputs.toFspId}",
             "payerFsp": "{$inputs.fromFspId}",
             "individualTransfers": [
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency}",
                   "amount": "1"
@@ -596,7 +596,7 @@
                 }
               },
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "GBP",
                   "amount": "2"
@@ -610,14 +610,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 7,
+                "id": "payer-cb-error-3202-Inactive-p",
                 "description": "payer callback - should be error 3202. Inactive participant error.",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3202')",
@@ -665,7 +665,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Update-part-inputs-fromFspId-a",
           "meta": {
             "info": "Update participant ({$inputs.fromFspId} to active)"
           },
@@ -688,7 +688,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-200",
                 "description": "Response status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -704,7 +704,7 @@
       ]
     },
     {
-      "id": 4,
+      "id": "neg-scenario-inact",
       "name": "negative scenario - inactive Payee FSP ID in request",
       "meta": {
         "info": "negative scenario - inactive Payee FSP ID"
@@ -714,7 +714,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Update-part-inputs-toFspId-ina",
           "meta": {
             "info": "Update participant ({$inputs.toFspId} to inactive)"
           },
@@ -737,7 +737,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-200",
                 "description": "Response status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -751,7 +751,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-Prepare-inactive-Payee-ID",
           "meta": {
             "info": "Send Bulk Prepare. Inactive Payee FSP ID should return error."
           },
@@ -773,13 +773,13 @@
             "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "bulkTransferId": "{$function.generic.generateUUID}",
-            "bulkQuoteId": "{$function.generic.generateUUID}",
+            "bulkTransferId": "{$function.generic.generateID}",
+            "bulkQuoteId": "{$function.generic.generateID}",
             "payeeFsp": "{$inputs.toFspId}",
             "payerFsp": "{$inputs.fromFspId}",
             "individualTransfers": [
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "{$inputs.currency}",
                   "amount": "1"
@@ -800,7 +800,7 @@
                 }
               },
               {
-                "transferId": "{$function.generic.generateUUID}",
+                "transferId": "{$function.generic.generateID}",
                 "transferAmount": {
                   "currency": "GBP",
                   "amount": "2"
@@ -814,14 +814,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-202",
                 "description": "Status code is 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 7,
+                "id": "payer-cb-error-3203-Inactive-p",
                 "description": "payer callback - should be error 3203. Inactive participant error.",
                 "exec": [
                   "expect(callback.body.errorInformation.errorCode).to.equal('3203')",
@@ -869,7 +869,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Update-part-inputs-toFspId-act",
           "meta": {
             "info": "Update participant ({$inputs.toFspId} to active)"
           },
@@ -892,7 +892,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-200",
                 "description": "Response status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"

@@ -2,17 +2,20 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "reserve-notification",
       "name": "Reserve Notification Positive - Testfsp1 Testfsp2",
       "meta": {
         "info": "Reserve Notification Positive - Testfsp1 Testfsp2"
       },
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/post_scenarios/reserve_notification_positive_testfsp1_testfsp2.json"
+        "path": "hub/golden_path/feature_tests/post_scenarios/reserve_notification_positive_testfsp1_testfsp2.json",
+        "labels": [
+          "prod-tests"
+        ]
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Add-testfsp1MSISDN-testfsp1",
           "meta": {
             "info": "Add {{testfsp1MSISDN}} to testfsp1"
           },
@@ -28,7 +31,9 @@
           "path": "/repository/parties",
           "method": "post",
           "url": "{$inputs.TESTFSP1_BACKEND_TESTAPI_URL}",
-          "headers": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
           "body": {
             "displayName": "{$requestVariables.fullName}",
             "firstName": "{$requestVariables.firstName}",
@@ -45,7 +50,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Successfully-POST-req",
                 "description": "Successfully POST request",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -70,7 +75,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Add-testfsp2MSISDN-testfsp2",
           "meta": {
             "info": "Add {{testfsp2MSISDN}} to testfsp2"
           },
@@ -86,7 +91,9 @@
           "path": "/repository/parties",
           "method": "post",
           "url": "{$inputs.TESTFSP2_BACKEND_TESTAPI_URL}",
-          "headers": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
           "body": {
             "displayName": "{$requestVariables.fullName}",
             "firstName": "{$requestVariables.firstName}",
@@ -103,7 +110,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Successfully-POST-req",
                 "description": "Successfully POST request",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -128,7 +135,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Add-party-SIMPAYEE-MSISDN",
           "meta": {
             "info": "Add party to SIMPAYEE - MSISDN"
           },
@@ -144,7 +151,9 @@
           "path": "/repository/parties",
           "method": "post",
           "url": "{$inputs.TESTFSP1_BACKEND_TESTAPI_URL}",
-          "headers": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
           "body": {
             "displayName": "PayeeFirst PayeeLast",
             "firstName": "PayeeFirst",
@@ -161,7 +170,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Successfully-POST-req",
                 "description": "Successfully POST request",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -181,7 +190,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Post-scn-MSISDN-TESTFSP2-TESTF",
           "meta": {
             "info": "Post scenarios - MSISDN - TESTFSP2 to TESTFSP1 - PATCH notification"
           },
@@ -195,6 +204,9 @@
           "path": "/scenarios",
           "method": "post",
           "url": "{$inputs.TESTFSP2_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
           "ignoreCallbacks": true,
           "body": [
             {
@@ -233,7 +245,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -242,7 +254,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "Payer-name-matches",
                 "description": "Payer name matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -251,7 +263,7 @@
                 ]
               },
               {
-                "id": 3,
+                "id": "Payer-idType-MSISDN",
                 "description": "Payer idType is 'MSISDN'",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -260,7 +272,7 @@
                 ]
               },
               {
-                "id": 4,
+                "id": "Payer-idValue-matches",
                 "description": "Payer idValue matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -269,7 +281,7 @@
                 ]
               },
               {
-                "id": 5,
+                "id": "Payee-idType-MSISDN",
                 "description": "Payee idType is 'MSISDN'",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -278,7 +290,7 @@
                 ]
               },
               {
-                "id": 6,
+                "id": "Payee-idValue-matches",
                 "description": "Payee idValue matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -287,7 +299,7 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "Payee-fspId-testfsp1",
                 "description": "Payee fspId is \"testfsp1\"",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -296,34 +308,34 @@
                 ]
               },
               {
-                "id": 8,
+                "id": "Payee-First-name-Testfsp1First",
                 "description": "Payee First name \"Testfsp1First\"",
                 "exec": [
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario1.result.to.firstName).to.equal('Testfsp1First')",
                   "}"
                 ]
               },
               {
-                "id": 9,
+                "id": "Payee-Last-name-Testfsp1Last",
                 "description": "Payee Last name \"Testfsp1Last\"",
                 "exec": [
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario1.result.to.lastName).to.equal('Testfsp1Last')",
                   "}"
                 ]
               },
               {
-                "id": 10,
+                "id": "Payee-DOB-matches",
                 "description": "Payee DOB matches",
                 "exec": [
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario1.result.to.dateOfBirth).to.equal('2010-10-10')",
                   "}"
                 ]
               },
               {
-                "id": 55,
+                "id": "amt-type-SEND",
                 "description": "Amount type is 'SEND'",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -332,7 +344,7 @@
                 ]
               },
               {
-                "id": 11,
+                "id": "curr-matches",
                 "description": "Currency matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -341,7 +353,7 @@
                 ]
               },
               {
-                "id": 12,
+                "id": "trans-amt-matches",
                 "description": "Transfer amount matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -350,7 +362,7 @@
                 ]
               },
               {
-                "id": 13,
+                "id": "txn-type-trans",
                 "description": "Transaction type is 'TRANSFER'",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -359,7 +371,7 @@
                 ]
               },
               {
-                "id": 14,
+                "id": "Initiator-type-CONSUMER",
                 "description": "Initiator type is 'CONSUMER'",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -368,7 +380,7 @@
                 ]
               },
               {
-                "id": 15,
+                "id": "Note-matches",
                 "description": "Note matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -377,7 +389,7 @@
                 ]
               },
               {
-                "id": 16,
+                "id": "transferId-matches",
                 "description": "transferId matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -386,7 +398,7 @@
                 ]
               },
               {
-                "id": 17,
+                "id": "Home-txn-ID-matches",
                 "description": "Home transaction ID matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -395,7 +407,7 @@
                 ]
               },
               {
-                "id": 18,
+                "id": "Current-state-quote-COMPLETED",
                 "description": "Current state on quote is 'COMPLETED'",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -404,7 +416,7 @@
                 ]
               },
               {
-                "id": 19,
+                "id": "trans-amt-matches",
                 "description": "Transfer amount matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -413,7 +425,7 @@
                 ]
               },
               {
-                "id": 20,
+                "id": "curr-matches",
                 "description": "Currency matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -422,7 +434,7 @@
                 ]
               },
               {
-                "id": 21,
+                "id": "Quote-rsp-expiration-not-null",
                 "description": "Quote response expiration is not null",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -431,7 +443,7 @@
                 ]
               },
               {
-                "id": 22,
+                "id": "Quote-req-ILP-packet-not-null",
                 "description": "Quote request ILP packet is not null",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -440,7 +452,7 @@
                 ]
               },
               {
-                "id": 23,
+                "id": "Quote-rsp-condition-not-null",
                 "description": "Quote response condition is not null",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -449,7 +461,7 @@
                 ]
               },
               {
-                "id": 24,
+                "id": "Payee-Fee-amt-0",
                 "description": "Payee Fee amount is 0",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -458,7 +470,7 @@
                 ]
               },
               {
-                "id": 25,
+                "id": "Payee-fee-curr-matches",
                 "description": "Payee fee currency matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -467,25 +479,25 @@
                 ]
               },
               {
-                "id": 57,
+                "id": "Payee-commission-amt-0",
                 "description": "Payee FSP commission amount is '0'",
                 "exec": [
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario1.result.quoteResponse.body.payeeFspCommission.amount).to.equal('0')",
                   "}"
                 ]
               },
               {
-                "id": 56,
+                "id": "Payee-commission-curr-matches",
                 "description": "Payee FSP commission currency matches",
                 "exec": [
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario1.result.quoteResponse.body.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
                   "}"
                 ]
               },
               {
-                "id": 26,
+                "id": "Payer-name-matches",
                 "description": "Payer FSP name matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -494,7 +506,7 @@
                 ]
               },
               {
-                "id": 27,
+                "id": "Payer-IdType-MSISDN",
                 "description": "Payer IdType is 'MSISDN'",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -503,7 +515,7 @@
                 ]
               },
               {
-                "id": 28,
+                "id": "Payer-MSISDN-matches",
                 "description": "Payer MSISDN matches",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -512,7 +524,7 @@
                 ]
               },
               {
-                "id": 29,
+                "id": "Payee-IdType-MSISDN",
                 "description": "Payee IdType is 'MSISDN'",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS) {",
@@ -521,7 +533,7 @@
                 ]
               },
               {
-                "id": 30,
+                "id": "Receiver-MSISDN-value-matches",
                 "description": "Receiver MSISDN value matches",
                 "exec": [
                   "",
@@ -532,7 +544,7 @@
                 ]
               },
               {
-                "id": 31,
+                "id": "fspId-testfsp1",
                 "description": "fspId is 'testfsp1'",
                 "exec": [
                   "",
@@ -543,40 +555,40 @@
                 ]
               },
               {
-                "id": 32,
+                "id": "First-name-party-matches",
                 "description": "First name of the party matches",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario2.result.to.firstName).to.equal('Testfsp1First')",
                   "}"
                 ]
               },
               {
-                "id": 33,
+                "id": "Last-name-party-matches",
                 "description": "Last name of the party matches",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario2.result.to.lastName).to.equal('Testfsp1Last')",
                   "}"
                 ]
               },
               {
-                "id": 34,
+                "id": "Date-Birth-MSISDN-2010-10-10",
                 "description": "Date of Birth of the MSISDN is '2010-10-10'",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario2.result.to.dateOfBirth).to.equal('2010-10-10')",
                   "}"
                 ]
               },
               {
-                "id": 35,
+                "id": "Amount-Type-Quote-req-SEND",
                 "description": "Amount-Type in Quote request is 'SEND'",
                 "exec": [
                   "",
@@ -587,7 +599,7 @@
                 ]
               },
               {
-                "id": 36,
+                "id": "curr-Quote-req-matches",
                 "description": "Currency in Quote request matches",
                 "exec": [
                   "",
@@ -598,7 +610,7 @@
                 ]
               },
               {
-                "id": 37,
+                "id": "trans-amt-10",
                 "description": "Transfer amount is '10'",
                 "exec": [
                   "",
@@ -609,7 +621,7 @@
                 ]
               },
               {
-                "id": 38,
+                "id": "txn-type-trans",
                 "description": "Transaction type is 'TRANSFER'",
                 "exec": [
                   "",
@@ -620,7 +632,7 @@
                 ]
               },
               {
-                "id": 39,
+                "id": "Initiator-type-CONSUMER",
                 "description": "Initiator type is 'CONSUMER'",
                 "exec": [
                   "",
@@ -631,7 +643,7 @@
                 ]
               },
               {
-                "id": 40,
+                "id": "Note-matches",
                 "description": "Note matches",
                 "exec": [
                   "",
@@ -642,7 +654,7 @@
                 ]
               },
               {
-                "id": 41,
+                "id": "HomeTransactionId-123ABC",
                 "description": "HomeTransactionId is 123ABC",
                 "exec": [
                   "",
@@ -653,7 +665,7 @@
                 ]
               },
               {
-                "id": 42,
+                "id": "Current-state-trans-COMPLETED",
                 "description": "Current state of the transfer is 'COMPLETED'",
                 "exec": [
                   "",
@@ -664,7 +676,7 @@
                 ]
               },
               {
-                "id": 43,
+                "id": "trans-amt-10",
                 "description": "Transfer Amount is '10'",
                 "exec": [
                   "",
@@ -675,7 +687,7 @@
                 ]
               },
               {
-                "id": 44,
+                "id": "rsp-validation-curr-matches",
                 "description": "Response validation: Currency matches",
                 "exec": [
                   "",
@@ -686,7 +698,7 @@
                 ]
               },
               {
-                "id": 45,
+                "id": "Quote-expiration-not-null",
                 "description": "Quote expiration is not null",
                 "exec": [
                   "",
@@ -697,7 +709,7 @@
                 ]
               },
               {
-                "id": 46,
+                "id": "rsp-ilpPacket-not-null",
                 "description": "Response ilpPacket is not null",
                 "exec": [
                   "",
@@ -708,7 +720,7 @@
                 ]
               },
               {
-                "id": 47,
+                "id": "rsp-condition-not-null",
                 "description": "Response condition is not null",
                 "exec": [
                   "",
@@ -719,7 +731,7 @@
                 ]
               },
               {
-                "id": 48,
+                "id": "PayeeFspFee-0",
                 "description": "PayeeFspFee is '0'",
                 "exec": [
                   "",
@@ -730,7 +742,7 @@
                 ]
               },
               {
-                "id": 49,
+                "id": "Payee-fee-curr-matches",
                 "description": "Payee FSP fee currency matches",
                 "exec": [
                   "",
@@ -741,29 +753,29 @@
                 ]
               },
               {
-                "id": 50,
+                "id": "Payee-commission-0",
                 "description": "Payee FSP commission is '0'",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.amount).to.equal('0')",
                   "}"
                 ]
               },
               {
-                "id": 54,
+                "id": "Payee-trans-commission-curr-ma",
                 "description": "Payee FSP Transfer commission currency matches",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.API_TYPE === 'fspiop') {",
                   "  expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
                   "}"
                 ]
               },
               {
-                "id": 51,
+                "id": "CompletedTimestamp-not-empty",
                 "description": "CompletedTimestamp is not empty",
                 "exec": [
                   "",
@@ -774,7 +786,7 @@
                 ]
               },
               {
-                "id": 52,
+                "id": "transferState-COMMITTED",
                 "description": "transferState is 'COMMITTED'",
                 "exec": [
                   "",
@@ -785,7 +797,7 @@
                 ]
               },
               {
-                "id": 53,
+                "id": "Fulfilment-not-empty",
                 "description": "Fulfilment is not empty",
                 "exec": [
                   "",
@@ -796,7 +808,7 @@
                 ]
               },
               {
-                "id": 58,
+                "id": "testfsp2-src-testfsp2",
                 "description": "On testfsp2 fspiop-source is testfsp2",
                 "exec": [
                   "",
@@ -807,8 +819,8 @@
                 ]
               },
               {
-                "id": 59,
-                "description": "On testfsp2 content-type should be application/vnd.interoperability.parties+json;version=1.0",
+                "id": "testfsp2-content-type-correct",
+                "description": "On testfsp2 content-type should be correct",
                 "exec": [
                   "",
                   "",
@@ -818,18 +830,7 @@
                 ]
               },
               {
-                "id": 60,
-                "description": "On Payee FSP 'accept' header should be 'application/vnd.interoperability.parties+json;version=1.1'",
-                "exec": [
-                  "",
-                  "",
-                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeRequest.headers['accept']).to.match(/application\\/vnd\\.interoperability\\.parties\\+json;version=1(\\.\\d)?/)",
-                  "}"
-                ]
-              },
-              {
-                "id": 61,
+                "id": "Payee-date-cannot-undefined",
                 "description": "On Payee FSP date cannot be undefined",
                 "exec": [
                   "",
@@ -840,7 +841,7 @@
                 ]
               },
               {
-                "id": 62,
+                "id": "testfsp2-src-testfsp1",
                 "description": "On testfsp2 'fspiop-source' is 'testfsp1'",
                 "exec": [
                   "",
@@ -851,7 +852,7 @@
                 ]
               },
               {
-                "id": 63,
+                "id": "testfsp2-dest-testfsp2",
                 "description": "On testfsp2 'fspiop-destination' is 'testfsp2'",
                 "exec": [
                   "",
@@ -862,8 +863,8 @@
                 ]
               },
               {
-                "id": 64,
-                "description": "On testfsp2 'content-type' header should be 'application/vnd.interoperability.parties+json;version=1.0'",
+                "id": "testfsp2-content-type-hdr-corr",
+                "description": "On testfsp2 'content-type' header should be correct",
                 "exec": [
                   "",
                   "",
@@ -873,7 +874,7 @@
                 ]
               },
               {
-                "id": 65,
+                "id": "Payer-accept-hdr-empty",
                 "description": "Payer FSP 'accept' header is empty",
                 "exec": [
                   "",
@@ -884,7 +885,7 @@
                 ]
               },
               {
-                "id": 87,
+                "id": "Payer-JWS-headers-validation",
                 "description": "Payer FSP JWS headers validation",
                 "exec": [
                   "",
@@ -896,7 +897,7 @@
                 ]
               },
               {
-                "id": 88,
+                "id": "Payer-JWS-validation",
                 "description": "Payer FSP JWS validation",
                 "exec": [
                   "",
@@ -908,7 +909,7 @@
                 ]
               },
               {
-                "id": 66,
+                "id": "Payer-uri-parties-MSISDN-17039",
                 "description": "Payer FSP 'fspiop-uri' should be /parties/MSISDN/17039811907",
                 "exec": [
                   "",
@@ -919,7 +920,7 @@
                 ]
               },
               {
-                "id": 67,
+                "id": "Payer-method-PUT",
                 "description": "Payer FSP 'fspiop-http-method' is PUT",
                 "exec": [
                   "",
@@ -930,7 +931,7 @@
                 ]
               },
               {
-                "id": 68,
+                "id": "Expected-partyIdType-MSISDN",
                 "description": "Expected partyIdType is 'MSISDN'",
                 "exec": [
                   "",
@@ -941,7 +942,7 @@
                 ]
               },
               {
-                "id": 73,
+                "id": "Expected-partyIdentifier-match",
                 "description": "Expected partyIdentifier matches",
                 "exec": [
                   "",
@@ -952,7 +953,7 @@
                 ]
               },
               {
-                "id": 69,
+                "id": "Expected-fspId-testfsp1",
                 "description": "Expected fspId is 'testfsp1'",
                 "exec": [
                   "",
@@ -963,51 +964,51 @@
                 ]
               },
               {
-                "id": 70,
+                "id": "Expected-receiver-first-name-T",
                 "description": "Expected receiver first name is 'Testfsp1First'",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
                   "  expect(requestVariables.payerCallback.data.party.personalInfo.complexName.firstName).to.equal('Testfsp1First')",
                   "}"
                 ]
               },
               {
-                "id": 71,
+                "id": "Expected-receiver-last-name-Te",
                 "description": "Expected receiver last name is 'Testfsp1Last'",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
                   "  expect(requestVariables.payerCallback.data.party.personalInfo.complexName.lastName).to.equal('Testfsp1Last')",
                   "}"
                 ]
               },
               {
-                "id": 72,
+                "id": "Expected-receiver-DOB-2010-10-",
                 "description": "Expected receiver DOB is '2010-10-10'",
                 "exec": [
                   "",
                   "",
-                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
                   "  expect(requestVariables.payerCallback.data.party.personalInfo.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)",
                   "}"
                 ]
               },
               {
-                "id": 74,
-                "description": "On testfsp1 'fspiop-source' is 'switch'",
+                "id": "testfsp1-src-switch-s-name",
+                "description": "On testfsp1 'fspiop-source' is switch's name",
                 "exec": [
                   "/* Disabled temporarily",
                   "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payeeSideTransferRequest.headers['fspiop-source']).to.equal('switch')",
+                  "  expect(requestVariables.payeeSideTransferRequest.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
                   "}",
                   "*/"
                 ]
               },
               {
-                "id": 75,
+                "id": "testfsp1-dest-testfsp1",
                 "description": "On testfsp1 'fspiop-destination' is 'testfsp1'",
                 "exec": [
                   "",
@@ -1018,7 +1019,7 @@
                 ]
               },
               {
-                "id": 76,
+                "id": "testfsp1-content-type-proper-f",
                 "description": "On testfsp1 'content-type' should be in the proper format",
                 "exec": [
                   "",
@@ -1029,7 +1030,7 @@
                 ]
               },
               {
-                "id": 77,
+                "id": "testfsp1-method-PATCH",
                 "description": "On testfsp1 'fspiop-http-method' is PATCH",
                 "exec": [
                   "/* Disabled temporarily",
@@ -1039,7 +1040,7 @@
                 ]
               },
               {
-                "id": 78,
+                "id": "testfsp1-uri-transfers",
                 "description": "On testfsp1 'fspiop-uri' contains '/transfers'",
                 "exec": [
                   "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
@@ -1048,7 +1049,7 @@
                 ]
               },
               {
-                "id": 79,
+                "id": "testfsp2-src-testfsp1",
                 "description": "On testfsp2 'fspiop-source' is 'testfsp1'",
                 "exec": [
                   "",
@@ -1059,7 +1060,7 @@
                 ]
               },
               {
-                "id": 80,
+                "id": "testfsp2-dest-testfsp2",
                 "description": "On testfsp2 'fspiop-destination' is 'testfsp2'",
                 "exec": [
                   "",
@@ -1070,17 +1071,17 @@
                 ]
               },
               {
-                "id": 81,
-                "description": "On Payer FSP 'content-type' should be 'application/vnd.interoperability.transfers+json;version=1.1'",
+                "id": "Payer-content-type-correct",
+                "description": "On Payer FSP 'content-type' should be correct",
                 "exec": [
                   "/* Disabled temporarily",
                   "if (environment.TEST_NOTIFICATIONS && environment.ENABLE_WS_ASSERTIONS===true) {",
-                  "  expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.1')",
+                  "  expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('{$inputs.expectedTransfersVersion}')",
                   "}*/"
                 ]
               },
               {
-                "id": 82,
+                "id": "Payer-accept-empty",
                 "description": "On Payer FSP 'accept' is empty",
                 "exec": [
                   "",
@@ -1091,7 +1092,7 @@
                 ]
               },
               {
-                "id": 83,
+                "id": "Payer-uri-includes-transfers",
                 "description": "On Payer FSP 'fspiop-uri' includes '/transfers'",
                 "exec": [
                   "",
@@ -1102,7 +1103,7 @@
                 ]
               },
               {
-                "id": 84,
+                "id": "Payer-method-PUT",
                 "description": "On Payer FSP 'fspiop-http-method' is PUT",
                 "exec": [
                   "",
@@ -1113,7 +1114,7 @@
                 ]
               },
               {
-                "id": 85,
+                "id": "rsp-data-does-not-have-transfe",
                 "description": "Response data does not have transferId",
                 "exec": [
                   "",
@@ -1124,7 +1125,7 @@
                 ]
               },
               {
-                "id": 86,
+                "id": "rsp-transferState-COMMITTED",
                 "description": "Response 'transferState' is 'COMMITTED'",
                 "exec": [
                   "",
