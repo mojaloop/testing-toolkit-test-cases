@@ -1,0 +1,308 @@
+{
+  "name": "merchant-onboarding-greenbank",
+  "test_cases": [
+    {
+      "id": 3,
+      "type": "Merchant Onboarding",
+      "name": "Merchant Onboarding",
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Health Check"
+          },
+          "description": "Acquirer Backend Health Check",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/api/v1/health-check",
+          "path": "/api/v1/health-check",
+          "method": "get",
+          "body": {
+          },
+          "url": "{$inputs.MERCHANT_ACQUIRER_ENDPOINT_BASE_URL}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response message to be 'OK'",
+                "exec": [
+                  "expect(response.body.message).to.equal('OK')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Login As HubUser1"
+          },
+          "description": "Authenticate and obtain a token from the ACQUIRER_BACKEND",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/api/v1/users/login",
+          "path": "/api/v1/users/login",
+          "method": "post",
+          "body": {
+            "email": "hubuser1@email.com",
+            "password": "password"
+          },
+          "url": "{$inputs.MERCHANT_ACQUIRER_ENDPOINT_BASE_URL}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response message to be 'Login successful'",
+                "exec": [
+                  "expect(response.body.message).to.equal('Login successful')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response body to have a token",
+                "exec": [
+                  "expect(response.body.token).to.exist;",
+                  "environment.HUB_USER_TOKEN = response.body.token;"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "GET DFSPs list"
+          },
+          "description": "GET DFSPs list",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/api/v1/dfsps",
+          "path": "/api/v1/dfsps",
+          "method": "get",
+          "url": "{$inputs.MERCHANT_ACQUIRER_ENDPOINT_BASE_URL}",
+          "headers": {
+            "Authorization": "Bearer {$environment.HUB_USER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response body to have a list of DFSPs",
+                "exec": [
+                  "expect(response.body.data).to.be.an('array');",
+                  "expect(response.body.data).to.have.length.above(0);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "GreenBank to be in the list of DFSPs and Extract",
+                "exec": [
+                  "environment.MERCHANT_GREEN_BANK_ID = response.body.data.find(dfsp => dfsp.fspId === 'greenbankfsp').id;",
+                  "expect(environment.MERCHANT_GREEN_BANK_ID).to.exist;"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Use the Green Bank ID to create a new client secret key"
+          },
+          "description": "Use the Green Bank ID to create a new client secret key",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/api/v1/dfsps/{$environment.MERCHANT_GREEN_BANK_ID}/client-access-key",
+          "path": "/api/v1/dfsps/{$environment.MERCHANT_GREEN_BANK_ID}/client-access-key",
+
+          "method": "post",
+          "url": "{$inputs.MERCHANT_ACQUIRER_ENDPOINT_BASE_URL}",
+          "headers": {
+            "Authorization": "Bearer {$environment.HUB_USER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response body to have a client access key",
+                "exec": [
+                  "expect(response.body.data).to.exist;",
+                  "environment.MERCHANT_GREEN_BANK_CLIENT_ACCESS_KEY = response.body.data;"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "Use Client Access Key to create a new merchant through External Merchant Oracle API"
+          },
+          "description": "Use Client Access Key to create a new merchant through External Merchant Oracle API",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "url": "{$inputs.MERCHANT_ORACLE_ENDPOINT_BASE_URL}",
+          "body": [
+            {
+              "merchant_id": "{$inputs.MERCHANT_ID}",
+              "currency": "{$inputs.MERCHANT_CURRENCY}",
+              "alias_value": "{$inputs.MERCHANT_ALIAS_VALUE}"
+            }
+          ],
+          "headers": {
+            "x-api-key": "{$environment.MERCHANT_GREEN_BANK_CLIENT_ACCESS_KEY}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response body to have a merchant object",
+                "exec": [
+                  "expect(response.body).to.be.an('array');",
+                  "expect(response.body).to.have.length.above(0);"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Register ALIAS Merchant Oracle"
+          },
+          "description": "Register ALIAS Merchant Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "body": {
+            "oracleIdType": "ALIAS",
+            "endpoint": {
+              "value": "{$inputs.MERCHANT_ORACLE_ENDPOINT_BASE_URL}",
+              "endpointType": "URL"
+            },
+            "currency": "{$inputs.currency}",
+            "isDefault": true
+          },
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_ADMIN}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 or errorCode 2001 already exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.body.errorInformation.errorCode).to.equal(\"2001\")",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "Lookup Merchant ALIAS Account from Oracle"
+          },
+          "description": "Lookup Merchant ALIAS Account from Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/participants/ALIAS/{$environment.MERCHANT_ALIAS_VALUE}",
+          "path": "/participants/ALIAS/{$environment.MERCHANT_ALIAS_VALUE}",
+          "method": "get",
+          "url": "{$inputs.MERCHANT_ORACLE_ENDPOINT_BASE_URL}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response body to have a merchant object",
+                "exec": [
+                  "expect(response.body).to.be.an('object');",
+                  "expect(response.body).to.have.property('partyList');",
+                  "expect(response.body.partyList).to.be.an('array');",
+                  "expect(response.body.partyList).to.have.length.above(0);",
+                  "expect(response.body.partyList[0].fspId).to.equal('greenbankfsp');"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
