@@ -1,24 +1,25 @@
 {
   "options": {},
-  "name": "hub_ha_fx_happy_path",
+  "name": "hub_golden_path_fx_feature_tests_happy_path_fx_tests",
   "test_cases": [
     {
       "id": "fx",
       "name": "HA/Happy Path FX E2E",
       "fileInfo": {
-        "path": "hub/HA/fx_happy_path.json",
+        "path": "hub/golden_path/fx/feature_tests/happy_path/fx_tests.json",
         "labels": [
           "HA-tests",
-          "fx"
+          "fx",
+          "min-func-tests"
         ]
       },
       "meta": {
-        "info": "Happy path of FX Transfer"
+        "info": "FX Transfer"
       },
       "breakOnError": false,
       "requests": [
         {
-          "id": "addParticipantALS",
+          "id": "Add-part-ALS",
           "description": "Add Participant to ALS",
           "apiVersion": {
             "minorVersion": 1,
@@ -53,7 +54,7 @@
           "tests": {
             "assertions": [
               {
-                "id": "responseStatus202",
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -64,7 +65,7 @@
           "disabled": false
         },
         {
-          "id": "getPartyInfo",
+          "id": "Get-party-info",
           "description": "Get party info",
           "apiVersion": {
             "minorVersion": 0,
@@ -96,35 +97,35 @@
           "tests": {
             "assertions": [
               {
-                "id": "responseStatus202",
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": "callbackContentLengthNotZero",
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": "callbackBodyContainsParty",
+                "id": "cb-party",
                 "description": "Callback body should contain party",
                 "exec": [
                   "expect(callback.body).to.have.property('party')"
                 ]
               },
               {
-                "id": "callbackFSPDestinationMatchesSource",
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": "callbackPartyIdInfoMatchesRequest",
+                "id": "cb-partyIdInfo-partyIdType-par",
                 "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
                 "exec": [
                   "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
@@ -135,7 +136,7 @@
           }
         },
         {
-          "id": "postFxQuotes",
+          "id": "POST-fxQuotes",
           "description": "POST /fxQuotes",
           "apiVersion": {
             "minorVersion": 0,
@@ -181,42 +182,42 @@
           "tests": {
             "assertions": [
               {
-                "id": "responseStatus202",
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": "responseStatusTextAccepted",
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": "callbackContentLengthNotZero",
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": "callbackFSPDestinationMatchesSource",
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": "callbackBodyContainsConversionTerms",
+                "id": "cb-conversionTerms",
                 "description": "Callback body should contain conversionTerms",
                 "exec": [
                   "expect(callback.body).to.have.property('conversionTerms')"
                 ]
               },
               {
-                "id": "callbackSourceAmountMatchesRequest",
+                "id": "cb-sourceAmount-amt-curr-req",
                 "description": "Callback sourceAmount (amount & currency) to match the request",
                 "exec": [
                   "expect(callback.body.conversionTerms.sourceAmount.currency).to.equal('{$request.body.conversionTerms.sourceAmount.currency}')",
@@ -224,28 +225,28 @@
                 ]
               },
               {
-                "id": "callbackContentTypeFxQuotes",
+                "id": "cb-content-type-fxQuotes",
                 "description": "Callback content-type to be fxQuotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.fxQuotes+json')"
                 ]
               },
               {
-                "id": "callbackBodyContainsCondition",
+                "id": "cb-condition",
                 "description": "Callback body should contain condition",
                 "exec": [
                   "expect(callback.body).to.have.property('condition')"
                 ]
               },
               {
-                "id": "callbackBodyContainsTargetAmount",
+                "id": "cb-target-amt",
                 "description": "Callback body should contain target amount",
                 "exec": [
                   "expect(callback.body.conversionTerms.targetAmount).to.have.property('amount')"
                 ]
               },
               {
-                "id": "callbackTransferAmountMatchesRequest",
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request Copy",
                 "exec": [
                   "expect(callback.body.conversionTerms.sourceAmount.currency).to.equal('{$request.body.conversionTerms.sourceAmount.currency}')",
@@ -256,7 +257,7 @@
           }
         },
         {
-          "id": "postQuotes",
+          "id": "POST-quotes",
           "description": "POST /quotes",
           "apiVersion": {
             "minorVersion": 0,
@@ -282,7 +283,7 @@
           },
           "body": {
             "quoteId": "{$function.generic.generateID}",
-            "transactionId": "{$prev.postFxQuotes.request.body.conversionTerms.determiningTransferId}",
+            "transactionId": "{$prev.POST-fxQuotes.request.body.conversionTerms.determiningTransferId}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -299,15 +300,15 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.getPartyInfo.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.getPartyInfo.callback.body.party.partyIdInfo.partyIdentifier}",
-                "fspId": "{$prev.getPartyInfo.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.Get-party-info.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-info.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.Get-party-info.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "SEND",
             "amount": {
-              "amount": "{$prev.postFxQuotes.callback.body.conversionTerms.targetAmount.amount}",
-              "currency": "{$prev.postFxQuotes.callback.body.conversionTerms.targetAmount.currency}"
+              "amount": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.amount}",
+              "currency": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.currency}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -320,42 +321,42 @@
           "tests": {
             "assertions": [
               {
-                "id": "responseStatus202",
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": "responseStatusTextAccepted",
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": "callbackContentLengthNotZero",
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": "callbackFSPDestinationMatchesSource",
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": "callbackBodyContainsTransferAmount",
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": "callbackTransferAmountMatchesRequest",
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -363,21 +364,21 @@
                 ]
               },
               {
-                "id": "transactionTypeScenarioTransfer",
+                "id": "req-transactionType-scenario-t",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": "transactionTypeInitiatorPayer",
+                "id": "req-transactionType-initiator-",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": "transactionTypeInitiatorTypeConsumer",
+                "id": "req-transactionType-initiatorT",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
@@ -387,7 +388,7 @@
           }
         },
         {
-          "id": "getAccountsPayerBeforeFxTransfer",
+          "id": "Get-Accounts-Payer-BEFORE-fxTr",
           "description": "Get Accounts for Payer BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -428,7 +429,7 @@
           }
         },
         {
-          "id": "getAccountsPayeeBeforeFxTransfer",
+          "id": "Get-Accounts-Payee-BEFORE-fxTr",
           "description": "Get Accounts for Payee BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -470,7 +471,7 @@
           }
         },
         {
-          "id": "getAccountsFXPBeforeFxTransfer",
+          "id": "Get-Accounts-FXP-BEFORE-fxTran",
           "description": "Get Accounts for FXP BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -519,7 +520,7 @@
           }
         },
         {
-          "id": "postFxTransfers",
+          "id": "POST-fxTransfers",
           "description": "POST /fxTransfers",
           "apiVersion": {
             "minorVersion": 0,
@@ -544,20 +545,20 @@
             "FSPIOP-Destination": "{$inputs.FX_TESTFXP1_ID}"
           },
           "body": {
-            "commitRequestId": "{$prev.postFxQuotes.callback.body.conversionTerms.conversionId}",
-            "determiningTransferId": "{$prev.postFxQuotes.request.body.conversionTerms.determiningTransferId}",
+            "commitRequestId": "{$prev.POST-fxQuotes.callback.body.conversionTerms.conversionId}",
+            "determiningTransferId": "{$prev.POST-fxQuotes.request.body.conversionTerms.determiningTransferId}",
             "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
             "amountType": "SEND",
             "sourceAmount": {
-              "amount": "{$prev.postFxQuotes.callback.body.conversionTerms.sourceAmount.amount}",
-              "currency": "{$prev.postFxQuotes.callback.body.conversionTerms.sourceAmount.currency}"
+              "amount": "{$prev.POST-fxQuotes.callback.body.conversionTerms.sourceAmount.amount}",
+              "currency": "{$prev.POST-fxQuotes.callback.body.conversionTerms.sourceAmount.currency}"
             },
             "targetAmount": {
-              "amount": "{$prev.postFxQuotes.callback.body.conversionTerms.targetAmount.amount}",
-              "currency": "{$prev.postFxQuotes.callback.body.conversionTerms.targetAmount.currency}"
+              "amount": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.amount}",
+              "currency": "{$prev.POST-fxQuotes.callback.body.conversionTerms.targetAmount.currency}"
             },
-            "condition": "{$prev.postFxQuotes.callback.body.condition}",
+            "condition": "{$prev.POST-fxQuotes.callback.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "scriptingEngine": "javascript",
@@ -565,21 +566,21 @@
           "tests": {
             "assertions": [
               {
-                "id": "responseStatus202",
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": "responseStatusTextAccepted",
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": "callbackContentLengthNotZero",
+                "id": "cb-length-not-zero",
                 "description": "Callback length not zero",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
@@ -596,7 +597,7 @@
           }
         },
         {
-          "id": "getAccountsPayerAfterFxTransfer",
+          "id": "Get-Accounts-Payer-AFTER-fx-tr",
           "description": "Get Accounts for Payer AFTER fx transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -620,7 +621,7 @@
           "tests": {
             "assertions": [
               {
-                "id": "payerPositionChanged",
+                "id": "Payer-pos-changed",
                 "description": "Payer position should be changed",
                 "exec": [
                   "expect(environment.payerPositionBalanceAfterFxTransfer).to.not.equal(environment.payerPositionBalanceBeforeFxTransfer)"
@@ -645,7 +646,7 @@
           }
         },
         {
-          "id": "getAccountsFXPAfterFxTransfer",
+          "id": "Get-Accounts-FXP-AFTER-fx-tran",
           "description": "Get Accounts for FXP AFTER fx transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -668,21 +669,21 @@
           "tests": {
             "assertions": [
               {
-                "id": "payerPositionChanged",
+                "id": "Payer-pos-changed",
                 "description": "Payer position should be changed",
                 "exec": [
                   "expect(environment.payerPositionBalanceAfterFxTransfer-environment.payerPositionBalanceBeforeFxTransfer).to.equal(+environment.FX_SOURCE_AMOUNT)"
                 ]
               },
               {
-                "id": "fxpSourceCurrencyPositionUnchanged",
+                "id": "FXP-src-curr-pos-not-changed",
                 "description": "FXP Source currency position should not be changed",
                 "exec": [
                   "expect(environment.fxpSourceCurrencyPositionBalanceAfterTransfer).to.equal(environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer)"
                 ]
               },
               {
-                "id": "fxpTargetCurrencyPositionUnchanged",
+                "id": "FXP-Target-curr-pos-not-change",
                 "description": "FXP Target currency position should not be changed",
                 "exec": [
                   "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer).to.equal(environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer)"
@@ -721,7 +722,7 @@
           }
         },
         {
-          "id": "getFxTransfers",
+          "id": "Get-FxTransfers",
           "description": "Get FxTransfers",
           "apiVersion": {
             "minorVersion": 0,
@@ -735,10 +736,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
           },
           "operationPath": "/fxTransfers/{ID}",
-          "path": "/fxTransfers/{$prev.postFxTransfers.request.body.commitRequestId}",
+          "path": "/fxTransfers/{$prev.POST-fxTransfers.request.body.commitRequestId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.postFxTransfers.request.body.commitRequestId}"
+            "ID": "{$prev.POST-fxTransfers.request.body.commitRequestId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -750,49 +751,49 @@
           "tests": {
             "assertions": [
               {
-                "id": "responseStatus202",
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": "responseStatusTextAccepted",
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": "callbackContentLengthNotZero",
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": "callbackFSPDestinationMatchesSource",
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": "callbackConversionStateReserved",
+                "id": "cb-conversionState-RESERVED",
                 "description": "Callback conversionState to be RESERVED",
                 "exec": [
                   "expect(callback.body.conversionState).to.equal('RESERVED')"
                 ]
               },
               {
-                "id": "callbackContentTypeFxTransfers",
+                "id": "cb-content-type-fxTransfers",
                 "description": "Callback content-type to be fxTransfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.fxTransfers+json')"
                 ]
               },
               {
-                "id": "callbackBodyContainsFulfilment",
+                "id": "cb-fulfilment",
                 "description": "Callback body should contain fulfilment",
                 "exec": [
                   "expect(callback.body).to.have.property('fulfilment')"
@@ -802,7 +803,7 @@
           }
         },
         {
-          "id": "postTransfer",
+          "id": "POST-trans",
           "description": "POST /transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -820,16 +821,16 @@
           "method": "post",
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "body": {
-            "transferId": "{$prev.postFxQuotes.request.body.conversionTerms.determiningTransferId}",
+            "transferId": "{$prev.POST-fxQuotes.request.body.conversionTerms.determiningTransferId}",
             "payeeFsp": "{$inputs.FX_PAYEE_DFSP_ID}",
             "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
-              "currency": "{$prev.postQuotes.callback.body.transferAmount.currency}",
-              "amount": "{$prev.postQuotes.callback.body.transferAmount.amount}"
+              "currency": "{$prev.POST-quotes.callback.body.transferAmount.currency}",
+              "amount": "{$prev.POST-quotes.callback.body.transferAmount.amount}"
             },
-            "ilpPacket": "{$prev.postQuotes.callback.body.ilpPacket}",
-            "condition": "{$prev.postQuotes.callback.body.condition}",
-            "expiration": "{$prev.postQuotes.callback.body.expiration}"
+            "ilpPacket": "{$prev.POST-quotes.callback.body.ilpPacket}",
+            "condition": "{$prev.POST-quotes.callback.body.condition}",
+            "expiration": "{$prev.POST-quotes.callback.body.expiration}"
           },
           "headers": {
             "Accept": "{$inputs.acceptTransfers}",
@@ -843,45 +844,45 @@
           "tests": {
             "assertions": [
               {
-                "id": "responseStatus202",
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": "responseStatusTextAccepted",
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": "callbackContentLengthNotZero",
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": "callbackFSPDestinationMatchesSource",
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": "callbackTransferStateCommitted",
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback transferState to be COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": "requestFSPSourceMatchesQuoteCallbackDestination",
+                "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.postFxQuotes.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.POST-fxQuotes.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
@@ -895,7 +896,7 @@
           }
         },
         {
-          "id": "getAccountsFXPAfterTransfer",
+          "id": "Get-Accounts-FXP-AFTER-trans",
           "description": "Get Accounts for FXP AFTER transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -918,14 +919,14 @@
           "tests": {
             "assertions": [
               {
-                "id": "fxpSourceCurrencyPositionChanged",
+                "id": "FXP-src-curr-pos-changed",
                 "description": "FXP Source currency position should be changed",
                 "exec": [
                   "expect(environment.fxpSourceCurrencyPositionBalanceAfterTransfer-environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer).to.equal(-environment.FX_SOURCE_AMOUNT)"
                 ]
               },
               {
-                "id": "fxpTargetCurrencyPositionChanged",
+                "id": "FXP-Target-curr-pos-changed",
                 "description": "FXP Target currency position should be changed",
                 "exec": [
                   "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer).to.not.equal(environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer)"
@@ -957,7 +958,7 @@
           }
         },
         {
-          "id": "getAccountsPayeeAfterTransfer",
+          "id": "Get-Accounts-Payee-AFTER-trans",
           "description": "Get Accounts for Payee AFTER transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -980,7 +981,7 @@
           "tests": {
             "assertions": [
               {
-                "id": "payeePositionChanged",
+                "id": "Payee-pos-changed",
                 "description": "Payee position should be changed",
                 "exec": [
                   "expect(environment.payeePositionBalanceAfterTransfer).to.not.equal(environment.payeePositionBalanceBeforeFxTransfer)"
@@ -1008,7 +1009,7 @@
           }
         },
         {
-          "id": "getFxTransfersAfterFinalTransfer",
+          "id": "Get-FxTransfers-after-final-tr",
           "description": "Get FxTransfers after final transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -1022,10 +1023,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
           },
           "operationPath": "/fxTransfers/{ID}",
-          "path": "/fxTransfers/{$prev.postFxTransfers.request.body.commitRequestId}",
+          "path": "/fxTransfers/{$prev.POST-fxTransfers.request.body.commitRequestId}",
           "method": "get",
           "params": {
-            "ID": "{$prev.postFxTransfers.request.body.commitRequestId}"
+            "ID": "{$prev.POST-fxTransfers.request.body.commitRequestId}"
           },
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "headers": {
@@ -1037,49 +1038,49 @@
           "tests": {
             "assertions": [
               {
-                "id": "responseStatus202",
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": "responseStatusTextAccepted",
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": "callbackContentLengthNotZero",
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": "callbackFSPDestinationMatchesSource",
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": "callbackConversionStateCommitted",
+                "id": "cb-conversionState-RESERVED",
                 "description": "Callback conversionState to be RESERVED",
                 "exec": [
                   "expect(callback.body.conversionState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": "callbackContentTypeFxTransfers",
+                "id": "cb-content-type-fxTransfers",
                 "description": "Callback content-type to be fxTransfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.fxTransfers+json')"
                 ]
               },
               {
-                "id": "callbackBodyContainsFulfilment",
+                "id": "cb-fulfilment",
                 "description": "Callback body should contain fulfilment",
                 "exec": [
                   "expect(callback.body).to.have.property('fulfilment')"
@@ -1090,7 +1091,7 @@
         }
       ],
       "options": {
-        "executionOrder": 10
+        "executionOrder": 50
       }
     }
   ]

@@ -1,0 +1,662 @@
+{
+  "options": {},
+  "name": "hub_golden_path_fx_feature_tests_negative_scenarios_timeout_scenarios",
+  "test_cases": [
+    {
+      "id": "pos-payer-fxtransfer-expired",
+      "name": "Check that position for Payer is not changed after FXTransfer is expired",
+      "fileInfo": {
+        "path": "hub/golden_path/fx/feature_tests/negative_scenarios/timeout_scenarios.json",
+        "labels": [
+          "HA-tests",
+          "fx"
+        ]
+      },
+      "meta": {
+        "info": "fxTransfer expired"
+      },
+      "requests": [
+        {
+          "id": "Get-Accounts-Payer-BEFORE-fxTr",
+          "description": "Get Accounts for Payer BEFORE fxTransfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_PAYER_DFSP_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
+                "",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.payerPositionBalanceBeforeFxTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`Payer Position Balance before FxTransfer=${environment.payerPositionBalanceBeforeFxTransfer}`);",
+                "",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "POST-fxTransfers-that-expires",
+          "description": "POST /fxTransfers that expires",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/fxTransfers",
+          "path": "/fxTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptFxTransfers}",
+            "Content-Type": "{$inputs.contentTypeFxTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}"
+          },
+          "body": {
+            "commitRequestId": "{$function.generic.generateID}",
+            "determiningTransferId": "{$function.generic.generateID}",
+            "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+            "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
+            "amountType": "SEND",
+            "sourceAmount": {
+              "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+              "amount": "16"
+            },
+            "targetAmount": {
+              "currency": "{$inputs.FX_TARGET_CURRENCY}",
+              "amount": "{$inputs.FX_TARGET_AMOUNT}"
+            },
+            "condition": "{$inputs.validCondition}",
+            "expiration": "{$requestVariables.expiration}"
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "name": ""
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "// Very short expiration",
+                "requestVariables.expiration =new Date(new Date().getTime() + 2 * 1000).toISOString()"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Accounts-Payer-AFTER-trans",
+          "description": "Get Accounts for Payer AFTER transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_PAYER_DFSP_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "Payer-pos-not-changed",
+                "description": "Payer position should not be changed",
+                "exec": [
+                  "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "Array.isArray(res) && res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.payerPositionBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`Payer Position Balance after Transfer=${environment.payerPositionBalanceAfterTransfer}`);"
+              ]
+            }
+          }
+        }
+      ],
+      "options": {
+        "executionOrder": 65
+      }
+    },
+    {
+      "id": "pos-transfer-expired",
+      "name": "Check that positions for FXP, Payer and Payee are not changed after transfer is expired",
+      "fileInfo": {
+        "path": "hub/golden_path/fx/feature_tests/negative_scenarios/timeout_scenarios.json",
+        "labels": [
+          "HA-tests",
+          "fx"
+        ]
+      },
+      "meta": {
+        "info": "POST /fxTransfers returns PUT /fxTransfers/{ID} with invalid fulfillment"
+      },
+      "requests": [
+        {
+          "id": "Get-Accounts-Payer-BEFORE-fxTr",
+          "description": "Get Accounts for Payer BEFORE fxTransfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_PAYER_DFSP_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
+                "",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.payerPositionBalanceBeforeFxTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`Payer Position Balance before FxTransfer=${environment.payerPositionBalanceBeforeFxTransfer}`);",
+                "",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Accounts-Payee-BEFORE-fxTr",
+          "description": "Get Accounts for Payee BEFORE fxTransfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_PAYEE_DFSP_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_PAYEE_DFSP_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": []
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.payeePositionBalanceBeforeFxTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`Payee Position Balance before FxTransfer=${environment.payeePositionBalanceBeforeFxTransfer}`);",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Accounts-FXP-BEFORE-fxTran",
+          "description": "Get Accounts for FXP BEFORE fxTransfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": []
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`FXP Source Currency Position Balance before FxTransfer=${environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer}`);",
+                "",
+                "console.log(`FXP Target Currency Position Balance before FxTransfer=${environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer}`);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "POST-fxTransfers",
+          "description": "POST /fxTransfers",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/fxTransfers",
+          "path": "/fxTransfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptFxTransfers}",
+            "Content-Type": "{$inputs.contentTypeFxTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}"
+          },
+          "body": {
+            "commitRequestId": "{$function.generic.generateID}",
+            "determiningTransferId": "{$function.generic.generateID}",
+            "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+            "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
+            "amountType": "SEND",
+            "sourceAmount": {
+              "currency": "{$inputs.FX_SOURCE_CURRENCY}",
+              "amount": "{$inputs.FX_SOURCE_AMOUNT}"
+            },
+            "targetAmount": {
+              "currency": "{$inputs.FX_TARGET_CURRENCY}",
+              "amount": "16"
+            },
+            "condition": "{$inputs.validCondition}",
+            "expiration": "{$requestVariables.expiration}"
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "name": ""
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+              ]
+            }
+          }
+        },
+        {
+          "id": "POST-trans-that-expires",
+          "description": "POST /transfer that expires",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "body": {
+            "transferId": "{$prev.POST-fxTransfers.request.body.determiningTransferId}",
+            "payeeFsp": "{$inputs.FX_PAYEE_DFSP_ID}",
+            "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+            "amount": {
+              "currency": "{$inputs.FX_TARGET_CURRENCY}",
+              "amount": "16"
+            },
+            "ilpPacket": "{$inputs.ilpPacket}",
+            "condition": "{$inputs.validCondition}",
+            "expiration": "{$requestVariables.expiration}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}"
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.expiration =new Date(new Date().getTime() + 2000).toISOString()"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Accounts-Payer-AFTER-trans",
+          "description": "Get Accounts for Payer AFTER transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_PAYER_DFSP_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "Payer-pos-not-changed",
+                "description": "Payer position should not be changed",
+                "exec": [
+                  "expect(environment.payerPositionBalanceAfterTransfer).to.equal(environment.payerPositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "Array.isArray(res) && res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.payerPositionBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`Payer Position Balance after Transfer=${environment.payerPositionBalanceAfterTransfer}`);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Accounts-Payee-AFTER-trans",
+          "description": "Get Accounts for Payee AFTER transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_PAYEE_DFSP_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_PAYEE_DFSP_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "FXP-pos-not-changed",
+                "description": "FXP position should not be changed",
+                "exec": [
+                  "expect(environment.payeePositionBalanceAfterTransfer).to.equal(environment.payeePositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.payeePositionBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`Payee Position Balance after Transfer=${environment.payeePositionBalanceAfterTransfer}`);",
+                "",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Accounts-FXP-AFTER-trans",
+          "description": "Get Accounts for FXP AFTER transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_TESTFXP1_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "FXP-src-curr-pos-not-changed",
+                "description": "FXP Source currency position should not be changed",
+                "exec": [
+                  "expect(environment.fxpSourceCurrencyPositionBalanceAfterTransfer).to.equal(environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer)"
+                ]
+              },
+              {
+                "id": "FXP-Target-curr-pos-not-change",
+                "description": "FXP Target currency position should not be changed",
+                "exec": [
+                  "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer).to.equal(environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.fxpSourceCurrencyPositionBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "res.filter(account => account.currency === environment.FX_TARGET_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.fxpTargetCurrencyPositionBalanceAfterTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`FXP Source Currency Position Balance after Transfer=${environment.fxpSourceCurrencyPositionBalanceAfterTransfer}`);",
+                "",
+                "console.log(`FXP Target Currency Position Balance after Transfer=${environment.fxpTargetCurrencyPositionBalanceAfterTransfer}`);",
+                "",
+                ""
+              ]
+            }
+          }
+        }
+      ],
+      "options": {
+        "executionOrder": 66
+      }
+    }
+  ]
+}
