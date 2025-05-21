@@ -2,10 +2,17 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": "fundsout-rsrv-comm",
-      "name": "Funds_out/Reserve&Commit_ttk",
+      "id": "fundsout-rsrv-abort",
+      "name": "Funds_out/Reserve&Abort",
       "meta": {
-        "info": "Funds_out/Reserve&Commit_ttk"
+        "info": "Funds_out/Reserve&Abort"
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/funds_out/Reserve&Abort/funds_out_abort.json",
+        "labels": [
+          "HA-tests",
+          "p2p"
+        ]
       },
       "requests": [
         {
@@ -434,8 +441,8 @@
                 "//console.log(callbackpayer.data);\r",
                 "\r",
                 "environment.payercallback = callbackpayer.data;\r",
-                "console.log(environment.payercallback);*/\r",
-                ""
+                "console.log(environment.payercallback);\r",
+                "*/"
               ]
             }
           }
@@ -443,9 +450,9 @@
         {
           "id": "Get-ttkdfsp-settle-acc-before-",
           "meta": {
-            "info": "Get testingtoolkitdfsp settlement account before commit"
+            "info": "Get testingtoolkitdfsp settlement account before abort"
           },
-          "description": "Get testingtoolkitdfsp settlement account before commit",
+          "description": "Get testingtoolkitdfsp settlement account before abort",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -495,9 +502,9 @@
         {
           "id": "Get-Hub-Reconcilliation-acc-be",
           "meta": {
-            "info": "Get Hub Reconcilliation account before commit"
+            "info": "Get Hub Reconcilliation account before abort"
           },
-          "description": "Get Hub Reconcilliation account before commit",
+          "description": "Get Hub Reconcilliation account before abort",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -535,21 +542,21 @@
                 "    for(var i in jsonData) {\r",
                 "        if((jsonData[i].ledgerAccountType === 'HUB_RECONCILIATION') && (jsonData[i].currency === environment.SIMPAYER_CURRENCY)) {\r",
                 "\r",
-                "environment.hubReconAccountBalanceBeforeFundsOutCommit=jsonData[i].value;\r",
+                "environment.hubReconAccountBalanceBeforeFundsOutAbort=jsonData[i].value;\r",
                 "        }\r",
                 "    }\r",
-                "console.log(environment.hubReconAccountBalanceBeforeFundsOutCommit);\r",
+                "console.log(environment.hubReconAccountBalanceBeforeFundsOutAbort);\r",
                 ""
               ]
             }
           }
         },
         {
-          "id": "Record-Funds-Out-Commit-SIMPAY",
+          "id": "Record-Funds-Out-Abort-SIMPAYE",
           "meta": {
-            "info": "Record Funds Out Commit - SIMPAYER"
+            "info": "Record Funds Out Abort - SIMPAYER"
           },
-          "description": "Record Funds Out Commit - SIMPAYER",
+          "description": "Record Funds Out Abort - SIMPAYER",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -570,7 +577,7 @@
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
           "body": {
-            "action": "recordFundsOutCommit",
+            "action": "recordFundsOutAbort",
             "reason": "Reason for out flow of funds"
           },
           "scriptingEngine": "javascript",
@@ -594,11 +601,11 @@
           }
         },
         {
-          "id": "Get-ttkdfsp-settle-acc-after-c",
+          "id": "Get-ttkdfsp-settle-acc-after-a",
           "meta": {
-            "info": "Get testingtoolkitdfsp settlement account after commit"
+            "info": "Get testingtoolkitdfsp settlement account after abort"
           },
-          "description": "Get testingtoolkitdfsp settlement account after commit",
+          "description": "Get testingtoolkitdfsp settlement account after abort",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -615,7 +622,6 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
           },
-          "retries": 5,
           "tests": {
             "assertions": [
               {
@@ -627,9 +633,9 @@
               },
               {
                 "id": "testingtoolkitdfsp-settle-acc-",
-                "description": "testingtoolkitdfsp Settlement Account Balance should not change during commit phase",
+                "description": "testingtoolkitdfsp Settlement Account Balance should rollback to the value before Prepare",
                 "exec": [
-                  "expect(environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsOutCommit+0).to.eql(environment.testingtoolkitdfspExpectedBalance+0);"
+                  "expect(environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsOutAbort+0).to.eql(environment.testingtoolkitdfspExpectedBalance+0);"
                 ]
               }
             ]
@@ -645,14 +651,14 @@
                 "    for(var i in jsonData) {\r",
                 "        if((jsonData[i].ledgerAccountType === 'SETTLEMENT') && (jsonData[i].currency === environment.SIMPAYER_CURRENCY)) {\r",
                 "\r",
-                "environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsOutCommit=jsonData[i].value;\r",
+                "environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsOutAbort=jsonData[i].value;\r",
                 "        }\r",
                 "    }\r",
                 "\r",
                 "\r",
-                "console.log(environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsOutCommit)\r",
+                "console.log(environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsOutAbort)\r",
                 "\r",
-                "  environment.testingtoolkitdfspExpectedBalance = Number(environment.SettlementAccountBalanceBeforeFundsOutCommit)\r",
+                "  environment.testingtoolkitdfspExpectedBalance = Number(environment.SettlementAccountBalanceBeforeFundsOutPrepare)\r",
                 "  \r",
                 "console.log(environment.testingtoolkitdfspExpectedBalance)"
               ]
@@ -667,9 +673,9 @@
         {
           "id": "Get-Hub-Reconcilliation-acc-af-1",
           "meta": {
-            "info": "Get Hub Reconcilliation account after commit"
+            "info": "Get Hub Reconcilliation account after abort"
           },
-          "description": "Get Hub Reconcilliation account after commit",
+          "description": "Get Hub Reconcilliation account after abort",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -697,9 +703,9 @@
               },
               {
                 "id": "Final-Hub-Reconciliation-acc-b",
-                "description": "Final Hub Reconciliation Account Balance should decrease by the transfer amount",
+                "description": "Final Hub Reconciliation Account Balance should not change",
                 "exec": [
-                  " expect(environment.hubReconAccountBalanceAfterFundsOutCommit+0).to.eql(environment.hubExpectedBalance+0);"
+                  " expect(environment.hubReconAccountBalanceAfterFundsOutAbort+0).to.eql(environment.hubExpectedBalance+0);"
                 ]
               }
             ]
@@ -714,12 +720,12 @@
                 "    for(var i in jsonData) {\r",
                 "        if((jsonData[i].ledgerAccountType === 'HUB_RECONCILIATION') && (jsonData[i].currency === environment.SIMPAYER_CURRENCY)) {\r",
                 "\r",
-                "environment.hubReconAccountBalanceAfterFundsOutCommit=jsonData[i].value;\r",
+                "environment.hubReconAccountBalanceAfterFundsOutAbort=jsonData[i].value;\r",
                 "        }\r",
                 "    }\r",
-                "console.log(environment.hubReconAccountBalanceAfterFundsOutCommit);\r",
+                "console.log(environment.hubReconAccountBalanceAfterFundsOutAbort);\r",
                 "\r",
-                "  environment.hubExpectedBalance = Number(environment.hubReconAccountBalanceBeforeFundsOutCommit) - Number(environment.fundsOutCommitAmount)\r",
+                "  environment.hubExpectedBalance = Number(environment.hubReconAccountBalanceBeforeFundsOutAbort)\r",
                 "  \r",
                 "console.log(environment.hubExpectedBalance);"
               ]
@@ -727,11 +733,11 @@
           }
         },
         {
-          "id": "Record-Funds-Out-Commit-trans-",
+          "id": "Record-Funds-Out-Abort-trans-s",
           "meta": {
-            "info": "Record Funds Out Commit - transfer status"
+            "info": "Record Funds Out Abort - transfer status"
           },
-          "description": "Record Funds Out Commit - transfer status",
+          "description": "Record Funds Out Abort - transfer status",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
@@ -777,7 +783,7 @@
               },
               {
                 "id": "content-type-proper-format",
-                "description": "content-type should be in the proper format",
+                "description": "content-type should match with the proper format",
                 "exec": [
                   "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=')"
                 ]
@@ -811,10 +817,10 @@
                 ]
               },
               {
-                "id": "trans-State-COMMITTED",
-                "description": "Transfer State should be COMMITTED",
+                "id": "trans-State-ABORTED",
+                "description": "Transfer State should be ABORTED",
                 "exec": [
-                  "expect(callback.body.transferState).to.equal('COMMITTED')"
+                  "expect(callback.body.transferState).to.equal('ABORTED')"
                 ]
               }
             ]
@@ -830,22 +836,19 @@
             },
             "postRequest": {
               "exec": [
-                "/*var callbackpayer = await axios.get(environment.testingtoolkitdfsp_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.transferidfi);\r",
+                "var callbackpayer = await axios.get(environment.testingtoolkitdfsp_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.transferidfi);\r",
                 "//console.log(callbackpayer.data);\r",
                 "\r",
                 "environment.payercallback = callbackpayer.data;\r",
                 "console.log(environment.payercallback);\r",
-                "*/"
+                ""
               ]
             }
           }
         }
       ],
-      "fileInfo": {
-        "path": "hub/golden_path/feature_tests/funds_out/Reserve&Commit/funds_out_commit.json",
-        "labels": [
-          "prod-tests"
-        ]
+      "options": {
+        "executionOrder": 17
       }
     }
   ]
