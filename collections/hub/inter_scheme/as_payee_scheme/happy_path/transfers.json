@@ -2,11 +2,11 @@
   "name": "Quotes Happy Path",
   "test_cases": [
     {
-      "id": 1,
+      "id": "proxy-transfers-svc",
       "name": "Proxy Transfers Service",
       "requests": [
         {
-          "id": 1,
+          "id": "Send-quote",
           "meta": {
             "info": "This request allows us to send a request for Quote (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
           },
@@ -61,84 +61,84 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-src-req-dest",
                 "description": "Callback FSP Source equal to request FSP Destination",
                 "exec": [
                   "expect(callback.headers['fspiop-source']).to.equal('{$request.headers['FSPIOP-Destination']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-quotes",
                 "description": "Callback content-type to be quotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-amountType-RECEIVE",
                 "description": "Request amountType to be RECEIVE",
                 "exec": [
                   "expect('{$request.body.amountType}').to.equal('RECEIVE')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-transactionType-scenario-t",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": 10,
+                "id": "req-transactionType-initiator-",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": 11,
+                "id": "req-transactionType-initiatorT",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
@@ -165,7 +165,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Send-trans",
           "meta": {
             "info": "This request allows us to send a request for Transfer (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
           },
@@ -189,29 +189,29 @@
             "FSPIOP-Proxy": "{$inputs.PROXY_HEADER}"
           },
           "body": {
-            "transferId": "{$prev.1.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.PROXY_PAYEE_TEST_PAYERFSP_ID}",
             "payeeFsp": "{$inputs.PROXY_PAYEE_TEST_PAYEEFSP_ID}",
             "amount": {
-              "amount": "{$prev.1.callback.body.transferAmount.amount}",
+              "amount": "{$prev.Send-quote.callback.body.transferAmount.amount}",
               "currency": "{$inputs.PROXY_AMOUNT_CURRENCY}"
             },
-            "expiration": "{$prev.1.callback.body.expiration}",
-            "ilpPacket": "{$prev.1.callback.body.ilpPacket}",
-            "condition": "{$prev.1.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "scriptingEngine": "javascript",
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback transferState to be COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')"

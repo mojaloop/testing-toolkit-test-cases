@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "account-linking--a7f8",
       "name": "Account Linking: Prelinking",
       "fileInfo": {
         "path": "hub/thirdparty/collection.json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "GET-linking-providers",
           "description": "GET /linking/providers",
           "apiVersion": {
             "minorVersion": 1,
@@ -22,7 +22,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-state",
                 "description": "response state",
                 "exec": [
                   "const expected = {",
@@ -39,14 +39,14 @@
       ]
     },
     {
-      "id": 2,
+      "id": "account-linking--bcef",
       "name": "Account Linking: Discovery",
       "fileInfo": {
         "path": "hub/thirdparty/collection.json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "GET-linking-accounts-fspId-use",
           "description": "GET /linking/accounts/{fspId}/{userId}",
           "apiVersion": {
             "minorVersion": 1,
@@ -64,21 +64,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-accounts",
                 "description": "Response body should contain accounts",
                 "exec": [
                   "expect(response.body).to.have.property('accounts')"
                 ]
               },
               {
-                "id": 2,
+                "id": "Accounts-array-has-two-element",
                 "description": "Accounts array has two elements",
                 "exec": [
                   "expect(response.body.accounts).to.have.length(2)"
                 ]
               },
               {
-                "id": 3,
+                "id": "acc-addresses",
                 "description": "An account should contain addresses",
                 "exec": [
                   "expect(response.body.accounts.map(a => a.address)).to.include.members(['dfspa.username.1234', 'dfspa.username.5678']);",
@@ -91,14 +91,14 @@
       ]
     },
     {
-      "id": 3,
+      "id": "account-linking--1963",
       "name": "Account Linking - Happy Path WEB",
       "fileInfo": {
         "path": "hub/thirdparty/collection.json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "POST-linking-request-consent",
           "description": "POST /linking/request-consent",
           "apiVersion": {
             "minorVersion": 1,
@@ -138,7 +138,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -171,7 +171,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "PATCH-linking-request-consent-",
           "description": "PATCH /linking/request-consent/{ID}/authenticate",
           "apiVersion": {
             "minorVersion": 1,
@@ -190,7 +190,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expectedScopes =  [",
@@ -219,7 +219,7 @@
           "url": "{$inputs.PISP_THIRDPARTY_SDK_OUTBOUND_URL}"
         },
         {
-          "id": 3,
+          "id": "POST-linking-request-consent-I",
           "description": "POST //linking/request-consent/{ID}/pass-credential",
           "apiVersion": {
             "minorVersion": 1,
@@ -249,7 +249,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -268,14 +268,14 @@
       ]
     },
     {
-      "id": 4,
+      "id": "account-linking--e06a",
       "name": "Account Linking - Happy Path OTP",
       "fileInfo": {
         "path": "hub/thirdparty/collection.json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "POST-linking-request-consent",
           "description": "POST /linking/request-consent",
           "apiVersion": {
             "minorVersion": 1,
@@ -315,7 +315,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -347,7 +347,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "PATCH-linking-request-consent-",
           "description": "PATCH /linking/request-consent/{ID}/authenticate",
           "apiVersion": {
             "minorVersion": 1,
@@ -366,7 +366,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expectedScopes =  [",
@@ -395,7 +395,7 @@
           "url": "{$inputs.PISP_THIRDPARTY_SDK_OUTBOUND_URL}"
         },
         {
-          "id": 3,
+          "id": "POST-linking-request-consent-I",
           "description": "POST //linking/request-consent/{ID}/pass-credential",
           "apiVersion": {
             "minorVersion": 1,
@@ -425,7 +425,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -444,14 +444,14 @@
       ]
     },
     {
-      "id": 5,
+      "id": "account-linking--d33f",
       "name": "Account Linking - Error @ consent request stage",
       "fileInfo": {
         "path": "hub/thirdparty/collection.json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "validateRequest-return-error",
           "description": "validateRequest should return an error",
           "apiVersion": {
             "minorVersion": 1,
@@ -490,7 +490,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response body",
                 "exec": [
                   "const expected = {",
@@ -511,14 +511,14 @@
       ]
     },
     {
-      "id": 6,
+      "id": "account-linking--202d",
       "name": "Account Linking - Error @ consent request authenticate stage",
       "fileInfo": {
         "path": "hub/thirdparty/collection.json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "POST-linking-request-consent",
           "description": "POST /linking/request-consent",
           "apiVersion": {
             "minorVersion": 1,
@@ -558,7 +558,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -591,7 +591,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "PATCH-linking-request-consent-",
           "description": "PATCH /linking/request-consent/{ID}/authenticate",
           "apiVersion": {
             "minorVersion": 1,
@@ -610,7 +610,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -632,14 +632,14 @@
       ]
     },
     {
-      "id": 7,
+      "id": "account-linking--aa83",
       "name": "Account Linking - Error @ consent request register credential stage",
       "fileInfo": {
         "path": "hub/thirdparty/collection.json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "POST-linking-request-consent",
           "description": "POST /linking/request-consent",
           "apiVersion": {
             "minorVersion": 1,
@@ -679,7 +679,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -712,7 +712,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "PATCH-linking-request-consent-",
           "description": "PATCH /linking/request-consent/{ID}/authenticate",
           "apiVersion": {
             "minorVersion": 1,
@@ -731,7 +731,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expectedScopes =  [",
@@ -760,7 +760,7 @@
           "url": "{$inputs.PISP_THIRDPARTY_SDK_OUTBOUND_URL}"
         },
         {
-          "id": 3,
+          "id": "POST-linking-request-consent-I",
           "description": "POST /linking/request-consent/{ID}/pass-credential",
           "apiVersion": {
             "minorVersion": 1,
@@ -790,7 +790,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -810,14 +810,14 @@
       ]
     },
     {
-      "id": 8,
+      "id": "third-party-tran-86a4",
       "name": "Third Party Transaction Request - Happy Path",
       "fileInfo": {
         "path": "hub/thirdparty/collection.json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "POST-linking-request-consent",
           "description": "POST /linking/request-consent",
           "apiVersion": {
             "minorVersion": 1,
@@ -857,7 +857,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -885,7 +885,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "PATCH-linking-request-consent-",
           "description": "PATCH /linking/request-consent/{ID}/authenticate",
           "apiVersion": {
             "minorVersion": 1,
@@ -904,7 +904,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -931,7 +931,7 @@
           "url": "{$inputs.PISP_THIRDPARTY_SDK_OUTBOUND_URL}"
         },
         {
-          "id": 3,
+          "id": "POST-linking-request-consent-I",
           "description": "POST /linking/request-consent/{ID}/pass-credential",
           "apiVersion": {
             "minorVersion": 1,
@@ -961,7 +961,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -978,7 +978,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "party-lookup",
           "description": "party lookup",
           "apiVersion": {
             "minorVersion": 1,
@@ -999,7 +999,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "const expected = {",
@@ -1029,7 +1029,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "initiate-third-party-txn-req",
           "description": "initiate third party transaction request",
           "apiVersion": {
             "minorVersion": 1,
@@ -1072,7 +1072,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "dynamic-fields",
                 "description": "dynamic fields",
                 "exec": [
                   "expect(response.body.authorization.expiration).to.match(/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}Z/)",
@@ -1081,42 +1081,42 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "currentState-authorizationRece",
                 "description": "currentState is authorizationReceived",
                 "exec": [
                   "expect(response.body.currentState).to.equal('authorizationReceived')"
                 ]
               },
               {
-                "id": 3,
+                "id": "authorization-rsp-transactionR",
                 "description": "authorization response contains transactionRequestId",
                 "exec": [
                   "expect(response.body.authorization).to.have.property('transactionRequestId')"
                 ]
               },
               {
-                "id": 4,
+                "id": "authorization-rsp-challenge",
                 "description": "authorization response contains challenge",
                 "exec": [
                   "expect(response.body.authorization).to.have.property('challenge')"
                 ]
               },
               {
-                "id": 5,
+                "id": "authorization-rsp-transferAmou",
                 "description": "authorization response contains transferAmount",
                 "exec": [
                   "expect(response.body.authorization).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "transferAmount-req-amt",
                 "description": "transferAmount is equal to request amount",
                 "exec": [
                   "expect(response.body.authorization.transferAmount.amount).to.equal('{$inputs.amount}')"
                 ]
               },
               {
-                "id": 7,
+                "id": "transferAmount-curr-requested-",
                 "description": "transferAmount currency is same as requested currency",
                 "exec": [
                   "expect(response.body.authorization.transferAmount.currency).to.equal('{$inputs.currency}')"
@@ -1141,7 +1141,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "approve-third-party-authorizat",
           "description": "approve third party authorization request",
           "apiVersion": {
             "minorVersion": 1,
@@ -1176,7 +1176,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp",
                 "description": "response",
                 "exec": [
                   "delete response.body.transactionStatus.transactionId",

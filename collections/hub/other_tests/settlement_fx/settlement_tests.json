@@ -3,7 +3,7 @@
   "name": "collections_tests_fx_fx_tests",
   "test_cases": [
     {
-      "id": 1,
+      "id": "settle-fx-tests",
       "name": "Settlement FX Transfer tests",
       "fileInfo": {
         "path": "hub/golden_path/fx/feature_tests/settlement/settlement_tests.json",
@@ -16,7 +16,7 @@
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Add-part-ALS",
           "description": "Add Participant to ALS",
           "apiVersion": {
             "minorVersion": 1,
@@ -50,7 +50,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
@@ -60,7 +60,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Get-party-info-Copy",
           "description": "Get party info Copy",
           "apiVersion": {
             "minorVersion": 0,
@@ -92,35 +92,35 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-party",
                 "description": "Callback body should contain party",
                 "exec": [
                   "expect(callback.body).to.have.property('party')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "cb-partyIdInfo-partyIdType-par",
                 "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
                 "exec": [
                   "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
@@ -131,7 +131,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "GET-services-FXP",
           "description": "GET /services/FXP",
           "apiVersion": {
             "minorVersion": 0,
@@ -160,21 +160,21 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-providers",
                 "description": "Callback body should contain providers",
                 "exec": [
                   "expect(callback.body).to.have.property('providers')",
@@ -182,7 +182,7 @@
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
@@ -192,7 +192,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "POST-fxQuotes",
           "description": "POST /fxQuotes",
           "apiVersion": {
             "minorVersion": 0,
@@ -237,42 +237,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-conversionTerms",
                 "description": "Callback body should contain conversionTerms",
                 "exec": [
                   "expect(callback.body).to.have.property('conversionTerms')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.conversionTerms.sourceAmount.currency).to.equal('{$request.body.conversionTerms.sourceAmount.currency}')",
@@ -280,21 +280,21 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-fxQuotes",
                 "description": "Callback content-type to be fxQuotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.fxQuotes+json')"
                 ]
               },
               {
-                "id": 16,
+                "id": "cb-condition",
                 "description": "Callback body should contain condition",
                 "exec": [
                   "expect(callback.body).to.have.property('condition')"
                 ]
               },
               {
-                "id": 17,
+                "id": "cb-target-amt",
                 "description": "Callback body should contain target amount",
                 "exec": [
                   "expect(callback.body.conversionTerms.targetAmount).to.have.property('amount')"
@@ -304,7 +304,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "POST-quotes",
           "description": "POST /quotes",
           "apiVersion": {
             "minorVersion": 0,
@@ -348,9 +348,9 @@
             },
             "payee": {
               "partyIdInfo": {
-                "partyIdType": "{$prev.2.callback.body.party.partyIdInfo.partyIdType}",
-                "partyIdentifier": "{$prev.2.callback.body.party.partyIdInfo.partyIdentifier}",
-                "fspId": "{$prev.2.callback.body.party.partyIdInfo.fspId}"
+                "partyIdType": "{$prev.Get-party-info-Copy.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-info-Copy.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.Get-party-info-Copy.callback.body.party.partyIdInfo.fspId}"
               }
             },
             "amountType": "SEND",
@@ -369,42 +369,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -412,28 +412,28 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-quotes",
                 "description": "Callback content-type to be quotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-transactionType-scenario-t",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": 10,
+                "id": "req-transactionType-initiator-",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": 11,
+                "id": "req-transactionType-initiatorT",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
@@ -443,7 +443,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Get-Accounts-FXP-BEFORE-fxTran",
           "description": "Get Accounts for FXP BEFORE fxTransfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -492,7 +492,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "POST-fxTransfers",
           "description": "POST /fxTransfers",
           "apiVersion": {
             "minorVersion": 0,
@@ -516,7 +516,7 @@
             "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}"
           },
           "body": {
-            "commitRequestId": "{$prev.4.callback.body.conversionTerms.conversionId}",
+            "commitRequestId": "{$prev.POST-fxQuotes.callback.body.conversionTerms.conversionId}",
             "determiningTransferId": "{$function.generic.generateID}",
             "initiatingFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "counterPartyFsp": "{$inputs.FX_TESTFXP1_ID}",
@@ -529,7 +529,7 @@
               "currency": "{$inputs.FX_TARGET_CURRENCY}",
               "amount": "{$inputs.FX_TARGET_AMOUNT}"
             },
-            "condition": "{$prev.4.callback.body.condition}",
+            "condition": "{$prev.POST-fxQuotes.callback.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "scriptingEngine": "javascript",
@@ -537,59 +537,59 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-conversionState-RESERVED",
                 "description": "Callback conversionState to be RESERVED",
                 "exec": [
                   "expect(callback.body.conversionState).to.equal('RESERVED')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-fxTransfers",
                 "description": "Callback content-type to be fxTransfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.fxTransfers+json')"
                 ]
               },
               {
-                "id": 8,
+                "id": "cb-fulfilment",
                 "description": "Callback body should contain fulfilment",
                 "exec": [
                   "expect(callback.body).to.have.property('fulfilment')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.4.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.POST-fxQuotes.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
@@ -603,7 +603,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "POST-trans",
           "description": "POST /transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -621,15 +621,15 @@
           "method": "post",
           "url": "{$inputs.HOST_ML_API_ADAPTER}",
           "body": {
-            "transferId": "{$prev.6.request.body.determiningTransferId}",
+            "transferId": "{$prev.Get-Accounts-FXP-BEFORE-fxTran.request.body.determiningTransferId}",
             "payeeFsp": "{$inputs.FXP_PAYEE_DFSP_ID}",
             "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
             "amount": {
               "currency": "{$inputs.FX_TARGET_CURRENCY}",
               "amount": "{$inputs.amount}"
             },
-            "ilpPacket": "{$prev.5.callback.body.ilpPacket}",
-            "condition": "{$prev.5.callback.body.condition}",
+            "ilpPacket": "{$prev.POST-quotes.callback.body.ilpPacket}",
+            "condition": "{$prev.POST-quotes.callback.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "headers": {
@@ -643,52 +643,52 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback transferState to be COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-transfers",
                 "description": "Callback content-type to be transfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.4.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.POST-fxQuotes.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
@@ -702,7 +702,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "Get-Accounts-FXP-AFTER-trans",
           "description": "Get Accounts for FXP AFTER Transfer",
           "apiVersion": {
             "minorVersion": 0,
@@ -753,14 +753,14 @@
       ]
     },
     {
-      "id": 2,
+      "id": "create-settle",
       "name": "Create Settlement on the current open window",
       "meta": {
         "info": "Get current open window and close it"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Get-Existing-Open-Window",
           "meta": {
             "info": "Get Existing Open Window"
           },
@@ -785,14 +785,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-200",
                 "description": "Response status to be 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "State-OPEN",
                 "description": "State should be OPEN",
                 "exec": [
                   "expect(environment.openWindowstate).to.equal(\"OPEN\")"
@@ -816,7 +816,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Close-existent-window",
           "meta": {
             "info": "Close existent window"
           },
@@ -845,7 +845,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200-400",
                 "description": "Status code is 200 or 400",
                 "exec": [
                   "if(response.status === 400){",
@@ -859,7 +859,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "New-window-State-OPEN",
                 "description": "New window State should be OPEN",
                 "exec": [
                   "",
@@ -899,7 +899,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Create-settle-Closed-Window",
           "meta": {
             "info": "Create Settlement for Closed Window"
           },
@@ -921,35 +921,35 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "Status-code-200",
                 "description": "Status code is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "settle-State-PENDING_SETTLEMEN",
                 "description": "Settlement State should be PENDING_SETTLEMENT",
                 "exec": [
                   "expect(environment.winstate).to.equal(\"PENDING_SETTLEMENT\")"
                 ]
               },
               {
-                "id": 3,
+                "id": "Number-associated-windows-1",
                 "description": "Number of associated windows should be 1",
                 "exec": [
                   "expect(response.body.settlementWindows.length).to.equal(1)"
                 ]
               },
               {
-                "id": 4,
+                "id": "Associated-settle-Window-ID-co",
                 "description": "Associated Settlement Window ID is the correct one",
                 "exec": [
                   "expect(response.body.settlementWindows[0].id).to.equal(environment.closedWindowID)"
                 ]
               },
               {
-                "id": 5,
+                "id": "Associated-settle-Window-state",
                 "description": "Associated Settlement Window state should be PENDING_SETTLEMENT",
                 "exec": [
                   "expect(response.body.settlementWindows[0].state).to.equal(\"PENDING_SETTLEMENT\")"
@@ -998,14 +998,14 @@
       }
     },
     {
-      "id": 11,
+      "id": "prepare-settle",
       "name": "Prepare-settlement",
       "meta": {
         "info": "Prepare-settlement"
       },
       "requests": [
         {
-          "id": 4,
+          "id": "Prepare-settle",
           "meta": {
             "info": "Prepare Settlement"
           },
@@ -1029,7 +1029,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
@@ -1061,14 +1061,14 @@
       }
     },
     {
-      "id": 12,
+      "id": "reserve-settlement",
       "name": "reserve-settlement",
       "meta": {
         "info": "reserve-settlement"
       },
       "requests": [
         {
-          "id": 4,
+          "id": "reserve-settle",
           "meta": {
             "info": "reserve Settlement"
           },
@@ -1092,7 +1092,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status is 200",
                 "exec": [
                   "//if(environment.WINDOWISEMPTY === false){",
@@ -1118,7 +1118,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "check-state-participants-after",
           "meta": {
             "info": "check state for participants after prepare"
           },
@@ -1143,28 +1143,28 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status is 200",
                 "exec": [
                   "expect(response.status).to.equal(200)"
                 ]
               },
               {
-                "id": 2,
+                "id": "Check-status-PS_TRANSFERS_RESE",
                 "description": "Check status PS_TRANSFERS_RESERVED",
                 "exec": [
                   "expect(response.body.state).to.eql(\"PS_TRANSFERS_RESERVED\");"
                 ]
               },
               {
-                "id": 3,
+                "id": "Check-status-window-PENDING-se",
                 "description": "Check status for window is PENDING SETTLEMENT",
                 "exec": [
                   " expect(response.body.settlementWindows[0].state).to.eql(\"PENDING_SETTLEMENT\");"
                 ]
               },
               {
-                "id": 4,
+                "id": "acc-state-PS_TRANSFERS_RESERVE",
                 "description": "Account state is PS_TRANSFERS_RESERVEDfor all accounts",
                 "exec": [
                   "expect(environment.controlvar).to.equal(true)"
@@ -1215,14 +1215,14 @@
       }
     },
     {
-      "id": 13,
+      "id": "commit-settlement",
       "name": "commit-settlement",
       "meta": {
         "info": "commit-settlement"
       },
       "requests": [
         {
-          "id": 4,
+          "id": "commit-settle",
           "meta": {
             "info": "commit Settlement"
           },
@@ -1246,7 +1246,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status is 200",
                 "exec": [
                   "//if(environment.WINDOWISEMPTY === false){",
@@ -1280,14 +1280,14 @@
       }
     },
     {
-      "id": 14,
+      "id": "settle-settlement",
       "name": "settle-settlement",
       "meta": {
         "info": "settle-settlement"
       },
       "requests": [
         {
-          "id": 4,
+          "id": "settle-settle",
           "meta": {
             "info": "settle Settlement"
           },
@@ -1311,7 +1311,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-code-status-200",
                 "description": "Response code status is 200",
                 "exec": [
                   "//if(environment.WINDOWISEMPTY === false){",
@@ -1337,7 +1337,7 @@
           }
         },
         {
-          "id": 15,
+          "id": "Get-Accounts-FXP-AFTER-settle",
           "description": "Get Accounts for FXP AFTER Settlement",
           "apiVersion": {
             "minorVersion": 0,

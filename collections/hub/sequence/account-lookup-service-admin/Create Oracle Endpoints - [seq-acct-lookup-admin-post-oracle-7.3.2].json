@@ -2,14 +2,14 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": 1,
+      "id": "create-oracle-en-89c2",
       "name": "Create Oracle Endpoints - Happy Path [seq-acct-lookup-admin-post-oracle-7.3.2].json",
       "meta": {
         "info": "Create Oracle Endpoints - Happy Path [seq-acct-lookup-admin-post-oracle-7.3.2].json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Create-Oracle-Endpoint",
           "meta": {
             "info": "Create Oracle Endpoint"
           },
@@ -41,7 +41,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-201",
                 "description": "Response status should be 201",
                 "exec": [
                   "if (response.status !== 500) {",
@@ -50,7 +50,7 @@
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-status-could-500-if-duplic",
                 "description": "Response status could be 500 if duplicate request is sent",
                 "exec": [
                   "if (response.status !== 201) {",
@@ -88,7 +88,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Clean-up",
           "meta": {
             "info": "Clean up"
           },
@@ -114,7 +114,7 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-204",
                 "description": "Response status should be 204",
                 "exec": [
                   "expect(response.status).to.equal(204)"
@@ -129,14 +129,14 @@
       }
     },
     {
-      "id": 2,
+      "id": "create-oracle-en-c63c",
       "name": "Create Oracle Endpoint - Unhappy Paths [seq-acct-lookup-admin-post-oracle-7.3.2].json",
       "meta": {
         "info": "Create Oracle Endpoint - Unhappy Paths [seq-acct-lookup-admin-post-oracle-7.3.2].json"
       },
       "requests": [
         {
-          "id": 1,
+          "id": "Invalid-req-Missing-Accept-hdr",
           "meta": {
             "info": "Invalid Request - Missing Accept Header"
           },
@@ -167,14 +167,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-400",
                 "description": "Response status code should be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-payload-appropriate-error-",
                 "description": "Response payload should contain appropriate error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')",
@@ -186,7 +186,7 @@
           }
         },
         {
-          "id": 2,
+          "id": "Invalid-req-Missing-endpoint-p",
           "meta": {
             "info": "Invalid Request - Missing 'endpoint' in payload"
           },
@@ -214,14 +214,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-400",
                 "description": "Response status code should be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-payload-appropriate-error-",
                 "description": "Response payload should contain appropriate error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')",
@@ -233,7 +233,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Invalid-req-Missing-oracleIdTy",
           "meta": {
             "info": "Invalid Request - Missing 'oracleIdType' in payload"
           },
@@ -264,14 +264,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-400",
                 "description": "Response status code should be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-payload-appropriate-error-",
                 "description": "Response payload should contain appropriate error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')",
@@ -283,7 +283,7 @@
           }
         },
         {
-          "id": 4,
+          "id": "Invalid-req-Non-existing-curr",
           "meta": {
             "info": "Invalid Request - Non-existing Currency"
           },
@@ -315,14 +315,14 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-code-400",
                 "description": "Response status code should be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-payload-appropriate-error-",
                 "description": "Response payload should contain appropriate error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')",

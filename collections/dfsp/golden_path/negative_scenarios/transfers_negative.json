@@ -2,14 +2,14 @@
   "name": "dfsp-p2p-tests",
   "test_cases": [
     {
-      "id": 6,
+      "id": "post-transfers-mis-hdr",
       "name": "POST /Transfers with missing headers",
       "meta": {
         "info": "POST /Transfers with missing headers"
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -67,42 +67,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -110,35 +110,35 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-quotes",
                 "description": "Callback content-type to be quotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-amountType-SEND",
                 "description": "Request amountType to be SEND",
                 "exec": [
                   "expect('{$request.body.amountType}').to.equal('SEND')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-transactionType-scenario-t",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": 10,
+                "id": "req-transactionType-initiator-",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": 11,
+                "id": "req-transactionType-initiatorT",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
@@ -152,7 +152,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -172,88 +172,88 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback transferState to be COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-transfers",
                 "description": "Callback content-type to be transfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
                 ]
               },
               {
-                "id": 7,
+                "id": "req-transferId-quote-req-trans",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
-                  "expect('{$request.body.transferId}').to.equal('{$prev.2.request.body.transactionId}')"
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-transferAmount-amt-curr-qu",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
-                  "expect('{$prev.2.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$prev.2.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.2.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
           }
         },
         {
-          "id": 4,
+          "id": "Send-trans-missing-date-hdr",
           "meta": {
             "info": "Send transfer with missing date header"
           },
@@ -272,56 +272,56 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-date-type",
                 "description": "Response should contain date-type",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('date')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3102",
                 "description": "Response should contain '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -331,7 +331,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-trans-missing-content-typ",
           "meta": {
             "info": "Send transfer with missing content type header (BUG)"
           },
@@ -350,49 +350,49 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp",
                 "description": "Response should contain body",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('body')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3102",
                 "description": "Response should contain '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3102')"
@@ -402,7 +402,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Send-trans-missing-fspiop-hdr",
           "meta": {
             "info": "Send transfer with missing fspiop header"
           },
@@ -421,56 +421,56 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-src-hdr",
                 "description": "Response should contain fspiop-source header",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('fspiop-source')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3102",
                 "description": "Response should contain '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -480,7 +480,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Send-trans-missing-accept-hdr",
           "meta": {
             "info": "Send transfer with missing accept header"
           },
@@ -499,56 +499,56 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-accept-hdr",
                 "description": "Response should contain accept header",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('accept')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3102",
                 "description": "Response should contain '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -560,14 +560,14 @@
       ]
     },
     {
-      "id": 7,
+      "id": "post-transfers-wrong-hdr",
       "name": "POST /Transfers with wrong headers",
       "meta": {
         "info": "POST /Transfers with wrong headers"
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -625,42 +625,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -668,35 +668,35 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-quotes",
                 "description": "Callback content-type to be quotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-amountType-SEND",
                 "description": "Request amountType to be SEND",
                 "exec": [
                   "expect('{$request.body.amountType}').to.equal('SEND')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-transactionType-scenario-t",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": 10,
+                "id": "req-transactionType-initiator-",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": 11,
+                "id": "req-transactionType-initiatorT",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
@@ -710,7 +710,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -730,88 +730,88 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback transferState to be COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-transfers",
                 "description": "Callback content-type to be transfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
                 ]
               },
               {
-                "id": 7,
+                "id": "req-transferId-quote-req-trans",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
-                  "expect('{$request.body.transferId}').to.equal('{$prev.2.request.body.transactionId}')"
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-transferAmount-amt-curr-qu",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
-                  "expect('{$prev.2.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$prev.2.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.2.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
           }
         },
         {
-          "id": 4,
+          "id": "Send-trans-wrong-date-hdr-BUG",
           "meta": {
             "info": "Send transfer with wrong date header (BUG)"
           },
@@ -831,49 +831,49 @@
             "Date": "Thursday"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-date-type",
                 "description": "Response should contain date-type",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('date')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3102",
                 "description": "Response should contain '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3102')"
@@ -883,7 +883,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Send-trans-wrong-accept-hdr-BU",
           "meta": {
             "info": "Send transfer with wrong accept header (BUG)"
           },
@@ -903,49 +903,49 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-accept-hdr",
                 "description": "Response should contain accept header",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('accept')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3102",
                 "description": "Response should contain '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3102')"
@@ -957,14 +957,14 @@
       ]
     },
     {
-      "id": 9,
+      "id": "post-transfers-mis-par",
       "name": "POST /Transfers with missing parameters in body",
       "meta": {
         "info": "POST /Transfers with missing parameters in body"
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -1022,42 +1022,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -1065,35 +1065,35 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-quotes",
                 "description": "Callback content-type to be quotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-amountType-SEND",
                 "description": "Request amountType to be SEND",
                 "exec": [
                   "expect('{$request.body.amountType}').to.equal('SEND')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-transactionType-scenario-t",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": 10,
+                "id": "req-transactionType-initiator-",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": 11,
+                "id": "req-transactionType-initiatorT",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
@@ -1107,7 +1107,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -1127,88 +1127,88 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback transferState to be COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-transfers",
                 "description": "Callback content-type to be transfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
                 ]
               },
               {
-                "id": 7,
+                "id": "req-transferId-quote-req-trans",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
-                  "expect('{$request.body.transferId}').to.equal('{$prev.2.request.body.transactionId}')"
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-transferAmount-amt-curr-qu",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
-                  "expect('{$prev.2.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$prev.2.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.2.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
           }
         },
         {
-          "id": 4,
+          "id": "Send-trans-missing-transferId",
           "meta": {
             "info": "Send transfer with missing transferId in body"
           },
@@ -1235,49 +1235,49 @@
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-transferId-type",
                 "description": "Response should contain transferId-type",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('transferId')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3100",
                 "description": "Response should contain '3100'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -1287,7 +1287,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-trans-missing-payerFsp",
           "meta": {
             "info": "Send transfer with missing payerFsp in body"
           },
@@ -1307,56 +1307,56 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-payerFsp",
                 "description": "Response should contain payerFsp",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('payerFsp')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3100",
                 "description": "Response should contain '3100'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -1366,7 +1366,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Send-trans-missing-payeeFsp",
           "meta": {
             "info": "Send transfer with missing payeeFsp in body"
           },
@@ -1386,56 +1386,56 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-payeeFsp",
                 "description": "Response should contain payeeFsp",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('payeeFsp')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3100",
                 "description": "Response should contain '3100'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -1445,7 +1445,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Send-trans-missing-amt",
           "meta": {
             "info": "Send transfer with missing amount in body"
           },
@@ -1465,56 +1465,56 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-transferId-type",
                 "description": "Response should contain transferId-type",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('amount')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3100",
                 "description": "Response should contain '3100'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -1524,7 +1524,7 @@
           }
         },
         {
-          "id": 8,
+          "id": "Send-trans-missing-curr",
           "meta": {
             "info": "Send transfer with missing currency in body"
           },
@@ -1544,56 +1544,56 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": ""
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-curr",
                 "description": "Response should contain currency",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('currency')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3100",
                 "description": "Response should contain '3100'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -1603,7 +1603,7 @@
           }
         },
         {
-          "id": 9,
+          "id": "Send-trans-missing-expiration",
           "meta": {
             "info": "Send transfer with missing expiration in body "
           },
@@ -1623,7 +1623,7 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
@@ -1631,48 +1631,48 @@
               "currency": "{$inputs.currency}"
             },
             "expiration": "",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-expiration",
                 "description": "Response should contain expiration",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('expiration')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3100",
                 "description": "Response should contain '3100'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -1682,7 +1682,7 @@
           }
         },
         {
-          "id": 10,
+          "id": "Send-trans-missing-ilpPacket",
           "meta": {
             "info": "Send transfer with missing ilpPacket in body"
           },
@@ -1702,56 +1702,56 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
             "ilpPacket": "",
-            "condition": "{$prev.2.callback.body.condition}"
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-transferId",
                 "description": "Response should contain transferId",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('ilpPacket')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3100",
                 "description": "Response should contain '3100'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -1761,7 +1761,7 @@
           }
         },
         {
-          "id": 11,
+          "id": "Send-trans-missing-condition",
           "meta": {
             "info": "Send transfer with missing condition in body "
           },
@@ -1781,56 +1781,56 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
             "condition": ""
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-condition",
                 "description": "Response should contain condition",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('condition')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3100",
                 "description": "Response should contain '3100'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -1842,14 +1842,14 @@
       ]
     },
     {
-      "id": 10,
+      "id": "post-transfers-wrong-par",
       "name": "POST /Transfers with wrong parameters in body",
       "meta": {
         "info": "POST /Transfers with wrong parameters in body"
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -1907,42 +1907,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -1950,35 +1950,35 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-quotes",
                 "description": "Callback content-type to be quotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-amountType-SEND",
                 "description": "Request amountType to be SEND",
                 "exec": [
                   "expect('{$request.body.amountType}').to.equal('SEND')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-transactionType-scenario-t",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": 10,
+                "id": "req-transactionType-initiator-",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": 11,
+                "id": "req-transactionType-initiatorT",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
@@ -1992,7 +1992,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-trans",
           "meta": {
             "info": "Send transfer"
           },
@@ -2012,88 +2012,88 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback transferState to be COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-transfers",
                 "description": "Callback content-type to be transfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
                 ]
               },
               {
-                "id": 7,
+                "id": "req-transferId-quote-req-trans",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
-                  "expect('{$request.body.transferId}').to.equal('{$prev.2.request.body.transactionId}')"
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-transferAmount-amt-curr-qu",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
-                  "expect('{$prev.2.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$prev.2.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.2.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
           }
         },
         {
-          "id": 4,
+          "id": "Send-trans-wrong-curr",
           "meta": {
             "info": "Send transfer with wrong  currency in body"
           },
@@ -2113,56 +2113,56 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "POC"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-curr",
                 "description": "Response should contain currency",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('currency')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3102",
                 "description": "Response should contain '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -2172,7 +2172,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-trans-wrong-amt",
           "meta": {
             "info": "Send transfer with wrong  amount in body"
           },
@@ -2192,56 +2192,56 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "fasdas",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-amt",
                 "description": "Response should contain amount",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('amount')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3102",
                 "description": "Response should contain '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -2251,7 +2251,7 @@
           }
         },
         {
-          "id": 6,
+          "id": "Send-trans-wrong-transferId-pa",
           "meta": {
             "info": "Send transfer with wrong  transferId in body parameters"
           },
@@ -2278,49 +2278,49 @@
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-transferId",
                 "description": "Response should contain transferId",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('transferId')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3102",
                 "description": "Response should contain '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -2330,7 +2330,7 @@
           }
         },
         {
-          "id": 7,
+          "id": "Send-trans-wrong-expiration",
           "meta": {
             "info": "Send transfer with wrong  expiration in body"
           },
@@ -2350,7 +2350,7 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
@@ -2358,48 +2358,48 @@
               "currency": "{$inputs.currency}"
             },
             "expiration": "thursd",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-400",
                 "description": "Response status to be 400",
                 "exec": [
                   "expect(response.status).to.equal(400)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-error-information",
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 3,
+                "id": "rsp-error-code",
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 4,
+                "id": "rsp-expiration",
                 "description": "Response should contain expiration",
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('expiration')"
                 ]
               },
               {
-                "id": 5,
+                "id": "rsp-3102",
                 "description": "Response should contain '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
-                "id": 6,
+                "id": "rsp-statusText-Bad-req",
                 "description": "Response statusText be Bad Request",
                 "exec": [
                   "expect(response.statusText).to.equal('Bad Request')"
@@ -2411,14 +2411,14 @@
       ]
     },
     {
-      "id": 13,
+      "id": "post-transfers-wrong-opt-hdr",
       "name": "POST /Transfers with wrong optional parameters and headers",
       "meta": {
         "info": "POST /Transfers with wrong optional parameters and headers"
       },
       "requests": [
         {
-          "id": 2,
+          "id": "Send-quote",
           "meta": {
             "info": "Send quote"
           },
@@ -2476,42 +2476,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -2519,35 +2519,35 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-quotes",
                 "description": "Callback content-type to be quotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-amountType-SEND",
                 "description": "Request amountType to be SEND",
                 "exec": [
                   "expect('{$request.body.amountType}').to.equal('SEND')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-transactionType-scenario-t",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": 10,
+                "id": "req-transactionType-initiator-",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": 11,
+                "id": "req-transactionType-initiatorT",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
@@ -2561,7 +2561,7 @@
           }
         },
         {
-          "id": 3,
+          "id": "Send-trans-wrong-optional-HTTP",
           "meta": {
             "info": "Send transfer with wrong optional HTTP header"
           },
@@ -2582,88 +2582,88 @@
             "FSPIOP-URI": "GET"
           },
           "body": {
-            "transferId": "{$prev.2.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.2.callback.body.expiration}",
-            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
-            "condition": "{$prev.2.callback.body.condition}"
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback transferState to be COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-transfers",
                 "description": "Callback content-type to be transfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
                 ]
               },
               {
-                "id": 7,
+                "id": "req-transferId-quote-req-trans",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
-                  "expect('{$request.body.transferId}').to.equal('{$prev.2.request.body.transactionId}')"
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-transferAmount-amt-curr-qu",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
-                  "expect('{$prev.2.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$prev.2.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.2.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
           }
         },
         {
-          "id": 4,
+          "id": "Send-quote-Copy",
           "meta": {
             "info": "Send quote Copy"
           },
@@ -2721,42 +2721,42 @@
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferAmount",
                 "description": "Callback body should contain transferAmount",
                 "exec": [
                   "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-transferAmount-amt-curr-req",
                 "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
                   "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
@@ -2764,35 +2764,35 @@
                 ]
               },
               {
-                "id": 7,
+                "id": "cb-content-type-quotes",
                 "description": "Callback content-type to be quotes",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-amountType-SEND",
                 "description": "Request amountType to be SEND",
                 "exec": [
                   "expect('{$request.body.amountType}').to.equal('SEND')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-transactionType-scenario-t",
                 "description": "Request transactionType scenario to be TRANSFER",
                 "exec": [
                   "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
                 ]
               },
               {
-                "id": 10,
+                "id": "req-transactionType-initiator-",
                 "description": "Request transactionType initiator to be PAYER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
                 ]
               },
               {
-                "id": 11,
+                "id": "req-transactionType-initiatorT",
                 "description": "Request transactionType initiatorType to be CONSUMER",
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
@@ -2806,7 +2806,7 @@
           }
         },
         {
-          "id": 5,
+          "id": "Send-trans-wrong-transactionId",
           "meta": {
             "info": "Send transfer with wrong transactionId in body"
           },
@@ -2826,82 +2826,82 @@
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
-            "transferId": "{$prev.4.request.body.transactionId}",
+            "transferId": "{$prev.Send-quote-Copy.request.body.transactionId}",
             "payerFsp": "{$inputs.fromFspId}",
             "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "expiration": "{$prev.4.callback.body.expiration}",
-            "ilpPacket": "{$prev.4.callback.body.ilpPacket}",
-            "condition": "{$prev.4.callback.body.condition}",
+            "expiration": "{$prev.Send-quote-Copy.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote-Copy.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote-Copy.callback.body.condition}",
             "transactionId": "123124123123"
           },
           "tests": {
             "assertions": [
               {
-                "id": 1,
+                "id": "rsp-status-202",
                 "description": "Response status to be 202",
                 "exec": [
                   "expect(response.status).to.equal(202)"
                 ]
               },
               {
-                "id": 2,
+                "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
                   "expect(response.statusText).to.equal('Accepted')"
                 ]
               },
               {
-                "id": 3,
+                "id": "cb-Content-Length-not-0",
                 "description": "Callback Content Length not 0",
                 "exec": [
                   "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
-                "id": 4,
+                "id": "cb-dest-req-src",
                 "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
-                "id": 5,
+                "id": "cb-transferState-COMMITTED",
                 "description": "Callback transferState to be COMMITTED",
                 "exec": [
                   "expect(callback.body.transferState).to.equal('COMMITTED')"
                 ]
               },
               {
-                "id": 6,
+                "id": "cb-content-type-transfers",
                 "description": "Callback content-type to be transfers",
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
                 ]
               },
               {
-                "id": 7,
+                "id": "req-transferId-quote-req-trans",
                 "description": "Request transferId same as quote request transferId",
                 "exec": [
-                  "expect('{$request.body.transferId}').to.equal('{$prev.4.request.body.transactionId}')"
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote-Copy.request.body.transactionId}')"
                 ]
               },
               {
-                "id": 8,
+                "id": "req-transferAmount-amt-curr-qu",
                 "description": "Request transferAmount (amount & currency) to match quote request",
                 "exec": [
-                  "expect('{$prev.2.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
-                  "expect('{$prev.2.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
                 ]
               },
               {
-                "id": 9,
+                "id": "req-src-quote-cb-dest",
                 "description": "Request FSP source the same as quote callback FSP destination",
                 "exec": [
-                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.2.callback.headers.fspiop-destination}')"
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
                 ]
               }
             ]
