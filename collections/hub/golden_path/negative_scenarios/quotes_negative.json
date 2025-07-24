@@ -81,8 +81,9 @@
             ]
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -145,11 +146,13 @@
           "headers": {
             "Accept": "{$inputs.acceptQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -215,7 +218,7 @@
               },
               {
                 "id": 6,
-                "description": "error code should be '3102'",
+                "description": "error code should be '3101'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
@@ -224,7 +227,11 @@
                 "id": 7,
                 "description": "Response should contain content header",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('content-type')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('content-type')",
+                  "} else { // for iso20022 the request is transformed is content-type is missing hence we get this error",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('accept')",
+                  "}"
                 ]
               }
             ]
@@ -298,11 +305,13 @@
           "headers": {
             "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -359,7 +368,8 @@
           "headers": {
             "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "{$inputs.contentTypeQuotes}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
             "quoteId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
@@ -589,8 +599,9 @@
             ]
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -699,7 +710,8 @@
             "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "application/vnd.interoperability.quotes+xml;version=5.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "disabled": false
         },
@@ -720,7 +732,7 @@
           "operationPath": "/quotes",
           "path": "/quotes",
           "method": "post",
-          "url": null,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "tests": {
             "assertions": [
               {
@@ -755,14 +767,14 @@
                 "id": 5,
                 "description": "Response should contain Accept",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Accept')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('accept')"
                 ]
               },
               {
                 "id": 6,
-                "description": "Response should contain '3001'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3001')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
@@ -771,7 +783,8 @@
             "Accept": "testAcceptText",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "disabled": false
         },
@@ -797,7 +810,8 @@
             "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "12345",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "tests": {
             "assertions": [
@@ -899,7 +913,8 @@
             "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "testFspiopSourceValue"
+            "FSPIOP-Source": "testFspiopSourceValue",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "tests": {
             "assertions": [
@@ -1043,7 +1058,11 @@
                 "id": 5,
                 "description": "Response should contain quote",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('quote')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('quote')",
+                  "} else {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('/requestBody/CdtTrfTxInf/PmtId/TxId must match pattern')",
+                  "}"
                 ]
               },
               {
@@ -1059,11 +1078,13 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
             "quoteId": "",
-            "transactionId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -1136,7 +1157,11 @@
                 "id": 5,
                 "description": "Response should contain transaction",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('transaction')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('transaction')",
+                  "} else {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('/requestBody/CdtTrfTxInf/PmtId/EndToEndId must match pattern')",
+                  "}"
                 ]
               },
               {
@@ -1167,10 +1192,11 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
             "transactionId": "",
             "payer": {
               "partyIdInfo": {
@@ -1229,11 +1255,13 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": "",
               "personalInfo": {
@@ -1297,14 +1325,23 @@
                 "id": 5,
                 "description": "Response should contain payer",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('payer')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('payer')",
+                  "} else {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('/requestBody/CdtTrfTxInf must have required property \\'Dbtr\\'')",
+                  "}"
                 ]
               },
               {
                 "id": 6,
-                "description": "Response should contain '3101'",
+                "description": "Response should contain '3101' or '3102'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.errorInformation.errorCode).to.include('3101')",
+                  "} else {",
+                  "  // This is a bug: https://github.com/mojaloop/project/issues/4165",
+                  "  expect(response.body.errorInformation.errorCode).to.include('3102')",
+                  "}"
                 ]
               }
             ]
@@ -1333,11 +1370,13 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -1377,42 +1416,54 @@
                 "id": 1,
                 "description": "Response status to be 400",
                 "exec": [
-                  "expect(response.status).to.equal(400)"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.status).to.equal(400)",
+                  "}"
                 ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
                 "exec": [
-                  "expect(response.statusText).to.equal('Bad Request')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.statusText).to.equal('Bad Request')",
+                  "}"                  
                 ]
               },
               {
                 "id": 3,
                 "description": "Response should contain error information",
                 "exec": [
-                  "expect(response.body).to.have.property('errorInformation')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body).to.have.property('errorInformation')",
+                  "}"
                 ]
               },
               {
                 "id": 4,
                 "description": "Response should contain error code",
                 "exec": [
-                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body.errorInformation).to.have.property('errorCode')",
+                  "}"
                 ]
               },
               {
                 "id": 5,
                 "description": "Response should contain amount",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('amount')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body.errorInformation.errorDescription).to.include('amount')",
+                  "}"
                 ]
               },
               {
                 "id": 6,
                 "description": "Response should contain '3100'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  " expect(response.body.errorInformation.errorCode).to.include('3100')",
+                  "}"
                 ]
               }
             ]
@@ -1441,11 +1492,13 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -1513,7 +1566,11 @@
                 "id": 5,
                 "description": "Response should contain amount",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('amount')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('amount')",
+                  "} else {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('/requestBody/CdtTrfTxInf/IntrBkSttlmAmt/ActiveCurrencyAndAmount must match pattern')",
+                  "}"                  
                 ]
               },
               {
@@ -1549,11 +1606,13 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -1621,7 +1680,11 @@
                 "id": 5,
                 "description": "Response should contain currency",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('currency')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('currency')",
+                  "} else {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('/requestBody/CdtTrfTxInf/IntrBkSttlmAmt/Ccy must be equal to one of the allowed values')",
+                  "}"
                 ]
               },
               {
@@ -1657,11 +1720,13 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -1729,14 +1794,23 @@
                 "id": 5,
                 "description": "Response should contain transactionType",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('transactionType')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('transactionType')",
+                  "} else {",
+                  "  expect(response.body.errorInformation.errorDescription).to.include('/requestBody/CdtTrfTxInf/Purp must have required property \\'Cd\\'')",
+                  "}"
                 ]
               },
               {
                 "id": 6,
                 "description": "Response should contain '3100'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.errorInformation.errorCode).to.include('3100')",
+                  "} else {",
+                  "  // This is a bug: https://github.com/mojaloop/project/issues/4166",
+                  "  expect(response.body.errorInformation.errorCode).to.include('3102')",
+                  "}"
                 ]
               }
             ]
@@ -1765,11 +1839,13 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -1809,42 +1885,54 @@
                 "id": 1,
                 "description": "Response status to be 400",
                 "exec": [
-                  "expect(response.status).to.equal(400)"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.status).to.equal(400)",
+                  "}"
                 ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
                 "exec": [
-                  "expect(response.statusText).to.equal('Bad Request')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.statusText).to.equal('Bad Request')",
+                  "}"
                 ]
               },
               {
                 "id": 3,
                 "description": "Response should contain error information",
                 "exec": [
-                  "expect(response.body).to.have.property('errorInformation')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body).to.have.property('errorInformation')",
+                  "}"
                 ]
               },
               {
                 "id": 4,
                 "description": "Response should contain error code",
                 "exec": [
-                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body.errorInformation).to.have.property('errorCode')",
+                  "}"
                 ]
               },
               {
                 "id": 5,
                 "description": "Response should contain transactionType",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('transactionType')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body.errorInformation.errorDescription).to.include('transactionType')",
+                  "}"
                 ]
               },
               {
                 "id": 6,
                 "description": "Response should contain '3100'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body.errorInformation.errorCode).to.include('3100')",
+                  "}"
                 ]
               }
             ]
@@ -1873,11 +1961,13 @@
             "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
             "payer": {
               "partyIdInfo": {
                 "partyIdType": "{$inputs.fromIdType}",
@@ -1917,42 +2007,54 @@
                 "id": 1,
                 "description": "Response status to be 400",
                 "exec": [
-                  "expect(response.status).to.equal(400)"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.status).to.equal(400)",
+                  "}"
                 ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
                 "exec": [
-                  "expect(response.statusText).to.equal('Bad Request')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.statusText).to.equal('Bad Request')",
+                  "}"
                 ]
               },
               {
                 "id": 3,
                 "description": "Response should contain error information",
                 "exec": [
-                  "expect(response.body).to.have.property('errorInformation')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body).to.have.property('errorInformation')",
+                  "}"
                 ]
               },
               {
                 "id": 4,
                 "description": "Response should contain error code",
                 "exec": [
-                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body.errorInformation).to.have.property('errorCode')",
+                  "}"
                 ]
               },
               {
                 "id": 5,
                 "description": "Response should contain transactionType",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('transactionType')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body.errorInformation.errorDescription).to.include('transactionType')",
+                  "}"
                 ]
               },
               {
                 "id": 6,
                 "description": "Response should contain '3100'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "if(environment.API_TYPE === 'fspiop') {",                  
+                  "  expect(response.body.errorInformation.errorCode).to.include('3100')",
+                  "}"
                 ]
               }
             ]
