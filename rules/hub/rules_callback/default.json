@@ -1555,6 +1555,60 @@
   {
     "ruleId": 259,
     "priority": 1,
+    "description": "ISO20022 post /transfers - No Callback",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "Accept"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        },
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "16",
+          "path": "CdtTrfTxInf.IntrBkSttlmAmt.ActiveCurrencyAndAmount"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "NO_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 260,
+    "priority": 1,
     "description": "ISO20022 post /fxTransfers - No Callback",
     "apiVersion": {
       "minorVersion": 0,
@@ -1595,7 +1649,7 @@
     },
     "event": {
       "method": "put",
-      "path": "/transfers/{ID}",
+      "path": "/fxTransfers/{ID}",
       "params": {
         "scripts": {
           "scriptingEngine": "postman"
