@@ -1320,7 +1320,7 @@
     "version": 1
   },
   {
-    "ruleId": 1,
+    "ruleId": 257,
     "priority": 1,
     "description": "ISO20022 Proxy get /parties/{Type}/{ID} Payer Scheme with Payee side Proxy as TTK - Happy Path",
     "apiVersion": {
@@ -1437,7 +1437,7 @@
     "version": 1
   },
   {
-    "ruleId": 2,
+    "ruleId": 258,
     "priority": 1,
     "description": "ISO20022 Proxy get /parties/{Type}/{ID} Payee side scheme with Payer side proxy as TTK and Payee DFSP as proxy",
     "apiVersion": {
@@ -1548,6 +1548,114 @@
         }
       },
       "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 259,
+    "priority": 1,
+    "description": "ISO20022 post /transfers - No Callback",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "Accept"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        },
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "16",
+          "path": "CdtTrfTxInf.IntrBkSttlmAmt.ActiveCurrencyAndAmount"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "NO_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 260,
+    "priority": 1,
+    "description": "ISO20022 post /fxTransfers - No Callback",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "Accept"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxTransfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        },
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "16",
+          "path": "CdtTrfTxInf.UndrlygCstmrCdtTrf.InstdAmt.ActiveOrHistoricCurrencyAndAmount"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxTransfers/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "NO_CALLBACK"
     },
     "type": "callback",
     "version": 1
@@ -2553,7 +2661,7 @@
           },
           "CdtTrfTxInf": {
             "VrfctnOfTerms": {
-              "Sh256Sgntr": "GRzLaTP7DJ9t4P-a_BA0WA9wzzlsugf00-Tn6kESAfM"
+              "Sh256Sgntr": "L9ZUmT5NJj-SKP5127Dvc1JkF4p74yW4RsLKnOd6QEY"
             },
             "PmtId": {
               "TxId": "{$request.body.CdtTrfTxInf.PmtId.TxId}",
@@ -2843,7 +2951,7 @@
             "AccptncDtTm": "{$environment.AccptncDtTm}",
             "AcctSvcrRef": "ACCTSVCRREF",
             "ClrSysRef": "CLRSYSREF",
-            "ExctnConf": "UNlJ98hZTY_dsw0cAqw4i_UN3v4utt7CZFB4yfLbVFA",
+            "ExctnConf": "VFhBCqP17O5VolemGmeVeVn_ZByepYwtqBDe2F675kA",
             "SplmtryData": {
               "PlcAndNm": "PLACE",
               "Envlp": {}
