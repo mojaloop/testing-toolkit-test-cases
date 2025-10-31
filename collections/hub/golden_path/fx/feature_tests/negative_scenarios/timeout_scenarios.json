@@ -823,7 +823,137 @@
                 "id": "Payer-pos-not-changed",
                 "description": "Payer position should not be reverted back",
                 "exec": [
-                  "expect(environment.payerPositionBalanceAfterTransfer-environment.payerPositionBalanceBeforeFxTransfer).to.equal(+environment.FX_SOURCE_AMOUNT)"
+                  "expect(environment.payerPositionBalanceAfterFxTransfer-environment.payerPositionBalanceBeforeFxTransfer).to.equal(+environment.FX_SOURCE_AMOUNT)"
+                ]
+              }
+            ]
+          },
+          "retriesDelay": "",
+          "delay": "3000",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "Array.isArray(res) && res.filter(account => account.currency === environment.FX_SOURCE_CURRENCY).forEach(curAccount => {",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.payerPositionBalanceAfterFxTransfer= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`Payer Position Balance after FxTransfer=${environment.payerPositionBalanceAfterFxTransfer}`);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "post-dependent",
+          "description": "post dependent transfer just to release the balance",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.FX_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FX_PAYEE_DFSP_ID}"
+          },
+          "body": {
+            "transferId": "{$prev.POST-fxTransfers-that-should-not-expire.request.body.determiningTransferId}",
+            "payeeFsp": "{$inputs.FX_PAYEE_DFSP_ID}",
+            "payerFsp": "{$inputs.FX_PAYER_DFSP_ID}",
+            "amount": {
+              "currency": "{$inputs.FX_TARGET_CURRENCY}",
+              "amount": "16"
+            },
+            "ilpPacket": "{$inputs.ilpPacket}",
+            "condition": "{$inputs.validCondition}",
+            "expiration": "{$requestVariables.expiration}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 1,
+                "description": "Callback errorcode is 3303",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3303')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "// Very short expiration",
+                "requestVariables.expiration =new Date(new Date().getTime() + 1 * 1000).toISOString()"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Accounts-Payer-AFTER-trans-copy",
+          "description": "Get Accounts for Payer - should be reverted",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.FX_PAYER_DFSP_ID}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.FX_PAYER_DFSP_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "Payer-pos-not-changed",
+                "description": "Payer position should be reverted back",
+                "exec": [
+                  "expect(+environment.payerPositionBalanceBeforeFxTransfer).to.equal(+environment.payerPositionBalanceAfterTransfer)"
                 ]
               }
             ]
