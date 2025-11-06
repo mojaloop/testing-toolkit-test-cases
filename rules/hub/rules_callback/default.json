@@ -1661,6 +1661,195 @@
     "version": 1
   },
   {
+    "ruleId": 261,
+    "priority": 1,
+    "description": "ISO20022 post /transfers - Invalid Fulfilment",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "Accept"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        },
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "15",
+          "path": "CdtTrfTxInf.IntrBkSttlmAmt.ActiveCurrencyAndAmount"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "environment.CreDtTm = new Date().toISOString()",
+            "environment.AccptncDtTm = new Date().toISOString()",
+            "environment.PmtInstrXpryDtTm = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.iso20022.transfers+json;version=2.0",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
+        },
+        "body": {
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$environment.CreDtTm}"
+          },
+          "TxInfAndSts": {
+            "StsId": "{$function.generic.generateULID}",
+            "OrgnlInstrId": "{$request.body.CdtTrfTxInf.PmtId.InstrId}",
+            "OrgnlEndToEndId": "{$request.body.CdtTrfTxInf.PmtId.EndToEndId}",
+            "OrgnlTxId": "{$request.body.CdtTrfTxInf.PmtId.TxId}",
+            "OrgnlUETR": "123e4567-e89b-12d3-a456-426614174000",
+            "TxSts": "COMM",
+            "StsRsnInf": {
+              "Rsn": {
+                "Prtry": "COMM"
+              },
+              "AddtlInf": "ADDITIONAL"
+            },
+            "AccptncDtTm": "{$environment.AccptncDtTm}",
+            "PrcgDt": {
+              "DtTm": "{$environment.AccptncDtTm}"
+            },
+            "AcctSvcrRef": "ACCTSVCRREF",
+            "ClrSysRef": "CLRSYSREF",
+            "ExctnConf": "AelJ98hZTY_dsw0cAqw4i_UN3v4utt7CZFB4yfLbVFA",
+            "SplmtryData": {
+              "PlcAndNm": "PLACE",
+              "Envlp": {}
+            }
+          }
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 262,
+    "priority": 1,
+    "description": "ISO20022 post /fxTransfers - Invalid Fulfilment",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "Accept"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxTransfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        },
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "15",
+          "path": "CdtTrfTxInf.UndrlygCstmrCdtTrf.InstdAmt.ActiveOrHistoricCurrencyAndAmount"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxTransfers/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "environment.CreDtTm = new Date().toISOString()",
+            "environment.AccptncDtTm = new Date().toISOString()",
+            "environment.PmtInstrXpryDtTm = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.iso20022.fxTransfers+json;version=2.0",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}"
+        },
+        "body": {
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$environment.CreDtTm}"
+          },
+          "TxInfAndSts": {
+            "StsId": "12345",
+            "OrgnlInstrId": "12345",
+            "OrgnlEndToEndId": "12345",
+            "OrgnlTxId": "12345",
+            "OrgnlUETR": "123e4567-e89b-12d3-a456-426614174000",
+            "TxSts": "RESV",
+            "StsRsnInf": {
+              "Rsn": {
+                "Prtry": "ACPT"
+              },
+              "AddtlInf": "ADDITIONAL"
+            },
+            "AccptncDtTm": "{$environment.AccptncDtTm}",
+            "AcctSvcrRef": "ACCTSVCRREF",
+            "ClrSysRef": "CLRSYSREF",
+            "ExctnConf": "AelJ98hZTY_dsw0cAqw4i_UN3v4utt7CZFB4yfLbVFA",
+            "SplmtryData": {
+              "PlcAndNm": "PLACE",
+              "Envlp": {}
+            }
+          }
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
     "ruleId": 51,
     "priority": 1,
     "description": "ISO20022 get /parties/{Type}/{ID}/{SubId}",
