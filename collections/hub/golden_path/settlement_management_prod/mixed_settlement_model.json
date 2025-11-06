@@ -696,6 +696,53 @@
       },
       "requests": [
         {
+          "id": "get-settlements-models",
+          "meta": {
+            "info": "get settlements models"
+          },
+          "description": "get settlements models",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/settlementModels",
+          "path": "/settlementModels",
+          "method": "get",
+          "scriptingEngine": "javascript",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-code-200",
+                "description": "status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var jsonData = response.body;",
+                "environment.settlementModels = { deferred: {}}",
+                "for (const sm of jsonData) {",
+                "  if (sm.settlementDelay === 'DEFERRED') {",
+                "    if (sm.currency === null) {",
+                "      environment.settlementModels.deferred.default = sm.name",
+                "    } else {",
+                "      environment.settlementModels.deferred[sm.currency] = sm.name",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "console.log(environment.settlementModels)"
+              ]
+            }
+          }
+        },
+        {
           "id": "Get-Existing-Open-Window",
           "meta": {
             "info": "Get Existing Open Window"
@@ -1811,53 +1858,6 @@
                 "",
                 "",
                 "  "
-              ]
-            }
-          }
-        },
-        {
-          "id": "get-settlements-models",
-          "meta": {
-            "info": "get settlements models"
-          },
-          "description": "get settlements models",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/settlementModels",
-          "path": "/settlementModels",
-          "method": "get",
-          "scriptingEngine": "javascript",
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": "status-code-200",
-                "description": "status code is 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              }
-            ]
-          },
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "var jsonData = response.body;",
-                "environment.settlementModels = { deferred: {}}",
-                "for (const sm of jsonData) {",
-                "  if (sm.settlementDelay === 'DEFERRED') {",
-                "    if (sm.currency === null) {",
-                "      environment.settlementModels.deferred.default = sm.name",
-                "    } else {",
-                "      environment.settlementModels.deferred[sm.currency] = sm.name",
-                "    }",
-                "  }",
-                "}",
-                "",
-                "console.log(environment.settlementModels)"
               ]
             }
           }
