@@ -153,19 +153,19 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.E2ESIM2_NAME}/accounts/{$environment.e2e-sim2SettlementAccountId}",
+          "path": "/participants/{$inputs.E2ESIM2_NAME}/accounts/{$environment.e2eSim2SettlementAccountId}",
           "method": "post",
           "params": {
             "name": "{$inputs.E2ESIM2_NAME}",
-            "id": "{$environment.e2e-sim2SettlementAccountId}"
+            "id": "{$environment.e2eSim2SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.e2e-sim2fundsInPrepareTransferId}",
+            "transferId": "{$environment.e2eSim2fundsInPrepareTransferId}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.e2e-sim2fundsInPrepareAmount}",
+              "amount": "{$environment.e2eSim2fundsInPrepareAmount}",
               "currency": "{$inputs.currency}"
             },
             "extensionList": {
@@ -238,7 +238,7 @@
                 "id": "e2e-sim2-settle-acc-bal-After-F",
                 "description": "e2e-sim2 Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.e2e-sim2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.e2e-sim2SettlementAccountBalanceBeforeFundsIn - +environment.e2e-sim2fundsInPrepareAmount)"
+                  "expect(+environment.e2eSim2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.e2eSim2SettlementAccountBalanceBeforeFundsIn - +environment.e2eSim2fundsInPrepareAmount)"
                 ]
               }
             ]
@@ -488,19 +488,19 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.E2ESIM2_NAME}/accounts/{$environment.e2e-sim2Currency2SettlementAccountId}",
+          "path": "/participants/{$inputs.E2ESIM2_NAME}/accounts/{$environment.e2eSim2Currency2SettlementAccountId}",
           "method": "post",
           "params": {
             "name": "{$inputs.E2ESIM2_NAME}",
-            "id": "{$environment.e2e-sim2Currency2SettlementAccountId}"
+            "id": "{$environment.e2eSim2Currency2SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.e2e-sim2fundsInPrepareTransferId}",
+            "transferId": "{$environment.e2eSim2fundsInPrepareTransferId}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.e2e-sim2fundsInPrepareAmountCurrency2}",
+              "amount": "{$environment.e2eSim2fundsInPrepareAmountCurrency2}",
               "currency": "{$inputs.currency2}"
             },
             "extensionList": {
@@ -573,7 +573,7 @@
                 "id": "settle-acc-bal-After-FundsIn-b",
                 "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.e2e-sim2Currency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.e2e-sim2Currency2SettlementAccountBalanceBeforeFundsIn - +environment.e2e-sim2fundsInPrepareAmountCurrency2)"
+                  "expect(+environment.e2eSim2Currency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.e2eSim2Currency2SettlementAccountBalanceBeforeFundsIn - +environment.e2eSim2fundsInPrepareAmountCurrency2)"
                 ]
               }
             ]
