@@ -24,29 +24,28 @@
           "path": "/transfers",
           "method": "post",
           "body": {
-            "homeTransactionId": "{$inputs.HOME_TRANSACTION_ID}",
+            "homeTransactionId": "{$inputs.homeTransactionId}",
             "from": {
               "type": "CONSUMER",
               "idType": "MSISDN",
-              "idValue": "{$inputs.DENV_SOURCE_GLOBAL__happyPathMSISDN}",
-              "displayName": "{$inputs.FROM_DISPLAY_NAME}",
-              "firstName": "{$inputs.FROM_FIRST_NAME}",
-              "middleName": "{$inputs.FROM_MIDDLE_NAME}",
-              "lastName": "{$inputs.FROM_LAST_NAME}",
-              "dateOfBirth": "{$inputs.FROM_DOB}",
-              "fspId": "{$inputs.DENV__SOURCE_FSP_ID}"
+              "idValue": "{$inputs.E2ESIM1_MSISDN_1}",
+              "displayName": "{$inputs.fromFirstName}",
+              "firstName": "{$inputs.fromFirstName}",
+              "lastName": "{$inputs.fromLastName}",
+              "dateOfBirth": "{$inputs.fromDOB}",
+              "fspId": "{$inputs.E2ESIM1_NAME}"
             },
             "to": {
               "type": "CONSUMER",
               "idType": "MSISDN",
-              "idValue": "{$inputs.DENV_TARGET_GLOBAL__happyPathMSISDN}",
+              "idValue": "{$inputs.E2ESIM2_MSISDN_1}",
               "merchantClassificationCode": "123"
             },
             "amountType": "SEND",
-            "currency": "{$inputs.DENV_SOURCE_GLOBAL__currency}",
-            "amount": "{$inputs.DENV_SOURCE__sendAmount}",
+            "currency": "{$inputs.currency}",
+            "amount": "{$inputs.amount}",
             "transactionType": "TRANSFER",
-            "note": "{$inputs.NOTE}",
+            "note": "{$inputs.note}",
             "skipPartyLookup": false
           },
           "params": {
@@ -71,7 +70,7 @@
               }
             ]
           },
-          "url": "{$inputs.DENV__SOURCE_SDK_OUTBOUND_URL}"
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}"
         },
         {
           "id": 2,
@@ -110,7 +109,7 @@
               }
             ]
           },
-          "url": "{$inputs.DENV__SOURCE_SDK_OUTBOUND_URL}"
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}"
         },
         {
           "id": 3,
@@ -149,7 +148,7 @@
               }
             ]
           },
-          "url": "{$inputs.DENV__SOURCE_SDK_OUTBOUND_URL}"
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}"
         }
       ]
     }
