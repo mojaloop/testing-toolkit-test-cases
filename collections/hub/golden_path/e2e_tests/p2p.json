@@ -2,13 +2,60 @@
   "name": "P2P Happy Path",
   "test_cases": [
     {
-      "id": 1,
+      "id": "Add-account",
+      "name": "Add account",
+      "fileInfo": {
+        "path": "hub/golden_path/e2e_tests/p2p.json"
+      },
+      "meta": {
+        "info": "Add account"
+      },
+      "requests": [
+        {
+          "id": "Post-Account",
+          "description": "Post Account",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": false,
+            "prefix": "/ml-con-out",
+            "hostnames": [],
+            "specFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/trigger_templates"
+          },
+          "operationPath": "/accounts",
+          "path": "/accounts",
+          "method": "post",
+          "url": "{$inputs.E2ESIM2_OUTBOUND_URL}",
+          "body": [
+            {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2ESIM2_MSISDN_1}"
+            }
+          ],
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "Send-Money",
       "name": "Send Money",
       "meta": {
-        "info": "Objective: Validate successful transaction completion across participant combinations \n\n Expected Result: Successful transaction completion"
-      },
-      "fileInfo": {
-        "path": "ttk-test-collection/multi-scheme-tests/p2p-happy-path.json"
+        "info": "Objective: Validate successful transaction completion across participant combinations"
       },
       "requests": [
         {
