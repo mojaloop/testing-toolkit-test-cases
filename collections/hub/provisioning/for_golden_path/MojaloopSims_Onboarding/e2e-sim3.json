@@ -24,7 +24,7 @@
           "method": "post",
           "body": {
             "name": "{$inputs.E2ESIM3_NAME}",
-            "currency": "{$inputs.currency3}"
+            "currency": "{$inputs.currency2}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -65,7 +65,7 @@
             "name": "{$inputs.E2ESIM3_NAME}"
           },
           "body": {
-            "currency": "{$inputs.currency3}",
+            "currency": "{$inputs.currency2}",
             "limit": {
               "type": "NET_DEBIT_CAP",
               "value": 500000
@@ -132,7 +132,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency3')) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
                 "    pm.environment.set(\"e2eSim3SettlementAccountId\", jsonData[i].id)",
                 "    pm.environment.set(\"e2eSim3SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
@@ -166,7 +166,7 @@
             "reason": "string",
             "amount": {
               "amount": "{$environment.e2eSim3fundsInPrepareAmount}",
-              "currency": "{$inputs.currency3}"
+              "currency": "{$inputs.currency2}"
             },
             "extensionList": {
               "extension": [
@@ -250,7 +250,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency3')) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
                 "    pm.environment.set(\"e2eSim3SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"

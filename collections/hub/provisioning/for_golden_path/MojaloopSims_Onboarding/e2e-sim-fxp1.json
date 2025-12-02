@@ -274,7 +274,7 @@
           "method": "post",
           "body": {
             "name": "{$inputs.E2ESIMFXP1_NAME}",
-            "currency": "{$inputs.currency3}"
+            "currency": "{$inputs.currency2}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -315,7 +315,7 @@
             "name": "{$inputs.E2ESIMFXP1_NAME}"
           },
           "body": {
-            "currency": "{$inputs.currency3}",
+            "currency": "{$inputs.currency2}",
             "limit": {
               "type": "NET_DEBIT_CAP",
               "value": 500000
@@ -430,7 +430,7 @@
         },
         {
           "id": "Get-Status-req-before-deposit-",
-          "description": "Get Status Request before deposit for currency3",
+          "description": "Get Status Request before deposit for currency2",
           "meta": {
             "info": "Get Status Request before deposit"
           },
@@ -467,7 +467,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency3')) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
                 "    pm.environment.set(\"e2eSimFxp1Currency3SettlementAccountId\", jsonData[i].id)",
                 "    pm.environment.set(\"e2eSimFxp1Currency3SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
@@ -478,7 +478,7 @@
         },
         {
           "id": "Deposit-Funds-settle-acc-curre",
-          "description": "Deposit Funds in Settlement Account currency3",
+          "description": "Deposit Funds in Settlement Account currency2",
           "meta": {
             "info": "Deposit Funds in Settlement Account"
           },
@@ -501,7 +501,7 @@
             "reason": "string",
             "amount": {
               "amount": "{$environment.e2eSimFxp1fundsInPrepareAmountCurrency3}",
-              "currency": "{$inputs.currency3}"
+              "currency": "{$inputs.currency2}"
             },
             "extensionList": {
               "extension": [
@@ -540,7 +540,7 @@
         },
         {
           "id": "Get-Status-req-after-deposit-c",
-          "description": "Get Status Request after deposit for currency3",
+          "description": "Get Status Request after deposit for currency2",
           "meta": {
             "info": "Get Status Request after deposit"
           },
@@ -585,7 +585,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency3')) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
                 "    pm.environment.set(\"e2eSimFxp1Currency3SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
