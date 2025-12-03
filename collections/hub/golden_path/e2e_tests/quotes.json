@@ -1,0 +1,224 @@
+{
+  "options": {},
+  "name": "E2E Quotes Negative Test Cases",
+  "test_cases": [
+    {
+      "id": "e2e-quotes-timeout",
+      "name": "E2E Quoting Service Timeout",
+      "meta": {
+        "info": "Objective: Validate Quoting Service timeout handling  \n\n Expected Result: - The transfer should fail with a timeout error. The error should be logged and monitored. The payer FSP should be notified of the failure"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}",
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "body": {
+            "homeTransactionId": "123ABC",
+            "from": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2ESIM1_MSISDN_1}",
+              "displayName": "scenario-quotes-timeout",
+              "firstName": "Firstname-Test",
+              "lastName": "Lastname-Test",
+              "dateOfBirth": "1984-01-01",
+              "fspId": "{$inputs.E2ESIM1_NAME}"
+            },
+            "to": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2ESIM2_MSISDN_1}",
+              "merchantClassificationCode": "123"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.E2E_SOURCE_CURRENCY}",
+            "amount": "{$inputs.E2E_SEND_AMOUNT}",
+            "transactionType": "TRANSFER",
+            "note": "test note",
+            "skipPartyLookup": false
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Current state should be WAITING_FOR_PARTY_ACCEPTANCE",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "description": "Accept Party and send POST /fxQuotes",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": false
+          },
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}",
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "body": {
+            "acceptParty": true
+          },
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 504",
+                "exec": [
+                  "expect(response.status).to.equal(504)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "e2e-quotes-generic-error",
+      "name": "E2E Quoting Service Processing Error",
+      "meta": {
+        "info": "Objective: Validate Quoting Service processing errors  \n\n Expected Result: - The transfer should fail with a processing error. The error should be logged and monitored. The payer FSP should be notified of the failure"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}",
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "body": {
+            "homeTransactionId": "123ABC",
+            "from": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2ESIM1_MSISDN_1}",
+              "displayName": "scenario-quotes-generic-error",
+              "firstName": "Firstname-Test",
+              "lastName": "Lastname-Test",
+              "dateOfBirth": "1984-01-01",
+              "fspId": "{$inputs.E2ESIM1_NAME}"
+            },
+            "to": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2ESIM2_MSISDN_1}",
+              "merchantClassificationCode": "123"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.E2E_SOURCE_CURRENCY}",
+            "amount": "{$inputs.E2E_SEND_AMOUNT}",
+            "transactionType": "TRANSFER",
+            "note": "test note",
+            "skipPartyLookup": false
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Current state should be WAITING_FOR_PARTY_ACCEPTANCE",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "description": "Accept Party and send POST /quotes",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": false
+          },
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}",
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "body": {
+            "acceptParty": true
+          },
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 500",
+                "exec": [
+                  "expect(response.status).to.equal(500)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Error code is 5001",
+                "exec": [
+                  "expect(response.body.transferState.lastError.mojaloopError.errorInformation.errorCode).to.equal('5001')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Error description should contain error message",
+                "exec": [
+                  "expect(response.body.transferState.lastError.mojaloopError.errorInformation.errorDescription).to.equal('Generic Quotes Error')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
