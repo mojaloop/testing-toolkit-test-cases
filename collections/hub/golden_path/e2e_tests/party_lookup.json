@@ -1,0 +1,249 @@
+{
+  "options": {
+    "breakOnError": true,
+    "transformerName": "fspiopToISO20022",
+    "generateIDType": "ulid"
+  },
+  "name": "hub_golden_path_e2e_tests_party_lookup",
+  "test_cases": [
+    {
+      "id": "e2e-party-moves-dfsp-migration",
+      "name": "E2E Party moves from one DFSP to another DFSP",
+      "meta": {
+        "info": "NOTE: Disabled this test case because it fails when the oracle caching is enabled in ALS. Objective: Ensure correct party resolution when party moves from one DFSP to another DFSP\n\n Expected Result: Smooth transition and correct DFSP returned"
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/e2e_tests/party_lookup.json"
+      },
+      "requests": [
+        {
+          "id": "delete-party-sim2-cleanup",
+          "description": "Delete Party from payee SIM2",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "operationPath": "/accounts/{idType}/{idValue}",
+          "path": "/accounts/MSISDN/{$inputs.E2E_MSISDN_DFSP_MIGRATION}",
+          "method": "delete",
+          "params": {
+            "idType": "MSISDN",
+            "idValue": "{$inputs.E2E_MSISDN_DFSP_MIGRATION}"
+          },
+          "url": "{$inputs.E2ESIM2_OUTBOUND_URL}",
+          "disabled": true
+        },
+        {
+          "id": "delete-party-sim3-cleanup",
+          "description": "Delete Party from payee SIM3",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "operationPath": "/accounts/{idType}/{idValue}",
+          "path": "/accounts/MSISDN/{$inputs.E2E_MSISDN_DFSP_MIGRATION}",
+          "method": "delete",
+          "params": {
+            "idType": "MSISDN",
+            "idValue": "{$inputs.E2E_MSISDN_DFSP_MIGRATION}"
+          },
+          "url": "{$inputs.E2ESIM3_OUTBOUND_URL}",
+          "disabled": true
+        },
+        {
+          "id": "add-party-sim2",
+          "description": "Add a party for payee SIM2",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "operationPath": "/accounts",
+          "path": "/accounts",
+          "method": "post",
+          "body": [
+            {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2E_MSISDN_DFSP_MIGRATION}"
+            }
+          ],
+          "url": "{$inputs.E2ESIM2_OUTBOUND_URL}",
+          "delay": "500",
+          "disabled": true
+        },
+        {
+          "id": 5,
+          "description": "Send transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}",
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "body": {
+            "homeTransactionId": "123ABC",
+            "from": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2ESIM1_MSISDN_1}",
+              "displayName": "Firstname-Test",
+              "firstName": "Firstname-Test",
+              "lastName": "Lastname-Test",
+              "dateOfBirth": "1984-01-01",
+              "fspId": "{$inputs.E2ESIM1_NAME}"
+            },
+            "to": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2E_MSISDN_DFSP_MIGRATION}",
+              "merchantClassificationCode": "123"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.E2E_SOURCE_CURRENCY}",
+            "amount": "{$inputs.E2E_SEND_AMOUNT}",
+            "transactionType": "TRANSFER",
+            "note": "test note",
+            "skipPartyLookup": false
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Destination FSP Id should be payee SIM2",
+                "exec": [
+                  "expect(response.body.getPartiesResponse.body.party.partyIdInfo.fspId).to.equal(environment.E2ESIM2_NAME)"
+                ]
+              }
+            ]
+          },
+          "delay": "1000",
+          "disabled": true
+        },
+        {
+          "id": 6,
+          "description": "Delete Party from payee SIM2",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "operationPath": "/accounts/{idType}/{idValue}",
+          "path": "/accounts/MSISDN/{$inputs.E2E_MSISDN_DFSP_MIGRATION}",
+          "method": "delete",
+          "params": {
+            "idType": "MSISDN",
+            "idValue": "{$inputs.E2E_MSISDN_DFSP_MIGRATION}"
+          },
+          "url": "{$inputs.E2ESIM2_OUTBOUND_URL}",
+          "disabled": true
+        },
+        {
+          "id": 7,
+          "description": "Add a party for payee SIM3",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "operationPath": "/accounts",
+          "path": "/accounts",
+          "method": "post",
+          "body": [
+            {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2E_MSISDN_DFSP_MIGRATION}"
+            }
+          ],
+          "url": "{$inputs.E2ESIM3_OUTBOUND_URL}",
+          "delay": "500",
+          "disabled": true
+        },
+        {
+          "id": 9,
+          "description": "Send transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}",
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "body": {
+            "homeTransactionId": "123ABC",
+            "from": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2ESIM1_MSISDN_1}",
+              "displayName": "Firstname-Test",
+              "firstName": "Firstname-Test",
+              "lastName": "Lastname-Test",
+              "dateOfBirth": "1984-01-01",
+              "fspId": "{$inputs.E2ESIM1_NAME}"
+            },
+            "to": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2E_MSISDN_DFSP_MIGRATION}",
+              "merchantClassificationCode": "123"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.E2E_SOURCE_CURRENCY}",
+            "amount": "{$inputs.E2E_SEND_AMOUNT}",
+            "transactionType": "TRANSFER",
+            "note": "test note",
+            "skipPartyLookup": false
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Destination FSP Id should be payee SIM3",
+                "exec": [
+                  "expect(response.body.getPartiesResponse.body.party.partyIdInfo.fspId).to.equal(environment.E2ESIM3_NAME)"
+                ]
+              }
+            ]
+          },
+          "delay": "3000",
+          "disabled": true
+        }
+      ]
+    }
+  ]
+}

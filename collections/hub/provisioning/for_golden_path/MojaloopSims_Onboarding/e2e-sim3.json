@@ -2,18 +2,18 @@
   "name": "multi",
   "test_cases": [
     {
-      "id": "e2eSim1-account",
-      "name": "e2eSim1 account",
+      "id": "e2eSim3-account",
+      "name": "e2eSim3 account",
       "meta": {
-        "info": "e2eSim1 account"
+        "info": "e2eSim3 account"
       },
       "requests": [
         {
-          "id": "Add-e2eSim1",
+          "id": "Add-e2eSim3",
           "meta": {
-            "info": "Add e2eSim1"
+            "info": "Add e2eSim3"
           },
-          "description": "Add e2eSim1",
+          "description": "Add e2eSim3",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -23,8 +23,8 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "{$inputs.E2ESIM1_NAME}",
-            "currency": "{$inputs.currency}"
+            "name": "{$inputs.E2ESIM3_NAME}",
+            "currency": "{$inputs.currency2}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -48,24 +48,24 @@
           }
         },
         {
-          "id": "Add-initial-pos-limits-e2eSim1",
+          "id": "Add-initial-pos-limits-e2eSim3",
           "meta": {
-            "info": "Add initial position and limits - e2eSim1"
+            "info": "Add initial position and limits - e2eSim3"
           },
-          "description": "Add initial position and limits - e2eSim1",
+          "description": "Add initial position and limits - e2eSim3",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "body": {
-            "currency": "{$inputs.currency}",
+            "currency": "{$inputs.currency2}",
             "limit": {
               "type": "NET_DEBIT_CAP",
               "value": 500000
@@ -94,21 +94,21 @@
           }
         },
         {
-          "id": "e2eSim1-Get-Status-req-before-",
+          "id": "e2eSim3-Get-Status-req-before-",
           "meta": {
-            "info": "e2eSim1 Get Status Request before deposit"
+            "info": "e2eSim3 Get Status Request before deposit"
           },
-          "description": "e2eSim1 Get Status Request before deposit",
+          "description": "e2eSim3 Get Status Request before deposit",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/accounts",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -132,9 +132,9 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"e2eSim1SettlementAccountId\", jsonData[i].id)",
-                "    pm.environment.set(\"e2eSim1SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "    pm.environment.set(\"e2eSim3SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"e2eSim3SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
@@ -144,29 +144,29 @@
         {
           "id": "Deposit-Funds-settle-acc-ttksi",
           "meta": {
-            "info": "Deposit Funds in Settlement Account - e2eSim1"
+            "info": "Deposit Funds in Settlement Account - e2eSim3"
           },
-          "description": "Deposit Funds in Settlement Account - e2eSim1",
+          "description": "Deposit Funds in Settlement Account - e2eSim3",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/accounts/{$environment.e2eSim1SettlementAccountId}",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/accounts/{$environment.e2eSim3SettlementAccountId}",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}",
-            "id": "{$environment.e2eSim1SettlementAccountId}"
+            "name": "{$inputs.E2ESIM3_NAME}",
+            "id": "{$environment.e2eSim3SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.e2eSim1fundsInPrepareTransferId}",
+            "transferId": "{$environment.e2eSim3fundsInPrepareTransferId}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.e2eSim1fundsInPrepareAmount}",
-              "currency": "{$inputs.currency}"
+              "amount": "{$environment.e2eSim3fundsInPrepareAmount}",
+              "currency": "{$inputs.currency2}"
             },
             "extensionList": {
               "extension": [
@@ -197,28 +197,28 @@
             "preRequest": {
               "exec": [
                 "var uuid = require('uuid');",
-                "pm.environment.set('e2eSim1fundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('e2eSim1fundsInPrepareAmount', 500000);"
+                "pm.environment.set('e2eSim3fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('e2eSim3fundsInPrepareAmount', 500000);"
               ]
             }
           }
         },
         {
-          "id": "e2eSim1-Get-Status-req-after-d",
+          "id": "e2eSim3-Get-Status-req-after-d",
           "meta": {
-            "info": "e2eSim1 Get Status Request after deposit"
+            "info": "e2eSim3 Get Status Request after deposit"
           },
-          "description": "e2eSim1 Get Status Request after deposit",
+          "description": "e2eSim3 Get Status Request after deposit",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/accounts",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -235,10 +235,10 @@
                 ]
               },
               {
-                "id": "e2eSim1-settle-acc-bal-After-F",
-                "description": "e2eSim1 Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "id": "e2eSim3-settle-acc-bal-After-F",
+                "description": "e2eSim3 Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.e2eSim1SettlementAccountBalanceAfterFundsIn).to.equal(+environment.e2eSim1SettlementAccountBalanceBeforeFundsIn - +environment.e2eSim1fundsInPrepareAmount)"
+                  "expect(+environment.e2eSim3SettlementAccountBalanceAfterFundsIn).to.equal(+environment.e2eSim3SettlementAccountBalanceBeforeFundsIn - +environment.e2eSim3fundsInPrepareAmount)"
                 ]
               }
             ]
@@ -250,8 +250,8 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"e2eSim1SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "    pm.environment.set(\"e2eSim3SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
@@ -261,28 +261,28 @@
       ]
     },
     {
-      "id": "e2eSim1-callbacks",
-      "name": "e2eSim1 callbacks",
+      "id": "e2eSim3-callbacks",
+      "name": "e2eSim3 callbacks",
       "meta": {
-        "info": "e2eSim1 callbacks"
+        "info": "e2eSim3 callbacks"
       },
       "requests": [
         {
-          "id": "Add-e2eSim1-cb-AUTHORIZATIONS",
+          "id": "Add-e2eSim3-cb-AUTHORIZATIONS",
           "meta": {
-            "info": "Add e2eSim1 callback - AUTHORIZATIONS"
+            "info": "Add e2eSim3 callback - AUTHORIZATIONS"
           },
-          "description": "Add e2eSim1 callback - AUTHORIZATIONS",
+          "description": "Add e2eSim3 callback - AUTHORIZATIONS",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -291,7 +291,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_AUTHORIZATIONS",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}"
           },
           "tests": {
             "assertions": [
@@ -306,21 +306,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-part-PUT",
+          "id": "Add-e2eSim3-cb-part-PUT",
           "meta": {
-            "info": "Add e2eSim1 callback - PARTICIPANT PUT"
+            "info": "Add e2eSim3 callback - PARTICIPANT PUT"
           },
-          "description": "Add e2eSim1 callback - PARTICIPANT PUT",
+          "description": "Add e2eSim3 callback - PARTICIPANT PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -329,7 +329,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -344,21 +344,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-part-PUT-Error",
+          "id": "Add-e2eSim3-cb-part-PUT-Error",
           "meta": {
-            "info": "Add e2eSim1 callback - PARTICIPANT PUT Error"
+            "info": "Add e2eSim3 callback - PARTICIPANT PUT Error"
           },
-          "description": "Add e2eSim1 callback - PARTICIPANT PUT Error",
+          "description": "Add e2eSim3 callback - PARTICIPANT PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -367,7 +367,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
@@ -382,21 +382,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-part-PUT-Batch",
+          "id": "Add-e2eSim3-cb-part-PUT-Batch",
           "meta": {
-            "info": "Add e2eSim1 callback - PARTICIPANT PUT Batch"
+            "info": "Add e2eSim3 callback - PARTICIPANT PUT Batch"
           },
-          "description": "Add e2eSim1 callback - PARTICIPANT PUT Batch",
+          "description": "Add e2eSim3 callback - PARTICIPANT PUT Batch",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -405,7 +405,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{requestId}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/participants/{{requestId}}"
           },
           "tests": {
             "assertions": [
@@ -420,21 +420,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-part-PUT-Batch-",
+          "id": "Add-e2eSim3-cb-part-PUT-Batch-",
           "meta": {
-            "info": "Add e2eSim1 callback - PARTICIPANT PUT Batch Error"
+            "info": "Add e2eSim3 callback - PARTICIPANT PUT Batch Error"
           },
-          "description": "Add e2eSim1 callback - PARTICIPANT PUT Batch Error",
+          "description": "Add e2eSim3 callback - PARTICIPANT PUT Batch Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -443,7 +443,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{requestId}}/error"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/participants/{{requestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -458,21 +458,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-PARTIES-GET",
+          "id": "Add-e2eSim3-cb-PARTIES-GET",
           "meta": {
-            "info": "Add e2eSim1 callback - PARTIES GET"
+            "info": "Add e2eSim3 callback - PARTIES GET"
           },
-          "description": "Add e2eSim1 callback - PARTIES GET",
+          "description": "Add e2eSim3 callback - PARTIES GET",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -481,7 +481,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -496,21 +496,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-PARTIES-PUT",
+          "id": "Add-e2eSim3-cb-PARTIES-PUT",
           "meta": {
-            "info": "Add e2eSim1 callback - PARTIES PUT"
+            "info": "Add e2eSim3 callback - PARTIES PUT"
           },
-          "description": "Add e2eSim1 callback - PARTIES PUT",
+          "description": "Add e2eSim3 callback - PARTIES PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -519,7 +519,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -534,21 +534,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-PARTIES-PUT-Err",
+          "id": "Add-e2eSim3-cb-PARTIES-PUT-Err",
           "meta": {
-            "info": "Add e2eSim1 callback - PARTIES PUT Error"
+            "info": "Add e2eSim3 callback - PARTIES PUT Error"
           },
-          "description": "Add e2eSim1 callback - PARTIES PUT Error",
+          "description": "Add e2eSim3 callback - PARTIES PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -557,7 +557,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
@@ -572,21 +572,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-QUOTES",
+          "id": "Add-e2eSim3-cb-QUOTES",
           "meta": {
-            "info": "Add e2eSim1 callback - QUOTES"
+            "info": "Add e2eSim3 callback - QUOTES"
           },
-          "description": "Add e2eSim1 callback - QUOTES",
+          "description": "Add e2eSim3 callback - QUOTES",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -594,7 +594,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_QUOTES",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}"
           },
           "tests": {
             "assertions": [
@@ -609,21 +609,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-TXN-req",
+          "id": "Add-e2eSim3-cb-TXN-req",
           "meta": {
-            "info": "Add e2eSim1 callback - TXN REQUEST"
+            "info": "Add e2eSim3 callback - TXN REQUEST"
           },
-          "description": "Add e2eSim1 callback - TXN REQUEST",
+          "description": "Add e2eSim3 callback - TXN REQUEST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -631,7 +631,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}"
           },
           "tests": {
             "assertions": [
@@ -646,21 +646,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-TRANSFERS-POST",
+          "id": "Add-e2eSim3-cb-TRANSFERS-POST",
           "meta": {
-            "info": "Add e2eSim1 callback - TRANSFERS POST"
+            "info": "Add e2eSim3 callback - TRANSFERS POST"
           },
-          "description": "Add e2eSim1 callback - TRANSFERS POST",
+          "description": "Add e2eSim3 callback - TRANSFERS POST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -668,7 +668,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/transfers"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/transfers"
           },
           "tests": {
             "assertions": [
@@ -683,21 +683,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-TRANSFERS-PUT",
+          "id": "Add-e2eSim3-cb-TRANSFERS-PUT",
           "meta": {
-            "info": "Add e2eSim1 callback - TRANSFERS PUT"
+            "info": "Add e2eSim3 callback - TRANSFERS PUT"
           },
-          "description": "Add e2eSim1 callback - TRANSFERS PUT",
+          "description": "Add e2eSim3 callback - TRANSFERS PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -705,7 +705,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/transfers/{{transferId}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/transfers/{{transferId}}"
           },
           "tests": {
             "assertions": [
@@ -720,21 +720,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-TRANSFERS-ERROR",
+          "id": "Add-e2eSim3-cb-TRANSFERS-ERROR",
           "meta": {
-            "info": "Add e2eSim1 callback - TRANSFERS ERROR"
+            "info": "Add e2eSim3 callback - TRANSFERS ERROR"
           },
-          "description": "Add e2eSim1 callback - TRANSFERS ERROR",
+          "description": "Add e2eSim3 callback - TRANSFERS ERROR",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -742,7 +742,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/transfers/{{transferId}}/error"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/transfers/{{transferId}}/error"
           },
           "tests": {
             "assertions": [
@@ -757,21 +757,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-BULK-TRANSFER-P",
+          "id": "Add-e2eSim3-cb-BULK-TRANSFER-P",
           "meta": {
-            "info": "Add e2eSim1 callback - BULK-TRANSFER POST"
+            "info": "Add e2eSim3 callback - BULK-TRANSFER POST"
           },
-          "description": "Add e2eSim1 callback - BULK-TRANSFER POST",
+          "description": "Add e2eSim3 callback - BULK-TRANSFER POST",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -779,7 +779,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/bulkTransfers"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/bulkTransfers"
           },
           "tests": {
             "assertions": [
@@ -794,21 +794,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-BULK-TRANSFER-P-1",
+          "id": "Add-e2eSim3-cb-BULK-TRANSFER-P-1",
           "meta": {
-            "info": "Add e2eSim1 callback - BULK-TRANSFER PUT"
+            "info": "Add e2eSim3 callback - BULK-TRANSFER PUT"
           },
-          "description": "Add e2eSim1 callback - BULK-TRANSFER PUT",
+          "description": "Add e2eSim3 callback - BULK-TRANSFER PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -816,7 +816,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/bulkTransfers/{{id}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/bulkTransfers/{{id}}"
           },
           "tests": {
             "assertions": [
@@ -831,21 +831,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-BULK-TRANSFER-E",
+          "id": "Add-e2eSim3-cb-BULK-TRANSFER-E",
           "meta": {
-            "info": "Add e2eSim1 callback - BULK-TRANSFER ERROR"
+            "info": "Add e2eSim3 callback - BULK-TRANSFER ERROR"
           },
-          "description": "Add e2eSim1 callback - BULK-TRANSFER ERROR",
+          "description": "Add e2eSim3 callback - BULK-TRANSFER ERROR",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -853,7 +853,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/bulkTransfers/{{id}}/error"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/bulkTransfers/{{id}}/error"
           },
           "tests": {
             "assertions": [
@@ -879,10 +879,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -890,7 +890,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -916,10 +916,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -927,7 +927,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
           },
           "tests": {
             "assertions": [
@@ -953,10 +953,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -964,7 +964,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -990,10 +990,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1001,7 +1001,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -1027,10 +1027,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1038,7 +1038,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -1064,10 +1064,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1075,7 +1075,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
           },
           "tests": {
             "assertions": [
@@ -1090,21 +1090,21 @@
           }
         },
         {
-          "id": "Add-e2eSim1-cb-FSPIOP_CALLBACK",
+          "id": "Add-e2eSim3-cb-FSPIOP_CALLBACK",
           "meta": {
-            "info": "Add e2eSim1 callback - FSPIOP_CALLBACK_URL_BULK_QUOTES"
+            "info": "Add e2eSim3 callback - FSPIOP_CALLBACK_URL_BULK_QUOTES"
           },
-          "description": "Add e2eSim1 callback - FSPIOP_CALLBACK_URL_BULK_QUOTES",
+          "description": "Add e2eSim3 callback - FSPIOP_CALLBACK_URL_BULK_QUOTES",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1112,7 +1112,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_QUOTES",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}"
           },
           "tests": {
             "assertions": [
@@ -1138,10 +1138,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1149,7 +1149,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_POST",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/fxTransfers"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/fxTransfers"
           },
           "tests": {
             "assertions": [
@@ -1175,10 +1175,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1186,7 +1186,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/fxTransfers/{{commitRequestId}}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/fxTransfers/{{commitRequestId}}"
           },
           "tests": {
             "assertions": [
@@ -1212,10 +1212,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1223,7 +1223,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/fxTransfers/{{commitRequestId}}/error"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}/fxTransfers/{{commitRequestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -1249,10 +1249,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1260,7 +1260,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
-            "value": "{$inputs.E2ESIM1_CALLBACK_URL}"
+            "value": "{$inputs.E2ESIM3_CALLBACK_URL}"
           },
           "tests": {
             "assertions": [
@@ -1277,10 +1277,10 @@
       ]
     },
     {
-      "id": "e2eSim1-notifica-a1ee",
-      "name": "e2eSim1 notification_emails",
+      "id": "e2eSim3-notifica-a1ee",
+      "name": "e2eSim3 notification_emails",
       "meta": {
-        "info": "e2eSim1 notification_emails"
+        "info": "e2eSim3 notification_emails"
       },
       "requests": [
         {
@@ -1295,19 +1295,19 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.E2ESIM1_NAME}"
+            "FSPIOP-Source": "{$inputs.E2ESIM3_NAME}"
           },
           "body": {
             "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
-            "value": "{$inputs.e2eSim1Email}"
+            "value": "{$inputs.e2eSim3Email}"
           },
           "tests": {
             "assertions": [
@@ -1333,10 +1333,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1345,7 +1345,7 @@
           },
           "body": {
             "type": "NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
-            "value": "{$inputs.e2eSim1Email}"
+            "value": "{$inputs.e2eSim3Email}"
           },
           "tests": {
             "assertions": [
@@ -1371,19 +1371,19 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM3_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.E2ESIM1_NAME}"
+            "name": "{$inputs.E2ESIM3_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
             "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.E2ESIM1_NAME}"
+            "FSPIOP-Source": "{$inputs.E2ESIM3_NAME}"
           },
           "body": {
             "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
-            "value": "{$inputs.e2eSim1Email}"
+            "value": "{$inputs.e2eSim3Email}"
           },
           "tests": {
             "assertions": [

@@ -257,346 +257,8 @@
               ]
             }
           }
-        },
-        {
-          "id": "Add-e2eSim2-different-curr-def",
-          "meta": {
-            "info": "Add e2eSim2 with different currency for default settlement case"
-          },
-          "description": "Add e2eSim2 with different currency for default settlement case",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants",
-          "path": "/participants",
-          "method": "post",
-          "body": {
-            "name": "{$inputs.E2ESIM2_NAME}",
-            "currency": "{$inputs.currency2}"
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.hub_operator}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": "status-201-if-not-exists-400-i",
-                "description": "status to be 201 if not exists or 400 if exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.status).to.equal(400)",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": "Add-initial-pos-limits-differe",
-          "meta": {
-            "info": "Add initial position and limits with different currency - e2eSim2"
-          },
-          "description": "Add initial position and limits with different currency - e2eSim2",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.E2ESIM2_NAME}/initialPositionAndLimits",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.E2ESIM2_NAME}"
-          },
-          "body": {
-            "currency": "{$inputs.currency2}",
-            "limit": {
-              "type": "NET_DEBIT_CAP",
-              "value": 500000
-            },
-            "initialPosition": 0
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.hub_operator}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": "status-201-if-not-exists-500-i",
-                "description": "status to be 201 if not exists or 500 if exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.status).to.equal(500)",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": "Add-e2eSim2-different-curr-def-1",
-          "description": "Add e2eSim2 with different currency for default settlement case CGS",
-          "meta": {
-            "info": "Add e2eSim2 with different currency for default settlement case"
-          },
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants",
-          "path": "/participants",
-          "method": "post",
-          "body": {
-            "name": "{$inputs.E2ESIM2_NAME}",
-            "currency": "{$inputs.cgscurrency}"
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.hub_operator}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": "status-201-if-not-exists-400-i",
-                "description": "status to be 201 if not exists or 400 if exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.status).to.equal(400)",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": "Add-initial-pos-limits-differe-1",
-          "description": "Add initial position and limits with different currency - e2eSim2 CGS",
-          "meta": {
-            "info": "Add initial position and limits with different currency - e2eSim2"
-          },
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.E2ESIM2_NAME}/initialPositionAndLimits",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.E2ESIM2_NAME}"
-          },
-          "body": {
-            "currency": "{$inputs.cgscurrency}",
-            "limit": {
-              "type": "NET_DEBIT_CAP",
-              "value": 500000
-            },
-            "initialPosition": 0
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.hub_operator}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": "status-201-if-not-exists-500-i",
-                "description": "status to be 201 if not exists or 500 if exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.status).to.equal(500)",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": "Get-Status-req-before-deposit-",
-          "description": "Get Status Request before deposit for currency2",
-          "meta": {
-            "info": "Get Status Request before deposit"
-          },
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.E2ESIM2_NAME}/accounts",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.E2ESIM2_NAME}"
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.hub_operator}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": "status-200",
-                "description": "status to be 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              }
-            ]
-          },
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "const jsonData = pm.response.body",
-                "console.log(jsonData)",
-                "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
-                "    pm.environment.set(\"e2eSim2Currency2SettlementAccountId\", jsonData[i].id)",
-                "    pm.environment.set(\"e2eSim2Currency2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
-                "  }",
-                "}"
-              ]
-            }
-          }
-        },
-        {
-          "id": "Deposit-Funds-settle-acc-curre",
-          "description": "Deposit Funds in Settlement Account currency2",
-          "meta": {
-            "info": "Deposit Funds in Settlement Account"
-          },
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.E2ESIM2_NAME}/accounts/{$environment.e2eSim2Currency2SettlementAccountId}",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.E2ESIM2_NAME}",
-            "id": "{$environment.e2eSim2Currency2SettlementAccountId}"
-          },
-          "body": {
-            "transferId": "{$environment.e2eSim2fundsInPrepareTransferId}",
-            "externalReference": "string",
-            "action": "recordFundsIn",
-            "reason": "string",
-            "amount": {
-              "amount": "{$environment.e2eSim2fundsInPrepareAmountCurrency2}",
-              "currency": "{$inputs.currency2}"
-            },
-            "extensionList": {
-              "extension": [
-                {
-                  "key": "string",
-                  "value": "string"
-                }
-              ]
-            }
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.hub_operator}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": "status-202",
-                "description": "status to be 202",
-                "exec": [
-                  "expect(response.status).to.equal(202)"
-                ]
-              }
-            ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "var uuid = require('uuid');",
-                "pm.environment.set('e2eSim2fundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('e2eSim2fundsInPrepareAmountCurrency2', 500000);"
-              ]
-            }
-          }
-        },
-        {
-          "id": "Get-Status-req-after-deposit-c",
-          "description": "Get Status Request after deposit for currency2",
-          "meta": {
-            "info": "Get Status Request after deposit"
-          },
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.E2ESIM2_NAME}/accounts",
-          "method": "get",
-          "params": {
-            "name": "{$inputs.E2ESIM2_NAME}"
-          },
-          "headers": {
-            "Content-Type": "application/json",
-            "FSPIOP-Source": "{$inputs.hub_operator}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "tests": {
-            "assertions": [
-              {
-                "id": "status-200",
-                "description": "status to be 200",
-                "exec": [
-                  "expect(response.status).to.equal(200)"
-                ]
-              },
-              {
-                "id": "settle-acc-bal-After-FundsIn-b",
-                "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
-                "exec": [
-                  "expect(+environment.e2eSim2Currency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.e2eSim2Currency2SettlementAccountBalanceBeforeFundsIn - +environment.e2eSim2fundsInPrepareAmountCurrency2)"
-                ]
-              }
-            ]
-          },
-          "delay": "500",
-          "scripts": {
-            "postRequest": {
-              "exec": [
-                "const jsonData = pm.response.body",
-                "console.log(jsonData)",
-                "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
-                "    pm.environment.set(\"e2eSim2Currency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
-                "  }",
-                "}"
-              ]
-            }
-          }
         }
-      ],
-      "fileInfo": {
-        "path": "hub/provisioning/for_sdk_bulk/e2eSim2.json"
-      }
+      ]
     },
     {
       "id": "e2eSim2-callbacks",
@@ -1463,11 +1125,156 @@
               }
             ]
           }
+        },
+        {
+          "id": "Add-cb-FX-TRANSFERS-POST",
+          "description": "Add callback - FX TRANSFERS POST",
+          "meta": {
+            "info": "Add callback - FX TRANSFERS POST"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_POST",
+            "value": "{$inputs.E2ESIM2_CALLBACK_URL}/fxTransfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-FX-TRANSFERS-PUT",
+          "description": "Add callback - FX TRANSFERS PUT",
+          "meta": {
+            "info": "Add callback - FX TRANSFERS PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
+            "value": "{$inputs.E2ESIM2_CALLBACK_URL}/fxTransfers/{{commitRequestId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-FX-TRANSFERS-ERROR",
+          "description": "Add callback - FX TRANSFERS ERROR",
+          "meta": {
+            "info": "Add callback - FX TRANSFERS ERROR"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
+            "value": "{$inputs.E2ESIM2_CALLBACK_URL}/fxTransfers/{{commitRequestId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-FXQUOTES-PUT",
+          "description": "Add callback - FXQUOTES PUT",
+          "meta": {
+            "info": "Add callback - FXQUOTES PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
+            "value": "{$inputs.E2ESIM2_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
         }
-      ],
-      "fileInfo": {
-        "path": "hub/provisioning/for_sdk_bulk/e2eSim2.json"
-      }
+      ]
     },
     {
       "id": "e2eSim2-notifica-a1ee",
@@ -1590,65 +1397,7 @@
             ]
           }
         }
-      ],
-      "fileInfo": {
-        "path": "hub/provisioning/for_sdk_bulk/e2eSim2.json"
-      }
-    },
-    {
-      "id": "e2eSim2-oraclere-de8f",
-      "name": "e2eSim2 oracle_registration",
-      "meta": {
-        "info": "e2eSim2 oracle_registration"
-      },
-      "requests": [
-        {
-          "id": "Add-MSISDN-Oracle",
-          "meta": {
-            "info": "Add MSISDN to Oracle"
-          },
-          "description": "Add MSISDN to Oracle",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "fspiop",
-            "asynchronous": true
-          },
-          "operationPath": "/participants/{Type}/{ID}",
-          "path": "/participants/MSISDN/{$inputs.E2ESIM2_MSISDN_1}",
-          "method": "post",
-          "params": {
-            "Type": "MSISDN",
-            "ID": "{$inputs.E2ESIM2_MSISDN_1}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "headers": {
-            "Content-Type": "{$inputs.contentTypeParticipants}",
-            "Accept": "{$inputs.acceptParticipants}",
-            "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.E2ESIM2_NAME}"
-          },
-          "body": {
-            "fspId": "{$inputs.E2ESIM2_NAME}",
-            "currency": "{$inputs.currency}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": "Status-code-202",
-                "description": "Status code is 202",
-                "exec": [
-                  "expect(response.status).to.equal(202)"
-                ]
-              }
-            ]
-          },
-          "ignoreCallbacks": true
-        }
-      ],
-      "fileInfo": {
-        "path": "hub/provisioning/for_sdk_bulk/e2eSim2.json"
-      }
+      ]
     }
   ]
 }
