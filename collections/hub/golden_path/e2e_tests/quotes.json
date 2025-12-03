@@ -3,6 +3,53 @@
   "name": "E2E Quotes Negative Test Cases",
   "test_cases": [
     {
+      "id": "e2e-quotes-add-account",
+      "name": "E2E Quotes Add account",
+      "meta": {
+        "info": "E2E QuotesAdd account"
+      },
+      "requests": [
+        {
+          "id": "Post-Account",
+          "description": "Post Account",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": false,
+            "prefix": "/ml-con-out",
+            "hostnames": [],
+            "specFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/trigger_templates"
+          },
+          "operationPath": "/accounts",
+          "path": "/accounts",
+          "method": "post",
+          "url": "{$inputs.E2ESIM2_OUTBOUND_URL}",
+          "body": [
+            {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2ESIM2_MSISDN_1}"
+            }
+          ],
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "e2e-quotes-timeout",
       "name": "E2E Quoting Service Timeout",
       "meta": {
