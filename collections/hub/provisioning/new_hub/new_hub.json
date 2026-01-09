@@ -933,6 +933,51 @@
               }
             ]
           }
+        },
+        {
+          "id": "Register-ACCOUNT-ID-Oracle",
+          "meta": {
+            "info": "Register ACCOUNT_ID Oracle"
+          },
+          "description": "Register ACCOUNT_ID Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "body": {
+            "oracleIdType": "ACCOUNT_ID",
+            "endpoint": {
+              "value": "{$inputs.HOST_ORACLE_MSISDN}",
+              "endpointType": "URL"
+            },
+            "isDefault": true
+          },
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_ADMIN}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-errorCode-2001-alre",
+                "description": "status to be 201 or errorCode 2001 already exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.body.errorInformation.errorCode).to.equal(\"2001\")",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
         }
       ]
     }
