@@ -2887,7 +2887,35 @@
           "FSPIOP-Destination": "testingtoolkitdfsp"
         },
         "body": {
-          "transferState": "COMMITTED"
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$environment.CreDtTm}"
+          },
+          "TxInfAndSts": {
+            "StsId": "{$function.generic.generateULID}",
+            "OrgnlInstrId": "{$request.body.CdtTrfTxInf.PmtId.InstrId}",
+            "OrgnlEndToEndId": "{$request.body.CdtTrfTxInf.PmtId.EndToEndId}",
+            "OrgnlTxId": "{$request.body.CdtTrfTxInf.PmtId.TxId}",
+            "OrgnlUETR": "123e4567-e89b-12d3-a456-426614174000",
+            "TxSts": "COMM",
+            "StsRsnInf": {
+              "Rsn": {
+                "Prtry": "COMM"
+              },
+              "AddtlInf": "ADDITIONAL"
+            },
+            "AccptncDtTm": "{$environment.AccptncDtTm}",
+            "PrcgDt": {
+              "DtTm": "{$environment.AccptncDtTm}"
+            },
+            "AcctSvcrRef": "ACCTSVCRREF",
+            "ClrSysRef": "CLRSYSREF",
+            "ExctnConf": "",
+            "SplmtryData": {
+              "PlcAndNm": "PLACE",
+              "Envlp": {}
+            }
+          }
         }
       },
       "type": "MOCK_CALLBACK"
