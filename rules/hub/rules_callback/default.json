@@ -2877,13 +2877,17 @@
       "path": "/transfers/{ID}",
       "params": {
         "scripts": {
+          "exec": [
+            "environment.CreDtTm = new Date().toISOString()",
+            "environment.AccptncDtTm = new Date().toISOString()",
+            "environment.PmtInstrXpryDtTm = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+          ],
           "scriptingEngine": "javascript"
         },
         "headers": {
           "Content-Type": "application/vnd.interoperability.iso20022.transfers+json;version=2.0",
-          "FSPIOP-Source": "nonexistentpayeefsp",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
           "Date": "{$request.headers.date}",
-          "FSPIOP-Proxy": "proxyttk",
           "FSPIOP-Destination": "testingtoolkitdfsp"
         },
         "body": {
@@ -2918,7 +2922,7 @@
           }
         }
       },
-      "type": "MOCK_CALLBACK"
+      "type": "FIXED_CALLBACK"
     },
     "type": "callback",
     "version": 1
