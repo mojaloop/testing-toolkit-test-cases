@@ -1,0 +1,349 @@
+{
+  "name": "MCM RBAC - Positive Authorization Tests",
+  "test_cases": [
+    {
+      "id": "mcm-auth-endpoints-accessible",
+      "name": "Auth endpoints are accessible to authenticated users",
+      "meta": {
+        "info": "Test that /api/auth/* endpoints are accessible with cookie session"
+      },
+      "requests": [
+        {
+          "id": "auth-login-accessible",
+          "description": "GET /api/auth/login is accessible",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/api/auth/login",
+          "path": "/api/auth/login",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200 or 302 (redirect)",
+                "exec": [
+                  "expect([200, 302]).to.include(response.status)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-dfsp-list-with-permission",
+      "name": "User with dfspList permission can list DFSPs",
+      "meta": {
+        "info": "Test that user with dfspList permission can access GET /api/dfsps"
+      },
+      "requests": [
+        {
+          "id": "list-dfsps-authorized",
+          "description": "GET /api/dfsps with dfspList permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/api/dfsps",
+          "path": "/api/dfsps",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response should be an array",
+                "exec": [
+                  "expect(response.body).to.be.an('array')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-dfsp-create-with-permission",
+      "name": "User with dfspManage permission can create DFSP",
+      "meta": {
+        "info": "Test that user with dfspManage permission can POST /api/dfsps"
+      },
+      "requests": [
+        {
+          "id": "create-dfsp-authorized",
+          "description": "POST /api/dfsps with dfspManage permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/api/dfsps",
+          "path": "/api/dfsps",
+          "method": "post",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "name": "{$inputs.TEST_DFSP_NAME}",
+            "monetaryZoneId": "{$inputs.MONETARY_ZONE_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200 or 201",
+                "exec": [
+                  "expect([200, 201]).to.include(response.status)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-dfsp-owner-credentials",
+      "name": "DFSP owner can access own credentials",
+      "meta": {
+        "info": "Test that DFSP owner (role: dfsp:DFSPID member) can access credentials"
+      },
+      "requests": [
+        {
+          "id": "get-own-credentials",
+          "description": "GET /api/dfsps/{dfspId}/credentials as owner",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/api/dfsps/{dfspId}/credentials",
+          "path": "/api/dfsps/{$inputs.DFSP_ID}/credentials",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.DFSP_OWNER_SESSION}"
+          },
+          "params": {
+            "dfspId": "{$inputs.DFSP_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-hub-endpoints-view",
+      "name": "User with hubEndpointsView can read hub endpoints",
+      "meta": {
+        "info": "Test that user with hubEndpointsView permission can GET /api/hub/*"
+      },
+      "requests": [
+        {
+          "id": "get-hub-endpoints",
+          "description": "GET /api/hub/endpoints with hubEndpointsView permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/api/hub/endpoints",
+          "path": "/api/hub/endpoints",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-hub-endpoints-manage",
+      "name": "User with hubEndpointsManage can update hub endpoints",
+      "meta": {
+        "info": "Test that user with hubEndpointsManage permission can POST /api/hub/*"
+      },
+      "requests": [
+        {
+          "id": "update-hub-endpoints",
+          "description": "POST /api/hub/endpoints with hubEndpointsManage permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/api/hub/endpoints",
+          "path": "/api/hub/endpoints",
+          "method": "post",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
+            "value": "http://example.com/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200 or 201",
+                "exec": [
+                  "expect([200, 201]).to.include(response.status)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-monetary-zones-view",
+      "name": "User with monetaryZonesView can list monetary zones",
+      "meta": {
+        "info": "Test that user with monetaryZonesView permission can GET /api/monetaryzones"
+      },
+      "requests": [
+        {
+          "id": "get-monetary-zones",
+          "description": "GET /api/monetaryzones with monetaryZonesView permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/api/monetaryzones",
+          "path": "/api/monetaryzones",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-jws-certs-view",
+      "name": "User with dfspJwsCertsView can view JWS certificates",
+      "meta": {
+        "info": "Test that user with dfspJwsCertsView permission can GET /api/dfsps/jwscerts"
+      },
+      "requests": [
+        {
+          "id": "get-jws-certs",
+          "description": "GET /api/dfsps/jwscerts with dfspJwsCertsView permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/api/dfsps/jwscerts",
+          "path": "/api/dfsps/jwscerts",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-dfsp-endpoints-unprocessed",
+      "name": "User with dfspManage can access unprocessed endpoints",
+      "meta": {
+        "info": "Test that user with dfspManage permission can GET /api/dfsps/endpoints/unprocessed"
+      },
+      "requests": [
+        {
+          "id": "get-unprocessed-endpoints",
+          "description": "GET /api/dfsps/endpoints/unprocessed with dfspManage permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/api/dfsps/endpoints/unprocessed",
+          "path": "/api/dfsps/endpoints/unprocessed",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
