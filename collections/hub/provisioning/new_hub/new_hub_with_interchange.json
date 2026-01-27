@@ -816,6 +816,694 @@
               }
             ]
           }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE_SETTLEMENT",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE_SETTLEMENT",
+            "currency": "{$inputs.currency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE",
+            "currency": "{$inputs.currency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE_SETTLEMENT-1",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Second Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Second Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE_SETTLEMENT",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE-1",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE Second Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE Second Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE_SETTLEMENT-2",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Third Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Third Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE_SETTLEMENT",
+            "currency": "{$inputs.currency3}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE-2",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE Third Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE Third Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE",
+            "currency": "{$inputs.currency3}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE_SETTLEMENT-3",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Fourth Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Fourth Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE_SETTLEMENT",
+            "currency": "{$inputs.currency4}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE-3",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE Fourth Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE Fourth Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE",
+            "currency": "{$inputs.currency4}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE_SETTLEMENT-4",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Fifth Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Fifth Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE_SETTLEMENT",
+            "currency": "{$inputs.currency5}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE-4",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE Fifth Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE Fifth Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE",
+            "currency": "{$inputs.currency5}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE_SETTLEMENT-5",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Sixth Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Sixth Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE_SETTLEMENT",
+            "currency": "{$inputs.currency6}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE-5",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE Sixth Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE Sixth Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE",
+            "currency": "{$inputs.currency6}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE_SETTLEMENT-6",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Seventh Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Seventh Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE_SETTLEMENT",
+            "currency": "{$inputs.currency7}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE-6",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE Seventh Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE Seventh Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE",
+            "currency": "{$inputs.currency7}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE_SETTLEMENT-7",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Eighth Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE_SETTLEMENT Eighth Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE_SETTLEMENT",
+            "currency": "{$inputs.currency8}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-INTERCHANGE_FEE-7",
+          "meta": {
+            "info": "Add Hub Account-INTERCHANGE_FEE Eighth Currency"
+          },
+          "description": "Add Hub Account-INTERCHANGE_FEE Eighth Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "INTERCHANGE_FEE",
+            "currency": "{$inputs.currency8}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
         }
       ]
     },
@@ -853,6 +1541,65 @@
             "ledgerAccountType": "POSITION",
             "autoPositionReset": true,
             "settlementAccountType": "SETTLEMENT"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "retries": 3,
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "interchange-fee-settlement-model",
+      "type": "Interchange Fee Settlement Model",
+      "name": "Interchange Fee Settlement Model",
+      "fileInfo": {
+        "path": "hub/provisioning/new_hub/new_hub.json"
+      },
+      "meta": {
+        "info": "Interchange Fee Settlement Model"
+      },
+      "requests": [
+        {
+          "id": "Create-settle-model-INTERCHANGEFEE",
+          "meta": {
+            "info": "Create settlement model INTERCHANGEFEE"
+          },
+          "description": "Create settlement model INTERCHANGEFEE",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/settlementModels",
+          "path": "/settlementModels",
+          "method": "post",
+          "body": {
+            "name": "INTERCHANGEFEE",
+            "settlementGranularity": "NET",
+            "settlementInterchange": "MULTILATERAL",
+            "settlementDelay": "DEFERRED",
+            "requireLiquidityCheck": false,
+            "ledgerAccountType": "INTERCHANGE_FEE",
+            "autoPositionReset": true,
+            "settlementAccountType": "INTERCHANGE_FEE_SETTLEMENT"
           },
           "headers": {
             "Content-Type": "application/json",
