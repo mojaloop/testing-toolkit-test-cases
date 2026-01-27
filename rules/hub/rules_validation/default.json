@@ -1018,8 +1018,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "3100"
-              }
+                "Prtry": "3100"
+              },
+              "AddtlInf": "Generic validation error simulation"
             }
           }
         }
@@ -1091,8 +1092,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "2001"
-              }
+                "Prtry": "2001"
+              },
+              "AddtlInf": "Internal server error simulation"
             }
           }
         }
@@ -1164,8 +1166,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "3001"
-              }
+                "Prtry": "3001"
+              },
+              "AddtlInf": "Unacceptable version requested simulation"
             }
           }
         }
@@ -1237,8 +1240,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "4001"
-              }
+                "Prtry": "4001"
+              },
+              "AddtlInf": "Insufficient funds simulation"
             }
           }
         }
@@ -1310,8 +1314,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "5001"
-              }
+                "Prtry": "5001"
+              },
+              "AddtlInf": "Limit exceeded simulation"
             }
           }
         }
@@ -1383,8 +1388,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "5101"
-              }
+                "Prtry": "5101"
+              },
+              "AddtlInf": "Payee reject error simulation"
             }
           }
         }
@@ -1456,8 +1462,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "3100"
-              }
+                "Prtry": "3100"
+              },
+              "AddtlInf": "Generic validation error simulation"
             }
           }
         }
@@ -1529,8 +1536,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "3100"
-              }
+                "Prtry": "3100"
+              },
+              "AddtlInf": "Generic validation error simulation"
             }
           }
         }
@@ -1602,8 +1610,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "3100"
-              }
+                "Prtry": "3100"
+              },
+              "AddtlInf": "Generic validation error simulation"
             }
           }
         }
@@ -1766,8 +1775,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "5201"
-              }
+                "Prtry": "5201"
+              },
+              "AddtlInf": "Payee quote error simulation"
             }
           }
         }
@@ -1839,8 +1849,9 @@
           "TxInfAndSts": {
             "StsRsnInf": {
               "Rsn": {
-                "Cd": "5201"
-              }
+                "Prtry": "5200"
+              },
+              "AddtlInf": "Payee quote error simulation"
             }
           }
         }
@@ -3108,6 +3119,142 @@
       "type": "FIXED_ERROR_CALLBACK"
     },
     "type": "validation",
+    "version": 1
+  },
+    {
+    "ruleId": 265,
+    "priority": 42,
+    "description": "ISO20022 get /transfers/{ID} - Proxy override for nonexistentpayeefsp2 error callback",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "includesString",
+          "value": "application/vnd.interoperability.iso20022",
+          "path": "accept"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "nonexistentpayeefsp2",
+          "path": "fspiop-destination"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "javascript"
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.iso20022.transfers+json;version=2.0",
+          "FSPIOP-Source": "nonexistentpayeefsp2",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Proxy": "proxyttk",
+          "FSPIOP-Destination": "testingtoolkitdfsp"
+        },
+        "body": {
+          "GrpHdr": {
+            "MsgId": "{$function.generic.generateULID}",
+            "CreDtTm": "{$function.generic.curDateISO}"
+          },
+          "TxInfAndSts": {
+            "StsRsnInf": {
+              "Rsn": {
+                "Prtry": "3300"
+              },
+              "AddtlInf": "Timeout error - GET /transfers/{ID} test"
+            }
+          }
+        }
+      },
+      "type": "FIXED_ERROR_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 266,
+    "priority": 42,
+    "description": "get /transfers/{ID} - Proxy override for nonexistentpayeefsp2 error callback",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "iso20022",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0_iso20022/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0_iso20022/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0_iso20022/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0_iso20022/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "nonexistentpayeefsp2",
+          "path": "fspiop-destination"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "javascript"
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.transfers+json;version=2.0",
+          "FSPIOP-Source": "nonexistentpayeefsp2",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Proxy": "proxyttk",
+          "FSPIOP-Destination": "testingtoolkitdfsp"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "3300",
+            "errorDescription": "Timeout error - GET /transfers/{ID} test"
+          }
+        }
+      },
+      "type": "FIXED_ERROR_CALLBACK"
+    },
+    "type": "callback",
     "version": 1
   }
 ]

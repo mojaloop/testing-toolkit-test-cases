@@ -1,0 +1,1403 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "e2eSim1-account",
+      "name": "e2eSim1 account",
+      "meta": {
+        "info": "e2eSim1 account"
+      },
+      "requests": [
+        {
+          "id": "Add-e2eSim1",
+          "meta": {
+            "info": "Add e2eSim1"
+          },
+          "description": "Add e2eSim1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.E2ESIM1_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-initial-pos-limits-e2eSim1",
+          "meta": {
+            "info": "Add initial position and limits - e2eSim1"
+          },
+          "description": "Add initial position and limits - e2eSim1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.currency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 500000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-500-i",
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "e2eSim1-Get-Status-req-before-",
+          "meta": {
+            "info": "e2eSim1 Get Status Request before deposit"
+          },
+          "description": "e2eSim1 Get Status Request before deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "    pm.environment.set(\"e2eSim1SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"e2eSim1SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Deposit-Funds-settle-acc-ttksi",
+          "meta": {
+            "info": "Deposit Funds in Settlement Account - e2eSim1"
+          },
+          "description": "Deposit Funds in Settlement Account - e2eSim1",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/accounts/{$environment.e2eSim1SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}",
+            "id": "{$environment.e2eSim1SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.e2eSim1fundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.e2eSim1fundsInPrepareAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('e2eSim1fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('e2eSim1fundsInPrepareAmount', 500000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "e2eSim1-Get-Status-req-after-d",
+          "meta": {
+            "info": "e2eSim1 Get Status Request after deposit"
+          },
+          "description": "e2eSim1 Get Status Request after deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "e2eSim1-settle-acc-bal-After-F",
+                "description": "e2eSim1 Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.e2eSim1SettlementAccountBalanceAfterFundsIn).to.equal(+environment.e2eSim1SettlementAccountBalanceBeforeFundsIn - +environment.e2eSim1fundsInPrepareAmount)"
+                ]
+              }
+            ]
+          },
+          "delay": "500",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "    pm.environment.set(\"e2eSim1SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "e2eSim1-callbacks",
+      "name": "e2eSim1 callbacks",
+      "meta": {
+        "info": "e2eSim1 callbacks"
+      },
+      "requests": [
+        {
+          "id": "Add-e2eSim1-cb-AUTHORIZATIONS",
+          "meta": {
+            "info": "Add e2eSim1 callback - AUTHORIZATIONS"
+          },
+          "description": "Add e2eSim1 callback - AUTHORIZATIONS",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_AUTHORIZATIONS",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-part-PUT",
+          "meta": {
+            "info": "Add e2eSim1 callback - PARTICIPANT PUT"
+          },
+          "description": "Add e2eSim1 callback - PARTICIPANT PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-part-PUT-Error",
+          "meta": {
+            "info": "Add e2eSim1 callback - PARTICIPANT PUT Error"
+          },
+          "description": "Add e2eSim1 callback - PARTICIPANT PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-part-PUT-Batch",
+          "meta": {
+            "info": "Add e2eSim1 callback - PARTICIPANT PUT Batch"
+          },
+          "description": "Add e2eSim1 callback - PARTICIPANT PUT Batch",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{requestId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-part-PUT-Batch-",
+          "meta": {
+            "info": "Add e2eSim1 callback - PARTICIPANT PUT Batch Error"
+          },
+          "description": "Add e2eSim1 callback - PARTICIPANT PUT Batch Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{requestId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-PARTIES-GET",
+          "meta": {
+            "info": "Add e2eSim1 callback - PARTIES GET"
+          },
+          "description": "Add e2eSim1 callback - PARTIES GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-PARTIES-PUT",
+          "meta": {
+            "info": "Add e2eSim1 callback - PARTIES PUT"
+          },
+          "description": "Add e2eSim1 callback - PARTIES PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-PARTIES-PUT-Err",
+          "meta": {
+            "info": "Add e2eSim1 callback - PARTIES PUT Error"
+          },
+          "description": "Add e2eSim1 callback - PARTIES PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-QUOTES",
+          "meta": {
+            "info": "Add e2eSim1 callback - QUOTES"
+          },
+          "description": "Add e2eSim1 callback - QUOTES",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_QUOTES",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-TXN-req",
+          "meta": {
+            "info": "Add e2eSim1 callback - TXN REQUEST"
+          },
+          "description": "Add e2eSim1 callback - TXN REQUEST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-TRANSFERS-POST",
+          "meta": {
+            "info": "Add e2eSim1 callback - TRANSFERS POST"
+          },
+          "description": "Add e2eSim1 callback - TRANSFERS POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-TRANSFERS-PUT",
+          "meta": {
+            "info": "Add e2eSim1 callback - TRANSFERS PUT"
+          },
+          "description": "Add e2eSim1 callback - TRANSFERS PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/transfers/{{transferId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-TRANSFERS-ERROR",
+          "meta": {
+            "info": "Add e2eSim1 callback - TRANSFERS ERROR"
+          },
+          "description": "Add e2eSim1 callback - TRANSFERS ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/transfers/{{transferId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-BULK-TRANSFER-P",
+          "meta": {
+            "info": "Add e2eSim1 callback - BULK-TRANSFER POST"
+          },
+          "description": "Add e2eSim1 callback - BULK-TRANSFER POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/bulkTransfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-BULK-TRANSFER-P-1",
+          "meta": {
+            "info": "Add e2eSim1 callback - BULK-TRANSFER PUT"
+          },
+          "description": "Add e2eSim1 callback - BULK-TRANSFER PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/bulkTransfers/{{id}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-BULK-TRANSFER-E",
+          "meta": {
+            "info": "Add e2eSim1 callback - BULK-TRANSFER ERROR"
+          },
+          "description": "Add e2eSim1 callback - BULK-TRANSFER ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/bulkTransfers/{{id}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-part-SUB-ID-PUT",
+          "meta": {
+            "info": "Add callback - PARTICIPANT SUB-ID PUT"
+          },
+          "description": "Add callback - PARTICIPANT SUB-ID PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-part-SUB-ID-PUT-Error",
+          "meta": {
+            "info": "Add callback - PARTICIPANT SUB-ID PUT Error"
+          },
+          "description": "Add callback - PARTICIPANT SUB-ID PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-part-SUB-ID-DELETE",
+          "meta": {
+            "info": "Add callback - PARTICIPANT SUB-ID DELETE"
+          },
+          "description": "Add callback - PARTICIPANT SUB-ID DELETE",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-PARTIES-SUB-ID-GET",
+          "meta": {
+            "info": "Add callback - PARTIES SUB-ID GET"
+          },
+          "description": "Add callback - PARTIES SUB-ID GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-PARTIES-SUB-ID-PUT",
+          "meta": {
+            "info": "Add callback - PARTIES SUB-ID PUT"
+          },
+          "description": "Add callback - PARTIES SUB-ID PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-PARTIES-SUB-ID-ERROR-PU",
+          "meta": {
+            "info": "Add callback - PARTIES SUB-ID ERROR PUT"
+          },
+          "description": "Add callback - PARTIES SUB-ID ERROR PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-e2eSim1-cb-FSPIOP_CALLBACK",
+          "meta": {
+            "info": "Add e2eSim1 callback - FSPIOP_CALLBACK_URL_BULK_QUOTES"
+          },
+          "description": "Add e2eSim1 callback - FSPIOP_CALLBACK_URL_BULK_QUOTES",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_QUOTES",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-FX-TRANSFERS-POST",
+          "description": "Add callback - FX TRANSFERS POST",
+          "meta": {
+            "info": "Add callback - FX TRANSFERS POST"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_POST",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/fxTransfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-FX-TRANSFERS-PUT",
+          "description": "Add callback - FX TRANSFERS PUT",
+          "meta": {
+            "info": "Add callback - FX TRANSFERS PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/fxTransfers/{{commitRequestId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-FX-TRANSFERS-ERROR",
+          "description": "Add callback - FX TRANSFERS ERROR",
+          "meta": {
+            "info": "Add callback - FX TRANSFERS ERROR"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}/fxTransfers/{{commitRequestId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-FXQUOTES-PUT",
+          "description": "Add callback - FXQUOTES PUT",
+          "meta": {
+            "info": "Add callback - FXQUOTES PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
+            "value": "{$inputs.E2ESIM1_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "e2eSim1-notifica-a1ee",
+      "name": "e2eSim1 notification_emails",
+      "meta": {
+        "info": "e2eSim1 notification_emails"
+      },
+      "requests": [
+        {
+          "id": "Set-Email-NET_DEBIT_CAP_THRESH",
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.E2ESIM1_NAME}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+            "value": "{$inputs.e2eSim1Email}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Set-Email-NET_DEBIT_CAP_ADJUST",
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+            "value": "{$inputs.e2eSim1Email}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Set-Email-SETTLEMENT_TRANSFER_",
+          "meta": {
+            "info": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL"
+          },
+          "description": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.E2ESIM1_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.E2ESIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.E2ESIM1_NAME}"
+          },
+          "body": {
+            "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+            "value": "{$inputs.e2eSim1Email}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
