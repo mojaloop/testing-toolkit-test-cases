@@ -9,6 +9,7 @@ This repository is a collection of tests for the Mojaloop testing toolkit
    - [Sequence Diagram test collection](#sequence-diagram-test-collection)
    - [Third Party Provisioning collectionn](#third-party-provisioning-collection)
    - [Third Party test collection](#third-party-test-collection)
+   - [MCM RBAC test collection](#mcm-rbac-test-collection)
  - [For Mojaloop **FSP** Implementations](#for-mojaloop-fsp-implementations)
    - [Provisioning collection for Mojaloop Simulator](#provisioning-collection-for-mojaloop-simulator)
    - [DFSP Golden Path collection](#dfsp-golden-path-collection)
@@ -88,6 +89,16 @@ The following scenarios are currently included:
 - Account Linking (WEB)
 - Account Linking (OTP)
 - 3rd Party Transaction Request
+
+### MCM RBAC Test Collection
+
+```
+collections/hub/mcm
+```
+
+This collection tests the Connection Manager (MCM) Role-Based Access Control (RBAC) functionality.
+
+See [MCM RBAC Tests Documentation](./docs/mcm-rbac.md) for more information.
 
 ## For Mojaloop FSP Implementations
 
