@@ -21,7 +21,7 @@
           "method": "get",
           "url": "{$inputs.MCM_PM4ML_URL}",
           "headers": {
-            "Authorization": "Bearer {$inputs.MACHINE_CLIENT_JWT}"
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}"
           },
           "tests": {
             "assertions": [
@@ -64,11 +64,11 @@
           "method": "post",
           "url": "{$inputs.MCM_PM4ML_URL}",
           "headers": {
-            "Authorization": "Bearer {$inputs.MACHINE_CLIENT_JWT}",
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}",
             "Content-Type": "application/json"
           },
           "body": {
-            "name": "{$inputs.TEST_DFSP_NAME}",
+            "name": "{$inputs.DFSP1_NAME}",
             "monetaryZoneId": "{$inputs.MONETARY_ZONE_ID}"
           },
           "tests": {
@@ -101,14 +101,14 @@
             "type": "mcm"
           },
           "operationPath": "/dfsps/{dfspId}",
-          "path": "/dfsps/{$inputs.DFSP_ID}",
+          "path": "/dfsps/{$inputs.DFSP1_ID}",
           "method": "get",
           "url": "{$inputs.MCM_PM4ML_URL}",
           "headers": {
-            "Authorization": "Bearer {$inputs.DFSP_OWNER_JWT}"
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}"
           },
           "params": {
-            "dfspId": "{$inputs.DFSP_ID}"
+            "dfspId": "{$inputs.DFSP1_ID}"
           },
           "tests": {
             "assertions": [
@@ -124,7 +124,7 @@
                 "description": "Response should contain DFSP data",
                 "exec": [
                   "expect(response.body).to.have.property('id')",
-                  "expect(response.body.id).to.equal('{$inputs.DFSP_ID}')"
+                  "expect(response.body.id).to.equal('{$inputs.DFSP1_ID}')"
                 ]
               }
             ]
@@ -152,7 +152,7 @@
           "method": "get",
           "url": "{$inputs.MCM_PM4ML_URL}",
           "headers": {
-            "Authorization": "Bearer {$inputs.MACHINE_CLIENT_JWT}"
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}"
           },
           "tests": {
             "assertions": [
@@ -188,7 +188,7 @@
           "method": "post",
           "url": "{$inputs.MCM_PM4ML_URL}",
           "headers": {
-            "Authorization": "Bearer {$inputs.MACHINE_CLIENT_JWT}",
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}",
             "Content-Type": "application/json"
           },
           "body": {
@@ -229,7 +229,7 @@
           "method": "get",
           "url": "{$inputs.MCM_PM4ML_URL}",
           "headers": {
-            "Authorization": "Bearer {$inputs.MACHINE_CLIENT_JWT}"
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}"
           },
           "tests": {
             "assertions": [
@@ -334,11 +334,11 @@
           "method": "post",
           "url": "{$inputs.MCM_PM4ML_URL}",
           "headers": {
-            "Authorization": "Bearer {$inputs.LIMITED_CLIENT_JWT}",
+            "Authorization": "Bearer {$inputs.DFSP2_JWT}",
             "Content-Type": "application/json"
           },
           "body": {
-            "name": "{$inputs.TEST_DFSP_NAME}",
+            "name": "{$inputs.DFSP1_NAME}",
             "monetaryZoneId": "{$inputs.MONETARY_ZONE_ID}"
           },
           "tests": {
