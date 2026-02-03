@@ -18,8 +18,8 @@ Apply the MCM RBAC environment variables in your TTK environment file:
 ```json
 {
   "inputValues": {
-    "MCM_URL": "https://mcm.<domain>",
-    "MCM_EXTERNAL_URL": "https://mcm-api.<domain>",
+    "MCM_URL": "https://mcm.<domain>/api",
+    "MCM_PM4ML_URL": "https://mcm.<domain>/pm4mlapi",
     "MONETARY_ZONE_ID": "1",
     "DFSP1_ID": "testdfsp1",
     "DFSP1_NAME": "testdfsp1",
