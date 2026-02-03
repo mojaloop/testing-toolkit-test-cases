@@ -46,14 +46,14 @@
     },
     {
       "id": "mcm-pm4ml-dfsp-create-jwt",
-      "name": "Machine client with dfspManage permission can create DFSP",
+      "name": "DFSP machine client cannot create DFSPs (no dfspManage permission)",
       "meta": {
-        "info": "Test JWT-based POST /dfsps for machine clients"
+        "info": "Test that DFSP JWT cannot POST /dfsps - requires admin permission"
       },
       "requests": [
         {
           "id": "pm4ml-create-dfsp-jwt",
-          "description": "POST /dfsps with JWT and dfspManage permission",
+          "description": "POST /dfsps with DFSP JWT (no dfspManage permission)",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -75,9 +75,9 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Response status to be 200 or 201",
+                "description": "Response status to be 403 Forbidden",
                 "exec": [
-                  "expect([200, 201]).to.include(response.status)"
+                  "expect(response.status).to.equal(403)"
                 ]
               }
             ]
@@ -133,6 +133,42 @@
       ]
     },
     {
+      "id": "mcm-pm4ml-dfsp-cross-access-denied",
+      "name": "DFSP cannot access another DFSP's data",
+      "meta": {
+        "info": "Test that DFSP1 JWT cannot access DFSP2 data - cross-DFSP isolation"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-cross-dfsp-403",
+          "description": "GET /dfsps/{dfspId} with DFSP1 JWT accessing DFSP2 data",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps/{dfspId}",
+          "path": "/dfsps/{$inputs.DFSP2_ID}",
+          "method": "get",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "headers": {
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 403 Forbidden",
+                "exec": [
+                  "expect(response.status).to.equal(403)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "mcm-pm4ml-hub-read-jwt",
       "name": "Machine client with hubEndpointsView can read hub endpoints",
       "meta": {
@@ -170,14 +206,14 @@
     },
     {
       "id": "mcm-pm4ml-hub-write-jwt",
-      "name": "Machine client with hubEndpointsManage can update hub endpoints",
+      "name": "DFSP machine client cannot update hub endpoints (no hubEndpointsManage permission)",
       "meta": {
-        "info": "Test JWT-based POST /hub/* for machine clients"
+        "info": "Test that DFSP JWT cannot POST /hub/* - requires admin permission"
       },
       "requests": [
         {
           "id": "pm4ml-update-hub-endpoints-jwt",
-          "description": "POST /hub/endpoints with JWT and hubEndpointsManage",
+          "description": "POST /hub/endpoints with DFSP JWT (no hubEndpointsManage permission)",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -199,9 +235,9 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Response status to be 200 or 201",
+                "description": "Response status to be 403 Forbidden",
                 "exec": [
-                  "expect([200, 201]).to.include(response.status)"
+                  "expect(response.status).to.equal(403)"
                 ]
               }
             ]
