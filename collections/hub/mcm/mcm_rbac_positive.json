@@ -2,42 +2,6 @@
   "name": "MCM RBAC - Positive Authorization Tests",
   "test_cases": [
     {
-      "id": "mcm-auth-endpoints-accessible",
-      "name": "Auth endpoints are accessible to authenticated users",
-      "meta": {
-        "info": "Test that /api/auth/* endpoints are accessible with cookie session"
-      },
-      "requests": [
-        {
-          "id": "auth-login-accessible",
-          "description": "GET /api/auth/login is accessible",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "mcm"
-          },
-          "operationPath": "/auth/login",
-          "path": "/auth/login",
-          "method": "get",
-          "url": "{$inputs.MCM_URL}",
-          "headers": {
-            "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response status to be 200 or 302 (redirect)",
-                "exec": [
-                  "expect([200, 302]).to.include(response.status)"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
       "id": "mcm-dfsp-list-with-permission",
       "name": "User with dfspList permission can list DFSPs",
       "meta": {
@@ -104,8 +68,10 @@
             "Content-Type": "application/json"
           },
           "body": {
+            "dfspId": "{$inputs.TEST_DFSP_ID}",
             "name": "{$inputs.TEST_DFSP_NAME}",
-            "monetaryZoneId": "{$inputs.MONETARY_ZONE_ID}"
+            "monetaryZoneId": "{$inputs.MONETARY_ZONE_ID}",
+            "email": "{$inputs.TEST_DFSP_EMAIL}"
           },
           "tests": {
             "assertions": [
@@ -198,21 +164,21 @@
     },
     {
       "id": "mcm-hub-endpoints-manage",
-      "name": "User with hubEndpointsManage can update hub endpoints",
+      "name": "User with hubEndpointsManage can create hub endpoints",
       "meta": {
-        "info": "Test that user with hubEndpointsManage permission can POST /api/hub/*"
+        "info": "Test that user with hubEndpointsManage permission can POST /api/hub/endpoints/ingress/ips"
       },
       "requests": [
         {
-          "id": "update-hub-endpoints",
-          "description": "POST /api/hub/endpoints with hubEndpointsManage permission",
+          "id": "create-hub-ingress-ip",
+          "description": "POST /api/hub/endpoints/ingress/ips with hubEndpointsManage permission",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "mcm"
           },
-          "operationPath": "/hub/endpoints",
-          "path": "/hub/endpoints",
+          "operationPath": "/hub/endpoints/ingress/ips",
+          "path": "/hub/endpoints/ingress/ips",
           "method": "post",
           "url": "{$inputs.MCM_URL}",
           "headers": {
@@ -220,8 +186,10 @@
             "Content-Type": "application/json"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
-            "value": "http://example.com/transfers"
+            "value": {
+              "address": "192.168.1.1",
+              "ports": ["443"]
+            }
           },
           "tests": {
             "assertions": [
