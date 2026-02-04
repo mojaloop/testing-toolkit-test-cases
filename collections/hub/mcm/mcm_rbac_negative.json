@@ -35,42 +35,6 @@
       ]
     },
     {
-      "id": "mcm-dfsp-list-no-permission",
-      "name": "User without dfspList permission cannot list DFSPs",
-      "meta": {
-        "info": "Test that user without dfspList permission gets 403 Forbidden"
-      },
-      "requests": [
-        {
-          "id": "list-dfsps-forbidden",
-          "description": "GET /api/dfsps without dfspList permission",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "mcm"
-          },
-          "operationPath": "/dfsps",
-          "path": "/dfsps",
-          "method": "get",
-          "url": "{$inputs.MCM_URL}",
-          "headers": {
-            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response status to be 403 Forbidden",
-                "exec": [
-                  "expect(response.status).to.equal(403)"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
       "id": "mcm-dfsp-create-no-permission",
       "name": "User without dfspManage permission cannot create DFSP",
       "meta": {
@@ -176,42 +140,6 @@
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
             "value": "http://example.com/transfers"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response status to be 403 Forbidden",
-                "exec": [
-                  "expect(response.status).to.equal(403)"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "mcm-hub-read-no-permission",
-      "name": "User without hubEndpointsView cannot read hub endpoints",
-      "meta": {
-        "info": "Test that user without hubEndpointsView permission gets 403"
-      },
-      "requests": [
-        {
-          "id": "get-hub-endpoints-forbidden",
-          "description": "GET /api/hub/endpoints without hubEndpointsView permission",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "mcm"
-          },
-          "operationPath": "/hub/endpoints",
-          "path": "/hub/endpoints",
-          "method": "get",
-          "url": "{$inputs.MCM_URL}",
-          "headers": {
-            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
           },
           "tests": {
             "assertions": [

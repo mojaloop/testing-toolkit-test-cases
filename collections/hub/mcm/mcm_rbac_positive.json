@@ -3,9 +3,9 @@
   "test_cases": [
     {
       "id": "mcm-dfsp-list-with-permission",
-      "name": "User with dfspList permission can list DFSPs",
+      "name": "Admin can list all DFSPs",
       "meta": {
-        "info": "Test that user with dfspList permission can access GET /api/dfsps"
+        "info": "Test that admin with dfspList permission can access GET /api/dfsps"
       },
       "requests": [
         {
@@ -22,6 +22,49 @@
           "url": "{$inputs.MCM_URL}",
           "headers": {
             "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response should be an array",
+                "exec": [
+                  "expect(response.body).to.be.an('array')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-dfsp-list-dfsp-operator",
+      "name": "DFSP operator can list DFSPs (filtered to own)",
+      "meta": {
+        "info": "Test that DFSP operator with dfspList permission can access GET /api/dfsps (returns filtered list)"
+      },
+      "requests": [
+        {
+          "id": "list-dfsps-dfsp-operator",
+          "description": "GET /api/dfsps as DFSP operator",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps",
+          "path": "/dfsps",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
           },
           "tests": {
             "assertions": [
@@ -85,9 +128,9 @@
     },
     {
       "id": "mcm-hub-endpoints-view",
-      "name": "User with hubEndpointsView can read hub endpoints",
+      "name": "Admin can read hub endpoints",
       "meta": {
-        "info": "Test that user with hubEndpointsView permission can GET /api/hub/*"
+        "info": "Test that admin with hubEndpointsView permission can GET /api/hub/endpoints"
       },
       "requests": [
         {
@@ -104,6 +147,42 @@
           "url": "{$inputs.MCM_URL}",
           "headers": {
             "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-hub-endpoints-view-dfsp-operator",
+      "name": "DFSP operator can read hub endpoints",
+      "meta": {
+        "info": "Test that DFSP operator with hubEndpointsView permission can GET /api/hub/endpoints"
+      },
+      "requests": [
+        {
+          "id": "get-hub-endpoints-dfsp",
+          "description": "GET /api/hub/endpoints as DFSP operator",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/hub/endpoints",
+          "path": "/hub/endpoints",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
           },
           "tests": {
             "assertions": [
