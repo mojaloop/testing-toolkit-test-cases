@@ -264,42 +264,6 @@
       ]
     },
     {
-      "id": "mcm-jws-certs-no-permission",
-      "name": "User without dfspJwsCertsView cannot view JWS certificates",
-      "meta": {
-        "info": "Test that user without dfspJwsCertsView permission gets 403"
-      },
-      "requests": [
-        {
-          "id": "get-jws-certs-forbidden",
-          "description": "GET /api/dfsps/jwscerts without dfspJwsCertsView permission",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "mcm"
-          },
-          "operationPath": "/dfsps/jwscerts",
-          "path": "/dfsps/jwscerts",
-          "method": "get",
-          "url": "{$inputs.MCM_URL}",
-          "headers": {
-            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response status to be 403 Forbidden",
-                "exec": [
-                  "expect(response.status).to.equal(403)"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
       "id": "mcm-admin-actions-dfsp-owner",
       "name": "DFSP owner cannot perform admin actions on other DFSPs",
       "meta": {

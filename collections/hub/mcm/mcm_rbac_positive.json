@@ -200,9 +200,9 @@
     },
     {
       "id": "mcm-jws-certs-view",
-      "name": "User with dfspJwsCertsView can view JWS certificates",
+      "name": "Admin with dfspJwsCertsView can view JWS certificates",
       "meta": {
-        "info": "Test that user with dfspJwsCertsView permission can GET /api/dfsps/jwscerts"
+        "info": "Test that admin with dfspJwsCertsView permission can GET /api/dfsps/jwscerts"
       },
       "requests": [
         {
@@ -219,6 +219,42 @@
           "url": "{$inputs.MCM_URL}",
           "headers": {
             "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-jws-certs-view-dfsp-operator",
+      "name": "DFSP operator can view JWS certificates",
+      "meta": {
+        "info": "Test that DFSP operator with dfspJwsCertsView permission can GET /api/dfsps/jwscerts"
+      },
+      "requests": [
+        {
+          "id": "get-jws-certs-dfsp",
+          "description": "GET /api/dfsps/jwscerts as DFSP operator",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps/jwscerts",
+          "path": "/dfsps/jwscerts",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
           },
           "tests": {
             "assertions": [
