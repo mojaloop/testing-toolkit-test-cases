@@ -54,7 +54,7 @@
           "method": "get",
           "url": "{$inputs.MCM_URL}",
           "headers": {
-            "Cookie": "ory_kratos_session={$inputs.OPERATOR_SESSION}"
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
           },
           "tests": {
             "assertions": [
@@ -90,11 +90,11 @@
           "method": "post",
           "url": "{$inputs.MCM_URL}",
           "headers": {
-            "Cookie": "ory_kratos_session={$inputs.OPERATOR_SESSION}",
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}",
             "Content-Type": "application/json"
           },
           "body": {
-            "name": "{$inputs.TEST_DFSP_NAME}",
+            "name": "Unauthorized Test DFSP",
             "monetaryZoneId": "{$inputs.MONETARY_ZONE_ID}"
           },
           "tests": {
@@ -127,14 +127,14 @@
             "type": "mcm"
           },
           "operationPath": "/dfsps/{dfspId}/credentials",
-          "path": "/dfsps/{$inputs.OTHER_DFSP_ID}/credentials",
+          "path": "/dfsps/{$inputs.DFSP2_ID}/credentials",
           "method": "get",
           "url": "{$inputs.MCM_URL}",
           "headers": {
-            "Cookie": "ory_kratos_session={$inputs.DFSP_OWNER_SESSION}"
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
           },
           "params": {
-            "dfspId": "{$inputs.OTHER_DFSP_ID}"
+            "dfspId": "{$inputs.DFSP2_ID}"
           },
           "tests": {
             "assertions": [
@@ -170,7 +170,7 @@
           "method": "post",
           "url": "{$inputs.MCM_URL}",
           "headers": {
-            "Cookie": "ory_kratos_session={$inputs.OPERATOR_SESSION}",
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}",
             "Content-Type": "application/json"
           },
           "body": {
@@ -211,7 +211,7 @@
           "method": "get",
           "url": "{$inputs.MCM_URL}",
           "headers": {
-            "Cookie": "ory_kratos_session={$inputs.OPERATOR_SESSION}"
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
           },
           "tests": {
             "assertions": [
@@ -247,7 +247,7 @@
           "method": "get",
           "url": "{$inputs.MCM_URL}",
           "headers": {
-            "Cookie": "ory_kratos_session={$inputs.OPERATOR_SESSION}"
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
           },
           "tests": {
             "assertions": [
@@ -283,7 +283,7 @@
           "method": "get",
           "url": "{$inputs.MCM_URL}",
           "headers": {
-            "Cookie": "ory_kratos_session={$inputs.OPERATOR_SESSION}"
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
           },
           "tests": {
             "assertions": [
@@ -315,15 +315,15 @@
             "type": "mcm"
           },
           "operationPath": "/dfsps/{dfspId}",
-          "path": "/dfsps/{$inputs.OTHER_DFSP_ID}",
+          "path": "/dfsps/{$inputs.DFSP2_ID}",
           "method": "put",
           "url": "{$inputs.MCM_URL}",
           "headers": {
-            "Cookie": "ory_kratos_session={$inputs.DFSP_OWNER_SESSION}",
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}",
             "Content-Type": "application/json"
           },
           "params": {
-            "dfspId": "{$inputs.OTHER_DFSP_ID}"
+            "dfspId": "{$inputs.DFSP2_ID}"
           },
           "body": {
             "name": "Modified DFSP"

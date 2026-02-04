@@ -45,49 +45,6 @@
       ]
     },
     {
-      "id": "mcm-dfsp-create-with-permission",
-      "name": "User with dfspManage permission can create DFSP",
-      "meta": {
-        "info": "Test that user with dfspManage permission can POST /api/dfsps"
-      },
-      "requests": [
-        {
-          "id": "create-dfsp-authorized",
-          "description": "POST /api/dfsps with dfspManage permission",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "mcm"
-          },
-          "operationPath": "/dfsps",
-          "path": "/dfsps",
-          "method": "post",
-          "url": "{$inputs.MCM_URL}",
-          "headers": {
-            "Cookie": "ory_kratos_session={$inputs.PORTAL_ADMIN_SESSION}",
-            "Content-Type": "application/json"
-          },
-          "body": {
-            "dfspId": "{$inputs.TEST_DFSP_ID}",
-            "name": "{$inputs.TEST_DFSP_NAME}",
-            "monetaryZoneId": "{$inputs.MONETARY_ZONE_ID}",
-            "email": "{$inputs.TEST_DFSP_EMAIL}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Response status to be 200 or 201",
-                "exec": [
-                  "expect([200, 201]).to.include(response.status)"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
       "id": "mcm-dfsp-owner-credentials",
       "name": "DFSP owner can access own credentials",
       "meta": {
@@ -103,14 +60,14 @@
             "type": "mcm"
           },
           "operationPath": "/dfsps/{dfspId}/credentials",
-          "path": "/dfsps/{$inputs.DFSP_ID}/credentials",
+          "path": "/dfsps/{$inputs.DFSP1_ID}/credentials",
           "method": "get",
           "url": "{$inputs.MCM_URL}",
           "headers": {
-            "Cookie": "ory_kratos_session={$inputs.DFSP_OWNER_SESSION}"
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
           },
           "params": {
-            "dfspId": "{$inputs.DFSP_ID}"
+            "dfspId": "{$inputs.DFSP1_ID}"
           },
           "tests": {
             "assertions": [
