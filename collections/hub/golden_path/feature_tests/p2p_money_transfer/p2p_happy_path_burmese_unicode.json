@@ -10,71 +10,17 @@
       "requests": [
         {
           "id": "Add-part-ALS",
-          "meta": {
-            "info": "This request allows us to add a new participant to Account Lookup Service."
-          },
-          "description": "Add Participant to ALS",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "fspiop",
-            "asynchronous": true
-          },
-          "operationPath": "/participants/{Type}/{ID}",
+          "call": "p2p.addParty",
           "path": "/participants/{$inputs.toBurmeseIdType}/{$inputs.toBurmeseIdValue}",
-          "method": "post",
           "params": {
             "Type": "{$inputs.toBurmeseIdType}",
             "ID": "{$inputs.toBurmeseIdValue}"
           },
           "headers": {
-            "FSPIOP-Source": "{$inputs.toBurmeseIdFspId}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
-            "Accept": "{$inputs.acceptParticipants}",
-            "Content-Type": "{$inputs.contentTypeParticipants}",
-            "baggage": "errorExpect=ALS.1001",
-            "Date": "{$function.generic.curDate}"
+            "FSPIOP-Source": "{$inputs.toBurmeseIdFspId}"
           },
           "body": {
-            "fspId": "{$inputs.toBurmeseIdFspId}",
-            "currency": "{$inputs.currency}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "ignoreCallbacks": true,
-          "scriptingEngine": "javascript",
-          "tests": {
-            "assertions": [
-              {
-                "id": "rsp-status-202",
-                "description": "Response status to be 202",
-                "exec": [
-                  "expect(response.status).to.equal(202)"
-                ]
-              },
-              {
-                "id": "rsp-statusText-Accepted",
-                "description": "Response statusText be Accepted",
-                "exec": [
-                  "expect(response.statusText).to.equal('Accepted')"
-                ]
-              }
-            ]
-          },
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.toIdValue}', 'payeeRequest')",
-                "}"
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
-                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
-                "}"
-              ]
-            }
+            "fspId": "{$inputs.toBurmeseIdFspId}"
           }
         },
         {

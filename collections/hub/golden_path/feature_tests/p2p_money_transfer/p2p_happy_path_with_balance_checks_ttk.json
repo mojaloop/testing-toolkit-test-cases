@@ -40,7 +40,7 @@
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
             "Accept": "{$inputs.acceptParticipants}",
             "Content-Type": "{$inputs.contentTypeParticipants}",
-            "baggage": "errorExpect=ALS.1001",
+            "baggage": "errorExpect=ALS.1001|MSISDN.ER_DUP_ENTRY|CSSh.ERR_BAD_REQUEST",
             "Date": "{$function.generic.curDate}"
           },
           "body": {
@@ -89,6 +89,7 @@
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.ttkpayeefspIdentifier1}"
           },
+          "retries": 5,
           "tests": {
             "assertions": [
               {
@@ -102,7 +103,8 @@
                 "id": "rsp-statusText-Accepted",
                 "description": "Response statusText be Accepted",
                 "exec": [
-                  "expect(response.statusText).to.equal('Accepted')"
+                  "expect(response.statusText).to.equal('Accepted')",
+                  "expect(request.retry).to.equal(3)"
                 ]
               },
               {
@@ -624,7 +626,7 @@
                 "    }",
                 "  })",
                 "",
-                "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
+                "  // TODO: Reference previous POST /Scenarios request (e.g. '$prev.54.request.body.amount') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
                 "  const transferAmount = envAmount;",
                 "  ",
                 "  console.log(`transferAmount=${transferAmount}`)",
@@ -785,7 +787,7 @@
                 "    }",
                 "  })",
                 "",
-                "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
+                "  // TODO: Reference previous POST /Scenarios request (e.g. '$prev.54.request.body.amount') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
                 "  const transferAmount = envAmount;",
                 "  ",
                 "  console.log(`transferAmount=${transferAmount}`)",

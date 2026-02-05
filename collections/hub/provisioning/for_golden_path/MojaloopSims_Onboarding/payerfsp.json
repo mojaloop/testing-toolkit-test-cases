@@ -4,6 +4,9 @@
     {
       "id": "payerfsp-account",
       "name": "payerfsp account",
+      "options": {
+        "executionOrder": 1
+      },
       "meta": {
         "info": "payerfsp account"
       },
@@ -27,6 +30,7 @@
             "currency": "{$inputs.currency}"
           },
           "headers": {
+            "baggage": "errorExpect=CL.3000",
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.hub_operator}"
           },
@@ -73,6 +77,7 @@
             "initialPosition": 0
           },
           "headers": {
+            "baggage": "errorExpect=CL.2001",
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.hub_operator}"
           },
@@ -331,6 +336,7 @@
             "currency": "{$inputs.currency2}"
           },
           "headers": {
+            "baggage": "errorExpect=CL.3000",
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.hub_operator}"
           },
@@ -377,6 +383,7 @@
             "initialPosition": 0
           },
           "headers": {
+            "baggage": "errorExpect=CL.2001",
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.hub_operator}"
           },
@@ -462,6 +469,7 @@
             "initialPosition": 0
           },
           "headers": {
+            "baggage": "errorExpect=CL.2001",
             "Content-Type": "application/json",
             "FSPIOP-Source": "{$inputs.hub_operator}"
           },
@@ -714,6 +722,9 @@
     {
       "id": "payerfsp-callbacks",
       "name": "payerfsp callbacks",
+      "options": {
+        "executionOrder": 1
+      },
       "meta": {
         "info": "payerfsp callbacks"
       },
@@ -1551,6 +1562,9 @@
     {
       "id": "payerfsp-notific-54a8",
       "name": "payerfsp notification_emails",
+      "options": {
+        "executionOrder": 1
+      },
       "meta": {
         "info": "payerfsp notification_emails"
       },
@@ -1680,6 +1694,9 @@
     {
       "id": "payerfsp-addusers",
       "name": "payerfsp add_users",
+      "options": {
+        "executionOrder": 1
+      },
       "meta": {
         "info": "payerfsp add_users"
       },
@@ -1706,7 +1723,7 @@
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "headers": {
-            "baggage": "errorExpect=ALS.3200",
+            "baggage": "errorExpect=ALS.3200|CL.3000",
             "Content-Type": "{$inputs.contentTypeParticipants}",
             "Accept": "{$inputs.acceptParticipants}",
             "Date": "{$function.generic.curDate}",
