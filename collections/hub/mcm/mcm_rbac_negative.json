@@ -1,0 +1,238 @@
+{
+  "name": "MCM RBAC - Negative Authorization Tests",
+  "test_cases": [
+    {
+      "id": "mcm-unauthenticated-access",
+      "name": "Unauthenticated requests are rejected",
+      "meta": {
+        "info": "Test that requests without authentication cookies return 401"
+      },
+      "requests": [
+        {
+          "id": "list-dfsps-unauthenticated",
+          "description": "GET /api/dfsps without authentication",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps",
+          "path": "/dfsps",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 401 Unauthorized",
+                "exec": [
+                  "expect(response.status).to.equal(401)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-dfsp-create-no-permission",
+      "name": "User without dfspManage permission cannot create DFSP",
+      "meta": {
+        "info": "Test that user without dfspManage permission gets 403 Forbidden"
+      },
+      "requests": [
+        {
+          "id": "create-dfsp-forbidden",
+          "description": "POST /api/dfsps without dfspManage permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps",
+          "path": "/dfsps",
+          "method": "post",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "name": "Unauthorized Test DFSP",
+            "monetaryZoneId": "{$inputs.MONETARY_ZONE_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 403 Forbidden",
+                "exec": [
+                  "expect(response.status).to.equal(403)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-dfsp-credentials-wrong-owner",
+      "name": "DFSP owner cannot access other DFSP credentials",
+      "meta": {
+        "info": "Test that DFSP owner cannot access credentials of another DFSP"
+      },
+      "requests": [
+        {
+          "id": "get-other-dfsp-credentials",
+          "description": "GET /api/dfsps/{otherDfspId}/credentials as different owner",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps/{dfspId}/credentials",
+          "path": "/dfsps/{$inputs.DFSP2_ID}/credentials",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
+          },
+          "params": {
+            "dfspId": "{$inputs.DFSP2_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 403 Forbidden",
+                "exec": [
+                  "expect(response.status).to.equal(403)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-hub-write-no-permission",
+      "name": "User without hubEndpointsManage cannot modify hub endpoints",
+      "meta": {
+        "info": "Test that user without hubEndpointsManage permission gets 403"
+      },
+      "requests": [
+        {
+          "id": "update-hub-endpoints-forbidden",
+          "description": "POST /api/hub/endpoints without hubEndpointsManage permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/hub/endpoints",
+          "path": "/hub/endpoints",
+          "method": "post",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
+            "value": "http://example.com/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 403 Forbidden",
+                "exec": [
+                  "expect(response.status).to.equal(403)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-monetary-zones-no-permission",
+      "name": "User without monetaryZonesView cannot list monetary zones",
+      "meta": {
+        "info": "Test that user without monetaryZonesView permission gets 403"
+      },
+      "requests": [
+        {
+          "id": "get-monetary-zones-forbidden",
+          "description": "GET /api/monetaryzones without monetaryZonesView permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/monetaryzones",
+          "path": "/monetaryzones",
+          "method": "get",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 403 Forbidden",
+                "exec": [
+                  "expect(response.status).to.equal(403)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-admin-actions-dfsp-owner",
+      "name": "DFSP owner cannot perform admin actions on other DFSPs",
+      "meta": {
+        "info": "Test that DFSP owner without dfspManage permission cannot manage other DFSPs"
+      },
+      "requests": [
+        {
+          "id": "update-other-dfsp-forbidden",
+          "description": "PUT /api/dfsps/{otherDfspId} as DFSP owner without admin rights",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps/{dfspId}",
+          "path": "/dfsps/{$inputs.DFSP2_ID}",
+          "method": "put",
+          "url": "{$inputs.MCM_URL}",
+          "headers": {
+            "Cookie": "ory_kratos_session={$inputs.DFSP1_OPERATOR_SESSION}",
+            "Content-Type": "application/json"
+          },
+          "params": {
+            "dfspId": "{$inputs.DFSP2_ID}"
+          },
+          "body": {
+            "name": "Modified DFSP"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 403 Forbidden",
+                "exec": [
+                  "expect(response.status).to.equal(403)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

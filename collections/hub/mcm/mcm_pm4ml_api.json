@@ -1,0 +1,395 @@
+{
+  "name": "MCM RBAC - PM4ML API Tests (JWT Authentication)",
+  "test_cases": [
+    {
+      "id": "mcm-pm4ml-dfsp-list-jwt",
+      "name": "Machine client with JWT can list DFSPs via PM4ML API",
+      "meta": {
+        "info": "Test JWT-based authentication for PM4ML external API endpoint"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-list-dfsps-jwt",
+          "description": "GET /dfsps with valid JWT token",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps",
+          "path": "/dfsps",
+          "method": "get",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "headers": {
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response should be an array",
+                "exec": [
+                  "expect(response.body).to.be.an('array')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-pm4ml-dfsp-create-jwt",
+      "name": "DFSP machine client cannot create DFSPs (no dfspManage permission)",
+      "meta": {
+        "info": "Test that DFSP JWT cannot POST /dfsps - requires admin permission"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-create-dfsp-jwt",
+          "description": "POST /dfsps with DFSP JWT (no dfspManage permission)",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps",
+          "path": "/dfsps",
+          "method": "post",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "headers": {
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "name": "{$inputs.DFSP1_NAME}",
+            "monetaryZoneId": "{$inputs.MONETARY_ZONE_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 403 Forbidden",
+                "exec": [
+                  "expect(response.status).to.equal(403)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-pm4ml-dfsp-owner-jwt",
+      "name": "Machine client as DFSP owner can access own DFSP data",
+      "meta": {
+        "info": "Test JWT-based DFSP owner access to specific DFSP endpoints"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-get-dfsp-owner-jwt",
+          "description": "GET /dfsps/{dfspId} as owner with JWT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps/{dfspId}",
+          "path": "/dfsps/{$inputs.DFSP1_ID}",
+          "method": "get",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "headers": {
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}"
+          },
+          "params": {
+            "dfspId": "{$inputs.DFSP1_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response should contain DFSP data",
+                "exec": [
+                  "expect(response.body).to.have.property('id')",
+                  "expect(response.body.id).to.equal('{$inputs.DFSP1_ID}')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-pm4ml-dfsp-cross-access-denied",
+      "name": "DFSP cannot access another DFSP's data",
+      "meta": {
+        "info": "Test that DFSP1 JWT cannot access DFSP2 data - cross-DFSP isolation"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-cross-dfsp-403",
+          "description": "GET /dfsps/{dfspId} with DFSP1 JWT accessing DFSP2 data",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps/{dfspId}",
+          "path": "/dfsps/{$inputs.DFSP2_ID}",
+          "method": "get",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "headers": {
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 403 Forbidden",
+                "exec": [
+                  "expect(response.status).to.equal(403)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-pm4ml-hub-read-jwt",
+      "name": "Machine client with hubEndpointsView can read hub endpoints",
+      "meta": {
+        "info": "Test JWT-based GET /hub/* for machine clients"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-get-hub-endpoints-jwt",
+          "description": "GET /hub/endpoints with JWT and hubEndpointsView",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/hub/endpoints",
+          "path": "/hub/endpoints",
+          "method": "get",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "headers": {
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-pm4ml-hub-write-jwt",
+      "name": "DFSP machine client cannot update hub endpoints (no hubEndpointsManage permission)",
+      "meta": {
+        "info": "Test that DFSP JWT cannot POST /hub/* - requires admin permission"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-update-hub-endpoints-jwt",
+          "description": "POST /hub/endpoints with DFSP JWT (no hubEndpointsManage permission)",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/hub/endpoints",
+          "path": "/hub/endpoints",
+          "method": "post",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "headers": {
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
+            "value": "http://example.com/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 403 Forbidden",
+                "exec": [
+                  "expect(response.status).to.equal(403)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-pm4ml-jws-certs-jwt",
+      "name": "Machine client with dfspJwsCertsView can view JWS certs",
+      "meta": {
+        "info": "Test JWT-based GET /dfsps/jwscerts for machine clients"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-get-jws-certs-jwt",
+          "description": "GET /dfsps/jwscerts with JWT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps/jwscerts",
+          "path": "/dfsps/jwscerts",
+          "method": "get",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "headers": {
+            "Authorization": "Bearer {$inputs.DFSP1_JWT}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-pm4ml-no-jwt",
+      "name": "PM4ML API rejects requests without JWT",
+      "meta": {
+        "info": "Test that PM4ML external API requires JWT authentication"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-no-jwt-401",
+          "description": "GET /dfsps without JWT token",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps",
+          "path": "/dfsps",
+          "method": "get",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 401 Unauthorized",
+                "exec": [
+                  "expect(response.status).to.equal(401)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-pm4ml-invalid-jwt",
+      "name": "PM4ML API rejects invalid JWT tokens",
+      "meta": {
+        "info": "Test that PM4ML external API validates JWT tokens"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-invalid-jwt-401",
+          "description": "GET /dfsps with invalid JWT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps",
+          "path": "/dfsps",
+          "method": "get",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "headers": {
+            "Authorization": "Bearer invalid.jwt.token"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 401 Unauthorized",
+                "exec": [
+                  "expect(response.status).to.equal(401)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcm-pm4ml-jwt-no-permission",
+      "name": "Valid JWT without required permission is rejected",
+      "meta": {
+        "info": "Test that JWT authentication alone is not sufficient - permissions are required"
+      },
+      "requests": [
+        {
+          "id": "pm4ml-jwt-no-perm-403",
+          "description": "POST /dfsps with JWT but without dfspManage permission",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "mcm"
+          },
+          "operationPath": "/dfsps",
+          "path": "/dfsps",
+          "method": "post",
+          "url": "{$inputs.MCM_PM4ML_URL}",
+          "headers": {
+            "Authorization": "Bearer {$inputs.DFSP2_JWT}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "name": "{$inputs.DFSP1_NAME}",
+            "monetaryZoneId": "{$inputs.MONETARY_ZONE_ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 403 Forbidden",
+                "exec": [
+                  "expect(response.status).to.equal(403)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
