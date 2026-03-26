@@ -1,5 +1,5 @@
 {
-  "name": "multi",
+  "name": "test_fundsout_ttkdfsp",
   "test_cases": [
     {
       "id": "primary-account",
@@ -1408,7 +1408,7 @@
             "id": "{$environment.testingtoolkitdfspSettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.testingtoolkitdfspfundsInPrepareTransferId}",
+            "transferId": "{$function.generic.generateUUID}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
@@ -1441,22 +1441,142 @@
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "var uuid = require('uuid');",
-                "pm.environment.set('testingtoolkitdfspfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('testingtoolkitdfspfundsInPrepareAmount', 5000);"
+                "environment.testingtoolkitdfspTargetFunds = -5000;",
+                "if (environment.testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn <= environment.testingtoolkitdfspTargetFunds) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.testingtoolkitdfspfundsInPrepareAmount = -(environment.testingtoolkitdfspTargetFunds - environment.testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn);",
+                "}"
               ]
             }
           }
         },
         {
-          "id": "ttkdfsp-Get-Status-req-after-d",
+          "id": "Withdraw-Funds-ttkdfsp-reserve",
           "meta": {
-            "info": "testingtoolkitdfsp Get Status Request after deposit"
+            "info": "Withdraw Funds from Settlement Account RESERVE - testingtoolkitdfsp"
           },
-          "description": "testingtoolkitdfsp Get Status Request after deposit",
+          "description": "Withdraw Funds from Settlement Account RESERVE - testingtoolkitdfsp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/testingtoolkitdfsp/accounts/{$environment.testingtoolkitdfspSettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "testingtoolkitdfsp",
+            "id": "{$environment.testingtoolkitdfspSettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "externalReference": "string",
+            "action": "recordFundsOutPrepareReserve",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.testingtoolkitdfspfundsOutPrepareAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn >= environment.testingtoolkitdfspTargetFunds) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.testingtoolkitdfspfundsOutPrepareAmount = -(environment.testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn - environment.testingtoolkitdfspTargetFunds);",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Withdraw-Funds-ttkdfsp-commit",
+          "meta": {
+            "info": "Withdraw Funds from Settlement Account COMMIT - testingtoolkitdfsp"
+          },
+          "description": "Withdraw Funds from Settlement Account COMMIT - testingtoolkitdfsp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}/transfers/{transferId}",
+          "path": "/participants/testingtoolkitdfsp/accounts/{$environment.testingtoolkitdfspSettlementAccountId}/transfers/{$prev.Withdraw-Funds-ttkdfsp-reserve.request.body.transferId}",
+          "method": "put",
+          "params": {
+            "name": "testingtoolkitdfsp",
+            "id": "{$environment.testingtoolkitdfspSettlementAccountId}",
+            "transferId": "{$prev.Withdraw-Funds-ttkdfsp-reserve.request.body.transferId}"
+          },
+          "body": {
+            "action": "recordFundsOutCommit",
+            "reason": "Reason for out flow of funds"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn >= environment.testingtoolkitdfspTargetFunds) {",
+                "  custom.skipRequest();",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "ttkdfsp-Get-Status-after-adj",
+          "meta": {
+            "info": "Get Status after funds adjustment"
+          },
+          "description": "Get Status after funds adjustment",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1486,7 +1606,7 @@
                 "id": "testingtoolkitdfsp-settle-acc-",
                 "description": "testingtoolkitdfsp Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn - +environment.testingtoolkitdfspfundsInPrepareAmount)"
+                  "expect(+environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.testingtoolkitdfspTargetFunds)"
                 ]
               }
             ]
@@ -1495,10 +1615,8 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "const expectedBalance = Number.parseFloat(pm.environment.get(\"testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"testingtoolkitdfspfundsInPrepareAmount\"))",
-                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn\")))",
-                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"testingtoolkitdfspfundsInPrepareAmount\")))",
-                "console.log(`expectedBalance: `, expectedBalance)",
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"testingtoolkitdfspTargetFunds\"))",
+                "",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
                 "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
@@ -1591,6 +1709,7 @@
               }
             ]
           },
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
@@ -1625,7 +1744,7 @@
             "id": "{$environment.testingtoolkitdfspCurrency2SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.testingtoolkitdfspfundsInPrepareTransferId}",
+            "transferId": "{$function.generic.generateUUID}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
@@ -1658,21 +1777,143 @@
               }
             ]
           },
+          "disabled": false,
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "var uuid = require('uuid');",
-                "pm.environment.set('testingtoolkitdfspfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('testingtoolkitdfspfundsInPrepareAmountCurrency2', 5000);"
+                "environment.testingtoolkitdfspTargetFundsCurrency2 = -5000;",
+                "if (environment.testingtoolkitdfspCurrency2SettlementAccountBalanceBeforeFundsIn <= environment.testingtoolkitdfspTargetFundsCurrency2) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.testingtoolkitdfspfundsInPrepareAmountCurrency2 = -(environment.testingtoolkitdfspTargetFundsCurrency2 - environment.testingtoolkitdfspCurrency2SettlementAccountBalanceBeforeFundsIn);",
+                "}"
               ]
             }
           }
         },
         {
-          "id": "Get-Status-req-after-deposit-c",
-          "description": "Get Status Request after deposit for currency2",
+          "id": "Withdraw-Funds-ttkdfsp-cur2-reserve",
+          "description": "Withdraw Funds from Settlement Account RESERVE currency2",
           "meta": {
-            "info": "Get Status Request after deposit"
+            "info": "Withdraw Funds from Settlement Account RESERVE currency2"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/testingtoolkitdfsp/accounts/{$environment.testingtoolkitdfspCurrency2SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "testingtoolkitdfsp",
+            "id": "{$environment.testingtoolkitdfspCurrency2SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "externalReference": "string",
+            "action": "recordFundsOutPrepareReserve",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.testingtoolkitdfspfundsOutPrepareAmount}",
+              "currency": "{$inputs.currency2}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.testingtoolkitdfspCurrency2SettlementAccountBalanceBeforeFundsIn >= environment.testingtoolkitdfspTargetFundsCurrency2) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.testingtoolkitdfspfundsOutPrepareAmount = -(environment.testingtoolkitdfspCurrency2SettlementAccountBalanceBeforeFundsIn - environment.testingtoolkitdfspTargetFundsCurrency2);",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Withdraw-Funds-ttkdfsp-cur2-commit",
+          "description": "Withdraw Funds from Settlement Account COMMIT currency2",
+          "meta": {
+            "info": "Withdraw Funds from Settlement Account COMMIT currency2"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}/transfers/{transferId}",
+          "path": "/participants/testingtoolkitdfsp/accounts/{$environment.testingtoolkitdfspCurrency2SettlementAccountId}/transfers/{$prev.Withdraw-Funds-ttkdfsp-cur2-reserve.request.body.transferId}",
+          "method": "put",
+          "params": {
+            "name": "testingtoolkitdfsp",
+            "id": "{$environment.testingtoolkitdfspCurrency2SettlementAccountId}",
+            "transferId": "{$prev.Withdraw-Funds-ttkdfsp-cur2-reserve.request.body.transferId}"
+          },
+          "body": {
+            "action": "recordFundsOutCommit",
+            "reason": "Reason for out flow of funds"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.testingtoolkitdfspCurrency2SettlementAccountBalanceBeforeFundsIn >= environment.testingtoolkitdfspTargetFundsCurrency2) {",
+                "  custom.skipRequest();",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Status-after-funds-adjustment",
+          "description": "Get Status after funds adjustment for currency2",
+          "meta": {
+            "info": "Get Status after funds adjustment for currency2"
           },
           "apiVersion": {
             "minorVersion": 0,
@@ -1703,19 +1944,17 @@
                 "id": "settle-acc-bal-After-FundsIn-b",
                 "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.testingtoolkitdfspCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.testingtoolkitdfspCurrency2SettlementAccountBalanceBeforeFundsIn - +environment.testingtoolkitdfspfundsInPrepareAmountCurrency2)"
+                  "expect(+environment.testingtoolkitdfspCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.testingtoolkitdfspTargetFundsCurrency2)"
                 ]
               }
             ]
           },
           "delay": "{$inputs.DELAY_FUNDS_IN}",
+          "disabled": false,
           "scripts": {
             "postRequest": {
               "exec": [
-                "const expectedBalance = Number.parseFloat(pm.environment.get(\"testingtoolkitdfspCurrency2SettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"testingtoolkitdfspfundsInPrepareAmountCurrency2\"))",
-                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"testingtoolkitdfspCurrency2SettlementAccountBalanceBeforeFundsIn\")))",
-                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"testingtoolkitdfspfundsInPrepareAmountCurrency2\")))",
-                "console.log(`expectedBalance: `, expectedBalance)",
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"testingtoolkitdfspTargetFundsCurrency2\"))",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
                 "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",

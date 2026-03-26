@@ -1226,7 +1226,7 @@
             "id": "{$environment.ttkfxpayerSettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.ttkfxpayerfundsInPrepareTransferId}",
+            "transferId": "{$function.generic.generateUUID}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
@@ -1259,22 +1259,142 @@
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "var uuid = require('uuid');",
-                "pm.environment.set('ttkfxpayerfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('ttkfxpayerfundsInPrepareAmount', 5000);"
+                "environment.ttkfxpayerTargetFunds = -5000;",
+                "if (environment.ttkfxpayerSettlementAccountBalanceBeforeFundsIn <= environment.ttkfxpayerTargetFunds) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.ttkfxpayerfundsInPrepareAmount = -(environment.ttkfxpayerTargetFunds - environment.ttkfxpayerSettlementAccountBalanceBeforeFundsIn);",
+                "}"
               ]
             }
           }
         },
         {
-          "id": "Get-Status-req-after-deposit",
+          "id": "Withdraw-Funds-ttkfxpayer-reserve",
           "meta": {
-            "info": "Get Status Request after deposit"
+            "info": "Withdraw Funds from Settlement Account RESERVE - ttkfxpayer"
           },
-          "description": "Get Status Request after deposit",
+          "description": "Withdraw Funds from Settlement Account RESERVE - ttkfxpayer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/ttkfxpayer/accounts/{$environment.ttkfxpayerSettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "ttkfxpayer",
+            "id": "{$environment.ttkfxpayerSettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "externalReference": "string",
+            "action": "recordFundsOutPrepareReserve",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.ttkfxpayerfundsOutPrepareAmount}",
+              "currency": "{$inputs.FX_SOURCE_CURRENCY}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ttkfxpayerSettlementAccountBalanceBeforeFundsIn >= environment.ttkfxpayerTargetFunds) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.ttkfxpayerfundsOutPrepareAmount = -(environment.ttkfxpayerSettlementAccountBalanceBeforeFundsIn - environment.ttkfxpayerTargetFunds);",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Withdraw-Funds-ttkfxpayer-commit",
+          "meta": {
+            "info": "Withdraw Funds from Settlement Account COMMIT - ttkfxpayer"
+          },
+          "description": "Withdraw Funds from Settlement Account COMMIT - ttkfxpayer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}/transfers/{transferId}",
+          "path": "/participants/ttkfxpayer/accounts/{$environment.ttkfxpayerSettlementAccountId}/transfers/{$prev.Withdraw-Funds-ttkfxpayer-reserve.request.body.transferId}",
+          "method": "put",
+          "params": {
+            "name": "ttkfxpayer",
+            "id": "{$environment.ttkfxpayerSettlementAccountId}",
+            "transferId": "{$prev.Withdraw-Funds-ttkfxpayer-reserve.request.body.transferId}"
+          },
+          "body": {
+            "action": "recordFundsOutCommit",
+            "reason": "Reason for out flow of funds"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ttkfxpayerSettlementAccountBalanceBeforeFundsIn >= environment.ttkfxpayerTargetFunds) {",
+                "  custom.skipRequest();",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Status-req-after-funds-adj",
+          "meta": {
+            "info": "Get Status Request after funds adjustment"
+          },
+          "description": "Get Status Request after funds adjustment",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1304,7 +1424,7 @@
                 "id": "settle-acc-bal-After-FundsIn-b",
                 "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.ttkfxpayerSettlementAccountBalanceAfterFundsIn).to.equal(+environment.ttkfxpayerSettlementAccountBalanceBeforeFundsIn - +environment.ttkfxpayerfundsInPrepareAmount)"
+                  "expect(+environment.ttkfxpayerSettlementAccountBalanceAfterFundsIn).to.equal(+environment.ttkfxpayerTargetFunds)"
                 ]
               }
             ]
@@ -1313,10 +1433,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "const expectedBalance = Number.parseFloat(pm.environment.get(\"ttkfxpayerSettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"ttkfxpayerfundsInPrepareAmount\"))",
-                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"ttkfxpayerSettlementAccountBalanceBeforeFundsIn\")))",
-                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"ttkfxpayerfundsInPrepareAmount\")))",
-                "console.log(`expectedBalance: `, expectedBalance)",
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"ttkfxpayerTargetFunds\"))",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
                 "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",

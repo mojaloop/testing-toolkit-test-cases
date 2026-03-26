@@ -129,8 +129,9 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "const jsonData = pm.response.body",
-                "console.log(jsonData)",
+                "const res = pm.response",
+                "const jsonData = res.body",
+                "",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
                 "    pm.environment.set(\"payeefspSettlementAccountId\", jsonData[i].id)",
@@ -139,7 +140,8 @@
                 "}"
               ]
             }
-          }
+          },
+          "delay": "{$inputs.DELAY_FUNDS_IN}"
         },
         {
           "id": "Deposit-Funds-settle-acc-payee",
@@ -160,7 +162,7 @@
             "id": "{$environment.payeefspSettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.payeefspfundsInPrepareTransferId}",
+            "transferId": "{$function.generic.generateUUID}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
@@ -193,22 +195,142 @@
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "var uuid = require('uuid');",
-                "pm.environment.set('payeefspfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('payeefspfundsInPrepareAmount', 5000);"
+                "environment.payeefspTargetFunds = -5000;",
+                "if (environment.payeefspSettlementAccountBalanceBeforeFundsIn <= environment.payeefspTargetFunds) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.payeefspfundsInPrepareAmount = -(environment.payeefspTargetFunds - environment.payeefspSettlementAccountBalanceBeforeFundsIn);",
+                "}"
               ]
             }
           }
         },
         {
-          "id": "payeefsp-Get-Status-req-after-",
+          "id": "Withdraw-Funds-payeefsp-reserve",
           "meta": {
-            "info": "payeefsp Get Status Request after deposit"
+            "info": "Withdraw Funds from Settlement Account RESERVE - payeefsp"
           },
-          "description": "payeefsp Get Status Request after deposit",
+          "description": "Withdraw Funds from Settlement Account RESERVE - payeefsp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/payeefsp/accounts/{$environment.payeefspSettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "payeefsp",
+            "id": "{$environment.payeefspSettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "externalReference": "string",
+            "action": "recordFundsOutPrepareReserve",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.payeefspfundsOutPrepareAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.payeefspSettlementAccountBalanceBeforeFundsIn >= environment.payeefspTargetFunds) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.payeefspfundsOutPrepareAmount = -(environment.payeefspSettlementAccountBalanceBeforeFundsIn - environment.payeefspTargetFunds);",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Withdraw-Funds-payeefsp-commit",
+          "meta": {
+            "info": "Withdraw Funds from Settlement Account COMMIT - payeefsp"
+          },
+          "description": "Withdraw Funds from Settlement Account COMMIT - payeefsp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}/transfers/{transferId}",
+          "path": "/participants/payeefsp/accounts/{$environment.payeefspSettlementAccountId}/transfers/{$prev.Withdraw-Funds-payeefsp-reserve.request.body.transferId}",
+          "method": "put",
+          "params": {
+            "name": "payeefsp",
+            "id": "{$environment.payeefspSettlementAccountId}",
+            "transferId": "{$prev.Withdraw-Funds-payeefsp-reserve.request.body.transferId}"
+          },
+          "body": {
+            "action": "recordFundsOutCommit",
+            "reason": "Reason for out flow of funds"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.payeefspSettlementAccountBalanceBeforeFundsIn >= environment.payeefspTargetFunds) {",
+                "  custom.skipRequest();",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "payeefsp-Get-Status-req-after-adj",
+          "meta": {
+            "info": "Get Status after funds adjustment"
+          },
+          "description": "Get Status after funds adjustment",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -238,7 +360,7 @@
                 "id": "payeefsp-settle-acc-bal-After-",
                 "description": "payeefsp Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.payeefspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.payeefspSettlementAccountBalanceBeforeFundsIn - +environment.payeefspfundsInPrepareAmount)"
+                  "expect(+environment.payeefspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.payeefspTargetFunds)"
                 ]
               }
             ]
@@ -247,13 +369,10 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "const expectedBalance = Number.parseFloat(pm.environment.get(\"payeefspSettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"payeefspfundsInPrepareAmount\"))",
-                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"payeefspSettlementAccountBalanceBeforeFundsIn\")))",
-                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"payeefspfundsInPrepareAmount\")))",
-                "console.log(`expectedBalance: `, expectedBalance)",
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"payeefspTargetFunds\"))",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
-                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 1500",
                 "",
                 "async function main() {",
                 "  let res = pm.response",
@@ -547,7 +666,7 @@
             "id": "{$environment.payeefspCurrency2SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.payeefspfundsInPrepareTransferId}",
+            "transferId": "{$function.generic.generateUUID}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
@@ -580,21 +699,142 @@
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "var uuid = require('uuid');",
-                "pm.environment.set('payeefspfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('payeefspfundsInPrepareAmountCurrency2', 5000);"
+                "environment.payeefspTargetFundsCurrency2 = -5000;",
+                "if (environment.payeefspCurrency2SettlementAccountBalanceBeforeFundsIn <= environment.payeefspTargetFundsCurrency2) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.payeefspfundsInPrepareAmountCurrency2 = -(environment.payeefspTargetFundsCurrency2 - environment.payeefspCurrency2SettlementAccountBalanceBeforeFundsIn);",
+                "}"
               ]
             }
           }
         },
         {
-          "id": "Get-Status-req-after-deposit-c",
-          "description": "Get Status Request after deposit for currency2",
+          "id": "Withdraw-Funds-payeefsp-cur2-reserve",
+          "description": "Withdraw Funds from Settlement Account RESERVE currency2",
           "meta": {
-            "info": "Get Status Request after deposit"
+            "info": "Withdraw Funds from Settlement Account RESERVE currency2"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/payeefsp/accounts/{$environment.payeefspCurrency2SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "payeefsp",
+            "id": "{$environment.payeefspCurrency2SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "externalReference": "string",
+            "action": "recordFundsOutPrepareReserve",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.payeefspfundsOutPrepareAmount}",
+              "currency": "{$inputs.currency2}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.payeefspCurrency2SettlementAccountBalanceBeforeFundsIn >= environment.payeefspTargetFundsCurrency2) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.payeefspfundsOutPrepareAmount = -(environment.payeefspCurrency2SettlementAccountBalanceBeforeFundsIn - environment.payeefspTargetFundsCurrency2);",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Withdraw-Funds-payeefsp-cur2-commit",
+          "description": "Withdraw Funds from Settlement Account COMMIT currency2",
+          "meta": {
+            "info": "Withdraw Funds from Settlement Account COMMIT currency2"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}/transfers/{transferId}",
+          "path": "/participants/payeefsp/accounts/{$environment.payeefspCurrency2SettlementAccountId}/transfers/{$prev.Withdraw-Funds-payeefsp-cur2-reserve.request.body.transferId}",
+          "method": "put",
+          "params": {
+            "name": "payeefsp",
+            "id": "{$environment.payeefspCurrency2SettlementAccountId}",
+            "transferId": "{$prev.Withdraw-Funds-payeefsp-cur2-reserve.request.body.transferId}"
+          },
+          "body": {
+            "action": "recordFundsOutCommit",
+            "reason": "Reason for out flow of funds"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.payeefspCurrency2SettlementAccountBalanceBeforeFundsIn >= environment.payeefspTargetFundsCurrency2) {",
+                "  custom.skipRequest();",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Status-after-funds-adjustment",
+          "description": "Get Status after funds adjustment for currency2",
+          "meta": {
+            "info": "Get Status after funds adjustment for currency2"
           },
           "apiVersion": {
             "minorVersion": 0,
@@ -625,7 +865,7 @@
                 "id": "settle-acc-bal-After-FundsIn-b",
                 "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.payeefspCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.payeefspCurrency2SettlementAccountBalanceBeforeFundsIn - +environment.payeefspfundsInPrepareAmountCurrency2)"
+                  "expect(+environment.payeefspCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.payeefspTargetFundsCurrency2)"
                 ]
               }
             ]
@@ -634,10 +874,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "const expectedBalance = Number.parseFloat(pm.environment.get(\"payeefspCurrency2SettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"payeefspfundsInPrepareAmountCurrency2\"))",
-                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"payeefspCurrency2SettlementAccountBalanceBeforeFundsIn\")))",
-                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"payeefspfundsInPrepareAmountCurrency2\")))",
-                "console.log(`expectedBalance: `, expectedBalance)",
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"payeefspTargetFundsCurrency2\"))",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
                 "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
