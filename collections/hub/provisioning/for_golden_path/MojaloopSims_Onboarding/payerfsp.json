@@ -162,7 +162,7 @@
             "id": "{$environment.payerfspSettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.payerfspfundsInPrepareTransferId}",
+            "transferId": "{$function.generic.generateUUID}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
@@ -195,22 +195,142 @@
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "var uuid = require('uuid');",
-                "pm.environment.set('payerfspfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('payerfspfundsInPrepareAmount', 5000);"
+                "environment.payerfspTargetFunds = -5000;",
+                "if (environment.payerfspSettlementAccountBalanceBeforeFundsIn <= environment.payerfspTargetFunds) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.payerfspfundsInPrepareAmount = -(environment.payerfspTargetFunds - environment.payerfspSettlementAccountBalanceBeforeFundsIn);",
+                "}"
               ]
             }
           }
         },
         {
-          "id": "payerfsp-Get-Status-req-after-",
+          "id": "Withdraw-Funds-payerfsp-reserve",
           "meta": {
-            "info": "payerfsp Get Status Request after deposit"
+            "info": "Withdraw Funds from Settlement Account RESERVE - payerfsp"
           },
-          "description": "payerfsp Get Status Request after deposit",
+          "description": "Withdraw Funds from Settlement Account RESERVE - payerfsp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/payerfsp/accounts/{$environment.payerfspSettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "payerfsp",
+            "id": "{$environment.payerfspSettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "externalReference": "string",
+            "action": "recordFundsOutPrepareReserve",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.payerfspfundsOutPrepareAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.payerfspSettlementAccountBalanceBeforeFundsIn >= environment.payerfspTargetFunds) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.payerfspfundsOutPrepareAmount = -(environment.payerfspSettlementAccountBalanceBeforeFundsIn - environment.payerfspTargetFunds);",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Withdraw-Funds-payerfsp-commit",
+          "meta": {
+            "info": "Withdraw Funds from Settlement Account COMMIT - payerfsp"
+          },
+          "description": "Withdraw Funds from Settlement Account COMMIT - payerfsp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}/transfers/{transferId}",
+          "path": "/participants/payerfsp/accounts/{$environment.payerfspSettlementAccountId}/transfers/{$prev.Withdraw-Funds-payerfsp-reserve.request.body.transferId}",
+          "method": "put",
+          "params": {
+            "name": "payerfsp",
+            "id": "{$environment.payerfspSettlementAccountId}",
+            "transferId": "{$prev.Withdraw-Funds-payerfsp-reserve.request.body.transferId}"
+          },
+          "body": {
+            "action": "recordFundsOutCommit",
+            "reason": "Reason for out flow of funds"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.payerfspSettlementAccountBalanceBeforeFundsIn >= environment.payerfspTargetFunds) {",
+                "  custom.skipRequest();",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "payerfsp-Get-Status-req-after-adj",
+          "meta": {
+            "info": "Get Status after funds adjustment"
+          },
+          "description": "Get Status after funds adjustment",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -240,7 +360,7 @@
                 "id": "payerfsp-settle-acc-bal-After-",
                 "description": "payerfsp Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.payerfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.payerfspSettlementAccountBalanceBeforeFundsIn - +environment.payerfspfundsInPrepareAmount)"
+                  "expect(+environment.payerfspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.payerfspTargetFunds)"
                 ]
               }
             ]
@@ -249,10 +369,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "const expectedBalance = Number.parseFloat(pm.environment.get(\"payerfspSettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"payerfspfundsInPrepareAmount\"))",
-                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"payerfspSettlementAccountBalanceBeforeFundsIn\")))",
-                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"payerfspfundsInPrepareAmount\")))",
-                "console.log(`expectedBalance: `, expectedBalance)",
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"payerfspTargetFunds\"))",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
                 "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 1500",
@@ -313,11 +430,11 @@
           }
         },
         {
-          "id": "Add-payeefsp-different-curr-de",
+          "id": "Add-payerfsp-different-curr-de",
           "meta": {
-            "info": "Add payeefsp with different currency for default settlement case"
+            "info": "Add payerfsp with different currency for default settlement case"
           },
-          "description": "Add payeefsp with different currency for default settlement case",
+          "description": "Add payerfsp with different currency for default settlement case",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -398,10 +515,10 @@
           }
         },
         {
-          "id": "Add-payeefsp-different-curr-de-1",
-          "description": "Add payeefsp with different currency for default settlement case CGS",
+          "id": "Add-payerfsp-different-curr-de-1",
+          "description": "Add payerfsp with different currency for default settlement case CGS",
           "meta": {
-            "info": "Add payeefsp with different currency for default settlement case"
+            "info": "Add payerfsp with different currency for default settlement case"
           },
           "apiVersion": {
             "minorVersion": 0,
@@ -549,7 +666,7 @@
             "id": "{$environment.payerfspCurrency2SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.payerfspfundsInPrepareTransferId}",
+            "transferId": "{$function.generic.generateUUID}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
@@ -582,21 +699,142 @@
               }
             ]
           },
+          "scriptingEngine": "javascript",
           "scripts": {
             "preRequest": {
               "exec": [
-                "var uuid = require('uuid');",
-                "pm.environment.set('payerfspfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('payerfspfundsInPrepareAmountCurrency2', 5000);"
+                "environment.payerfspTargetFundsCurrency2 = -5000;",
+                "if (environment.payerfspCurrency2SettlementAccountBalanceBeforeFundsIn <= environment.payerfspTargetFundsCurrency2) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.payerfspfundsInPrepareAmountCurrency2 = -(environment.payerfspTargetFundsCurrency2 - environment.payerfspCurrency2SettlementAccountBalanceBeforeFundsIn);",
+                "}"
               ]
             }
           }
         },
         {
-          "id": "Get-Status-req-after-deposit-c",
-          "description": "Get Status Request after deposit for currency2",
+          "id": "Withdraw-Funds-payerfsp-cur2-reserve",
+          "description": "Withdraw Funds from Settlement Account RESERVE currency2",
           "meta": {
-            "info": "Get Status Request after deposit"
+            "info": "Withdraw Funds from Settlement Account RESERVE currency2"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/payerfsp/accounts/{$environment.payerfspCurrency2SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "payerfsp",
+            "id": "{$environment.payerfspCurrency2SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "externalReference": "string",
+            "action": "recordFundsOutPrepareReserve",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.payerfspfundsOutPrepareAmount}",
+              "currency": "{$inputs.currency2}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.payerfspCurrency2SettlementAccountBalanceBeforeFundsIn >= environment.payerfspTargetFundsCurrency2) {",
+                "  custom.skipRequest();",
+                "} else {",
+                "  environment.payerfspfundsOutPrepareAmount = -(environment.payerfspCurrency2SettlementAccountBalanceBeforeFundsIn - environment.payerfspTargetFundsCurrency2);",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Withdraw-Funds-payerfsp-cur2-commit",
+          "description": "Withdraw Funds from Settlement Account COMMIT currency2",
+          "meta": {
+            "info": "Withdraw Funds from Settlement Account COMMIT currency2"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}/transfers/{transferId}",
+          "path": "/participants/payerfsp/accounts/{$environment.payerfspCurrency2SettlementAccountId}/transfers/{$prev.Withdraw-Funds-payerfsp-cur2-reserve.request.body.transferId}",
+          "method": "put",
+          "params": {
+            "name": "payerfsp",
+            "id": "{$environment.payerfspCurrency2SettlementAccountId}",
+            "transferId": "{$prev.Withdraw-Funds-payerfsp-cur2-reserve.request.body.transferId}"
+          },
+          "body": {
+            "action": "recordFundsOutCommit",
+            "reason": "Reason for out flow of funds"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.payerfspCurrency2SettlementAccountBalanceBeforeFundsIn >= environment.payerfspTargetFundsCurrency2) {",
+                "  custom.skipRequest();",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Status-after-funds-adjustment",
+          "description": "Get Status after funds adjustment for currency2",
+          "meta": {
+            "info": "Get Status after funds adjustment for currency2"
           },
           "apiVersion": {
             "minorVersion": 0,
@@ -627,7 +865,7 @@
                 "id": "settle-acc-bal-After-FundsIn-b",
                 "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.payerfspCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.payerfspCurrency2SettlementAccountBalanceBeforeFundsIn - +environment.payerfspfundsInPrepareAmountCurrency2)"
+                  "expect(+environment.payerfspCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.payerfspTargetFundsCurrency2)"
                 ]
               }
             ]
@@ -636,14 +874,7 @@
           "scripts": {
             "postRequest": {
               "exec": [
-                "const jsonData = pm.response.body",
-                "console.log(jsonData)",
-                "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
-                "    pm.environment.set(\"payerfspCurrency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
-                "  }",
-                "}",
-                "",
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"payerfspTargetFundsCurrency2\"))",
                 "// lets get retry config",
                 "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
                 "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
@@ -658,7 +889,7 @@
                 "    let isOk = false;",
                 "    ",
                 "    for(var i in jsonData) {",
-                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2') && Number.parseFloat(jsonData[i].value) == expectedBalance) {",
                 "        pm.environment.set(\"payerfspCurrency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "        isOk = true",
                 "      }",
@@ -1319,11 +1550,11 @@
           }
         },
         {
-          "id": "Add-payerfsp-cb-part-SUB-ID-PU",
+          "id": "Add-cb-part-SUB-ID-PUT",
           "meta": {
-            "info": "Add payerfsp callback - PARTICIPANT SUB-ID PUT"
+            "info": "Add callback - PARTICIPANT SUB-ID PUT"
           },
-          "description": "Add payerfsp callback - PARTICIPANT SUB-ID PUT",
+          "description": "Add callback - PARTICIPANT SUB-ID PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1356,11 +1587,11 @@
           }
         },
         {
-          "id": "Add-payerfsp-cb-part-SUB-ID-PU-1",
+          "id": "Add-cb-part-SUB-ID-PUT-Error",
           "meta": {
-            "info": "Add payerfsp callback - PARTICIPANT SUB-ID PUT Error"
+            "info": "Add callback - PARTICIPANT SUB-ID PUT Error"
           },
-          "description": "Add payerfsp callback - PARTICIPANT SUB-ID PUT Error",
+          "description": "Add callback - PARTICIPANT SUB-ID PUT Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1393,11 +1624,11 @@
           }
         },
         {
-          "id": "Add-payerfsp-cb-part-SUB-ID-DE",
+          "id": "Add-cb-part-SUB-ID-DELETE",
           "meta": {
-            "info": "Add payerfsp callback - PARTICIPANT SUB-ID DELETE"
+            "info": "Add callback - PARTICIPANT SUB-ID DELETE"
           },
-          "description": "Add payerfsp callback - PARTICIPANT SUB-ID DELETE",
+          "description": "Add callback - PARTICIPANT SUB-ID DELETE",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1430,11 +1661,11 @@
           }
         },
         {
-          "id": "Add-payerfsp-cb-PARTIES-SUB-ID",
+          "id": "Add-cb-PARTIES-SUB-ID-GET",
           "meta": {
-            "info": "Add payerfsp callback - PARTIES SUB-ID GET"
+            "info": "Add callback - PARTIES SUB-ID GET"
           },
-          "description": "Add payerfsp callback - PARTIES SUB-ID GET",
+          "description": "Add callback - PARTIES SUB-ID GET",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1467,11 +1698,11 @@
           }
         },
         {
-          "id": "Add-payerfsp-cb-PARTIES-SUB-ID-1",
+          "id": "Add-cb-PARTIES-SUB-ID-PUT",
           "meta": {
-            "info": "Add payerfsp callback - PARTIES SUB-ID PUT"
+            "info": "Add callback - PARTIES SUB-ID PUT"
           },
-          "description": "Add payerfsp callback - PARTIES SUB-ID PUT",
+          "description": "Add callback - PARTIES SUB-ID PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
@@ -1504,11 +1735,11 @@
           }
         },
         {
-          "id": "Add-payerfsp-cb-PARTIES-SUB-ID-2",
+          "id": "Add-cb-PARTIES-SUB-ID-ERROR-PU",
           "meta": {
-            "info": "Add payerfsp callback - PARTIES SUB-ID ERROR PUT"
+            "info": "Add callback - PARTIES SUB-ID ERROR PUT"
           },
-          "description": "Add payerfsp callback - PARTIES SUB-ID ERROR PUT",
+          "description": "Add callback - PARTIES SUB-ID ERROR PUT",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
