@@ -997,6 +997,555 @@
           }
         }
       ]
+    },
+    {
+      "id": "settle-non-finalized-settlements",
+      "name": "Settle non-finalized settlements",
+      "meta": {
+        "info": "Find non-finalized settlements across PENDING_SETTLEMENT, PS_TRANSFERS_RECORDED, PS_TRANSFERS_RESERVED and drive them to SETTLED"
+      },
+      "fileInfo": {
+        "path": "hub/cleanup/position_cleanup.json"
+      },
+      "requests": [
+        {
+          "id": "Get-settlements-PENDING_SETTLEMENT",
+          "meta": {
+            "info": "Get settlements in PENDING_SETTLEMENT state"
+          },
+          "description": "Get settlements in PENDING_SETTLEMENT state",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements",
+          "path": "/settlements",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "queryParams": {
+            "state": "PENDING_SETTLEMENT"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.nonFinalizedSettlements = [];"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "var settlements = Array.isArray(response.body) ? response.body : [];",
+                "environment.nonFinalizedSettlements = environment.nonFinalizedSettlements.concat(settlements);",
+                "console.log('PENDING_SETTLEMENT count:', settlements.length);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-settlements-PS_TRANSFERS_RECORDED",
+          "meta": {
+            "info": "Get settlements in PS_TRANSFERS_RECORDED state"
+          },
+          "description": "Get settlements in PS_TRANSFERS_RECORDED state",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements",
+          "path": "/settlements",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "queryParams": {
+            "state": "PS_TRANSFERS_RECORDED"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var settlements = Array.isArray(response.body) ? response.body : [];",
+                "environment.nonFinalizedSettlements = environment.nonFinalizedSettlements.concat(settlements);",
+                "console.log('PS_TRANSFERS_RECORDED count:', settlements.length);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-settlements-PS_TRANSFERS_RESERVED",
+          "meta": {
+            "info": "Get settlements in PS_TRANSFERS_RESERVED state"
+          },
+          "description": "Get settlements in PS_TRANSFERS_RESERVED state",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements",
+          "path": "/settlements",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "queryParams": {
+            "state": "PS_TRANSFERS_RESERVED"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var settlements = Array.isArray(response.body) ? response.body : [];",
+                "environment.nonFinalizedSettlements = environment.nonFinalizedSettlements.concat(settlements);",
+                "console.log('PS_TRANSFERS_RESERVED count:', settlements.length);",
+                "if (environment.nonFinalizedSettlements.length > 0) {",
+                "  environment.hasNonFinalizedSettlement = true;",
+                "  environment.targetSettlementId = environment.nonFinalizedSettlements[0].id;",
+                "  environment.settlementData = environment.nonFinalizedSettlements[0];",
+                "  console.log('Target settlement:', environment.targetSettlementId, 'state:', environment.settlementData.state);",
+                "} else {",
+                "  environment.hasNonFinalizedSettlement = false;",
+                "  console.log('No non-finalized settlements found');",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Prepare-non-finalized-settlement",
+          "meta": {
+            "info": "Prepare non-finalized settlement"
+          },
+          "description": "Prepare non-finalized settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.targetSettlementId}",
+          "method": "put",
+          "params": {
+            "id": "{$environment.targetSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "body": {
+            "participants": []
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status is 200",
+                "exec": [
+                  "if(environment.expectedState === 'PENDING_SETTLEMENT'){",
+                  "  expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              },
+              {
+                "id": "state-ps-transfers-recorded",
+                "description": "Settlement state is PS_TRANSFERS_RECORDED",
+                "exec": [
+                  "if(environment.expectedState === 'PENDING_SETTLEMENT'){",
+                  "  expect(response.body.state).to.equal('PS_TRANSFERS_RECORDED')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.hasNonFinalizedSettlement !== true){",
+                "  custom.skipRequest();",
+                "}",
+                "var res = environment.settlementData;",
+                "environment.expectedState = res.state;",
+                "if(res.state !== 'PENDING_SETTLEMENT'){",
+                "  custom.skipRequest();",
+                "}",
+                "var participants = [];",
+                "res.participants.forEach(function (participant) {",
+                "  var accounts = [];",
+                "  participant.accounts.forEach(curAccount => {",
+                "    accounts.push({",
+                "      id: curAccount.id,",
+                "      reason: 'Transfers recorded for payer',",
+                "      state: 'PS_TRANSFERS_RECORDED'",
+                "    });",
+                "  });",
+                "  participants.push({ id: participant.id, accounts: accounts });",
+                "});",
+                "custom.appendRequestBody({ participants: participants });"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(response.status === 200){",
+                "  environment.settlementData = response.body;",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Reserve-non-finalized-settlement",
+          "meta": {
+            "info": "Reserve non-finalized settlement"
+          },
+          "description": "Reserve non-finalized settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.targetSettlementId}",
+          "method": "put",
+          "params": {
+            "id": "{$environment.targetSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "body": {
+            "participants": []
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status is 200",
+                "exec": [
+                  "if(environment.expectedState === 'PS_TRANSFERS_RECORDED'){",
+                  "  expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              },
+              {
+                "id": "state-ps-transfers-reserved",
+                "description": "Settlement state is PS_TRANSFERS_RESERVED",
+                "exec": [
+                  "if(environment.expectedState === 'PS_TRANSFERS_RECORDED'){",
+                  "  expect(response.body.state).to.equal('PS_TRANSFERS_RESERVED')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.hasNonFinalizedSettlement !== true){",
+                "  custom.skipRequest();",
+                "}",
+                "var res = environment.settlementData;",
+                "environment.expectedState = res.state;",
+                "if(res.state !== 'PS_TRANSFERS_RECORDED'){",
+                "  custom.skipRequest();",
+                "}",
+                "var participants = [];",
+                "res.participants.forEach(function (participant) {",
+                "  var accounts = [];",
+                "  participant.accounts.forEach(curAccount => {",
+                "    accounts.push({",
+                "      id: curAccount.id,",
+                "      reason: 'Transfers reserved for payer',",
+                "      state: 'PS_TRANSFERS_RESERVED'",
+                "    });",
+                "  });",
+                "  participants.push({ id: participant.id, accounts: accounts });",
+                "});",
+                "custom.appendRequestBody({ participants: participants });"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(response.status === 200){",
+                "  environment.settlementData = response.body;",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Commit-non-finalized-settlement",
+          "meta": {
+            "info": "Commit non-finalized settlement"
+          },
+          "description": "Commit non-finalized settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.targetSettlementId}",
+          "method": "put",
+          "params": {
+            "id": "{$environment.targetSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "body": {
+            "participants": []
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status is 200",
+                "exec": [
+                  "if(environment.expectedState === 'PS_TRANSFERS_RESERVED'){",
+                  "  expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              },
+              {
+                "id": "state-ps-transfers-committed",
+                "description": "Settlement state is PS_TRANSFERS_COMMITTED",
+                "exec": [
+                  "if(environment.expectedState === 'PS_TRANSFERS_RESERVED'){",
+                  "  expect(response.body.state).to.equal('PS_TRANSFERS_COMMITTED')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.hasNonFinalizedSettlement !== true){",
+                "  custom.skipRequest();",
+                "}",
+                "var res = environment.settlementData;",
+                "environment.expectedState = res.state;",
+                "if(res.state !== 'PS_TRANSFERS_RESERVED'){",
+                "  custom.skipRequest();",
+                "}",
+                "var participants = [];",
+                "res.participants.forEach(function (participant) {",
+                "  var accounts = [];",
+                "  participant.accounts.forEach(curAccount => {",
+                "    accounts.push({",
+                "      id: curAccount.id,",
+                "      reason: 'Transfers committed for payer',",
+                "      state: 'PS_TRANSFERS_COMMITTED'",
+                "    });",
+                "  });",
+                "  participants.push({ id: participant.id, accounts: accounts });",
+                "});",
+                "custom.appendRequestBody({ participants: participants });"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(response.status === 200){",
+                "  environment.settlementData = response.body;",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Settle-non-finalized-settlement",
+          "meta": {
+            "info": "Settle non-finalized settlement"
+          },
+          "description": "Settle non-finalized settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.targetSettlementId}",
+          "method": "put",
+          "params": {
+            "id": "{$environment.targetSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "body": {
+            "participants": []
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status is 200",
+                "exec": [
+                  "if(environment.expectedState === 'PS_TRANSFERS_COMMITTED'){",
+                  "  expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              },
+              {
+                "id": "state-settled",
+                "description": "Settlement state is SETTLED",
+                "exec": [
+                  "if(environment.expectedState === 'PS_TRANSFERS_COMMITTED'){",
+                  "  expect(response.body.state).to.equal('SETTLED')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.hasNonFinalizedSettlement !== true){",
+                "  custom.skipRequest();",
+                "}",
+                "var res = environment.settlementData;",
+                "environment.expectedState = res.state;",
+                "if(res.state !== 'PS_TRANSFERS_COMMITTED'){",
+                "  custom.skipRequest();",
+                "}",
+                "var participants = [];",
+                "res.participants.forEach(function (participant) {",
+                "  var accounts = [];",
+                "  participant.accounts.forEach(curAccount => {",
+                "    accounts.push({",
+                "      id: curAccount.id,",
+                "      reason: 'Transfers settled for payer',",
+                "      state: 'SETTLED'",
+                "    });",
+                "  });",
+                "  participants.push({ id: participant.id, accounts: accounts });",
+                "});",
+                "custom.appendRequestBody({ participants: participants });"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if(response.status === 200){",
+                "  environment.settlementData = response.body;",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-final-state-non-finalized-settlement",
+          "meta": {
+            "info": "Get final state for selected settlement"
+          },
+          "description": "Get final state for selected settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlements/{id}",
+          "path": "/settlements/{$environment.targetSettlementId}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.targetSettlementId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status is 200",
+                "exec": [
+                  "if(environment.hasNonFinalizedSettlement === true){",
+                  "  expect(response.status).to.equal(200)",
+                  "}"
+                ]
+              },
+              {
+                "id": "final-state-settled",
+                "description": "Final state is SETTLED",
+                "exec": [
+                  "if(environment.hasNonFinalizedSettlement === true){",
+                  "  expect(response.body.state).to.equal('SETTLED')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.hasNonFinalizedSettlement !== true){",
+                "  custom.skipRequest();",
+                "}"
+              ]
+            }
+          }
+        }
+      ]
     }
   ]
 }
