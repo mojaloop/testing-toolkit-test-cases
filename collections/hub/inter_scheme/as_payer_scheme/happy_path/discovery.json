@@ -154,6 +154,160 @@
           }
         }
       ]
+    },
+    {
+      "id": "participants-lookup-proxyab-nonexistentpayeefsp2",
+      "name": "Party Lookup for ProxyAB if not cached - nonexistentpayeefsp2",
+      "requests": [
+        {
+          "id": "Delete-Proxied-party-from-Orac",
+          "description": "Delete Proxied party from Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}/{$inputs.PROXY_PAYERFSP_PARTY_ID}7",
+          "method": "delete",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYERFSP_PARTY_ID}7"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}",
+            "Content-Type": "application/vnd.interoperability.iso20022.participants+json;version=2.0",
+            "Accept": "application/vnd.interoperability.iso20022.participants+json;version=2.0"
+          },
+          "ignoreCallbacks": true,
+          "disabled": false
+        },
+        {
+          "id": "Send-party-lookup-req",
+          "description": "Send party lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYER_TEST_PAYEEFSP_PARTY_ID}7"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-Proxy-hdr-set",
+                "description": "Response Proxy Header should be set",
+                "exec": [
+                  "expect(callback.headers['fspiop-proxy']).to.equal('{$inputs.PROXY_HEADER}')"
+                ]
+              },
+              {
+                "id": "rsp-src-hdr-Payeefsp-Id",
+                "description": "Response Source Header same as Payeefsp Id",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.PROXY_PAYER_TEST_PAYEEFSP_ID}2')"
+                ]
+              },
+              {
+                "id": "rsp-dest-hdr-Payerfsp-Id",
+                "description": "Response Destination Header same as Payerfsp Id",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.PROXY_PAYER_TEST_PAYERFSP_ID}')"
+                ]
+              },
+              {
+                "id": "cb-content-type-parties",
+                "description": "Callback content-type to be parties",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
+                ]
+              },
+              {
+                "id": "cb-partyIdInfo-partyIdType-par",
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}')"
+                ]
+              },
+              {
+                "id": "cb-partyIdInfo-partyIdType-par",
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.PROXY_PAYER_TEST_PAYEEFSP_PARTY_ID}7')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Send-Oracle-lookup-req",
+          "description": "Send Oracle lookup request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "url": "{$inputs.HOST_ORACLE_MSISDN}",
+          "operationPath": "/participants/{Type}/{ID}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.PROXY_PAYEEFSP_PARTY_ID_TYPE}",
+            "ID": "{$inputs.PROXY_PAYER_TEST_PAYEEFSP_PARTY_ID}7"
+          },
+          "headers": {
+            "Accept": "application/vnd.interoperability.participants+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Date": "{$function.generic.curDate}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Oracle-has-Proxy-Payee-set",
+                "description": "Oracle has Proxy Payee DFSP set",
+                "exec": [
+                  "expect(response.body.partyList[0].fspId).to.equal('{$inputs.PROXY_PAYER_TEST_PAYEEFSP_ID}2')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }

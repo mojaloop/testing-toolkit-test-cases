@@ -1,0 +1,231 @@
+{
+  "name": "E2E P2P Happy Path with Sub ID",
+  "test_cases": [
+    {
+      "id": "e2e-add-account",
+      "name": "E2E Add account Sub ID",
+      "fileInfo": {
+        "path": "hub/golden_path/e2e_tests/p2p-sub.json"
+      },
+      "meta": {
+        "info": "E2E Add account Sub ID"
+      },
+      "requests": [
+        {
+          "id": "Post-Account",
+          "description": "Post Account",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": false,
+            "prefix": "/ml-con-out",
+            "hostnames": [],
+            "specFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/mojaloop_connector_outbound_2.1/trigger_templates"
+          },
+          "operationPath": "/accounts",
+          "path": "/accounts",
+          "method": "post",
+          "url": "{$inputs.E2ESIM2_OUTBOUND_URL}",
+          "body": [
+            {
+              "idType": "MSISDN",
+              "idSubValue": "{$inputs.E2ESIM2_SUB_1}",
+              "idValue": "{$inputs.E2ESIM2_MSISDN_SUB_1}"
+            }
+          ],
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "e2e-send-money",
+      "name": "E2E Send Money Sub ID",
+      "meta": {
+        "info": "Objective: Validate successful transaction completion across participant combinations"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "body": {
+            "homeTransactionId": "123ABC",
+            "from": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.E2ESIM1_MSISDN_SUB_1}",
+              "idSubValue": "{$inputs.E2ESIM1_SUB_1}",
+              "displayName": "Firstname-Test",
+              "firstName": "Firstname-Test",
+              "lastName": "Lastname-Test",
+              "dateOfBirth": "1984-01-01",
+              "fspId": "{$inputs.E2ESIM1_NAME}"
+            },
+            "to": {
+              "type": "CONSUMER",
+              "idType": "MSISDN",
+              "idSubValue": "{$inputs.E2ESIM2_SUB_1}",
+              "idValue": "{$inputs.E2ESIM2_MSISDN_SUB_1}",
+              "merchantClassificationCode": "123"
+            },
+            "amountType": "SEND",
+            "currency": "{$inputs.E2E_SOURCE_CURRENCY}",
+            "amount": "{$inputs.E2E_SEND_AMOUNT}",
+            "transactionType": "TRANSFER",
+            "note": "test note",
+            "skipPartyLookup": false
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Current state should be WAITING_FOR_PARTY_ACCEPTANCE",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Sub ID",
+                "exec": [
+                  "expect(response.body.getPartiesResponse.body.party.partyIdInfo.partySubIdOrType).to.equal('{$inputs.E2ESIM2_SUB_1}')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}"
+        },
+        {
+          "id": 2,
+          "description": "Accept Party and request Quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": false
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "body": {
+            "acceptParty": true
+          },
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Current state should be WAITING_FOR_QUOTE_ACCEPTANCE",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Sub ID",
+                "exec": [
+                  "if(environment.API_TYPE === 'iso20022') {",
+                  "  expect(response.body.quoteResponse.body.extensionList.extension.find(item => item.key === 'CdtTrfTxInf.CdtrAgt.FinInstnId.ClrSysMmbId.MmbId').value).to.equal('{$inputs.E2ESIM2_SUB_1}')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}"
+        },
+        {
+          "id": 3,
+          "description": "Accept Quote and complete transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "mojaloop_connector_outbound",
+            "asynchronous": false
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$prev.1.response.body.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "body": {
+            "acceptQuote": true
+          },
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Current state should be COMPLETED",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('COMPLETED')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Check Sub ID",
+                "exec": [
+                  "if(environment.API_TYPE === 'iso20022') {",
+                  "  expect(response.body.prepare.body.extensionList.extension.find(item => item.key === 'CdtTrfTxInf.CdtrAgt.FinInstnId.ClrSysMmbId.MmbId').value).to.equal('{$inputs.E2ESIM2_SUB_1}')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.E2ESIM1_OUTBOUND_URL}"
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,56 @@
 [
   {
+    "ruleId": 4,
+    "priority": 1,
+    "description": "get /parties/{idType}/{idValue}/{idSubValue}",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 2,
+      "type": "mojaloop_connector_outbound",
+      "asynchronous": false
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{idType}/{idValue}/{idSubValue}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": null,
+      "path": null,
+      "params": {
+        "body": {
+          "dateOfBirth": "1966-06-16",
+          "displayName": "Chikondi Banda",
+          "firstName": "Chikondi",
+          "fspId": "testpayee",
+          "idType": "{$request.params.idType}",
+          "idValue": "{$request.params.idValue}",
+          "idSubValue": "{$request.params.idSubValue}",
+          "lastName": "Banda",
+          "merchantClassificationCode": "1234",
+          "middleName": "",
+          "kycInformation": "This is encrypted KYC information"
+        },
+        "statusCode": "200",
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "FIXED_RESPONSE"
+    },
+    "type": "response",
+    "version": 1
+  },
+  {
     "ruleId": 8,
     "priority": 1,
     "description": "get /parties/{idType}/{idValue}",
@@ -32,7 +83,7 @@
           "displayName": "Chikondi Banda",
           "firstName": "Chikondi",
           "fspId": "testpayee",
-          "idType": "MSISDN",
+          "idType": "{$request.params.idType}",
           "idValue": "{$request.params.idValue}",
           "lastName": "Banda",
           "merchantClassificationCode": "1234",
