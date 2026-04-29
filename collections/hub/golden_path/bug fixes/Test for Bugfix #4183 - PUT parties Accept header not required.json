@@ -1,0 +1,133 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "bugfix-4183",
+      "name": "Test for Bugfix #4183 - PUT /parties Accept header not required",
+      "meta": {
+        "info": "Test for Bugfix #4183 - PUT /parties/{Type}/{ID} should not require Accept header per FSPIOP spec. PUT/PATCH are callbacks and Accept is only mandatory for request-initiating methods (GET, POST, DELETE)."
+      },
+      "requests": [
+        {
+          "id": "put-parties-no-accept-header",
+          "meta": {
+            "info": "PUT /parties without Accept header should not be rejected"
+          },
+          "description": "PUT /parties without Accept header should not be rejected",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "FSPIOP-Destination": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "party": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.toFspId}"
+              },
+              "name": "Test Party"
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-not-400",
+                "description": "Response status should not be 400 (Accept header validation should not reject PUT)",
+                "exec": [
+                  "expect(response.status).to.not.equal(400)"
+                ]
+              },
+              {
+                "id": "rsp-no-accept-required-error",
+                "description": "Response should not contain 'Accept is required' error",
+                "exec": [
+                  "if (response.body && response.body.errorInformation) { expect(response.body.errorInformation.errorDescription).to.not.include('Accept is required') }"
+                ]
+              },
+              {
+                "id": "rsp-no-error-code-3102",
+                "description": "Response should not contain error code 3102 (Missing mandatory element for Accept)",
+                "exec": [
+                  "if (response.body && response.body.errorInformation) { expect(response.body.errorInformation.errorCode).to.not.equal('3102') }"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "get-parties-no-accept-header",
+          "meta": {
+            "info": "GET /parties without Accept header should be rejected with error 3102"
+          },
+          "description": "GET /parties without Accept header should be rejected with error 3102",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status should be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "rsp-accept-required-error",
+                "description": "Response should contain 'Accept is required' error",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Accept is required')"
+                ]
+              },
+              {
+                "id": "rsp-error-code-3102",
+                "description": "Response should contain error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102')"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/bug fixes/Test for Bugfix #4183 - PUT parties Accept header not required.json"
+      }
+    }
+  ]
+}
