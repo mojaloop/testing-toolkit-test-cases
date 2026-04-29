@@ -1,4 +1,4 @@
-# MCM RBAC Tests
+# MCM IAM Tests
 
 ## Overview
 Tests for validating Mojaloop Connection Manager (MCM) Role-Based Access Control using Ory Oathkeeper authorization rules.
@@ -13,7 +13,7 @@ Tests for validating Mojaloop Connection Manager (MCM) Role-Based Access Control
   - DFSP owner user - Member of specific DFSP role
 
 ### Required Environment Variables
-Apply the MCM RBAC environment variables in your TTK environment file:
+Apply the MCM IAM environment variables in your TTK environment file:
 
 ```json
 {
@@ -48,24 +48,24 @@ Apply the MCM RBAC environment variables in your TTK environment file:
 
 ## Test Collections
 
-- `mcm_rbac_positive.json` - Authorized access tests (200/201 expected)
-- `mcm_rbac_negative.json` - Unauthorized access tests (401/403 expected)
+- `mcm_iam_positive.json` - Authorized access tests (200/201 expected)
+- `mcm_iam_negative.json` - Unauthorized access tests (401/403 expected)
 - `mcm_pm4ml_api.json` - JWT-based PM4ML API tests
 
 ## Running Tests
 
 ### Automated (via ArgoCD Deployment)
 
-MCM RBAC tests run automatically after MCM deployment via a Kubernetes Job:
-- **Location**: `iac-modules/terraform/gitops/generate-files/templates/mcm/mcm-rbac-test-job.yaml.tpl`
+MCM IAM tests run automatically after MCM deployment via a Kubernetes Job:
+- **Location**: `iac-modules/terraform/gitops/generate-files/templates/mcm/mcm-iam-test-job.yaml.tpl`
 - **Trigger**: PostSync hook (ArgoCD sync wave 5)
 - **Downloads**: Test collections from this repo automatically
 - **Reports**: Available via TTK UI after job completes
 
 **View job status:**
 ```bash
-kubectl get jobs -n mcm mcm-rbac-validation
-kubectl logs -n mcm job/mcm-rbac-validation
+kubectl get jobs -n mcm mcm-iam-validation
+kubectl logs -n mcm job/mcm-iam-validation
 ```
 
 **Configure test parameters** in `cluster-config.yaml`:
@@ -83,14 +83,14 @@ app_var_map:
 ### Manual (via TTK CLI)
 
 ```bash
-# Run all MCM RBAC tests
+# Run all MCM IAM tests
 ml-ttk-cli -e mcm-environment.json \
   -i collections/hub/mcm/master.json \
   -u http://ttk-backend:5050
 
 # Run specific collection
 ml-ttk-cli -e mcm-environment.json \
-  -i collections/hub/mcm/mcm_rbac_positive.json \
+  -i collections/hub/mcm/mcm_iam_positive.json \
   -u http://ttk-backend:5050
 ```
 
@@ -103,10 +103,10 @@ ml-ttk-cli -e mcm-environment.json \
 
 ## CI/CD Integration
 
-The MCM RBAC validation job is integrated into the Mojaloop deployment pipeline:
+The MCM IAM validation job is integrated into the Mojaloop deployment pipeline:
 
 1. **ArgoCD** deploys MCM application
-2. **PostSync Hook** triggers `mcm-rbac-validation` job
+2. **PostSync Hook** triggers `mcm-iam-validation` job
 3. **Job** downloads test collections from this repo
 4. **TTK CLI** runs tests against deployed MCM
 5. **Results** saved to TTK backend for review
@@ -121,4 +121,4 @@ The automated job validates basic connectivity and test infrastructure.
 ## References
 - [BOF Documentation](https://mojaloop.github.io/business-operations-framework-docs/)
 - [MCM Oathkeeper Rules](https://github.com/mojaloop/iac-modules/blob/main/terraform/gitops/generate-files/templates/mcm/rbac.yaml.tpl)
-- [Automated Test Job](https://github.com/mojaloop/iac-modules/blob/main/terraform/gitops/generate-files/templates/mcm/mcm-rbac-test-job.yaml.tpl)
+- [Automated Test Job](https://github.com/mojaloop/iac-modules/blob/main/terraform/gitops/generate-files/templates/mcm/mcm-iam-test-job.yaml.tpl)
