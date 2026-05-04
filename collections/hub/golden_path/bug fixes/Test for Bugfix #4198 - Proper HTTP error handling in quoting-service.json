@@ -1,0 +1,205 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "bugfix-4198",
+      "name": "Tests for Bugfix #4198 - Proper HTTP error handling in quoting-service (no blanket 1001 wrapping)",
+      "meta": {
+        "info": "Tests for Bugfix mojaloop/project#4198 - quoting-service and its callers were wrapping ALL axios errors (including HTTP 4xx with FSPIOP errorInformation) as DESTINATION_COMMUNICATION_ERROR (errorCode 1001 -> HTTP 503), masking the real downstream failure.\n\nThe fix in mojaloop/quoting-service#468 (src/lib/http.js, src/model/quotes.js, src/model/fxQuotes.js, src/model/bulkQuotes.js) now distinguishes:\n  - Response with FSPIOP errorInformation -> original errorCode is propagated directly\n  - HTTP 4xx without errorInformation    -> CLIENT_ERROR (errorCode 3000)\n  - HTTP 5xx / network failure           -> DESTINATION_COMMUNICATION_ERROR (errorCode 1001) -- unchanged\n\nThese tests assert the regression-guard invariant: a 4xx from a downstream hop (participant endpoint lookup in central-ledger for a non-existent destination FSP) must NO LONGER surface to the caller as errorCode 1001. The specific replacement code depends on whether central-ledger returns FSPIOP errorInformation (then that original code is preserved, typically 3201 DESTINATION_FSP_ERROR or 3003) or a plain 4xx (then 3000 CLIENT_ERROR).\n\nDepends on: mojaloop/quoting-service#468"
+      },
+      "requests": [
+        {
+          "id": "quote-nonexistent-destination",
+          "meta": {
+            "info": "POST /quotes with a FSPIOP-Destination that is not registered in the hub. The participant-endpoint lookup inside quoting-service returns a 4xx; pre-fix this became errorCode 1001 (HTTP 503) in the caller's callback. Post-fix the caller sees the real downstream error."
+          },
+          "description": "Regression guard: POST /quotes to non-existent destination FSP must not surface as 1001",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "nonexistentfsp4198"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "nonexistentfsp4198"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Initial sync response should be 202 Accepted (quoting-service accepts the request and will process it asynchronously)",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-errorInformation",
+                "description": "Async PUT /quotes/{ID}/error callback body should contain errorInformation",
+                "exec": [
+                  "expect(callback.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": "cb-error-code-present",
+                "description": "Callback errorInformation should contain errorCode",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": "cb-error-code-not-1001",
+                "description": "Regression-guard: errorCode MUST NOT be 1001 (DESTINATION_COMMUNICATION_ERROR). Pre-fix this assertion fails because quoting-service blanket-wrapped all axios errors as 1001; post-fix the real downstream errorCode is propagated.",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.not.equal('1001')"
+                ]
+              },
+              {
+                "id": "cb-error-code-expected-family",
+                "description": "Expected post-fix errorCode is either 3xxx (FSPIOP errorInformation propagated from central-ledger, typically 3003 Party/3201 Destination FSP not found) or 3000 (CLIENT_ERROR for 4xx without errorInformation). Assertion is tolerant so it stays green across both paths.",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.match(/^3\\d{3}$/)"
+                ]
+              },
+              {
+                "id": "cb-fspiop-destination-echo",
+                "description": "Callback fspiop-destination should echo the original FSPIOP-Source (the caller receives their own error)",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers[\"FSPIOP-Source\"]}')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "quote-positive-control",
+          "meta": {
+            "info": "Positive control - POST /quotes to a valid destination must still succeed (regression guard against the fix accidentally breaking the happy path)."
+          },
+          "description": "Positive control: valid quote request to provisioned payee FSP still works end-to-end",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.toFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Initial sync response should be 202 Accepted",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-no-errorInformation",
+                "description": "Callback body should NOT contain errorInformation on the happy path",
+                "exec": [
+                  "expect(callback.body).to.not.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": "cb-has-transferAmount",
+                "description": "Callback body should contain a valid quote response payload (transferAmount)",
+                "exec": [
+                  "expect(callback.body).to.have.property('transferAmount')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
