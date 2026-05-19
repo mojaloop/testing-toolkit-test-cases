@@ -1,0 +1,224 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "bugfix-4109",
+      "name": "Test for Bugfix #4109 - GET /parties/{Type}/{ID} must reject invalid FSPIOP-Source header values",
+      "meta": {
+        "info": "Test for Bugfix #4109 - The Account Lookup Service must reject GET /parties/{Type}/{ID} requests whose FSPIOP-Source header is not a known participant FSP-ID, returning FSPIOP errorCode 3101 'Malformed syntax - invalid fspiop-source header'.\n\nBefore the fix (ALS #621, merged 2026-05-13), an unknown/invalid FSPIOP-Source value would still result in the GET being forwarded asynchronously to a callback URL, leaking lookup behaviour to unauthenticated callers. After the fix, ALS validates the source FSP-ID against the participant cache before any downstream processing.\n\nDepending on whether rejection happens synchronously (HTTP 4xx with errorInformation in the response body) or asynchronously (HTTP 202 followed by PUT /parties/{Type}/{ID}/error with errorInformation in the callback body), assertions accept either errorCode 3101 (handler-level malformed syntax) or errorCode 3100 (schema-level generic validation) — both indicate the request was correctly rejected at the source-validation gate. The test stays green if the rejection layer is moved between OpenAPI schema and handler in the future."
+      },
+      "requests": [
+        {
+          "id": "parties-get-invalid-fspiop-source",
+          "meta": {
+            "info": "GET /parties/MSISDN/{validMSISDN} with FSPIOP-Source set to a literal junk string (not a registered participant FSP-ID). Exercises the source-FSP validation added in ALS #621 (src/lib/validators.js).\n\nThe MSISDN itself is well-formed (passes the path-parameter validator). Only the FSPIOP-Source header is bad. Failure must therefore be attributable to the source-validation path, not the ID-validation path."
+          },
+          "description": "GET /parties with invalid FSPIOP-Source header should be rejected with errorCode 3101",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/MSISDN/{$inputs.toIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "invalidFSPIOPText"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rejected",
+                "description": "Request must be rejected — either sync 4xx with errorInformation, or async 202 followed by PUT .../error",
+                "exec": [
+                  "expect([202, 400]).to.include(response.status)"
+                ]
+              },
+              {
+                "id": "error-information-present",
+                "description": "An errorInformation payload must be returned — either in response.body (sync) or callback.body (async)",
+                "exec": [
+                  "const sync = response.body && response.body.errorInformation",
+                  "const async = callback && callback.body && callback.body.errorInformation",
+                  "expect(sync || async).to.exist"
+                ]
+              },
+              {
+                "id": "error-code-3101-or-3100",
+                "description": "errorCode should be 3101 (Malformed syntax - invalid fspiop-source header) or 3100 (Generic validation error). Both indicate the request was rejected at the source-validation gate.",
+                "exec": [
+                  "const errInfo = (response.body && response.body.errorInformation) || (callback && callback.body && callback.body.errorInformation)",
+                  "expect(['3100', '3101']).to.include(errInfo.errorCode)"
+                ]
+              },
+              {
+                "id": "error-description-mentions-source",
+                "description": "errorDescription should indicate a source-header problem (matches the post-fix wording from ALS validators.js or the generic schema message)",
+                "exec": [
+                  "const errInfo = (response.body && response.body.errorInformation) || (callback && callback.body && callback.body.errorInformation)",
+                  "expect(errInfo.errorDescription).to.match(/fspiop-source|source|Malformed syntax|invalid/i)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "parties-get-fspiop-source-with-curly-braces",
+          "meta": {
+            "info": "GET /parties/MSISDN/{validMSISDN} with an FSPIOP-Source value that contains curly braces — a syntactically malformed FSP-ID. Same expected behaviour as the invalidFSPIOPText case above; this variant guards against any path that strips/normalises non-alphanumeric characters before validating."
+          },
+          "description": "GET /parties with curly-braced FSPIOP-Source should be rejected with errorCode 3101",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/MSISDN/{$inputs.toIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{fspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rejected",
+                "description": "Request must be rejected — either sync 4xx or async 202 + error callback",
+                "exec": [
+                  "expect([202, 400]).to.include(response.status)"
+                ]
+              },
+              {
+                "id": "error-code-3101-or-3100",
+                "description": "errorCode should be 3101 or 3100 — request rejected at source-validation or schema-validation gate",
+                "exec": [
+                  "const errInfo = (response.body && response.body.errorInformation) || (callback && callback.body && callback.body.errorInformation)",
+                  "expect(errInfo).to.exist",
+                  "expect(['3100', '3101']).to.include(errInfo.errorCode)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "parties-get-empty-fspiop-source",
+          "meta": {
+            "info": "Positive control / different rejection path. An empty FSPIOP-Source header is rejected by FSPIOP header validation (mandatory header check) with errorCode 3102 'Missing mandatory element' or 3101, BEFORE the new source-FSP-validation path added by #621 has a chance to run. Asserts the request is still rejected, but with a different error class — guards against a regression where empty-source somehow makes it through to the lookup handler."
+          },
+          "description": "GET /parties with empty FSPIOP-Source should be rejected (different path than the invalid-value case)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/MSISDN/{$inputs.toIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": ""
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rejected-sync",
+                "description": "Empty FSPIOP-Source is rejected synchronously by FSPIOP header validation",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "errorInformation-present",
+                "description": "Response body should contain errorInformation",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": "error-code-3xxx",
+                "description": "errorCode is in the 3xxx range (client-side error) — exact code is path-dependent (3101 / 3102 / 3100)",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.match(/^3\\d{3}$/)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "parties-get-valid-fspiop-source-positive-control",
+          "meta": {
+            "info": "Positive control. Identical GET /parties request, but with a valid FSPIOP-Source (the provisioned `fromFspId`). The lookup must pass the source-validation gate added by #621 — i.e. the response is NOT a synchronous 4xx with errorCode 3101, and the async callback (whatever its content) is NOT an errorCode-3101 source-validation error.\n\nThis test deliberately does NOT assert that the party lookup ultimately succeeds (callback contains `party` and no `errorInformation`). The downstream lookup can legitimately fail for unrelated reasons (oracle miss, simulator state, party-not-found) which are outside the scope of #621. Only the source-validation gate's behaviour is in scope."
+          },
+          "description": "GET /parties with a valid (registered) FSPIOP-Source should NOT be rejected at the source-validation gate",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/MSISDN/{$inputs.toIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Sync response should be 202 Accepted (valid source passes the sync validation gate)",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-not-source-validation-error",
+                "description": "If the async callback contains errorInformation, the errorCode must NOT be 3101 (invalid fspiop-source) — i.e. the source-validation gate must NOT reject a valid source",
+                "exec": [
+                  "const err = callback && callback.body && callback.body.errorInformation",
+                  "if (err) { expect(err.errorCode).to.not.equal('3101') }",
+                  "if (err) { expect(err.errorDescription || '').to.not.match(/invalid fspiop-source/i) }"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
