@@ -3,6 +3,36 @@
   "name": "switch_onboarding_participant_fxp",
   "test_cases": [
     {
+      "id": "Clear environment variables",
+      "name": "Clear environment variables",
+      "description": "Cleanup all FXP env vars used during the run",
+      "scripts": {
+        "postRequest": {
+          "exec": [
+            "const varsToDelete = [",
+            "  'fxpCurrency1SettlementAccountId',",
+            "  'fxpCurrency1SettlementAccountBalanceBeforeFundsIn',",
+            "  'fxpCurrency1SettlementAccountBalanceAfterFundsIn',",
+            "  'fxpCurrency1fundsInPrepareTransferId',",
+            "  'fxpCurrency1fundsInPrepareAmount',",
+            "  'fxpCurrency'",
+            "];",
+            "",
+            "varsToDelete.forEach(v => {",
+            "  if (pm.environment.has(v)) {",
+            "    pm.environment.unset(v);",
+            "    console.log('Removed env var:', v);",
+            "  }",
+            "});"
+          ]
+        }
+      },
+      "meta": {
+        "info": "Clear environment variables"
+      },
+      "requests": []
+    },
+    {
       "id": "setup-fxp-accounts",
       "name": "Setup FXP Accounts",
       "meta": {
@@ -206,7 +236,7 @@
               "exec": [
                 "var uuid = require('uuid');",
                 "pm.environment.set('fxpCurrency1fundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('fxpCurrency1fundsInPrepareAmount', 5000000);"
+                "pm.environment.set('fxpCurrency1fundsInPrepareAmount', {$inputs.fundsIn});"
               ]
             }
           }
