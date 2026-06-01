@@ -106,9 +106,9 @@
               },
               {
                 "id": "cb-fspiop-destination-echo",
-                "description": "Callback fspiop-destination should echo the original FSPIOP-Source (the caller receives their own error)",
+                "description": "Callback fspiop-destination should echo the original FSPIOP-Source (the caller receives their own error). Uses {$inputs.fromFspId} because TTK's template substitution does not expand {$request.headers[...]} inside expect() arguments; fromFspId is the same env value that was set as FSPIOP-Source on the outbound POST /quotes.",
                 "exec": [
-                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers[\"FSPIOP-Source\"]}')"
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}')"
                 ]
               }
             ]
