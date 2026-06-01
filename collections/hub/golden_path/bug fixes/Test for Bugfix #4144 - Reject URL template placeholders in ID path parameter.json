@@ -1,0 +1,349 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "bugfix-4144",
+      "name": "Tests for Bugfix #4144 - Reject URL template placeholders in ID path parameter",
+      "meta": {
+        "info": "Tests for Bugfix #4144 - ALS must reject URL-template placeholders ('{ID}') and ill-formed identifiers (type-specific format violations) on the ID/SubId path parameters.\n\nTwo rejection layers are exercised: (a) the OpenAPI schema ('^[^\\s{}]+$' on the ID parameter) rejects curly-braced IDs synchronously with HTTP 400 + FSPIOP errorCode 3100 'Generic validation error'; (b) the handler-level validator (src/lib/validators.js, introduced by PR #619) rejects type-specific format violations asynchronously via PUT /parties/{Type}/{ID}/error with errorCode 3101 'Malformed syntax'. Assertions accept either errorCode so the test stays green if the schema pattern is loosened/tightened in the future.\n\nAsync callback assertions use TTK's callback-capture mechanism (callback.body.*), following the pattern in dfsp/golden_path/negative_scenarios/parties_negative.json. Handler-only fixtures are chosen to use URL-safe ASCII (MSISDN, EMAIL, IBAN format violations) so the outbound error-callback URL round-trips cleanly; exotic characters like backticks or angle brackets exercise the same validator code path but trip unrelated URL-escaping bugs in ALS's outbound callback construction and are therefore covered by Jest unit tests instead."
+      },
+      "requests": [
+        {
+          "id": "parties-get-literal-id-placeholder",
+          "meta": {
+            "info": "GET /parties/{Type}/{ID} with literal '{ID}' placeholder. Caught synchronously by OpenAPI schema ('^[^\\s{}]+$'); handler-layer validator would also catch it. Assertions accept errorCode 3100 OR 3101."
+          },
+          "description": "GET parties with literal {ID} placeholder",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/MSISDN/%7BID%7D",
+          "method": "get",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status should be 400 Bad Request",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "rsp-errorInformation",
+                "description": "Response body should contain errorInformation",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": "rsp-error-code-3100-or-3101",
+                "description": "errorCode should be 3100 (schema) OR 3101 (handler) - tolerant to validation-layer changes",
+                "exec": [
+                  "expect(['3100', '3101']).to.include(response.body.errorInformation.errorCode)"
+                ]
+              },
+              {
+                "id": "rsp-error-description-mentions-id",
+                "description": "errorDescription should indicate an ID-path-parameter problem (either 'Invalid ID' from handler or '/path/ID must match pattern' from schema)",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.match(/Invalid ID|\\/path\\/ID|pattern/i)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "parties-get-email-format-violation",
+          "meta": {
+            "info": "GET /parties/EMAIL/{ID} with a string that is not a valid email ('not-an-email'). OpenAPI schema has no EMAIL-specific pattern so the request reaches the handler; the handler-layer validator (TYPE_PATTERNS.EMAIL) rejects it. Rejection is returned asynchronously via PUT /parties/{Type}/{ID}/error. Uses URL-safe ASCII so the callback URL round-trips cleanly."
+          },
+          "description": "GET parties with EMAIL format violation (handler-only rejection)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/EMAIL/not-an-email",
+          "method": "get",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "EMAIL",
+            "ID": "not-an-email"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Initial sync response should be 202 Accepted (async flow)",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-errorInformation",
+                "description": "Async PUT .../error callback body should contain errorInformation",
+                "exec": [
+                  "expect(callback.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": "cb-error-code-3100-or-3101",
+                "description": "Callback errorCode should be 3100 (schema) OR 3101 (handler)",
+                "exec": [
+                  "expect(['3100', '3101']).to.include(callback.body.errorInformation.errorCode)"
+                ]
+              },
+              {
+                "id": "cb-error-description-mentions-email",
+                "description": "Callback errorDescription should indicate an EMAIL format problem",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.match(/Invalid EMAIL|EMAIL/i)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "parties-get-iban-format-violation",
+          "meta": {
+            "info": "GET /parties/IBAN/{ID} with a string that is not a valid IBAN ('notaniban'). Exercises the handler-layer validator's TYPE_PATTERNS.IBAN (^[A-Z]{2}\\\\d{2}[A-Z0-9]{1,30}$). Rejection is returned asynchronously via PUT /parties/{Type}/{ID}/error."
+          },
+          "description": "GET parties with IBAN format violation (handler-only rejection)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/IBAN/notaniban",
+          "method": "get",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "IBAN",
+            "ID": "notaniban"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Initial sync response should be 202 Accepted (async flow)",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-errorInformation",
+                "description": "Async PUT .../error callback body should contain errorInformation",
+                "exec": [
+                  "expect(callback.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": "cb-error-code-3100-or-3101",
+                "description": "Callback errorCode should be 3100 (schema) OR 3101 (handler)",
+                "exec": [
+                  "expect(['3100', '3101']).to.include(callback.body.errorInformation.errorCode)"
+                ]
+              },
+              {
+                "id": "cb-error-description-mentions-iban",
+                "description": "Callback errorDescription should indicate an IBAN format problem",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.match(/Invalid IBAN|IBAN/i)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "parties-get-msisdn-format-violation",
+          "meta": {
+            "info": "GET /parties/MSISDN/not-a-phone. OpenAPI schema has no type-specific MSISDN pattern, so only the handler-layer validator rejects this via its MSISDN regex. Same async-callback caveat."
+          },
+          "description": "GET parties with MSISDN format violation",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/MSISDN/not-a-phone",
+          "method": "get",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "not-a-phone"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Initial sync response should be 202 Accepted (async flow)",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "cb-errorInformation",
+                "description": "Async PUT .../error callback body should contain errorInformation",
+                "exec": [
+                  "expect(callback.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": "cb-error-code-3100-or-3101",
+                "description": "Callback errorCode should be 3100 (schema) OR 3101 (handler)",
+                "exec": [
+                  "expect(['3100', '3101']).to.include(callback.body.errorInformation.errorCode)"
+                ]
+              },
+              {
+                "id": "cb-error-description-mentions-msisdn",
+                "description": "Callback errorDescription should indicate a MSISDN format problem",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.match(/Invalid MSISDN|MSISDN/i)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "participants-get-literal-id-placeholder",
+          "meta": {
+            "info": "GET /participants/{Type}/{ID} with literal '{ID}' placeholder. Caught synchronously by the OpenAPI schema on the participants spec. Tolerant to 3100/3101."
+          },
+          "description": "GET participants with literal {ID} placeholder",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/MSISDN/%7BID%7D",
+          "method": "get",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{ID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status should be 400 Bad Request",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "rsp-errorInformation",
+                "description": "Response body should contain errorInformation",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": "rsp-error-code-3100-or-3101",
+                "description": "errorCode should be 3100 (schema) OR 3101 (handler)",
+                "exec": [
+                  "expect(['3100', '3101']).to.include(response.body.errorInformation.errorCode)"
+                ]
+              },
+              {
+                "id": "rsp-error-description-mentions-id",
+                "description": "errorDescription should indicate an ID-path-parameter problem",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.match(/Invalid ID|\\/path\\/ID|pattern/i)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "parties-get-valid-id-positive-control",
+          "meta": {
+            "info": "Positive control - valid MSISDN must pass both schema AND handler validators and yield HTTP 202."
+          },
+          "description": "Positive control: valid MSISDN is still accepted after the fix",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status should be 202 Accepted",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
