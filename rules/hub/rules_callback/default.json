@@ -450,7 +450,7 @@
       "all": [
         {
           "fact": "headers",
-          "operator": "in",
+          "operator": "equal",
           "value": "noresponsepayeefsp",
           "path": "FSPIOP-Destination"
         },
@@ -2566,7 +2566,7 @@
       "params": {
         "headers": {
           "Content-Type": "application/vnd.interoperability.iso20022.parties+json;version=2.0",
-          "FSPIOP-Source": "{$config.FSPID}",
+          "FSPIOP-Source": "{$environment.sourceFSP}",
           "Date": "{$request.headers.date}",
           "FSPIOP-Destination": "{$request.headers.fspiop-source}"
         },
@@ -2587,7 +2587,7 @@
               "Agt": {
                 "FinInstnId": {
                   "Othr": {
-                    "Id": "{$config.FSPID}"
+                    "Id": "{$environment.sourceFSP}"
                   }
                 }
               }
@@ -2600,7 +2600,7 @@
               "Agt": {
                 "FinInstnId": {
                   "Othr": {
-                    "Id": "ttkpayeefsp"
+                    "Id": "{$environment.sourceFSP}"
                   }
                 }
               },
@@ -2625,7 +2625,8 @@
         },
         "scripts": {
           "exec": [
-            "environment.CreDtTm = new Date().toISOString()"
+            "environment.CreDtTm = new Date().toISOString()",
+            "environment.sourceFSP = request.headers['fspiop-destination'] || userConfig.FSPID"
           ],
           "scriptingEngine": "javascript"
         }
@@ -2723,7 +2724,19 @@
           "exec": [
             "environment.CreDtTm = new Date().toISOString()",
             "environment.AccptncDtTm = new Date().toISOString()",
-            "environment.PmtInstrXpryDtTm = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+            "environment.PmtInstrXpryDtTm = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
+            "",
+            "const quoteBody = JSON.parse(request.body)",
+            "",
+            "await custom.appendEventBody({",
+            "    CdtTrfTxInf: {",
+            "      Cdtr: quoteBody.CdtTrfTxInf.Cdtr,",
+            "      Dbtr: quoteBody.CdtTrfTxInf.Dbtr,",
+            "      CdtrAgt: quoteBody.CdtTrfTxInf.CdtrAgt,",
+            "      DbtrAgt: quoteBody.CdtTrfTxInf.DbtrAgt,",
+            "    }",
+            "  })",
+            ""
           ],
           "scriptingEngine": "javascript"
         },
@@ -2777,52 +2790,10 @@
                 }
               }
             },
-            "Cdtr": {
-              "Nm": "{$request.body.CdtTrfTxInf.Cdtr.Nm}",
-              "Id": {
-                "OrgId": {
-                  "Othr": {
-                    "Id": "{$request.body.CdtTrfTxInf.Cdtr.Id.OrgId.Othr.Id}",
-                    "SchmeNm": {
-                      "Prtry": "{$request.body.CdtTrfTxInf.Cdtr.Id.OrgId.Othr.SchmeNm.Prtry}"
-                    }
-                  }
-                }
-              }
-            },
-            "Dbtr": {
-              "Nm": "{$request.body.CdtTrfTxInf.Dbtr.Nm}",
-              "Id": {
-                "OrgId": {
-                  "Othr": {
-                    "Id": "{$request.body.CdtTrfTxInf.Dbtr.Id.OrgId.Othr.Id}",
-                    "SchmeNm": {
-                      "Prtry": "{$request.body.CdtTrfTxInf.Dbtr.Id.OrgId.Othr.SchmeNm.Prtry}"
-                    }
-                  }
-                }
-              }
-            },
-            "DbtrAgt": {
-              "FinInstnId": {
-                "Othr": {
-                  "Id": "{$request.headers['FSPIOP-Source']}",
-                  "SchmeNm": {
-                    "Cd": "BDID"
-                  }
-                }
-              }
-            },
-            "CdtrAgt": {
-              "FinInstnId": {
-                "Othr": {
-                  "Id": "{$request.headers['FSPIOP-Destination']}",
-                  "SchmeNm": {
-                    "Cd": "BDID"
-                  }
-                }
-              }
-            }
+            "Cdtr": {},
+            "Dbtr": {},
+            "DbtrAgt": {},
+            "CdtrAgt": {}
           }
         }
       },
